@@ -26,6 +26,7 @@ export const handler = async (event, context) => {
     }
 
     // Make the request to the backend
+    console.log(`Proxying ${method} ${backendUrl}`);
     const response = await fetch(backendUrl, fetchOptions);
     const responseText = await response.text();
 
@@ -49,14 +50,14 @@ export const handler = async (event, context) => {
       body: JSON.stringify(responseBody),
     };
   } catch (error) {
-    console.error('Proxy error:', error);
+    console.error('Proxy error:', error.message, error.stack);
     return {
       statusCode: 500,
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       },
-      body: JSON.stringify({ error: error.message || 'Internal server error' }),
+      body: JSON.stringify({ error: error.message || 'Internal server error', stack: error.stack }),
     };
   }
 };
