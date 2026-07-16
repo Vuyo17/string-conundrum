@@ -7,11 +7,11 @@ const isProduction = import.meta.env.PROD;
 let API_BASE_URL;
 
 if (isDevelopment) {
-  // Local development - backend on remote server with proper domain
-  API_BASE_URL = 'https://api.stringscon.netlify.app';
+  // Local development - backend on remote server with HTTPS
+  API_BASE_URL = 'https://137.158.61.235';
 } else if (isProduction) {
-  // Production on Netlify - backend on remote server with HTTPS domain
-  API_BASE_URL = 'https://api.stringscon.netlify.app';
+  // Production on Netlify - backend on remote server with HTTPS
+  API_BASE_URL = 'https://137.158.61.235';
 } else {
   // Fallback
   API_BASE_URL = `${window.location.protocol}//${window.location.host}`;
