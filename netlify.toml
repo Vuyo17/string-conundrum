@@ -1,7 +1,9 @@
 [build]
+  # Build frontend and deploy with Netlify Functions proxy
   command = "cd frontend && npm run build"
   functions = "netlify/functions"
   publish = "frontend/dist"
+
 
 [dev]
   command = "cd frontend && npm run dev"
@@ -11,3 +13,4 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
