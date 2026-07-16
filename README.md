@@ -9,6 +9,11 @@ It includes:
 - Frozen API contract docs
 - CI workflow scaffold
 
+## Production Deployment
+
+✓ **Backend:** Running on UCT server at http://137.158.61.235 (Ubuntu 26.04 LTS with Nginx + Gunicorn)
+✓ **Frontend:** Deployed to Netlify at https://stringscon.netlify.app (React + Vite)
+
 ## Project Structure
 
 ```text
