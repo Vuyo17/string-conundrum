@@ -8,12 +8,11 @@ let API_BASE_URL;
 
 if (isDevelopment) {
   // Local development - backend on remote server via CORS proxy
-  // Using thingproxy to bridge HTTP/HTTPS
-  API_BASE_URL = 'https://thingproxy.freehostip.com/fetch/http://137.158.61.235';
+  API_BASE_URL = 'https://cors-anywhere.herokuapp.com/http://137.158.61.235';
 } else if (isProduction) {
   // Production on Netlify - backend on remote server via CORS proxy
-  // Using thingproxy to bridge HTTP/HTTPS for mixed content security issue
-  API_BASE_URL = 'https://thingproxy.freehostip.com/fetch/http://137.158.61.235';
+  // Using cors-anywhere to bridge HTTP/HTTPS for mixed content security
+  API_BASE_URL = 'https://cors-anywhere.herokuapp.com/http://137.158.61.235';
 } else {
   // Fallback
   API_BASE_URL = `${window.location.protocol}//${window.location.host}`;
