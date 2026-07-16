@@ -7,12 +7,11 @@ const isProduction = import.meta.env.PROD;
 let API_BASE_URL;
 
 if (isDevelopment) {
-  // Local development - backend directly (for local testing)
-  // Change to '/.netlify/functions/api' if testing production behavior
+  // Local development - backend directly
   API_BASE_URL = 'http://137.158.61.235';
 } else if (isProduction) {
-  // Production on Netlify - use Netlify Functions as proxy
-  API_BASE_URL = '/.netlify/functions/api';
+  // Production on Netlify - use allorigins CORS proxy for HTTP backend
+  API_BASE_URL = 'https://api.allorigins.win/raw?url=http://137.158.61.235';
 } else {
   // Fallback
   API_BASE_URL = `${window.location.protocol}//${window.location.host}`;
@@ -22,9 +21,9 @@ export const getApiUrl = (path) => {
   // Remove leading slash from path if present
   const cleanPath = path.startsWith('/') ? path.substring(1) : path;
   
-  // If using Netlify Functions proxy, append path as query param
-  if (API_BASE_URL === '/.netlify/functions/api') {
-    return `${API_BASE_URL}?path=/${cleanPath}`;
+  // If using allorigins proxy, append path as query param
+  if (API_BASE_URL.includes('allorigins')) {
+    return `${API_BASE_URL}/${cleanPath}`;
   }
   
   // Otherwise use direct URL
