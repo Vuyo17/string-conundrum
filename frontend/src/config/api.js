@@ -10,8 +10,9 @@ if (isDevelopment) {
   // Local development - backend directly
   API_BASE_URL = 'http://137.158.61.235';
 } else if (isProduction) {
-  // Production on Netlify - use cors-anywhere proxy for HTTP backend
-  API_BASE_URL = 'https://cors-anywhere.herokuapp.com/http://137.158.61.235';
+  // Production on Netlify - use thingproxy CORS proxy
+  // Format: https://thingproxy.freeboard.io/fetch/[URL]
+  API_BASE_URL = 'https://thingproxy.freeboard.io/fetch/http://137.158.61.235';
 } else {
   // Fallback
   API_BASE_URL = `${window.location.protocol}//${window.location.host}`;
