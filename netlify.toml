@@ -1,5 +1,6 @@
 [build]
-  # Build frontend and deploy with Netlify Functions proxy
+  # Build from root, functions at repo root
+  base = ""
   command = "cd frontend && npm run build"
   functions = "netlify/functions"
   publish = "frontend/dist"

@@ -6,14 +6,6 @@ const isProduction = import.meta.env.PROD;
 
 let API_BASE_URL;
 
-// API Configuration
-// Automatically determines the correct API base URL based on environment
-
-const isDevelopment = import.meta.env.DEV;
-const isProduction = import.meta.env.PROD;
-
-let API_BASE_URL;
-
 if (isDevelopment) {
   // Local development - backend directly (for local testing)
   // Change to '/.netlify/functions/api' if testing production behavior
@@ -38,7 +30,5 @@ export const getApiUrl = (path) => {
   // Otherwise use direct URL
   return `${API_BASE_URL}/${cleanPath}`;
 };
-
-export default API_BASE_URL;
 
 export default API_BASE_URL;
