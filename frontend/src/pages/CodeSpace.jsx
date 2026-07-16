@@ -3,6 +3,7 @@ import {
   ArrowLeft, ArrowRight, Code2, Eye, Pause, Play, Terminal, Trash2,
 } from 'lucide-react';
 import styles from '../styles/App.module.css';
+import { getApiUrl } from '../config/api';
 
 // ─── default starter code ────────────────────────────────────────────────────
 const DEFAULT_CODE = `# Try the debugger — step through this code
@@ -290,12 +291,12 @@ export function CodeSpace() {
 
     try {
       const [execRes, debugRes] = await Promise.all([
-        fetch('/api/execute', {
+        fetch(getApiUrl('/api/execute'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ code }),
         }),
-        fetch('/api/debug', {
+        fetch(getApiUrl('/api/debug'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ code }),
