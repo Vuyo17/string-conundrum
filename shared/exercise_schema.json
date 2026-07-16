@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "String Conundrum Exercise",
+  "type": "object",
+  "required": ["module_id", "question_id", "prompt", "type"],
+  "properties": {
+    "module_id": {"type": "string"},
+    "question_id": {"type": "string"},
+    "prompt": {"type": "string"},
+    "type": {
+      "type": "string",
+      "enum": ["mcq", "select_all", "fill_blank", "write_code"],
+      "description": "mcq: single correct option. select_all: one or more correct options. fill_blank: single typed answer, exact match after trim. write_code: learner submits code, graded by executing it against test_cases."
+    },
+    "options": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Required for mcq and select_all. The list of choices shown to the learner."
+    },
+    "answer": {
+      "type": "string",
+      "description": "Required for mcq and fill_blank. The single correct answer."
+    },
+    "answers": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Required for select_all. All options that must be selected (and no others) to be marked correct."
+    },
+    "test_cases": {
+      "type": "array",
+      "description": "Required for write_code. Learner's code is run once per test case.",
+      "items": {
+        "type": "object",
+        "required": ["expected_output"],
+        "properties": {
+          "input": {
+            "type": "string",
+            "description": "Text piped to stdin, for programs that call input(). Omit if the program takes no input."
+          },
+          "expected_output": {
+            "type": "string",
+            "description": "Expected stdout, compared after trimming trailing whitespace."
+          }
+        }
+      }
+    },
+    "xp": {
+      "type": "integer",
+      "description": "XP awarded on a correct submission. Defaults to 10 if omitted."
+    },
+    "misconception_map": {
+      "type": "object",
+      "additionalProperties": {"type": "string"},
+      "description": "Maps a wrong answer (mcq/fill_blank) or a wrong-but-common option (select_all) to a misconception_id. Not used for write_code, which reports failed test cases instead."
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"type": {"const": "mcq"}}},
+      "then": {"required": ["options", "answer"]}
+    },
+    {
+      "if": {"properties": {"type": {"const": "select_all"}}},
+      "then": {"required": ["options", "answers"]}
+    },
+    {
+      "if": {"properties": {"type": {"const": "fill_blank"}}},
+      "then": {"required": ["answer"]}
+    },
+    {
+      "if": {"properties": {"type": {"const": "write_code"}}},
+      "then": {"required": ["test_cases"]}
+    }
+  ]
+}

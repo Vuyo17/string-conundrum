@@ -1,0 +1,3951 @@
+[
+  {
+    "module_id": "intro",
+    "question_id": "intro-01",
+    "prompt": "Which of the following correctly creates a string variable holding Hlomla?",
+    "type": "mcq",
+    "options": [
+      "name = Hlomla",
+      "name = 'Hlomla'",
+      "name = (Hlomla)",
+      "name = <Hlomla>"
+    ],
+    "answer": "name = 'Hlomla'",
+    "misconception_map": {
+      "name = Hlomla": "strings_need_quotes"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-02",
+    "prompt": "Which of the following correctly creates a string variable holding Cape Town?",
+    "type": "mcq",
+    "options": [
+      "name = Cape Town",
+      "name = 'Cape Town'",
+      "name = (Cape Town)",
+      "name = <Cape Town>"
+    ],
+    "answer": "name = 'Cape Town'",
+    "misconception_map": {
+      "name = Cape Town": "strings_need_quotes"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-03",
+    "prompt": "Which of the following correctly creates a string variable holding Xhosa?",
+    "type": "mcq",
+    "options": [
+      "name = Xhosa",
+      "name = 'Xhosa'",
+      "name = (Xhosa)",
+      "name = <Xhosa>"
+    ],
+    "answer": "name = 'Xhosa'",
+    "misconception_map": {
+      "name = Xhosa": "strings_need_quotes"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-04",
+    "prompt": "Which of the following correctly creates a string variable holding Python?",
+    "type": "mcq",
+    "options": [
+      "name = Python",
+      "name = 'Python'",
+      "name = (Python)",
+      "name = <Python>"
+    ],
+    "answer": "name = 'Python'",
+    "misconception_map": {
+      "name = Python": "strings_need_quotes"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-05",
+    "prompt": "Which of the following correctly creates a string variable holding Firebase?",
+    "type": "mcq",
+    "options": [
+      "name = Firebase",
+      "name = 'Firebase'",
+      "name = (Firebase)",
+      "name = <Firebase>"
+    ],
+    "answer": "name = 'Firebase'",
+    "misconception_map": {
+      "name = Firebase": "strings_need_quotes"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-06",
+    "prompt": "Select all of the following that are valid ways to create the string \"python\" in Python.",
+    "type": "select_all",
+    "options": [
+      "word = 'python'",
+      "word = \"python\"",
+      "word = '''python'''",
+      "word = [p,y,t]"
+    ],
+    "answers": [
+      "word = 'python'",
+      "word = \"python\"",
+      "word = '''python'''"
+    ],
+    "misconception_map": {
+      "word = [p,y,t]": "string_vs_list_confusion"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-07",
+    "prompt": "Select all of the following that are valid ways to create the string \"learning\" in Python.",
+    "type": "select_all",
+    "options": [
+      "word = 'learning'",
+      "word = \"learning\"",
+      "word = '''learning'''",
+      "word = [l,e,a]"
+    ],
+    "answers": [
+      "word = 'learning'",
+      "word = \"learning\"",
+      "word = '''learning'''"
+    ],
+    "misconception_map": {
+      "word = [l,e,a]": "string_vs_list_confusion"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-08",
+    "prompt": "Select all of the following that are valid ways to create the string \"capstone\" in Python.",
+    "type": "select_all",
+    "options": [
+      "word = 'capstone'",
+      "word = \"capstone\"",
+      "word = '''capstone'''",
+      "word = [c,a,p]"
+    ],
+    "answers": [
+      "word = 'capstone'",
+      "word = \"capstone\"",
+      "word = '''capstone'''"
+    ],
+    "misconception_map": {
+      "word = [c,a,p]": "string_vs_list_confusion"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-09",
+    "prompt": "What does the following code print?\nword = \"cat\" + \"fish\"\nprint(word)",
+    "type": "mcq",
+    "options": [
+      "catfish",
+      "cat fish",
+      "cat + fish",
+      "An error"
+    ],
+    "answer": "catfish",
+    "misconception_map": {
+      "cat fish": "concatenation_adds_space",
+      "An error": "concatenation_requires_same_type_fear"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-10",
+    "prompt": "What does the following code print?\nword = \"Cape\" + \"Town\"\nprint(word)",
+    "type": "mcq",
+    "options": [
+      "CapeTown",
+      "Cape Town",
+      "Cape + Town",
+      "An error"
+    ],
+    "answer": "CapeTown",
+    "misconception_map": {
+      "Cape Town": "concatenation_adds_space",
+      "An error": "concatenation_requires_same_type_fear"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-11",
+    "prompt": "What does the following code print?\nword = \"un\" + \"happy\"\nprint(word)",
+    "type": "mcq",
+    "options": [
+      "unhappy",
+      "un happy",
+      "un + happy",
+      "An error"
+    ],
+    "answer": "unhappy",
+    "misconception_map": {
+      "un happy": "concatenation_adds_space",
+      "An error": "concatenation_requires_same_type_fear"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-12",
+    "prompt": "What does the following code print?\nword = \"post\" + \"graduate\"\nprint(word)",
+    "type": "mcq",
+    "options": [
+      "postgraduate",
+      "post graduate",
+      "post + graduate",
+      "An error"
+    ],
+    "answer": "postgraduate",
+    "misconception_map": {
+      "post graduate": "concatenation_adds_space",
+      "An error": "concatenation_requires_same_type_fear"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-13",
+    "prompt": "What does the following code print?\nword = \"play\" + \"ground\"\nprint(word)",
+    "type": "mcq",
+    "options": [
+      "playground",
+      "play ground",
+      "play + ground",
+      "An error"
+    ],
+    "answer": "playground",
+    "misconception_map": {
+      "play ground": "concatenation_adds_space",
+      "An error": "concatenation_requires_same_type_fear"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-14",
+    "prompt": "print(\"ab\" * 3)",
+    "type": "mcq",
+    "options": [
+      "ababab",
+      "ab ab ab",
+      "ab3",
+      "An error"
+    ],
+    "answer": "ababab",
+    "misconception_map": {
+      "ab ab ab": "concatenation_adds_space",
+      "ab3": "repetition_confused_with_multiplication"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-15",
+    "prompt": "print(\"ha\" * 2)",
+    "type": "mcq",
+    "options": [
+      "haha",
+      "ha ha",
+      "ha2",
+      "An error"
+    ],
+    "answer": "haha",
+    "misconception_map": {
+      "ha ha": "concatenation_adds_space",
+      "ha2": "repetition_confused_with_multiplication"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-16",
+    "prompt": "print(\"xo\" * 4)",
+    "type": "mcq",
+    "options": [
+      "xoxoxoxo",
+      "xo xo xo xo",
+      "xo4",
+      "An error"
+    ],
+    "answer": "xoxoxoxo",
+    "misconception_map": {
+      "xo xo xo xo": "concatenation_adds_space",
+      "xo4": "repetition_confused_with_multiplication"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-17",
+    "prompt": "print(\"na\" * 2)",
+    "type": "mcq",
+    "options": [
+      "nana",
+      "na na",
+      "na2",
+      "An error"
+    ],
+    "answer": "nana",
+    "misconception_map": {
+      "na na": "concatenation_adds_space",
+      "na2": "repetition_confused_with_multiplication"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-18",
+    "prompt": "print(\"go\" * 3)",
+    "type": "mcq",
+    "options": [
+      "gogogo",
+      "go go go",
+      "go3",
+      "An error"
+    ],
+    "answer": "gogogo",
+    "misconception_map": {
+      "go go go": "concatenation_adds_space",
+      "go3": "repetition_confused_with_multiplication"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-19",
+    "prompt": "print(len(\"banana\"))",
+    "type": "fill_blank",
+    "answer": "6",
+    "misconception_map": {
+      "7": "off_by_one_length"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-20",
+    "prompt": "print(len(\"isiXhosa\"))",
+    "type": "fill_blank",
+    "answer": "8",
+    "misconception_map": {
+      "9": "off_by_one_length"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-21",
+    "prompt": "print(len(\"capstone\"))",
+    "type": "fill_blank",
+    "answer": "8",
+    "misconception_map": {
+      "9": "off_by_one_length"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-22",
+    "prompt": "print(len(\"flask\"))",
+    "type": "fill_blank",
+    "answer": "5",
+    "misconception_map": {
+      "6": "off_by_one_length"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-23",
+    "prompt": "print(len(\"vite\"))",
+    "type": "fill_blank",
+    "answer": "4",
+    "misconception_map": {
+      "5": "off_by_one_length"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-24",
+    "prompt": "What happens when Python runs the line: price = hello   (with no quotes around hello)?",
+    "type": "mcq",
+    "options": [
+      "NameError, because Python looks for a variable called hello",
+      "price becomes the string 'hello'",
+      "SyntaxError immediately, before anything runs",
+      "hello is treated as a number"
+    ],
+    "answer": "NameError, because Python looks for a variable called hello",
+    "misconception_map": {
+      "price becomes the string 'hello'": "strings_need_quotes"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-25",
+    "prompt": "What happens when Python runs the line: flag = hello   (with no quotes around hello)?",
+    "type": "mcq",
+    "options": [
+      "NameError, because Python looks for a variable called hello",
+      "flag becomes the string 'hello'",
+      "SyntaxError immediately, before anything runs",
+      "hello is treated as a number"
+    ],
+    "answer": "NameError, because Python looks for a variable called hello",
+    "misconception_map": {
+      "flag becomes the string 'hello'": "strings_need_quotes"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-26",
+    "prompt": "What happens when Python runs the line: level = hello   (with no quotes around hello)?",
+    "type": "mcq",
+    "options": [
+      "NameError, because Python looks for a variable called hello",
+      "level becomes the string 'hello'",
+      "SyntaxError immediately, before anything runs",
+      "hello is treated as a number"
+    ],
+    "answer": "NameError, because Python looks for a variable called hello",
+    "misconception_map": {
+      "level becomes the string 'hello'": "strings_need_quotes"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-27",
+    "prompt": "Select all expressions below that create the string \"dog\".",
+    "type": "select_all",
+    "options": [
+      "\"dog\"",
+      "['d', 'o', 'g']",
+      "'dog'",
+      "['d', 'o', 'g']"
+    ],
+    "answers": [
+      "\"dog\"",
+      "'dog'"
+    ],
+    "misconception_map": {
+      "['d', 'o', 'g']": "string_vs_list_confusion"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-28",
+    "prompt": "Select all expressions below that create the string \"cat\".",
+    "type": "select_all",
+    "options": [
+      "\"cat\"",
+      "['c', 'a', 't']",
+      "'cat'",
+      "['c', 'a', 't']"
+    ],
+    "answers": [
+      "\"cat\"",
+      "'cat'"
+    ],
+    "misconception_map": {
+      "['c', 'a', 't']": "string_vs_list_confusion"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-29",
+    "prompt": "Select all expressions below that create the string \"sun\".",
+    "type": "select_all",
+    "options": [
+      "\"sun\"",
+      "['s', 'u', 'n']",
+      "'sun'",
+      "['s', 'u', 'n']"
+    ],
+    "answers": [
+      "\"sun\"",
+      "'sun'"
+    ],
+    "misconception_map": {
+      "['s', 'u', 'n']": "string_vs_list_confusion"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-30",
+    "prompt": "count = 5\nprint(\"Count: \" + count)\nWhat happens?",
+    "type": "mcq",
+    "options": [
+      "TypeError, because you cannot concatenate a str and an int directly",
+      "\"Count: 5\" is printed",
+      "\"Count: \" is printed, then 5 on a new line",
+      "count is automatically converted to a string"
+    ],
+    "answer": "TypeError, because you cannot concatenate a str and an int directly",
+    "misconception_map": {
+      "\"Count: 5\" is printed": "concatenation_requires_same_type_fear"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-01",
+    "prompt": "text = \"python\"\nprint(text[0])",
+    "type": "mcq",
+    "options": [
+      "p",
+      "y",
+      "Index error",
+      "None"
+    ],
+    "answer": "p",
+    "misconception_map": {
+      "y": "indexing_from_one"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-02",
+    "prompt": "text = \"banana\"\nprint(text[0])",
+    "type": "mcq",
+    "options": [
+      "b",
+      "a",
+      "Index error",
+      "None"
+    ],
+    "answer": "b",
+    "misconception_map": {
+      "a": "indexing_from_one"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-03",
+    "prompt": "text = \"capetown\"\nprint(text[0])",
+    "type": "mcq",
+    "options": [
+      "c",
+      "a",
+      "Index error",
+      "None"
+    ],
+    "answer": "c",
+    "misconception_map": {
+      "a": "indexing_from_one"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-04",
+    "prompt": "text = \"xhosa\"\nprint(text[0])",
+    "type": "mcq",
+    "options": [
+      "x",
+      "h",
+      "Index error",
+      "None"
+    ],
+    "answer": "x",
+    "misconception_map": {
+      "h": "indexing_from_one"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-05",
+    "prompt": "text = \"learning\"\nprint(text[0])",
+    "type": "mcq",
+    "options": [
+      "l",
+      "e",
+      "Index error",
+      "None"
+    ],
+    "answer": "l",
+    "misconception_map": {
+      "e": "indexing_from_one"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-06",
+    "prompt": "text = \"umuntu\"\nprint(text[0])",
+    "type": "mcq",
+    "options": [
+      "u",
+      "m",
+      "Index error",
+      "None"
+    ],
+    "answer": "u",
+    "misconception_map": {
+      "m": "indexing_from_one"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-07",
+    "prompt": "text = \"python\"\nprint(text[-1])",
+    "type": "mcq",
+    "options": [
+      "p",
+      "n",
+      "Index error",
+      "empty string"
+    ],
+    "answer": "n",
+    "misconception_map": {
+      "Index error": "negative_index_confusion"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-08",
+    "prompt": "text = \"banana\"\nprint(text[-1])",
+    "type": "mcq",
+    "options": [
+      "b",
+      "a",
+      "Index error",
+      "empty string"
+    ],
+    "answer": "a",
+    "misconception_map": {
+      "Index error": "negative_index_confusion"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-09",
+    "prompt": "text = \"capetown\"\nprint(text[-1])",
+    "type": "mcq",
+    "options": [
+      "c",
+      "n",
+      "Index error",
+      "empty string"
+    ],
+    "answer": "n",
+    "misconception_map": {
+      "Index error": "negative_index_confusion"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-10",
+    "prompt": "text = \"xhosa\"\nprint(text[-1])",
+    "type": "mcq",
+    "options": [
+      "x",
+      "a",
+      "Index error",
+      "empty string"
+    ],
+    "answer": "a",
+    "misconception_map": {
+      "Index error": "negative_index_confusion"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-11",
+    "prompt": "text = \"learning\"\nprint(text[-1])",
+    "type": "mcq",
+    "options": [
+      "l",
+      "g",
+      "Index error",
+      "empty string"
+    ],
+    "answer": "g",
+    "misconception_map": {
+      "Index error": "negative_index_confusion"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-12",
+    "prompt": "text = \"umuntu\"\nprint(text[-1])",
+    "type": "mcq",
+    "options": [
+      "u",
+      "u",
+      "Index error",
+      "empty string"
+    ],
+    "answer": "u",
+    "misconception_map": {
+      "Index error": "negative_index_confusion"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-13",
+    "prompt": "Fill in the missing index so that text[__] returns 't' from text = \"python\"",
+    "type": "fill_blank",
+    "answer": "2",
+    "misconception_map": {
+      "3": "indexing_from_one"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-14",
+    "prompt": "Fill in the missing index so that text[__] returns 'a' from text = \"banana\"",
+    "type": "fill_blank",
+    "answer": "3",
+    "misconception_map": {
+      "4": "indexing_from_one"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-15",
+    "prompt": "Fill in the missing index so that text[__] returns 'a' from text = \"xhosa\"",
+    "type": "fill_blank",
+    "answer": "4",
+    "misconception_map": {
+      "5": "indexing_from_one"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-16",
+    "prompt": "Fill in the missing index so that text[__] returns 'm' from text = \"umuntu\"",
+    "type": "fill_blank",
+    "answer": "1",
+    "misconception_map": {
+      "2": "indexing_from_one"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-17",
+    "prompt": "mL = \"programming\" (length 11). Select all of the indices below that will cause an IndexError.",
+    "type": "select_all",
+    "options": [
+      "mL[10]",
+      "mL[11]",
+      "mL[-11]",
+      "mL[-12]"
+    ],
+    "answers": [
+      "mL[11]",
+      "mL[-12]"
+    ],
+    "misconception_map": {
+      "mL[10]": "off_by_one_length",
+      "mL[-11]": "negative_index_confusion"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-18",
+    "prompt": "mL = \"kitten\" (length 6). Select all of the indices below that will cause an IndexError.",
+    "type": "select_all",
+    "options": [
+      "mL[5]",
+      "mL[6]",
+      "mL[-6]",
+      "mL[-7]"
+    ],
+    "answers": [
+      "mL[6]",
+      "mL[-7]"
+    ],
+    "misconception_map": {
+      "mL[5]": "off_by_one_length",
+      "mL[-6]": "negative_index_confusion"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-19",
+    "prompt": "mL = \"orange\" (length 6). Select all of the indices below that will cause an IndexError.",
+    "type": "select_all",
+    "options": [
+      "mL[5]",
+      "mL[6]",
+      "mL[-6]",
+      "mL[-7]"
+    ],
+    "answers": [
+      "mL[6]",
+      "mL[-7]"
+    ],
+    "misconception_map": {
+      "mL[5]": "off_by_one_length",
+      "mL[-6]": "negative_index_confusion"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-20",
+    "prompt": "mL = \"monday\" (length 6). Select all of the indices below that will cause an IndexError.",
+    "type": "select_all",
+    "options": [
+      "mL[5]",
+      "mL[6]",
+      "mL[-6]",
+      "mL[-7]"
+    ],
+    "answers": [
+      "mL[6]",
+      "mL[-7]"
+    ],
+    "misconception_map": {
+      "mL[5]": "off_by_one_length",
+      "mL[-6]": "negative_index_confusion"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-21",
+    "prompt": "This code is meant to print the last character of text. Why does it fail?\ntext = \"python\"\nprint(text[len(text)])",
+    "type": "mcq",
+    "options": [
+      "len(text) is one past the last valid index",
+      "print() cannot accept an expression",
+      "strings do not support len()",
+      "the code is actually correct"
+    ],
+    "answer": "len(text) is one past the last valid index",
+    "misconception_map": {
+      "the code is actually correct": "off_by_one_length"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-22",
+    "prompt": "This code is meant to print the last character of text. Why does it fail?\ntext = \"hello\"\nprint(text[len(text)])",
+    "type": "mcq",
+    "options": [
+      "len(text) is one past the last valid index",
+      "print() cannot accept an expression",
+      "strings do not support len()",
+      "the code is actually correct"
+    ],
+    "answer": "len(text) is one past the last valid index",
+    "misconception_map": {
+      "the code is actually correct": "off_by_one_length"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-23",
+    "prompt": "This code is meant to print the last character of text. Why does it fail?\ntext = \"capstone\"\nprint(text[len(text)])",
+    "type": "mcq",
+    "options": [
+      "len(text) is one past the last valid index",
+      "print() cannot accept an expression",
+      "strings do not support len()",
+      "the code is actually correct"
+    ],
+    "answer": "len(text) is one past the last valid index",
+    "misconception_map": {
+      "the code is actually correct": "off_by_one_length"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-24",
+    "prompt": "text = \"python\"\nprint(text[-7])\nWhy does this raise an IndexError?",
+    "type": "mcq",
+    "options": [
+      "-7 goes further back than the string's length allows",
+      "negative indices cannot be used with variables, only literals",
+      "the string needs to be reversed first",
+      "it does not raise an error"
+    ],
+    "answer": "-7 goes further back than the string's length allows",
+    "misconception_map": {
+      "it does not raise an error": "negative_index_confusion"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-25",
+    "prompt": "text = \"banana\"\nprint(text[-7])\nWhy does this raise an IndexError?",
+    "type": "mcq",
+    "options": [
+      "-7 goes further back than the string's length allows",
+      "negative indices cannot be used with variables, only literals",
+      "the string needs to be reversed first",
+      "it does not raise an error"
+    ],
+    "answer": "-7 goes further back than the string's length allows",
+    "misconception_map": {
+      "it does not raise an error": "negative_index_confusion"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-26",
+    "prompt": "text = \"umuntu\"\nprint(text[-7])\nWhy does this raise an IndexError?",
+    "type": "mcq",
+    "options": [
+      "-7 goes further back than the string's length allows",
+      "negative indices cannot be used with variables, only literals",
+      "the string needs to be reversed first",
+      "it does not raise an error"
+    ],
+    "answer": "-7 goes further back than the string's length allows",
+    "misconception_map": {
+      "it does not raise an error": "negative_index_confusion"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-27",
+    "prompt": "What does this print?\nw = \"python\"\ni = 3\nprint(w[i])",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "h"
+      }
+    ],
+    "xp": 15
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-28",
+    "prompt": "What does this print?\nw = \"banana\"\ni = 2\nprint(w[i])",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "n"
+      }
+    ],
+    "xp": 15
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-29",
+    "prompt": "What does this print?\nw = \"xhosa\"\ni = 0\nprint(w[i])",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "x"
+      }
+    ],
+    "xp": 15
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-30",
+    "prompt": "text = \"a\"\nprint(text[0])\nWhat is special about indexing a one-character string like this?",
+    "type": "mcq",
+    "options": [
+      "Index 0 is both the first and only valid index",
+      "It always raises an error because there's nothing to index",
+      "You must use text[-1] instead of text[0]",
+      "Single characters cannot be stored as strings"
+    ],
+    "answer": "Index 0 is both the first and only valid index",
+    "xp": 10
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-01",
+    "prompt": "word = \"Hello, World!\"\nprint(word[7:12])",
+    "type": "mcq",
+    "options": [
+      "World",
+      "World!",
+      "Worl",
+      "An error"
+    ],
+    "answer": "World",
+    "misconception_map": {
+      "World!": "slice_stop_inclusive"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-02",
+    "prompt": "word = \"Cape Town\"\nprint(word[0:4])",
+    "type": "mcq",
+    "options": [
+      "Cape",
+      "Cape ",
+      "Cap",
+      "An error"
+    ],
+    "answer": "Cape",
+    "misconception_map": {
+      "Cape ": "slice_stop_inclusive"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-03",
+    "prompt": "word = \"umuntu ngumuntu\"\nprint(word[0:6])",
+    "type": "mcq",
+    "options": [
+      "umuntu",
+      "umuntu ",
+      "umunt",
+      "An error"
+    ],
+    "answer": "umuntu",
+    "misconception_map": {
+      "umuntu ": "slice_stop_inclusive"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-04",
+    "prompt": "word = \"programming\"\nprint(word[3:7])",
+    "type": "mcq",
+    "options": [
+      "gram",
+      "gramm",
+      "gra",
+      "An error"
+    ],
+    "answer": "gram",
+    "misconception_map": {
+      "gramm": "slice_stop_inclusive"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-05",
+    "prompt": "word = \"isiXhosa\"\nprint(word[3:8])",
+    "type": "mcq",
+    "options": [
+      "Xhosa",
+      "Xhosa",
+      "Xhos",
+      "An error"
+    ],
+    "answer": "Xhosa",
+    "misconception_map": {
+      "Xhosa": "slice_stop_inclusive"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-06",
+    "prompt": "word = \"firebase\"\nprint(word[4:8])",
+    "type": "mcq",
+    "options": [
+      "base",
+      "base",
+      "bas",
+      "An error"
+    ],
+    "answer": "base",
+    "misconception_map": {
+      "base": "slice_stop_inclusive"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-07",
+    "prompt": "Fill in the stop index so that word[0:__] returns 'Hello' from word = \"Hello, World!\"",
+    "type": "fill_blank",
+    "answer": "5",
+    "misconception_map": {
+      "4": "slice_stop_inclusive"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-08",
+    "prompt": "Fill in the stop index so that word[5:__] returns 'Town' from word = \"Cape Town\"",
+    "type": "fill_blank",
+    "answer": "9",
+    "misconception_map": {
+      "8": "slice_stop_inclusive"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-09",
+    "prompt": "Fill in the stop index so that word[2:__] returns 'muntu' from word = \"umuntu\"",
+    "type": "fill_blank",
+    "answer": "7",
+    "misconception_map": {
+      "6": "slice_stop_inclusive"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-10",
+    "prompt": "Fill in the stop index so that word[7:__] returns 'split' from word = \"banana split\"",
+    "type": "fill_blank",
+    "answer": "12",
+    "misconception_map": {
+      "11": "slice_stop_inclusive"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-11",
+    "prompt": "word = \"stressed\"\nprint(word[::-1])",
+    "type": "mcq",
+    "options": [
+      "desserts",
+      "stressed",
+      "An error",
+      "empty string"
+    ],
+    "answer": "desserts",
+    "misconception_map": {
+      "An error": "negative_step_unfamiliar"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-12",
+    "prompt": "word = \"python\"\nprint(word[::-1])",
+    "type": "mcq",
+    "options": [
+      "nohtyp",
+      "python",
+      "An error",
+      "empty string"
+    ],
+    "answer": "nohtyp",
+    "misconception_map": {
+      "An error": "negative_step_unfamiliar"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-13",
+    "prompt": "word = \"capstone\"\nprint(word[::-1])",
+    "type": "mcq",
+    "options": [
+      "enotspac",
+      "capstone",
+      "An error",
+      "empty string"
+    ],
+    "answer": "enotspac",
+    "misconception_map": {
+      "An error": "negative_step_unfamiliar"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-14",
+    "prompt": "word = \"programming\"\nprint(word[:4])",
+    "type": "mcq",
+    "options": [
+      "prog",
+      "prog",
+      "ramming",
+      "An error"
+    ],
+    "answer": "prog",
+    "xp": 15
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-15",
+    "prompt": "word = \"programming\"\nprint(word[4:])",
+    "type": "mcq",
+    "options": [
+      "ramming",
+      "prog",
+      "ramming",
+      "An error"
+    ],
+    "answer": "ramming",
+    "xp": 15
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-16",
+    "prompt": "word = \"programming\"\nprint(word[:])",
+    "type": "mcq",
+    "options": [
+      "programming",
+      "prog",
+      "ramming",
+      "An error"
+    ],
+    "answer": "programming",
+    "xp": 15
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-17",
+    "prompt": "word = \"umuntu\"\nprint(word[3:])",
+    "type": "mcq",
+    "options": [
+      "ntu",
+      "umun",
+      "tu",
+      "An error"
+    ],
+    "answer": "ntu",
+    "xp": 15
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-18",
+    "prompt": "word = \"cat\" (only 3 characters long)\nprint(word[0:10])\nWhat happens?",
+    "type": "mcq",
+    "options": [
+      "It prints \"cat\", slice bounds are clamped rather than erroring",
+      "IndexError, because the bounds go past the string's length",
+      "It prints an empty string no matter what",
+      "It pads the missing characters with spaces"
+    ],
+    "answer": "It prints \"cat\", slice bounds are clamped rather than erroring",
+    "xp": 15
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-19",
+    "prompt": "word = \"dog\" (only 3 characters long)\nprint(word[1:99])\nWhat happens?",
+    "type": "mcq",
+    "options": [
+      "It prints \"og\", slice bounds are clamped rather than erroring",
+      "IndexError, because the bounds go past the string's length",
+      "It prints an empty string no matter what",
+      "It pads the missing characters with spaces"
+    ],
+    "answer": "It prints \"og\", slice bounds are clamped rather than erroring",
+    "xp": 15
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-20",
+    "prompt": "word = \"owl\" (only 3 characters long)\nprint(word[-50:2])\nWhat happens?",
+    "type": "mcq",
+    "options": [
+      "It prints \"ow\", slice bounds are clamped rather than erroring",
+      "IndexError, because the bounds go past the string's length",
+      "It prints an empty string no matter what",
+      "It pads the missing characters with spaces"
+    ],
+    "answer": "It prints \"ow\", slice bounds are clamped rather than erroring",
+    "xp": 15
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-21",
+    "prompt": "word = \"hello world\"\nSelect all slicing expressions below that produce \"world\".",
+    "type": "select_all",
+    "options": [
+      "word[6:11]",
+      "word[6:]",
+      "word[-5:]",
+      "word[0:5]"
+    ],
+    "answers": [
+      "word[6:11]",
+      "word[6:]",
+      "word[-5:]"
+    ],
+    "xp": 15
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-22",
+    "prompt": "word = \"banana\"\nSelect all slicing expressions below that produce \"ana\".",
+    "type": "select_all",
+    "options": [
+      "word[1:4]",
+      "word[3:6]",
+      "word[1:6]",
+      "word[0:3]"
+    ],
+    "answers": [
+      "word[1:4]",
+      "word[3:6]"
+    ],
+    "xp": 15
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-23",
+    "prompt": "word = \"umuntu\"\nSelect all slicing expressions below that produce \"ntu\".",
+    "type": "select_all",
+    "options": [
+      "word[3:6]",
+      "word[-3:]",
+      "word[0:3]",
+      "word[3:]"
+    ],
+    "answers": [
+      "word[3:6]",
+      "word[-3:]",
+      "word[3:]"
+    ],
+    "xp": 15
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-24",
+    "prompt": "source = \"was it a car or a cat i saw\"\nWrite ONE Python expression (not a full program) that prints \"a car or a cat\" using slicing on source. There may be more than one valid way (positive indices, negative indices, or a negative step) \u2014 any correct one is accepted.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "a car or a cat"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-25",
+    "prompt": "source = \"the level is fine\"\nWrite ONE Python expression (not a full program) that prints \"level\" using slicing on source. There may be more than one valid way (positive indices, negative indices, or a negative step) \u2014 any correct one is accepted.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "level"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-26",
+    "prompt": "source = \"a radar station beeped\"\nWrite ONE Python expression (not a full program) that prints \"radar\" using slicing on source. There may be more than one valid way (positive indices, negative indices, or a negative step) \u2014 any correct one is accepted.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "radar"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-27",
+    "prompt": "Write a program that stores \"report_final.pdf\" in a variable called text and prints the file extension (the last 3 characters), using slicing only.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "pdf"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-28",
+    "prompt": "Write a program that stores \"user@example.com\" in a variable called text and prints everything after the @ symbol (it's always at index 4 in this input), using slicing only.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "example.com"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-29",
+    "prompt": "Write a program that stores \"2026-07-06\" in a variable called text and prints just the year (the first 4 characters), using slicing only.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "2026"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "slicing",
+    "question_id": "slicing-30",
+    "prompt": "word = \"programming\"\nprint(word[::2])",
+    "type": "mcq",
+    "options": [
+      "pormig",
+      "programming",
+      "rgamn",
+      "An error"
+    ],
+    "answer": "pormig",
+    "misconception_map": {
+      "An error": "negative_step_unfamiliar"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-01",
+    "prompt": "What happens when the following code runs?\nname = \"ada\"\nname[0] = \"A\"",
+    "type": "mcq",
+    "options": [
+      "It raises a TypeError because strings are immutable",
+      "It changes name to 'Ada'",
+      "It silently does nothing",
+      "It creates a new variable called name[0]"
+    ],
+    "answer": "It raises a TypeError because strings are immutable",
+    "misconception_map": {
+      "It changes name to 'Ada'": "immutability_in_place"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-02",
+    "prompt": "What happens when the following code runs?\nword = \"cat\"\nword[0] = \"C\"",
+    "type": "mcq",
+    "options": [
+      "It raises a TypeError because strings are immutable",
+      "It changes word to 'Cat'",
+      "It silently does nothing",
+      "It creates a new variable called word[0]"
+    ],
+    "answer": "It raises a TypeError because strings are immutable",
+    "misconception_map": {
+      "It changes word to 'Cat'": "immutability_in_place"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-03",
+    "prompt": "What happens when the following code runs?\ncity = \"cape\"\ncity[0] = \"K\"",
+    "type": "mcq",
+    "options": [
+      "It raises a TypeError because strings are immutable",
+      "It changes city to 'Kape'",
+      "It silently does nothing",
+      "It creates a new variable called city[0]"
+    ],
+    "answer": "It raises a TypeError because strings are immutable",
+    "misconception_map": {
+      "It changes city to 'Kape'": "immutability_in_place"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-04",
+    "prompt": "What happens when the following code runs?\ncode = \"abc\"\ncode[0] = \"X\"",
+    "type": "mcq",
+    "options": [
+      "It raises a TypeError because strings are immutable",
+      "It changes code to 'Xbc'",
+      "It silently does nothing",
+      "It creates a new variable called code[0]"
+    ],
+    "answer": "It raises a TypeError because strings are immutable",
+    "misconception_map": {
+      "It changes code to 'Xbc'": "immutability_in_place"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-05",
+    "prompt": "What happens when the following code runs?\nflag = \"red\"\nflag[0] = \"G\"",
+    "type": "mcq",
+    "options": [
+      "It raises a TypeError because strings are immutable",
+      "It changes flag to 'Ged'",
+      "It silently does nothing",
+      "It creates a new variable called flag[0]"
+    ],
+    "answer": "It raises a TypeError because strings are immutable",
+    "misconception_map": {
+      "It changes flag to 'Ged'": "immutability_in_place"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-06",
+    "prompt": "What happens when the following code runs?\nword = \"owl\"\nword[0] = \"O\"",
+    "type": "mcq",
+    "options": [
+      "It raises a TypeError because strings are immutable",
+      "It changes word to 'Owl'",
+      "It silently does nothing",
+      "It creates a new variable called word[0]"
+    ],
+    "answer": "It raises a TypeError because strings are immutable",
+    "misconception_map": {
+      "It changes word to 'Owl'": "immutability_in_place"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-07",
+    "prompt": "This code is meant to transform name, but it is broken. What is wrong?\nname = \"ada\"\nname.upper()\nprint(name)",
+    "type": "mcq",
+    "options": [
+      "upper() returns a new string that is never stored, so name is unchanged",
+      "upper() only works on the whole string, not variables",
+      "name cannot be read after being written to",
+      "print(name) needs an extra argument"
+    ],
+    "answer": "upper() returns a new string that is never stored, so name is unchanged",
+    "misconception_map": {
+      "upper() only works on the whole string, not variables": "method_mutates_target"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-08",
+    "prompt": "This code is meant to transform city, but it is broken. What is wrong?\ncity = \"CAPE\"\ncity.lower()\nprint(city)",
+    "type": "mcq",
+    "options": [
+      "lower() returns a new string that is never stored, so city is unchanged",
+      "lower() only works on the whole string, not variables",
+      "city cannot be read after being written to",
+      "print(city) needs an extra argument"
+    ],
+    "answer": "lower() returns a new string that is never stored, so city is unchanged",
+    "misconception_map": {
+      "lower() only works on the whole string, not variables": "method_mutates_target"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-09",
+    "prompt": "This code is meant to transform word, but it is broken. What is wrong?\nword = \" hi \"\nword.strip()\nprint(word)",
+    "type": "mcq",
+    "options": [
+      "strip() returns a new string that is never stored, so word is unchanged",
+      "strip() only works on the whole string, not variables",
+      "word cannot be read after being written to",
+      "print(word) needs an extra argument"
+    ],
+    "answer": "strip() returns a new string that is never stored, so word is unchanged",
+    "misconception_map": {
+      "strip() only works on the whole string, not variables": "method_mutates_target"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-10",
+    "prompt": "This code is meant to transform tag, but it is broken. What is wrong?\ntag = \"abc\"\ntag.upper()\nprint(tag)",
+    "type": "mcq",
+    "options": [
+      "upper() returns a new string that is never stored, so tag is unchanged",
+      "upper() only works on the whole string, not variables",
+      "tag cannot be read after being written to",
+      "print(tag) needs an extra argument"
+    ],
+    "answer": "upper() returns a new string that is never stored, so tag is unchanged",
+    "misconception_map": {
+      "upper() only works on the whole string, not variables": "method_mutates_target"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-11",
+    "prompt": "Fix the broken code below so that greeting actually changes. Reply with the corrected line that replaces line 2.\nLine 1: greeting = \"hi\"\nLine 2: greeting.upper()\nLine 3: print(greeting)",
+    "type": "fill_blank",
+    "answer": "greeting = greeting.upper()",
+    "misconception_map": {
+      "greeting.upper": "method_mutates_target"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-12",
+    "prompt": "Fix the broken code below so that title actually changes. Reply with the corrected line that replaces line 2.\nLine 1: title = \"hello\"\nLine 2: title.capitalize()\nLine 3: print(title)",
+    "type": "fill_blank",
+    "answer": "title = title.capitalize()",
+    "misconception_map": {
+      "title.capitalize": "method_mutates_target"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-13",
+    "prompt": "Fix the broken code below so that path actually changes. Reply with the corrected line that replaces line 2.\nLine 1: path = \" x \"\nLine 2: path.strip()\nLine 3: print(path)",
+    "type": "fill_blank",
+    "answer": "path = path.strip()",
+    "misconception_map": {
+      "path.strip": "method_mutates_target"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-14",
+    "prompt": "Fix the broken code below so that word actually changes. Reply with the corrected line that replaces line 2.\nLine 1: word = \"cat\"\nLine 2: word.upper()\nLine 3: print(word)",
+    "type": "fill_blank",
+    "answer": "word = word.upper()",
+    "misconception_map": {
+      "word.upper": "method_mutates_target"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-15",
+    "prompt": "letters = ['c','a','t']\nletters[0] = 'b'\nprint(letters)\nWhy does this work, while the equivalent code on a string would fail?",
+    "type": "mcq",
+    "options": [
+      "Lists are mutable, so individual items can be reassigned; strings are not",
+      "Lists use a special syntax that strings also support",
+      "letters is not really being changed, just displayed differently",
+      "This code actually raises an error too"
+    ],
+    "answer": "Lists are mutable, so individual items can be reassigned; strings are not",
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-16",
+    "prompt": "nums = [1,2,3]\nnums[1] = 9\nprint(nums)\nWhy does this work, while the equivalent code on a string would fail?",
+    "type": "mcq",
+    "options": [
+      "Lists are mutable, so individual items can be reassigned; strings are not",
+      "Lists use a special syntax that strings also support",
+      "nums is not really being changed, just displayed differently",
+      "This code actually raises an error too"
+    ],
+    "answer": "Lists are mutable, so individual items can be reassigned; strings are not",
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-17",
+    "prompt": "chars = ['d','o','g']\nchars[2] = 'x'\nprint(chars)\nWhy does this work, while the equivalent code on a string would fail?",
+    "type": "mcq",
+    "options": [
+      "Lists are mutable, so individual items can be reassigned; strings are not",
+      "Lists use a special syntax that strings also support",
+      "chars is not really being changed, just displayed differently",
+      "This code actually raises an error too"
+    ],
+    "answer": "Lists are mutable, so individual items can be reassigned; strings are not",
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-18",
+    "prompt": "items = ['a','b']\nitems[0] = 'z'\nprint(items)\nWhy does this work, while the equivalent code on a string would fail?",
+    "type": "mcq",
+    "options": [
+      "Lists are mutable, so individual items can be reassigned; strings are not",
+      "Lists use a special syntax that strings also support",
+      "items is not really being changed, just displayed differently",
+      "This code actually raises an error too"
+    ],
+    "answer": "Lists are mutable, so individual items can be reassigned; strings are not",
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-19",
+    "prompt": "result = \"\"\nfor ch in \"cat\":\n    result = result + ch.upper()\nprint(result)\nWhat does this loop demonstrate about immutability?",
+    "type": "mcq",
+    "options": [
+      "Each iteration creates a brand new string and reassigns it to result",
+      "result is being modified in place each time",
+      "ch.upper() changes the original string permanently",
+      "The loop actually only runs once"
+    ],
+    "answer": "Each iteration creates a brand new string and reassigns it to result",
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-20",
+    "prompt": "output = \"\"\nfor ch in \"dog\":\n    output = output + ch.upper()\nprint(output)\nWhat does this loop demonstrate about immutability?",
+    "type": "mcq",
+    "options": [
+      "Each iteration creates a brand new string and reassigns it to output",
+      "output is being modified in place each time",
+      "ch.upper() changes the original string permanently",
+      "The loop actually only runs once"
+    ],
+    "answer": "Each iteration creates a brand new string and reassigns it to output",
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-21",
+    "prompt": "text = \"\"\nfor ch in \"owl\":\n    text = text + ch.upper()\nprint(text)\nWhat does this loop demonstrate about immutability?",
+    "type": "mcq",
+    "options": [
+      "Each iteration creates a brand new string and reassigns it to text",
+      "text is being modified in place each time",
+      "ch.upper() changes the original string permanently",
+      "The loop actually only runs once"
+    ],
+    "answer": "Each iteration creates a brand new string and reassigns it to text",
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-22",
+    "prompt": "Select all of the operations below that return a NEW string rather than modifying the original.",
+    "type": "select_all",
+    "options": [
+      "text.upper()",
+      "text.replace('a','b')",
+      "text[1:3]",
+      "text[0] = 'Z'  (direct assignment)"
+    ],
+    "answers": [
+      "text.upper()",
+      "text.replace('a','b')",
+      "text[1:3]"
+    ],
+    "misconception_map": {
+      "text[0] = 'Z'  (direct assignment)": "immutability_in_place"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-23",
+    "prompt": "Select all of the operations below that return a NEW string rather than modifying the original.",
+    "type": "select_all",
+    "options": [
+      "text.upper()",
+      "text.replace('a','b')",
+      "text[1:3]",
+      "text[0] = 'Z'  (direct assignment)"
+    ],
+    "answers": [
+      "text.upper()",
+      "text.replace('a','b')",
+      "text[1:3]"
+    ],
+    "misconception_map": {
+      "text[0] = 'Z'  (direct assignment)": "immutability_in_place"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-24",
+    "prompt": "Select all of the operations below that return a NEW string rather than modifying the original.",
+    "type": "select_all",
+    "options": [
+      "text.upper()",
+      "text.replace('a','b')",
+      "text[1:3]",
+      "text[0] = 'Z'  (direct assignment)"
+    ],
+    "answers": [
+      "text.upper()",
+      "text.replace('a','b')",
+      "text[1:3]"
+    ],
+    "misconception_map": {
+      "text[0] = 'Z'  (direct assignment)": "immutability_in_place"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-25",
+    "prompt": "Write a program that reads a word from input and prints it with the first letter capitalised, without using .capitalize() or .title().",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "cat",
+        "expected_output": "Cat"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-26",
+    "prompt": "Write a program that reads a word from input and prints an uppercase version of it, storing the result in a new variable before printing.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "dog",
+        "expected_output": "DOG"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-27",
+    "prompt": "Write a program that reads a word from input and prints it reversed, storing the result in a new variable before printing.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "owl",
+        "expected_output": "lwo"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-28",
+    "prompt": "s = \"cat\"\ns = s.upper()\nAfter this runs, what happened to the original string object \"cat\"?",
+    "type": "mcq",
+    "options": [
+      "It still exists unchanged; s now points to a different, new string object",
+      "It was modified in place to become uppercase",
+      "It was deleted from memory immediately",
+      "It became the string 'upper'"
+    ],
+    "answer": "It still exists unchanged; s now points to a different, new string object",
+    "misconception_map": {
+      "It was modified in place to become uppercase": "immutability_in_place"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-29",
+    "prompt": "word = \"dog\"\nword = word.upper()\nAfter this runs, what happened to the original string object \"dog\"?",
+    "type": "mcq",
+    "options": [
+      "It still exists unchanged; word now points to a different, new string object",
+      "It was modified in place to become uppercase",
+      "It was deleted from memory immediately",
+      "It became the string 'upper'"
+    ],
+    "answer": "It still exists unchanged; word now points to a different, new string object",
+    "misconception_map": {
+      "It was modified in place to become uppercase": "immutability_in_place"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "immutability",
+    "question_id": "immutability-30",
+    "prompt": "text = \"owl\"\ntext = text.upper()\nAfter this runs, what happened to the original string object \"owl\"?",
+    "type": "mcq",
+    "options": [
+      "It still exists unchanged; text now points to a different, new string object",
+      "It was modified in place to become uppercase",
+      "It was deleted from memory immediately",
+      "It became the string 'upper'"
+    ],
+    "answer": "It still exists unchanged; text now points to a different, new string object",
+    "misconception_map": {
+      "It was modified in place to become uppercase": "immutability_in_place"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-01",
+    "prompt": "print(\"Cat\" == \"cat\")",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error",
+      "None"
+    ],
+    "answer": "False",
+    "misconception_map": {
+      "True": "comparison_ignores_case"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-02",
+    "prompt": "print(\"Python\" == \"python\")",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error",
+      "None"
+    ],
+    "answer": "False",
+    "misconception_map": {
+      "True": "comparison_ignores_case"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-03",
+    "prompt": "print(\"XHOSA\" == \"xhosa\")",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error",
+      "None"
+    ],
+    "answer": "False",
+    "misconception_map": {
+      "True": "comparison_ignores_case"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-04",
+    "prompt": "print(\"Cape\" == \"cape\")",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error",
+      "None"
+    ],
+    "answer": "False",
+    "misconception_map": {
+      "True": "comparison_ignores_case"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-05",
+    "prompt": "print(\"Dog\" == \"dog\")",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error",
+      "None"
+    ],
+    "answer": "False",
+    "misconception_map": {
+      "True": "comparison_ignores_case"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-06",
+    "prompt": "print(\"Owl\" == \"owl\")",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error",
+      "None"
+    ],
+    "answer": "False",
+    "misconception_map": {
+      "True": "comparison_ignores_case"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-07",
+    "prompt": "print(\"apple\" < \"banana\")",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error",
+      "Cannot compare strings with <"
+    ],
+    "answer": "True",
+    "misconception_map": {
+      "Cannot compare strings with <": "strings_not_orderable_myth"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-08",
+    "prompt": "print(\"cat\" < \"dog\")",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error",
+      "Cannot compare strings with <"
+    ],
+    "answer": "True",
+    "misconception_map": {
+      "Cannot compare strings with <": "strings_not_orderable_myth"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-09",
+    "prompt": "print(\"umuntu\" < \"ubuntu\")",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error",
+      "Cannot compare strings with <"
+    ],
+    "answer": "False",
+    "misconception_map": {
+      "Cannot compare strings with <": "strings_not_orderable_myth"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-10",
+    "prompt": "print(\"code\" < \"conundrum\")",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error",
+      "Cannot compare strings with <"
+    ],
+    "answer": "True",
+    "misconception_map": {
+      "Cannot compare strings with <": "strings_not_orderable_myth"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-11",
+    "prompt": "print(\"Z\" < \"a\")\nRemember: uppercase letters come before lowercase letters in ASCII order.",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error"
+    ],
+    "answer": "True",
+    "xp": 15
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-12",
+    "prompt": "print(\"A\" < \"z\")\nRemember: uppercase letters come before lowercase letters in ASCII order.",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error"
+    ],
+    "answer": "True",
+    "xp": 15
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-13",
+    "prompt": "print(\"B\" < \"b\")\nRemember: uppercase letters come before lowercase letters in ASCII order.",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error"
+    ],
+    "answer": "True",
+    "xp": 15
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-14",
+    "prompt": "Select all expressions below that evaluate to True.",
+    "type": "select_all",
+    "options": [
+      "'10' == 10",
+      "'10' == '10'",
+      "'a' < 'b'",
+      "'Z' < 'a'"
+    ],
+    "answers": [
+      "'10' == '10'",
+      "'a' < 'b'",
+      "'Z' < 'a'"
+    ],
+    "misconception_map": {
+      "'10' == 10": "string_number_equality_myth",
+      "'10' == '10'": "string_number_equality_myth"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-15",
+    "prompt": "Select all expressions below that evaluate to True.",
+    "type": "select_all",
+    "options": [
+      "'cat' == 'cat'",
+      "'cat' == 'Cat'",
+      "'5' == 5",
+      "'dog' > 'cat'"
+    ],
+    "answers": [
+      "'cat' == 'cat'",
+      "'dog' > 'cat'"
+    ],
+    "misconception_map": {
+      "'5' == 5": "string_number_equality_myth"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-16",
+    "prompt": "Select all expressions below that evaluate to True.",
+    "type": "select_all",
+    "options": [
+      "3 == '3'",
+      "'a' != 'b'",
+      "'x' < 'y'",
+      "'A' == 'a'"
+    ],
+    "answers": [
+      "'a' != 'b'",
+      "'x' < 'y'"
+    ],
+    "misconception_map": {
+      "3 == '3'": "string_number_equality_myth"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-17",
+    "prompt": "Select all expressions below that evaluate to True.",
+    "type": "select_all",
+    "options": [
+      "'py' in 'python'",
+      "'10' == 10",
+      "'z' > 'a'",
+      "'Cat' == 'cat'"
+    ],
+    "answers": [
+      "'py' in 'python'",
+      "'z' > 'a'"
+    ],
+    "misconception_map": {
+      "'10' == 10": "string_number_equality_myth"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-18",
+    "prompt": "print(\"cat\" == \"cat\")",
+    "type": "fill_blank",
+    "answer": "True",
+    "xp": 10
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-19",
+    "prompt": "print(\"Cat\" != \"cat\")",
+    "type": "fill_blank",
+    "answer": "True",
+    "xp": 10
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-20",
+    "prompt": "print(\"a\" > \"b\")",
+    "type": "fill_blank",
+    "answer": "False",
+    "xp": 10
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-21",
+    "prompt": "print(\"Cat\".lower() == \"cat\".lower())",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error"
+    ],
+    "answer": "True",
+    "xp": 15
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-22",
+    "prompt": "print(\"PYTHON\".lower() == \"python\".lower())",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error"
+    ],
+    "answer": "True",
+    "xp": 15
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-23",
+    "prompt": "print(\"Dog\".lower() == \"DOG\".lower())",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error"
+    ],
+    "answer": "True",
+    "xp": 15
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-24",
+    "prompt": "print(\"cat\" in \"concatenate\")",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error"
+    ],
+    "answer": "True",
+    "xp": 15
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-25",
+    "prompt": "print(\"xyz\" in \"python\")",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error"
+    ],
+    "answer": "False",
+    "xp": 15
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-26",
+    "prompt": "print(\"py\" in \"python\")",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error"
+    ],
+    "answer": "True",
+    "xp": 15
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-27",
+    "prompt": "Write a program comparing the words \"Cat\" and \"cat\" ignoring case, printing \"Yes\" if they are equal and \"No\" otherwise.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "Yes"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-28",
+    "prompt": "Write a program comparing the words \"Dog\" and \"DOGGY\" ignoring case, printing \"Yes\" if they are equal and \"No\" otherwise.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "No"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-29",
+    "prompt": "Write a program comparing the words \"python\" and \"PYTHON\" ignoring case, printing \"Yes\" if they are equal and \"No\" otherwise.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "Yes"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "comparison",
+    "question_id": "comparison-30",
+    "prompt": "Which of the following words comes first in alphabetical (dictionary) order?",
+    "type": "mcq",
+    "options": [
+      "apple",
+      "banana",
+      "cherry",
+      "They are all equal"
+    ],
+    "answer": "apple",
+    "xp": 10
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-01",
+    "prompt": "How many times does the print statement run?\nfor ch in \"cats\":\n    print(ch)",
+    "type": "fill_blank",
+    "answer": "4",
+    "misconception_map": {
+      "3": "off_by_one_length"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-02",
+    "prompt": "How many times does the print statement run?\nfor ch in \"dogs\":\n    print(ch)",
+    "type": "fill_blank",
+    "answer": "4",
+    "misconception_map": {
+      "3": "off_by_one_length"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-03",
+    "prompt": "How many times does the print statement run?\nfor ch in \"python\":\n    print(ch)",
+    "type": "fill_blank",
+    "answer": "6",
+    "misconception_map": {
+      "5": "off_by_one_length"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-04",
+    "prompt": "How many times does the print statement run?\nfor ch in \"banana\":\n    print(ch)",
+    "type": "fill_blank",
+    "answer": "6",
+    "misconception_map": {
+      "5": "off_by_one_length"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-05",
+    "prompt": "How many times does the print statement run?\nfor ch in \"xhosa\":\n    print(ch)",
+    "type": "fill_blank",
+    "answer": "5",
+    "misconception_map": {
+      "4": "off_by_one_length"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-06",
+    "prompt": "word = \"dog\"\ni = 0\nwhile i < len(word):\n    print(word[i])\n    i += 1\nWhat is printed on the last line of output?",
+    "type": "mcq",
+    "options": [
+      "d",
+      "o",
+      "g",
+      "Nothing, it errors"
+    ],
+    "answer": "g",
+    "misconception_map": {
+      "Nothing, it errors": "off_by_one_length"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-07",
+    "prompt": "word = \"cat\"\ni = 0\nwhile i < len(word):\n    print(word[i])\n    i += 1\nWhat is printed on the last line of output?",
+    "type": "mcq",
+    "options": [
+      "c",
+      "a",
+      "t",
+      "Nothing, it errors"
+    ],
+    "answer": "t",
+    "misconception_map": {
+      "Nothing, it errors": "off_by_one_length"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-08",
+    "prompt": "word = \"owl\"\ni = 0\nwhile i < len(word):\n    print(word[i])\n    i += 1\nWhat is printed on the last line of output?",
+    "type": "mcq",
+    "options": [
+      "o",
+      "w",
+      "l",
+      "Nothing, it errors"
+    ],
+    "answer": "l",
+    "misconception_map": {
+      "Nothing, it errors": "off_by_one_length"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-09",
+    "prompt": "word = \"sun\"\ni = 0\nwhile i < len(word):\n    print(word[i])\n    i += 1\nWhat is printed on the last line of output?",
+    "type": "mcq",
+    "options": [
+      "s",
+      "u",
+      "n",
+      "Nothing, it errors"
+    ],
+    "answer": "n",
+    "misconception_map": {
+      "Nothing, it errors": "off_by_one_length"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-10",
+    "prompt": "This while loop is meant to print every character of word but never stops. What is missing?\nword = \"owl\"\ni = 0\nwhile i < len(word):\n    print(word[i])",
+    "type": "mcq",
+    "options": [
+      "i += 1 is missing from inside the loop body",
+      "while should be for",
+      "len(word) should be len(word) - 1",
+      "the loop condition should be i <= len(word)"
+    ],
+    "answer": "i += 1 is missing from inside the loop body",
+    "misconception_map": {
+      "the loop condition should be i <= len(word)": "off_by_one_length"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-11",
+    "prompt": "This while loop is meant to print every character of word but never stops. What is missing?\nword = \"cat\"\ni = 0\nwhile i < len(word):\n    print(word[i])",
+    "type": "mcq",
+    "options": [
+      "i += 1 is missing from inside the loop body",
+      "while should be for",
+      "len(word) should be len(word) - 1",
+      "the loop condition should be i <= len(word)"
+    ],
+    "answer": "i += 1 is missing from inside the loop body",
+    "misconception_map": {
+      "the loop condition should be i <= len(word)": "off_by_one_length"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-12",
+    "prompt": "This while loop is meant to print every character of word but never stops. What is missing?\nword = \"dog\"\ni = 0\nwhile i < len(word):\n    print(word[i])",
+    "type": "mcq",
+    "options": [
+      "i += 1 is missing from inside the loop body",
+      "while should be for",
+      "len(word) should be len(word) - 1",
+      "the loop condition should be i <= len(word)"
+    ],
+    "answer": "i += 1 is missing from inside the loop body",
+    "misconception_map": {
+      "the loop condition should be i <= len(word)": "off_by_one_length"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-13",
+    "prompt": "How many lines does this code print in total?\nfor x in \"abc\":\n    for y in range(2):\n        print(x, y)",
+    "type": "fill_blank",
+    "answer": "6",
+    "xp": 15
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-14",
+    "prompt": "How many lines does this code print in total?\nfor x in range(3):\n    for y in \"hi\":\n        print(x, y)",
+    "type": "fill_blank",
+    "answer": "6",
+    "xp": 15
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-15",
+    "prompt": "How many lines does this code print in total?\nfor x in \"cat\":\n    for y in \"ab\":\n        print(x, y)",
+    "type": "fill_blank",
+    "answer": "6",
+    "xp": 15
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-16",
+    "prompt": "How many lines does this code print in total?\nfor x in range(2):\n    for y in range(3):\n        print(x, y)",
+    "type": "fill_blank",
+    "answer": "6",
+    "xp": 15
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-17",
+    "prompt": "count = 0\nfor c in \"banana\":\n    if c == \"a\":\n        count += 1\nprint(count)\nWhat does this print?",
+    "type": "fill_blank",
+    "answer": "3",
+    "xp": 15
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-18",
+    "prompt": "count = 0\nfor c in \"mississippi\":\n    if c == \"s\":\n        count += 1\nprint(count)\nWhat does this print?",
+    "type": "fill_blank",
+    "answer": "4",
+    "xp": 15
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-19",
+    "prompt": "count = 0\nfor c in \"umuntu\":\n    if c == \"u\":\n        count += 1\nprint(count)\nWhat does this print?",
+    "type": "fill_blank",
+    "answer": "3",
+    "xp": 15
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-20",
+    "prompt": "w = \"cat\"\nfor i, ch in enumerate(w):\n    if i == 1:\n        print(ch)\nWhat does this print?",
+    "type": "mcq",
+    "options": [
+      "c",
+      "a",
+      "t",
+      "Nothing"
+    ],
+    "answer": "a",
+    "xp": 15
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-21",
+    "prompt": "w = \"dog\"\nfor i, ch in enumerate(w):\n    if i == 0:\n        print(ch)\nWhat does this print?",
+    "type": "mcq",
+    "options": [
+      "d",
+      "o",
+      "g",
+      "Nothing"
+    ],
+    "answer": "d",
+    "xp": 15
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-22",
+    "prompt": "w = \"owl\"\nfor i, ch in enumerate(w):\n    if i == 2:\n        print(ch)\nWhat does this print?",
+    "type": "mcq",
+    "options": [
+      "o",
+      "w",
+      "l",
+      "Nothing"
+    ],
+    "answer": "l",
+    "xp": 15
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-23",
+    "prompt": "Write a program that reverses the word \"cat\" using a loop (not slicing). Store the input as w = \"cat\" and print the reversed result.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "tac"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-24",
+    "prompt": "Write a program that reverses the word \"python\" using a loop (not slicing). Store the input as w = \"python\" and print the reversed result.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "nohtyp"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-25",
+    "prompt": "Write a program that reverses the word \"umuntu\" using a loop (not slicing). Store the input as w = \"umuntu\" and print the reversed result.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "utnumu"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-26",
+    "prompt": "Write a program that counts the vowels in the word \"banana\" using a loop, storing the word as w = \"banana\".",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "3"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-27",
+    "prompt": "Write a program that counts the vowels in the word \"umuntu\" using a loop, storing the word as w = \"umuntu\".",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "3"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-28",
+    "prompt": "Write a program that counts the vowels in the word \"orange\" using a loop, storing the word as w = \"orange\".",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "3"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-29",
+    "prompt": "for ch in \"cat\":\n    if ch == \"z\":\n        break\nelse:\n    print(\"not found\")\nWhat does this print?",
+    "type": "mcq",
+    "options": [
+      "not found",
+      "Nothing",
+      "cat",
+      "An error"
+    ],
+    "answer": "not found",
+    "xp": 15
+  },
+  {
+    "module_id": "looping",
+    "question_id": "looping-30",
+    "prompt": "for ch in \"cat\":\n    if ch == \"a\":\n        break\n    print(ch)\nWhat does this print?",
+    "type": "mcq",
+    "options": [
+      "c",
+      "cat",
+      "c\na\nt",
+      "Nothing"
+    ],
+    "answer": "c",
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-01",
+    "prompt": "print(\"Hello\".upper())",
+    "type": "mcq",
+    "options": [
+      "HELLO",
+      "Hello",
+      "Hello",
+      "An error"
+    ],
+    "answer": "HELLO",
+    "xp": 10
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-02",
+    "prompt": "print(\"PyThOn\".lower())",
+    "type": "mcq",
+    "options": [
+      "python",
+      "PyThOn",
+      "Python",
+      "An error"
+    ],
+    "answer": "python",
+    "xp": 10
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-03",
+    "prompt": "print(\"cape TOWN\".upper())",
+    "type": "mcq",
+    "options": [
+      "CAPE TOWN",
+      "cape TOWN",
+      "Cape Town",
+      "An error"
+    ],
+    "answer": "CAPE TOWN",
+    "xp": 10
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-04",
+    "prompt": "print(\"XHOSA\".lower())",
+    "type": "mcq",
+    "options": [
+      "xhosa",
+      "XHOSA",
+      "Xhosa",
+      "An error"
+    ],
+    "answer": "xhosa",
+    "xp": 10
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-05",
+    "prompt": "print(\"hello world\".title())",
+    "type": "mcq",
+    "options": [
+      "Hello World",
+      "Hello World",
+      "Hello world",
+      "HELLO WORLD"
+    ],
+    "answer": "Hello World",
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-06",
+    "prompt": "print(\"hello world\".capitalize())",
+    "type": "mcq",
+    "options": [
+      "Hello world",
+      "Hello World",
+      "Hello world",
+      "HELLO WORLD"
+    ],
+    "answer": "Hello world",
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-07",
+    "prompt": "print(repr(\"  hello  \".strip()))\n(repr shows quote marks so you can see whitespace clearly)",
+    "type": "mcq",
+    "options": [
+      "'hello'",
+      "'hello  '",
+      "'  hello'",
+      "'  hello  '"
+    ],
+    "answer": "'hello'",
+    "misconception_map": {
+      "'  hello  '": "strip_only_removes_one_char"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-08",
+    "prompt": "print(repr(\"  hello  \".lstrip()))\n(repr shows quote marks so you can see whitespace clearly)",
+    "type": "mcq",
+    "options": [
+      "'hello'",
+      "'hello  '",
+      "'  hello'",
+      "'  hello  '"
+    ],
+    "answer": "'hello  '",
+    "misconception_map": {
+      "'  hello  '": "strip_only_removes_one_char"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-09",
+    "prompt": "print(repr(\"  hello  \".rstrip()))\n(repr shows quote marks so you can see whitespace clearly)",
+    "type": "mcq",
+    "options": [
+      "'hello'",
+      "'hello  '",
+      "'  hello'",
+      "'  hello  '"
+    ],
+    "answer": "'  hello'",
+    "misconception_map": {
+      "'  hello  '": "strip_only_removes_one_char"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-10",
+    "prompt": "print(\"banana\".count(\"a\"))",
+    "type": "fill_blank",
+    "answer": "3",
+    "misconception_map": {
+      "2": "count_overlap_confusion"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-11",
+    "prompt": "print(\"mississippi\".count(\"ss\"))",
+    "type": "fill_blank",
+    "answer": "2",
+    "misconception_map": {
+      "1": "count_overlap_confusion"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-12",
+    "prompt": "print(\"hello\".count(\"l\"))",
+    "type": "fill_blank",
+    "answer": "2",
+    "misconception_map": {
+      "1": "count_overlap_confusion"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-13",
+    "prompt": "word = \"hello world\"\nSelect all of the following that would correctly find the POSITION of the first occurrence of \"o\".",
+    "type": "select_all",
+    "options": [
+      "word.find(\"o\")",
+      "word.index(\"o\")",
+      "word.count(\"o\")",
+      "word[4]"
+    ],
+    "answers": [
+      "word.find(\"o\")",
+      "word.index(\"o\")"
+    ],
+    "misconception_map": {
+      "word.count(\"o\")": "count_vs_find_confusion"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-14",
+    "prompt": "word = \"banana\"\nSelect all of the following that would correctly find the POSITION of the first occurrence of \"n\".",
+    "type": "select_all",
+    "options": [
+      "word.find(\"n\")",
+      "word.index(\"n\")",
+      "word.count(\"n\")",
+      "word[2]"
+    ],
+    "answers": [
+      "word.find(\"n\")",
+      "word.index(\"n\")"
+    ],
+    "misconception_map": {
+      "word.count(\"n\")": "count_vs_find_confusion"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-15",
+    "prompt": "word = \"umuntu ngumuntu\"\nSelect all of the following that would correctly find the POSITION of the first occurrence of \"ngumuntu\".",
+    "type": "select_all",
+    "options": [
+      "word.find(\"ngumuntu\")",
+      "word.index(\"ngumuntu\")",
+      "word.count(\"ngumuntu\")",
+      "word[7]"
+    ],
+    "answers": [
+      "word.find(\"ngumuntu\")",
+      "word.index(\"ngumuntu\")"
+    ],
+    "misconception_map": {
+      "word.count(\"ngumuntu\")": "count_vs_find_confusion"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-16",
+    "prompt": "print(\"banana\".replace(\"a\", \"o\"))",
+    "type": "mcq",
+    "options": [
+      "bonono",
+      "bonana",
+      "banana",
+      "An error"
+    ],
+    "answer": "bonono",
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-17",
+    "prompt": "print(\"hello world\".replace(\"o\", \"0\"))",
+    "type": "mcq",
+    "options": [
+      "hell0 w0rld",
+      "hell0 world",
+      "hello world",
+      "An error"
+    ],
+    "answer": "hell0 w0rld",
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-18",
+    "prompt": "print(\"mississippi\".replace(\"i\", \"!\"))",
+    "type": "mcq",
+    "options": [
+      "m!ss!ss!pp!",
+      "m!ssissippi",
+      "mississippi",
+      "An error"
+    ],
+    "answer": "m!ss!ss!pp!",
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-19",
+    "prompt": "print(\"cat dog owl\".split())",
+    "type": "mcq",
+    "options": [
+      "['cat', 'dog', 'owl']",
+      "\"cat dog owl\".split()",
+      "An error",
+      "None"
+    ],
+    "answer": "['cat', 'dog', 'owl']",
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-20",
+    "prompt": "print(\"-\".join([\"a\",\"b\",\"c\"]))",
+    "type": "mcq",
+    "options": [
+      "a-b-c",
+      "\"-\".join([\"a\",\"b\",\"c\"])",
+      "An error",
+      "None"
+    ],
+    "answer": "a-b-c",
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-21",
+    "prompt": "print(\"one,two,three\".split(\",\"))",
+    "type": "mcq",
+    "options": [
+      "['one', 'two', 'three']",
+      "\"one,two,three\".split(\",\")",
+      "An error",
+      "None"
+    ],
+    "answer": "['one', 'two', 'three']",
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-22",
+    "prompt": "print(\"hello.py\".endswith(\".py\"))",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error"
+    ],
+    "answer": "True",
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-23",
+    "prompt": "print(\"umuntu\".startswith(\"umu\"))",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error"
+    ],
+    "answer": "True",
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-24",
+    "prompt": "print(\"banana\".endswith(\"nana\"))",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error"
+    ],
+    "answer": "True",
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-25",
+    "prompt": "print(\"hello\".isalpha())",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error"
+    ],
+    "answer": "True",
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-26",
+    "prompt": "print(\"12345\".isdigit())",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error"
+    ],
+    "answer": "True",
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-27",
+    "prompt": "print(\"HELLO\".isupper())",
+    "type": "mcq",
+    "options": [
+      "True",
+      "False",
+      "Error"
+    ],
+    "answer": "True",
+    "xp": 15
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-28",
+    "prompt": "Write a program that reads a sentence from input and prints how many words it contains (use split()).",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "hello world foo",
+        "expected_output": "3"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-29",
+    "prompt": "Write a program that reads a word from input and prints 'Yes' if it reads the same forwards and backwards (ignoring case), else 'No'.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "Level",
+        "expected_output": "Yes"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "methods",
+    "question_id": "methods-30",
+    "prompt": "Write a program that reads a word from input and prints how many times the letter 'a' appears in it (use count()).",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "banana",
+        "expected_output": "3"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-01",
+    "prompt": "name = \"Ada\"\nage = 30\nprint(f\"{name} is {age}\")",
+    "type": "mcq",
+    "options": [
+      "Ada is 30",
+      "name is age",
+      "{name} is {age}",
+      "An error"
+    ],
+    "answer": "Ada is 30",
+    "misconception_map": {
+      "{name} is {age}": "fstring_missing_prefix_effect"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-02",
+    "prompt": "city = \"Cape Town\"\nyear = 2026\nprint(f\"{city} is {year}\")",
+    "type": "mcq",
+    "options": [
+      "Cape Town is 2026",
+      "city is year",
+      "{city} is {year}",
+      "An error"
+    ],
+    "answer": "Cape Town is 2026",
+    "misconception_map": {
+      "{city} is {year}": "fstring_missing_prefix_effect"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-03",
+    "prompt": "word = \"Python\"\nlen = 6\nprint(f\"{word} is {len}\")",
+    "type": "mcq",
+    "options": [
+      "Python is 6",
+      "word is len",
+      "{word} is {len}",
+      "An error"
+    ],
+    "answer": "Python is 6",
+    "misconception_map": {
+      "{word} is {len}": "fstring_missing_prefix_effect"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-04",
+    "prompt": "student = \"Hlomla\"\nmark = 95\nprint(f\"{student} is {mark}\")",
+    "type": "mcq",
+    "options": [
+      "Hlomla is 95",
+      "student is mark",
+      "{student} is {mark}",
+      "An error"
+    ],
+    "answer": "Hlomla is 95",
+    "misconception_map": {
+      "{student} is {mark}": "fstring_missing_prefix_effect"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-05",
+    "prompt": "name = \"Ada\"\nprint(\"{name} says hi\")\nWhat is printed? (note there is no f before the string)",
+    "type": "mcq",
+    "options": [
+      "{name} says hi",
+      "Ada says hi",
+      "An error",
+      "hi says hi"
+    ],
+    "answer": "{name} says hi",
+    "misconception_map": {
+      "Ada says hi": "fstring_missing_prefix_effect"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-06",
+    "prompt": "city = \"Joburg\"\nprint(\"{city} says hi\")\nWhat is printed? (note there is no f before the string)",
+    "type": "mcq",
+    "options": [
+      "{city} says hi",
+      "Joburg says hi",
+      "An error",
+      "hi says hi"
+    ],
+    "answer": "{city} says hi",
+    "misconception_map": {
+      "Joburg says hi": "fstring_missing_prefix_effect"
+    },
+    "xp": 15
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-07",
+    "prompt": "print(\"Line1\\nLine2\")\nHow many separate lines does this print across?",
+    "type": "fill_blank",
+    "answer": "2",
+    "misconception_map": {
+      "1": "escape_sequence_literal_confusion"
+    },
+    "xp": 10
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-08",
+    "prompt": "print(\"A\\tB\")\nIs there a tab character or the two characters backslash-t between A and B?",
+    "type": "mcq",
+    "options": [
+      "A tab character",
+      "The two characters backslash and t"
+    ],
+    "answer": "A tab character",
+    "xp": 10
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-09",
+    "prompt": "print(\"She said \\\"hi\\\"\")\nWhat appears between She said and hi in the output?",
+    "type": "mcq",
+    "options": [
+      "Quotation marks",
+      "The characters backslash-quote"
+    ],
+    "answer": "Quotation marks",
+    "xp": 10
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-10",
+    "prompt": "print(\"a\", \"b\", \"c\", sep=\"-\")\nWhat does this print?",
+    "type": "mcq",
+    "options": [
+      "a-b-c",
+      "a b c",
+      "An error",
+      "Nothing"
+    ],
+    "answer": "a-b-c",
+    "xp": 15
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-11",
+    "prompt": "print(\"x\", end=\"!\")\nprint(\"y\")\nWhat does this print?",
+    "type": "mcq",
+    "options": [
+      "x!y",
+      "xy",
+      "An error",
+      "Nothing"
+    ],
+    "answer": "x!y",
+    "xp": 15
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-12",
+    "prompt": "print(1, 2, 3, sep=\", \")\nWhat does this print?",
+    "type": "mcq",
+    "options": [
+      "1, 2, 3",
+      "1 2 3",
+      "An error",
+      "Nothing"
+    ],
+    "answer": "1, 2, 3",
+    "xp": 15
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-13",
+    "prompt": "Write a Python expression using an f-string that produces the exact text: Score: 7/10",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "Score: 7/10"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-14",
+    "prompt": "Write a Python expression using an f-string that produces the exact text: Total: R150",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "Total: R150"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-15",
+    "prompt": "Write a Python expression using an f-string that produces the exact text: Name: Hlomla",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "expected_output": "Name: Hlomla"
+      }
+    ],
+    "xp": 20
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-16",
+    "prompt": "print(\"{} is {}\".format(\"Ada\", 30))",
+    "type": "mcq",
+    "options": [
+      "Ada is 30",
+      "\"{} is {}\".format(\"Ada\", 30)",
+      "An error",
+      "None"
+    ],
+    "answer": "Ada is 30",
+    "xp": 15
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-17",
+    "prompt": "print(\"{0}-{1}-{0}\".format(\"x\", \"y\"))",
+    "type": "mcq",
+    "options": [
+      "x-y-x",
+      "\"{0}-{1}-{0}\".format(\"x\", \"y\")",
+      "An error",
+      "None"
+    ],
+    "answer": "x-y-x",
+    "xp": 15
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-18",
+    "prompt": "print(\"Score: {}\".format(95))",
+    "type": "mcq",
+    "options": [
+      "Score: 95",
+      "\"Score: {}\".format(95)",
+      "An error",
+      "None"
+    ],
+    "answer": "Score: 95",
+    "xp": 15
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-19",
+    "prompt": "print(\"%s is %d\" % (\"Ada\", 30))",
+    "type": "mcq",
+    "options": [
+      "Ada is 30",
+      "\"%s is %d\" % (\"Ada\", 30)",
+      "An error"
+    ],
+    "answer": "Ada is 30",
+    "xp": 15
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-20",
+    "prompt": "print(\"%d%%\" % 50)",
+    "type": "mcq",
+    "options": [
+      "50%",
+      "\"%d%%\" % 50",
+      "An error"
+    ],
+    "answer": "50%",
+    "xp": 15
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-21",
+    "prompt": "print(repr(f\"{'hi':>10}\"))\n(repr shows the spaces so alignment is visible)",
+    "type": "mcq",
+    "options": [
+      "'        hi'",
+      "'hi'",
+      "'    hi    '",
+      "'hi        '"
+    ],
+    "answer": "'        hi'",
+    "xp": 15
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-22",
+    "prompt": "print(repr(f\"{'hi':<10}\"))\n(repr shows the spaces so alignment is visible)",
+    "type": "mcq",
+    "options": [
+      "'hi        '",
+      "'hi'",
+      "'    hi    '",
+      "'hi        '"
+    ],
+    "answer": "'hi        '",
+    "xp": 15
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-23",
+    "prompt": "print(repr(f\"{'hi':^10}\"))\n(repr shows the spaces so alignment is visible)",
+    "type": "mcq",
+    "options": [
+      "'    hi    '",
+      "'hi'",
+      "'    hi    '",
+      "'hi        '"
+    ],
+    "answer": "'    hi    '",
+    "xp": 15
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-24",
+    "prompt": "print(f\"{3.14159:.2f}\")",
+    "type": "mcq",
+    "options": [
+      "3.14",
+      "3.14159",
+      "An error",
+      "3.14"
+    ],
+    "answer": "3.14",
+    "xp": 15
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-25",
+    "prompt": "print(f\"{1/3:.3f}\")",
+    "type": "mcq",
+    "options": [
+      "0.333",
+      "0.3333333333333333",
+      "An error",
+      "3.14"
+    ],
+    "answer": "0.333",
+    "xp": 15
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-26",
+    "prompt": "print(\"-\" * 10)",
+    "type": "mcq",
+    "options": [
+      "----------",
+      "\"-\" * 10",
+      "An error"
+    ],
+    "answer": "----------",
+    "xp": 10
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-27",
+    "prompt": "print(\"=\" * 5)",
+    "type": "mcq",
+    "options": [
+      "=====",
+      "\"=\" * 5",
+      "An error"
+    ],
+    "answer": "=====",
+    "xp": 10
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-28",
+    "prompt": "Write a program that reads a name and age separated by a semicolon (e.g. Ada;30), splits them, and prints '<name> is <age> years old' using an f-string.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "Ada;30",
+        "expected_output": "Ada is 30 years old"
+      }
+    ],
+    "xp": 25
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-29",
+    "prompt": "Write a program that reads two numbers separated by a semicolon representing score;total (e.g. 7;10), and prints the percentage as '<percent>%' where percent = score/total*100.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "7;10",
+        "expected_output": "70.0%"
+      }
+    ],
+    "xp": 25
+  },
+  {
+    "module_id": "formatting",
+    "question_id": "formatting-30",
+    "prompt": "Write a program that reads a number from input and prints it as 'Number: 0XX' padded to 2 digits with a leading zero if needed, using an f-string with :02 formatting, prefixed with 'Number: '.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "42",
+        "expected_output": "Number: 042"
+      }
+    ],
+    "xp": 25
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-01",
+    "prompt": "Write a program that reads a full name from input and prints it in title case.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "jane doe",
+        "expected_output": "Jane Doe"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-02",
+    "prompt": "Write a program that reads a full name from input and prints it in title case.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "MARY ANN SMITH",
+        "expected_output": "Mary Ann Smith"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-03",
+    "prompt": "Write a program that reads a full name from input and prints it in title case.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "hlomla",
+        "expected_output": "Hlomla"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-04",
+    "prompt": "Write a program that reads a sentence and prints each word on its own line, in lowercase, without using split().",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "Cape Town is home",
+        "expected_output": "cape\ntown\nis\nhome"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-05",
+    "prompt": "Write a program that reads a sentence and prints each word on its own line, in lowercase, without using split().",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "The Quick Brown Fox",
+        "expected_output": "the\nquick\nbrown\nfox"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-06",
+    "prompt": "Write a program that reads a sentence and prints each word on its own line, in lowercase, without using split().",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "Learn Python Fast",
+        "expected_output": "learn\npython\nfast"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-07",
+    "prompt": "Write a program that reads a word and prints it reversed, using slicing only (no loops).",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "python",
+        "expected_output": "nohtyp"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-08",
+    "prompt": "Write a program that reads a word and prints it reversed, using slicing only (no loops).",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "isiXhosa",
+        "expected_output": "asohXisi"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-09",
+    "prompt": "Write a program that reads a word and prints it reversed, using slicing only (no loops).",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "capstone",
+        "expected_output": "enotspac"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-10",
+    "prompt": "Write a program that reads a 16-digit card number and prints it with all but the last 4 digits replaced by '*'.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "4532015112830366",
+        "expected_output": "************0366"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-11",
+    "prompt": "Write a program that reads a 16-digit card number and prints it with all but the last 4 digits replaced by '*'.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "1234567812345678",
+        "expected_output": "************5678"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-12",
+    "prompt": "Write a program that reads a 16-digit card number and prints it with all but the last 4 digits replaced by '*'.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "9876543210001111",
+        "expected_output": "************1111"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-13",
+    "prompt": "Write a program that reads a string and prints every substring that is NOT made of letters (digits, punctuation, symbols), one per line, in the order they appear.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "r7cape9town!",
+        "expected_output": "7\n9\n!"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-14",
+    "prompt": "Write a program that reads a string and prints every substring that is NOT made of letters (digits, punctuation, symbols), one per line, in the order they appear.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "hlomla2026@uct",
+        "expected_output": "2026@"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-15",
+    "prompt": "Write a program that reads a string and prints every substring that is NOT made of letters (digits, punctuation, symbols), one per line, in the order they appear.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "id#4521-xy",
+        "expected_output": "#4521-"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-16",
+    "prompt": "Write a program that reads a phrase and prints its acronym: the uppercase first letter of each word, with no spaces.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "Central Processing Unit",
+        "expected_output": "CPU"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-17",
+    "prompt": "Write a program that reads a phrase and prints its acronym: the uppercase first letter of each word, with no spaces.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "as soon as possible",
+        "expected_output": "ASAP"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-18",
+    "prompt": "Write a program that reads a phrase and prints its acronym: the uppercase first letter of each word, with no spaces.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "random access memory",
+        "expected_output": "RAM"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-19",
+    "prompt": "Write a program that reads a sentence and prints how many words it contains.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "the quick brown fox jumps",
+        "expected_output": "5"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-20",
+    "prompt": "Write a program that reads a sentence and prints how many words it contains.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "hello world",
+        "expected_output": "2"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-21",
+    "prompt": "Write a program that reads a sentence and prints how many words it contains.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "one",
+        "expected_output": "1"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-22",
+    "prompt": "Write a program that reads two words separated by a semicolon (e.g. listen;silent) and prints 'Yes' if they are anagrams of each other (ignoring case), else 'No'.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "listen;silent",
+        "expected_output": "Yes"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-23",
+    "prompt": "Write a program that reads two words separated by a semicolon (e.g. listen;silent) and prints 'Yes' if they are anagrams of each other (ignoring case), else 'No'.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "cat;dog",
+        "expected_output": "No"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-24",
+    "prompt": "Write a program that reads two words separated by a semicolon (e.g. listen;silent) and prints 'Yes' if they are anagrams of each other (ignoring case), else 'No'.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "Dormitory;DirtyRoom",
+        "expected_output": "Yes"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-25",
+    "prompt": "Write a program that reads a snake_case variable name and prints it converted to Title Case with spaces (e.g. user_name becomes User Name).",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "user_first_name",
+        "expected_output": "User First Name"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-26",
+    "prompt": "Write a program that reads a snake_case variable name and prints it converted to Title Case with spaces (e.g. user_name becomes User Name).",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "total_score_value",
+        "expected_output": "Total Score Value"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-27",
+    "prompt": "Write a program that reads a snake_case variable name and prints it converted to Title Case with spaces (e.g. user_name becomes User Name).",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "cape_town_weather",
+        "expected_output": "Cape Town Weather"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-28",
+    "prompt": "Write a program that reads a comma-separated list of words (e.g. apples,bananas,cherries) and prints them joined into a natural sentence: items separated by commas, with 'and' before the last item.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "apples,bananas,cherries",
+        "expected_output": "apples, bananas and cherries"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-29",
+    "prompt": "Write a program that reads a comma-separated list of words (e.g. apples,bananas,cherries) and prints them joined into a natural sentence: items separated by commas, with 'and' before the last item.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "cat,dog",
+        "expected_output": "cat and dog"
+      }
+    ],
+    "xp": 30
+  },
+  {
+    "module_id": "challenge",
+    "question_id": "challenge-30",
+    "prompt": "Write a program that reads a comma-separated list of words (e.g. apples,bananas,cherries) and prints them joined into a natural sentence: items separated by commas, with 'and' before the last item.",
+    "type": "write_code",
+    "test_cases": [
+      {
+        "input": "one,two,three,four",
+        "expected_output": "one, two, three and four"
+      }
+    ],
+    "xp": 30
+  }
+]
