@@ -8,10 +8,10 @@ let API_BASE_URL;
 
 if (isDevelopment) {
   // Local development - backend on remote server
-  API_BASE_URL = 'http://137.158.61.235';
+  API_BASE_URL = 'https://137.158.61.235';
 } else if (isProduction) {
-  // Production on Netlify - backend on remote server IP
-  API_BASE_URL = 'http://137.158.61.235';
+  // Production on Netlify - backend on remote server IP (HTTPS required for mixed content)
+  API_BASE_URL = 'https://137.158.61.235';
 } else {
   // Fallback
   API_BASE_URL = `${window.location.protocol}//${window.location.host}`;
