@@ -33,6 +33,17 @@ else:
     print("Short string.")
 `;
 
+const STEP_COLORS = {
+  assign: '#4b27f4',
+  for: '#0e8a6b',
+  while: '#c75000',
+  if: '#8a2be2',
+  print: '#1a6eb5',
+  call: '#1a6eb5',
+  stmt: '#555',
+  error: '#d32f2f',
+};
+
 const INDENT = '    ';
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
@@ -106,7 +117,6 @@ export function CodeSpace() {
   const textareaRef = useRef(null);
   const lineNumbersRef = useRef(null);
   const highlightRef = useRef(null);
-  const outputRef = useRef(null);
   const pendingSelectionRef = useRef(null);
   const codeLines = code.split('\n');
 
@@ -114,11 +124,11 @@ export function CodeSpace() {
   const step = steps[stepIndex] ?? null;
 
   // resolve which string to show in the visualiser
-  const visStringVar = useMemo(() => {
-    if (!step) return null;
-    return firstStringVar(step.variables);
+  const visString = useMemo(() => {
+    if (!step) return '';
+    const sv = firstStringVar(step.variables);
+    return sv ? sv.value : '';
   }, [step]);
-  const visString = visStringVar?.value ?? '';
 
   const incrementalStdout = useMemo(() => {
     if (!debugging || steps.length === 0) return '';
@@ -179,23 +189,6 @@ export function CodeSpace() {
       highlightRef.current.scrollLeft = target.scrollLeft;
     }
   }
-
-  // auto-scroll editor so the currently-executing line stays visible
-  useEffect(() => {
-    if (!debugging || !step?.line || !textareaRef.current) return;
-    const LINE_H = 26;
-    const pane = textareaRef.current;
-    const target = (step.line - 1) * LINE_H;
-    const desired = Math.max(0, target - pane.clientHeight * 0.35);
-    pane.scrollTop = desired;
-    syncEditorScroll(pane);
-  }, [debugging, step?.line]);
-
-  // auto-scroll output pane to the bottom as new lines are printed
-  useEffect(() => {
-    if (!outputRef.current) return;
-    outputRef.current.scrollTop = outputRef.current.scrollHeight;
-  }, [displayedOutput]);
 
   function setCodeWithSelection(nextCode, start, end = start) {
     pendingSelectionRef.current = { start, end };
@@ -405,7 +398,7 @@ export function CodeSpace() {
               <span className={styles.softIcon}><Terminal size={22} /></span>
               <h2>Output</h2>
             </div>
-            <pre ref={outputRef} className={styles.codeOutput}>
+            <pre className={styles.codeOutput}>
               {stderr
                 ? <span style={{ color: '#d32f2f' }}>{displayedOutput}</span>
                 : displayedOutput}
@@ -413,21 +406,11 @@ export function CodeSpace() {
           </article>
         </section>
 
-        {/* ── right: visualiser panel ── */}
+        {/* ── right: debugger panel ── */}
         <section className={styles.visualPanelWide}>
-          <div className={styles.dbgTopBar}>
-            <div className={styles.dbgTopLeft}>
-              <span className={styles.eyeIcon}><Eye size={26} /></span>
-              <h2>Visualiser</h2>
-            </div>
-            {debugging && (
-              <div className={styles.dbgTopRight}>
-                <span className={styles.dbgStepPill}>
-                  {stepIndex + 1} / {steps.length}
-                </span>
-                {step && <span className={styles.dbgLineTag}>Line {step.line}</span>}
-              </div>
-            )}
+          <div className={styles.codePanelHeader}>
+            <span className={styles.eyeIcon}><Eye size={32} /></span>
+            <h2>Debugger &amp; Visualiser</h2>
           </div>
 
           <div className={styles.playerControls}>
@@ -444,45 +427,98 @@ export function CodeSpace() {
             </button>
           </div>
 
-          {debugging && (
-            <div className={styles.dbgProgressSlim}>
-              <div
-                className={styles.dbgProgressBar}
-                style={{ width: `${((stepIndex + 1) / steps.length) * 100}%` }}
-              />
-            </div>
-          )}
-
           {!debugging ? (
             <div className={styles.dbgPlaceholder}>
-              <p>Press <strong>Run</strong> to step through your code.</p>
+              <p>Press <strong>Run &amp; Debug</strong> to step through your code.</p>
               <p className={styles.dbgHint}>
-                Works with <code>for</code>, <code>while</code>, <code>if</code>,
-                indexing, slicing, and string methods.
+                Supports <code>for</code> loops, <code>while</code> loops,
+                <code>if</code> statements, string indexing, slicing, and methods.
               </p>
             </div>
           ) : (
             <>
-              {visString ? (
-                <div className={styles.dbgStringHero}>
-                  <div className={styles.dbgStrCaption}>
-                    <code>{visStringVar?.name ?? 'string'}</code>
-                    <span className={styles.dbgLenTag}>length {visString.length}</span>
+              {/* progress bar */}
+              <div className={styles.dbgProgress}>
+                <div
+                  className={styles.dbgProgressBar}
+                  style={{ width: `${((stepIndex + 1) / steps.length) * 100}%` }}
+                />
+              </div>
+              <div className={styles.dbgCounter}>
+                Step {stepIndex + 1} / {steps.length}
+              </div>
+
+              {/* current step card */}
+              {step && (
+                <div
+                  className={styles.dbgStepCard}
+                  style={{ borderLeftColor: STEP_COLORS[step.event] ?? '#888' }}
+                >
+                  <div className={styles.dbgStepHeader}>
+                    <span
+                      className={styles.dbgEventBadge}
+                      style={{ background: STEP_COLORS[step.event] ?? '#888' }}
+                    >
+                      {eventLabel(step.event)}
+                    </span>
+                    <span className={styles.dbgLineBadge}>Line {step.line}</span>
+
+                    {/* condition result badge for if/while */}
+                    {(step.event === 'if' || step.event === 'while') && (
+                      <span
+                        className={styles.dbgCondBadge}
+                        style={{
+                          background: step.condition_result ? '#c8f7e1' : '#fde8e8',
+                          color: step.condition_result ? '#0e8a6b' : '#d32f2f',
+                        }}
+                      >
+                        {step.condition_result ? 'True ✓' : 'False ✗'}
+                      </span>
+                    )}
+
+                    {/* iteration badge for for/while */}
+                    {step.event === 'for' && (
+                      <span className={styles.dbgIterBadge}>
+                        Iteration {step.iteration} / {step.total}
+                      </span>
+                    )}
+                  </div>
+                  <div className={styles.dbgDescription}>{step.description}</div>
+
+                  {step.event === 'print' && step.output && (
+                    <div className={styles.dbgPrintOut}>
+                      <Terminal size={15} /> <code>{step.output}</code>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* string visualiser */}
+              {visString && (
+                <div className={styles.dbgStringSection}>
+                  <div className={styles.dbgStrLabel}>
+                    String: <code>"{visString}"</code>
+                    &nbsp;(length = {visString.length})
                   </div>
 
                   <div className={styles.stringVisualArea}>
+                    {/* positive indices */}
                     <div
-                      className={styles.indexRowSingle}
-                      style={{ gridTemplateColumns: `repeat(${visString.length}, 56px)` }}
+                      className={styles.indexGrid}
+                      style={{ gridTemplateColumns: `repeat(${visString.length}, 64px)` }}
                     >
                       {visString.split('').map((_, i) => (
-                        <span key={`i-${i}`}>{i}</span>
+                        <span key={`p-${i}`}>{i}</span>
+                      ))}
+                      {visString.split('').map((_, i) => (
+                        <span key={`n-${i}`}>{i - visString.length}</span>
                       ))}
                     </div>
 
+                    {/* characters */}
                     <div
                       className={styles.charGrid}
-                      style={{ gridTemplateColumns: `repeat(${visString.length}, 56px)` }}
+                      style={{ gridTemplateColumns: `repeat(${visString.length}, 64px)` }}
                     >
                       {visString.split('').map((letter, i) => (
                         <span
@@ -494,9 +530,10 @@ export function CodeSpace() {
                       ))}
                     </div>
 
+                    {/* arrows */}
                     <div
                       className={styles.arrowGrid}
-                      style={{ gridTemplateColumns: `repeat(${visString.length}, 56px)` }}
+                      style={{ gridTemplateColumns: `repeat(${visString.length}, 64px)` }}
                     >
                       {visString.split('').map((_, i) => (
                         <span key={i}>{step?.highlight?.includes(i) ? '↑' : ''}</span>
@@ -504,28 +541,28 @@ export function CodeSpace() {
                     </div>
                   </div>
                 </div>
-              ) : (
-                <div className={styles.dbgNoString}>
-                  No string variable in scope yet on this step.
-                </div>
               )}
 
-              {step && (
-                <p className={styles.dbgStepDesc}>
-                  <span className={styles.dbgEventTag}>{eventLabel(step.event)}</span>
-                  <span className={styles.dbgStepText}>{step.description}</span>
-                </p>
-              )}
-
+              {/* variable watch table */}
               {step && Object.keys(step.variables).length > 0 && (
-                <div className={styles.dbgVarChips}>
-                  {Object.entries(step.variables).map(([k, v]) => (
-                    <span key={k} className={styles.dbgVarChip}>
-                      <b>{k}</b>
-                      <span className={styles.dbgVarEq}>=</span>
-                      <code>{typeof v === 'string' ? `"${v}"` : String(v)}</code>
-                    </span>
-                  ))}
+                <div className={styles.dbgVarsSection}>
+                  <div className={styles.dbgVarsLabel}>Variables</div>
+                  <table className={styles.dbgVarsTable}>
+                    <thead>
+                      <tr><th>Name</th><th>Value</th><th>Type</th></tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(step.variables).map(([k, v]) => (
+                        <tr key={k}>
+                          <td className={styles.dbgVarName}>{k}</td>
+                          <td className={styles.dbgVarValue}>
+                            {typeof v === 'string' ? `"${v}"` : String(v)}
+                          </td>
+                          <td className={styles.dbgVarType}>{typeof v}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </>

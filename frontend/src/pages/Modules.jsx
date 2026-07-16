@@ -4,7 +4,7 @@ import { ScreenHeader } from '../components/ScreenHeader';
 import { ModuleCard } from '../components/ModuleCard';
 import { modules } from '../data/modules';
 
-export function Modules() {
+export function Modules({ openModule }) {
   return (
     <div className={styles.screenStack}>
       <ScreenHeader
@@ -17,7 +17,12 @@ export function Modules() {
       </div>
       <div className={styles.moduleGrid}>
         {modules.map((mod, i) => (
-          <ModuleCard key={mod.title} module={mod} number={i + 1} />
+          <ModuleCard
+            key={mod.id}
+            module={mod}
+            number={i + 1}
+            onOpen={() => openModule?.(mod.id, i + 1)}
+          />
         ))}
       </div>
     </div>

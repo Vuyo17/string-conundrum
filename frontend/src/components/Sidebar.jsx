@@ -25,10 +25,11 @@ export function Sidebar({ screen, setScreen }) {
 
       {items.map((item) => {
         const Icon = NAV_ICONS[item];
+        const active = screen === item || (screen === 'Module' && item === 'Modules');
         return (
           <button
             key={item}
-            className={screen === item ? styles.sideActive : ''}
+            className={active ? styles.sideActive : ''}
             onClick={() => setScreen(item)}
           >
             {Icon && <Icon size={17} />}
