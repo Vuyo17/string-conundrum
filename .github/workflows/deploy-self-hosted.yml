@@ -2,7 +2,7 @@ name: Deploy (Self-Hosted Runner)
 
 on:
   push:
-    branches: [main]
+    branches: [main, production]
     paths:
       - 'backend/**'
       - 'frontend/**'
