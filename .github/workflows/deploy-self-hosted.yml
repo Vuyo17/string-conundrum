@@ -1,0 +1,88 @@
+name: Deploy (Self-Hosted Runner)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+      - '.github/workflows/deploy-self-hosted.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux, x64]
+    environment: production
+    env:
+      APP_DIR: /localhome/mtmluv001/string-conundrum-api
+      WEB_ROOT: /var/www/stringcon
+      API_SERVICE: string-api
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build frontend
+        working-directory: frontend
+        run: |
+          set -euo pipefail
+          npm ci
+          npm run build
+
+      - name: Deploy backend and frontend
+        shell: bash
+        env:
+          SUDO_PASSWORD: ${{ secrets.SUDO_PASSWORD }}
+        run: |
+          set -euo pipefail
+
+          run_sudo() {
+            if [ -n "${SUDO_PASSWORD:-}" ]; then
+              printf '%s\n' "$SUDO_PASSWORD" | sudo -S -p '' "$@"
+            else
+              sudo "$@"
+            fi
+          }
+
+          # Sync backend code to the path used by the systemd service.
+          mkdir -p "$APP_DIR/backend"
+          rsync -az --delete backend/ "$APP_DIR/backend/"
+
+          # Ensure backend virtualenv exists and dependencies are current.
+          if [ ! -d "$APP_DIR/venv" ]; then
+            python3 -m venv "$APP_DIR/venv"
+          fi
+          "$APP_DIR/venv/bin/pip" install --upgrade pip
+          "$APP_DIR/venv/bin/pip" install -r "$APP_DIR/backend/requirements.txt"
+
+          # Sync built frontend assets to Nginx web root.
+          run_sudo mkdir -p "$WEB_ROOT"
+          run_sudo rsync -az --delete frontend/dist/ "$WEB_ROOT/"
+          run_sudo find "$WEB_ROOT" -type d -exec chmod 755 {} \;
+          run_sudo find "$WEB_ROOT" -type f -exec chmod 644 {} \;
+
+          # Reload services.
+          run_sudo systemctl restart "$API_SERVICE"
+          run_sudo systemctl reload nginx
+
+      - name: Smoke checks
+        run: |
+          set -euo pipefail
+          curl -fsS http://127.0.0.1/health
+          curl -fsS -X POST http://127.0.0.1/api/visualize \
+            -H 'Content-Type: application/json' \
+            -d '{"expression":"word[1:4]","context":{"word":"python"}}'
