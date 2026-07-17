@@ -79,6 +79,23 @@ jobs:
       - name: Smoke checks
         run: |
           set -euo pipefail
+
+          for i in {1..20}; do
+            if curl -fsS http://127.0.0.1/health >/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+
+          for i in {1..20}; do
+            if curl -fsS -X POST http://127.0.0.1/api/visualize \
+              -H 'Content-Type: application/json' \
+              -d '{"expression":"word[1:4]","context":{"word":"python"}}' >/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+
           curl -fsS http://127.0.0.1/health
           curl -fsS -X POST http://127.0.0.1/api/visualize \
             -H 'Content-Type: application/json' \
