@@ -342,9 +342,6 @@ export function CodeSpace() {
             <p>Write Python code and step through it like a debugger.</p>
           </div>
         </div>
-        <button className={styles.codeRunMain} onClick={handleRun} disabled={loading}>
-          <Play size={24} fill="currentColor" /> {loading ? 'Running…' : 'Run'}
-        </button>
         <button className={styles.codeClearButton} onClick={handleClear}>
           <Trash2 size={22} /> Clear
         </button>
@@ -357,6 +354,17 @@ export function CodeSpace() {
             <div className={styles.codePanelHeader}>
               <span className={styles.softIcon}><Code2 size={22} /></span>
               <h2>Code Editor</h2>
+              <div className={styles.codePanelHeaderActions}>
+                <button
+                  className={styles.codeRunIconButton}
+                  onClick={handleRun}
+                  disabled={loading}
+                  title={loading ? 'Running...' : 'Run code'}
+                  aria-label={loading ? 'Running code' : 'Run code'}
+                >
+                  <Play size={18} fill="currentColor" />
+                </button>
+              </div>
             </div>
             <div className={styles.codeEditorBox}>
               <div ref={lineNumbersRef} className={styles.lineNumbers} aria-hidden="true">
