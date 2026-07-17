@@ -1,6 +1,6 @@
 // `id` must match the backend module_id in backend/app/data/exercises.json —
 // it is also the key used to look up page content in data/moduleContent/.
-export const Modules = [
+export const modules = [
   {
     id: "intro",
     title: "Introduction to Strings",
