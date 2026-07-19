@@ -1,10 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from '../styles/App.module.css';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { ModuleCard } from '../components/ModuleCard';
+import { ModulePage } from './ModulePage';
 import { modules } from '../data/modules';
 
 export function Modules() {
+  // Which module is open, if any. Null shows the card grid.
+  const [openModule, setOpenModule] = useState(null);
+
+  if (openModule) {
+    const number = modules.findIndex((mod) => mod.id === openModule.id) + 1;
+    return (
+      <ModulePage
+        moduleId={openModule.id}
+        moduleNumber={number}
+        onBack={() => setOpenModule(null)}
+      />
+    );
+  }
+
   return (
     <div className={styles.screenStack}>
       <ScreenHeader
@@ -17,7 +32,12 @@ export function Modules() {
       </div>
       <div className={styles.moduleGrid}>
         {modules.map((mod, i) => (
-          <ModuleCard key={mod.title} module={mod} number={i + 1} />
+          <ModuleCard
+            key={mod.id}
+            module={mod}
+            number={i + 1}
+            onOpen={setOpenModule}
+          />
         ))}
       </div>
     </div>

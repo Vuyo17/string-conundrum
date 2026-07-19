@@ -1,10 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ChevronDown, ChevronRight, Target } from 'lucide-react';
+import { ChevronDown, ChevronRight, Star, Target } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { Progress } from '../components/Progress';
 import { StringCells } from '../components/StringCells';
 import { exerciseModules } from '../data/exerciseModules';
-import { getApiUrl } from '../config/api';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -38,7 +37,7 @@ export function Exercise() {
   const [answerState, setAnswerState] = useState(null);
   const [result, setResult] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-  const [xp, setXp] = useState(0);
+  const [stars, setStars] = useState(0); // session stars (bank's legacy xp = stars * 10)
 
   const exercise = exercises[index] ?? null;
 
@@ -50,7 +49,7 @@ export function Exercise() {
     setIndex(0);
     setResult(null);
 
-    fetch(getApiUrl(`/api/exercises/${moduleId}`))
+    fetch(`/api/exercises/${moduleId}`)
       .then((res) => res.json())
       .then((data) => {
         if (cancelled) return;
@@ -89,14 +88,14 @@ export function Exercise() {
     if (exercise.type === 'write_code') payload.code = answerState?.code ?? '';
 
     try {
-      const res = await fetch(getApiUrl('/api/exercises/submit'), {
+      const res = await fetch('/api/exercises/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
       const data = await res.json();
       setResult(data);
-      if (data.correct) setXp((prev) => prev + (exercise.xp ?? 10));
+      if (data.correct) setStars((prev) => prev + (exercise.stars ?? Math.max(1, Math.round((exercise.xp ?? 10) / 10))));
     } catch {
       setResult({ ok: false, correct: false, feedback: 'Cannot reach server. Is the backend running?' });
     } finally {
@@ -145,7 +144,7 @@ export function Exercise() {
             <ChevronDown size={18} />
           </div>
           {exercises.length > 0 && (
-            <span className={styles.xpBadge}>⭐ {xp} XP</span>
+            <span className={styles.xpBadge}><Star size={14} /> {stars} {stars === 1 ? 'star' : 'stars'}</span>
           )}
         </div>
 
@@ -163,7 +162,9 @@ export function Exercise() {
                 Question {index + 1} of {exercises.length}
               </strong>
               <Progress value={((index + 1) / exercises.length) * 100} />
-              <span className={styles.xpBadge}>⭐ {exercise.xp ?? 10} XP</span>
+              <span className={styles.xpBadge}>
+                <Star size={14} /> {exercise.stars ?? Math.max(1, Math.round((exercise.xp ?? 10) / 10))}
+              </span>
             </div>
 
             <h3 style={{ marginTop: '16px' }}>{exercise.prompt.split('\n')[0]}</h3>

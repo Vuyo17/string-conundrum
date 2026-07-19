@@ -1,5 +1,8 @@
+// `id` must match the backend module_id in backend/app/data/exercises.json —
+// it is also the key used to look up page content in data/moduleContent/.
 export const modules = [
   {
+    id: "intro",
     title: "Introduction to Strings",
     desc: "Understand what strings are in Python.",
     progress: 100,
@@ -7,6 +10,7 @@ export const modules = [
     time: "15 min",
   },
   {
+    id: "indexing",
     title: "String Indexing",
     desc: "Access characters using indexes.",
     progress: 100,
@@ -14,6 +18,7 @@ export const modules = [
     time: "20 min",
   },
   {
+    id: "slicing",
     title: "String Slicing",
     desc: "Extract parts of a string using slices.",
     progress: 60,
@@ -21,6 +26,7 @@ export const modules = [
     time: "25 min",
   },
   {
+    id: "immutability",
     title: "String Immutability",
     desc: "See why strings cannot be changed in place.",
     progress: 0,
@@ -28,6 +34,7 @@ export const modules = [
     time: "25 min",
   },
   {
+    id: "comparison",
     title: "String Comparison",
     desc: "Compare strings using operators.",
     progress: 0,
@@ -35,6 +42,7 @@ export const modules = [
     time: "20 min",
   },
   {
+    id: "looping",
     title: "Looping Through Strings",
     desc: "Iterate over characters in a string.",
     progress: 0,
@@ -42,6 +50,7 @@ export const modules = [
     time: "30 min",
   },
   {
+    id: "methods",
     title: "String Methods",
     desc: "Explore built-in string methods.",
     progress: 0,
@@ -49,6 +58,7 @@ export const modules = [
     time: "35 min",
   },
   {
+    id: "formatting",
     title: "String Formatting",
     desc: "Format strings in various ways.",
     progress: 0,
@@ -74,3 +84,4 @@ export const letters = [
 ];
 export const positiveIndexes = letters.map((_, i) => i);
 export const negativeIndexes = letters.map((_, i) => i - letters.length);
+
