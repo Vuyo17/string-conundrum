@@ -1,5 +1,6 @@
 from flask import Blueprint, request
 
+from .services.challenges import grade_challenge, list_challenges
 from .services.feedback import evaluate_answer, get_module_exercises
 from .services.sandbox import execute_code, trace_steps
 from .services.visualizer import build_visual_state
@@ -64,6 +65,21 @@ def list_module_exercises(module_id: str):
     """Return every exercise for a module, e.g. to render the Exercise screen."""
     exercises = get_module_exercises(module_id)
     return {"ok": True, "module_id": module_id, "exercises": exercises}
+
+
+@api_bp.get("/challenges")
+def get_challenges():
+    """Return every coding challenge for the Challenges screen."""
+    return {"ok": True, "challenges": list_challenges()}
+
+
+@api_bp.post("/challenges/run")
+def run_challenge_submission():
+    """Run submitted code against a challenge's test cases."""
+    payload = request.get_json(silent=True) or {}
+    challenge_id = payload.get("challenge_id", "")
+    code = payload.get("code", "")
+    return grade_challenge(challenge_id=challenge_id, code=code)
 
 
 @api_bp.get("/progress/<user_id>")

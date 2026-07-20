@@ -37,19 +37,249 @@ else:
 const INDENT = '    ';
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
-function firstStringVar(vars) {
-  for (const [k, v] of Object.entries(vars)) {
-    if (typeof v === 'string') return { name: k, value: v };
-  }
-  return null;
-}
-
 function eventLabel(event) {
   const map = {
     assign: 'Assignment', for: 'For Loop', while: 'While Loop',
     if: 'If Statement', print: 'Print', call: 'Call', stmt: 'Statement', error: 'Error',
   };
   return map[event] || event;
+}
+
+// ─── for-loop diagram ─────────────────────────────────────────────────────────
+function displayLoopItem(raw, kind) {
+  if (kind === 'char') return raw === ' ' ? '␣' : raw;
+  return raw;
+}
+
+function ForLoopDiagram({ loop }) {
+  const { var: varName, iteration, total, items, kind } = loop;
+  const current = iteration - 1; // 0-based index of the active item
+  const currentRaw = items[current] ?? '';
+  const currentDisplay = displayLoopItem(currentRaw, kind);
+  const pct = total > 0 ? (iteration / total) * 100 : 0;
+  const sequenceLabel = kind === 'char' ? 'characters' : 'sequence';
+
+  return (
+    <div className={styles.flpDiagram}>
+      {/* header: badge + loop signature + counter */}
+      <div className={styles.flpHeader}>
+        <span className={styles.flpBadge}>for&nbsp;loop</span>
+        <div className={styles.flpSignature}>
+          <span className={styles.flpKw}>for</span>
+          <span className={styles.flpVar}>{varName}</span>
+          <span className={styles.flpKw}>in</span>
+          <span className={styles.flpSeq}>{sequenceLabel}</span>
+          <span className={styles.flpColon}>:</span>
+        </div>
+        <span className={styles.flpCounter}>
+          pass <b>{iteration}</b> of {total}
+        </span>
+      </div>
+
+      {/* the sequence being walked, one cell per element */}
+      <div className={styles.flpTrackWrap}>
+        <div className={styles.flpTrackHead}>
+          <span>The loop walks through each element, left to right</span>
+        </div>
+        <div className={styles.flpTrack}>
+          {items.map((it, i) => {
+            const state =
+              i < current ? styles.flpDone : i === current ? styles.flpActive : styles.flpTodo;
+            return (
+              <div key={i} className={`${styles.flpCell} ${state}`}>
+                <span className={styles.flpCellIdx}>{i}</span>
+                <span className={styles.flpCellVal}>{displayLoopItem(it, kind)}</span>
+                {i === current && <span className={styles.flpCellPointer} aria-hidden="true" />}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* flow: current element → loop variable → body → back to top */}
+      <div className={styles.flpFlow}>
+        <div className={styles.flpFlowNode}>
+          <span className={styles.flpFlowLabel}>current element</span>
+          <span className={styles.flpFlowValue}>{currentDisplay}</span>
+        </div>
+        <span className={styles.flpFlowArrow}>→</span>
+        <div className={`${styles.flpFlowNode} ${styles.flpFlowVar}`}>
+          <span className={styles.flpFlowLabel}>loop variable</span>
+          <span className={styles.flpFlowValue}>
+            <code>{varName}</code> = <code>{currentDisplay}</code>
+          </span>
+        </div>
+        <span className={styles.flpFlowArrow}>→</span>
+        <div className={`${styles.flpFlowNode} ${styles.flpFlowBody}`}>
+          <span className={styles.flpFlowLabel}>runs</span>
+          <span className={styles.flpFlowValue}>loop body</span>
+        </div>
+        <span className={styles.flpLoopBack} title="repeats for the next element">↺</span>
+      </div>
+
+      {/* progress through the sequence */}
+      <div className={styles.flpProgress}>
+        <div className={styles.flpProgressFill} style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  );
+}
+
+// ─── while-loop diagram ───────────────────────────────────────────────────────
+function WhileLoopDiagram({ ctx, steps }) {
+  const { condition, condition_eval: conditionEval, iteration, result, line } = ctx;
+
+  // reconstruct every condition check for this loop from the trace
+  const byIter = new Map();
+  for (const s of steps) {
+    if (s.event === 'while' && s.line === line && typeof s.iteration === 'number') {
+      byIter.set(s.iteration, s.condition_result);
+    }
+  }
+  const passes = [...byIter.entries()]
+    .sort((a, b) => a[0] - b[0])
+    .map(([iter, res]) => ({ iter, res }));
+
+  return (
+    <div className={styles.flpDiagram}>
+      <div className={styles.flpHeader}>
+        <span className={styles.flpBadge}>while&nbsp;loop</span>
+        <div className={styles.flpSignature}>
+          <span className={styles.flpKw}>while</span>
+          <span className={styles.flpCond}>{condition}</span>
+          <span className={styles.flpColon}>:</span>
+        </div>
+        <span className={styles.flpCounter}>
+          check <b>{iteration}</b>
+        </span>
+      </div>
+
+      {/* condition with the current values plugged in */}
+      <div className={styles.flpEval}>
+        <code className={styles.flpEvalRaw}>{condition}</code>
+        <span className={styles.flpEvalArrow}>→</span>
+        <code className={styles.flpEvalSub}>{conditionEval}</code>
+        <span className={result ? styles.flpEvalTrue : styles.flpEvalFalse}>
+          {result ? 'True' : 'False'}
+        </span>
+      </div>
+
+      {/* one chip per condition check */}
+      <div className={styles.flpTrackWrap}>
+        <div className={styles.flpTrackHead}>
+          <span>Each pass re-checks the condition before the body runs</span>
+        </div>
+        <div className={styles.flpTrack}>
+          {passes.map((p) => {
+            const state =
+              p.iter < iteration
+                ? styles.flpDone
+                : p.iter === iteration
+                  ? styles.flpActive
+                  : styles.flpTodo;
+            return (
+              <div key={p.iter} className={`${styles.flpPass} ${state}`}>
+                <span className={styles.flpPassNo}>check {p.iter}</span>
+                <span className={p.res ? styles.flpTrue : styles.flpFalse}>
+                  {p.res ? 'true · run body' : 'false · stop'}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* current condition → result → action */}
+      <div className={styles.flpFlow}>
+        <div className={styles.flpFlowNode}>
+          <span className={styles.flpFlowLabel}>condition</span>
+          <span className={styles.flpFlowValue}>
+            <code>{condition}</code>
+          </span>
+        </div>
+        <span className={styles.flpFlowArrow}>→</span>
+        <div className={`${styles.flpFlowNode} ${result ? styles.flpTrueNode : styles.flpFalseNode}`}>
+          <span className={styles.flpFlowLabel}>evaluates to</span>
+          <span className={styles.flpFlowValue}>{result ? 'True' : 'False'}</span>
+        </div>
+        <span className={styles.flpFlowArrow}>→</span>
+        <div className={`${styles.flpFlowNode} ${styles.flpFlowBody}`}>
+          <span className={styles.flpFlowLabel}>so we</span>
+          <span className={styles.flpFlowValue}>{result ? 'run the body' : 'exit the loop'}</span>
+        </div>
+        {result && (
+          <span className={styles.flpLoopBack} title="then check the condition again">↺</span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── if-statement diagram ─────────────────────────────────────────────────────
+function IfStatementDiagram({ ctx }) {
+  const { condition, condition_eval: conditionEval, result, taken, has_else: hasElse } = ctx;
+
+  return (
+    <div className={styles.flpDiagram}>
+      <div className={styles.flpHeader}>
+        <span className={styles.flpBadge}>if&nbsp;statement</span>
+        <div className={styles.flpSignature}>
+          <span className={styles.flpKw}>if</span>
+          <span className={styles.flpCond}>{condition}</span>
+          <span className={styles.flpColon}>:</span>
+        </div>
+        <span className={`${styles.flpCounter} ${result ? styles.flpTrueText : styles.flpFalseText}`}>
+          {result ? 'True' : 'False'}
+        </span>
+      </div>
+
+      {/* the condition evaluated */}
+      <div className={styles.ifCondBox}>
+        <span className={styles.flpFlowLabel}>condition</span>
+        <span className={styles.ifCondValue}>
+          <code>{condition}</code>
+          <span className={styles.flpEvalArrow}>→</span>
+          <code className={styles.ifCondSub}>{conditionEval}</code>
+        </span>
+        <span className={result ? styles.ifResultTrue : styles.ifResultFalse}>
+          {result ? 'TRUE' : 'FALSE'}
+        </span>
+      </div>
+
+      <div className={styles.ifSplit} aria-hidden="true">chooses one path</div>
+
+      {/* the two possible branches */}
+      <div className={styles.ifBranches}>
+        <div
+          className={`${styles.ifBranch} ${taken === 'if' ? styles.ifBranchTaken : styles.ifBranchSkipped}`}
+        >
+          <div className={styles.ifBranchHead}>
+            <span className={styles.ifBranchTag}>condition True</span>
+            {taken === 'if' && <span className={styles.ifTakenPill}>✓ path taken</span>}
+          </div>
+          <p className={styles.ifBranchDesc}>
+            run the <code>if</code> block
+          </p>
+        </div>
+
+        <div
+          className={`${styles.ifBranch} ${taken === 'else' ? styles.ifBranchTaken : styles.ifBranchSkipped}`}
+        >
+          <div className={styles.ifBranchHead}>
+            <span className={styles.ifBranchTag}>{hasElse ? 'condition False' : 'condition False'}</span>
+            {taken === 'else' && <span className={styles.ifTakenPill}>✓ path taken</span>}
+          </div>
+          <p className={styles.ifBranchDesc}>
+            {hasElse ? (
+              <>run the <code>else</code> block</>
+            ) : (
+              <>skip the <code>if</code> block</>
+            )}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function escapeHtml(value) {
@@ -114,12 +344,8 @@ export function CodeSpace() {
   // current step
   const step = steps[stepIndex] ?? null;
 
-  // resolve which string to show in the visualiser
-  const visStringVar = useMemo(() => {
-    if (!step) return null;
-    return firstStringVar(step.variables);
-  }, [step]);
-  const visString = visStringVar?.value ?? '';
+  // active construct context (for / while / if) attached by the tracer
+  const activeCtx = step?.ctx ?? null;
 
   const incrementalStdout = useMemo(() => {
     if (!debugging || steps.length === 0) return '';
@@ -472,52 +698,9 @@ export function CodeSpace() {
             </div>
           ) : (
             <>
-              {visString ? (
-                <div className={styles.dbgStringHero}>
-                  <div className={styles.dbgStrCaption}>
-                    <code>{visStringVar?.name ?? 'string'}</code>
-                    <span className={styles.dbgLenTag}>length {visString.length}</span>
-                  </div>
-
-                  <div className={styles.stringVisualArea}>
-                    <div
-                      className={styles.indexRowSingle}
-                      style={{ gridTemplateColumns: `repeat(${visString.length}, 56px)` }}
-                    >
-                      {visString.split('').map((_, i) => (
-                        <span key={`i-${i}`}>{i}</span>
-                      ))}
-                    </div>
-
-                    <div
-                      className={styles.charGrid}
-                      style={{ gridTemplateColumns: `repeat(${visString.length}, 56px)` }}
-                    >
-                      {visString.split('').map((letter, i) => (
-                        <span
-                          key={`${letter}-${i}`}
-                          className={step?.highlight?.includes(i) ? styles.charSelected : ''}
-                        >
-                          {letter === ' ' ? '·' : letter}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div
-                      className={styles.arrowGrid}
-                      style={{ gridTemplateColumns: `repeat(${visString.length}, 56px)` }}
-                    >
-                      {visString.split('').map((_, i) => (
-                        <span key={i}>{step?.highlight?.includes(i) ? '↑' : ''}</span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className={styles.dbgNoString}>
-                  No string variable in scope yet on this step.
-                </div>
-              )}
+              {activeCtx?.type === 'for' && <ForLoopDiagram loop={activeCtx} />}
+              {activeCtx?.type === 'while' && <WhileLoopDiagram ctx={activeCtx} steps={steps} />}
+              {activeCtx?.type === 'if' && <IfStatementDiagram ctx={activeCtx} />}
 
               {step && (
                 <p className={styles.dbgStepDesc}>

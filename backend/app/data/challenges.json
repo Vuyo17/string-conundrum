@@ -1,0 +1,47 @@
+[
+  {
+    "id": "reverse-string",
+    "title": "Reverse a String",
+    "difficulty": "Easy",
+    "description": "Read a single line of text from input and print it reversed.",
+    "hint": "A slice with a negative step walks a string backwards: text[::-1].",
+    "io": { "input": "A single line of text.", "output": "The same text, reversed." },
+    "starter_code": "text = input()\n# print the reversed text\n",
+    "tests": [
+      { "input": "hello", "expected": "olleh" },
+      { "input": "Python", "expected": "nohtyP" },
+      { "input": "racecar", "expected": "racecar" },
+      { "input": "String Conundrum", "expected": "murdnunoC gnirtS" }
+    ]
+  },
+  {
+    "id": "count-vowels",
+    "title": "Count the Vowels",
+    "difficulty": "Easy",
+    "description": "Read a single line of text and print how many vowels (a, e, i, o, u) it contains. Uppercase and lowercase letters count the same.",
+    "hint": "Lowercase the text, then count the characters that appear in 'aeiou'.",
+    "io": { "input": "A single line of text.", "output": "A single integer: the vowel count." },
+    "starter_code": "text = input()\n# print the number of vowels\n",
+    "tests": [
+      { "input": "hello", "expected": "2" },
+      { "input": "PYTHON", "expected": "1" },
+      { "input": "rhythm", "expected": "0" },
+      { "input": "Education", "expected": "5" }
+    ]
+  },
+  {
+    "id": "title-case",
+    "title": "Capitalise Each Word",
+    "difficulty": "Medium",
+    "description": "Read a single line of text and print it with the first letter of every word in uppercase and the rest in lowercase. Words are separated by single spaces.",
+    "hint": "Split on spaces, capitalise each word, then join them back together with a space.",
+    "io": { "input": "A single line of words separated by spaces.", "output": "The line with each word capitalised." },
+    "starter_code": "text = input()\n# print the text with each word capitalised\n",
+    "tests": [
+      { "input": "hello world", "expected": "Hello World" },
+      { "input": "the quick brown fox", "expected": "The Quick Brown Fox" },
+      { "input": "PYTHON strings", "expected": "Python Strings" },
+      { "input": "a b c", "expected": "A B C" }
+    ]
+  }
+]

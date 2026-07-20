@@ -5,7 +5,7 @@ import { Sidebar } from "./components/Sidebar";
 import { Modules } from "./pages/Modules";
 import { Visualiser } from "./pages/Visualiser";
 import { CodeSpace } from "./pages/CodeSpace";
-import { Exercise } from "./pages/Exercise";
+import { Challenges } from "./pages/Challenges";
 import { Leaderboard } from "./pages/Leaderboard";
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
     Modules,
     Visualiser,
     "Code Space": CodeSpace,
-    Exercise,
+    Challenges,
     Leaderboard,
   }[screen];
 

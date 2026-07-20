@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  LayoutGrid, Eye, Code2, Dumbbell, Trophy, Sparkles,
+  LayoutGrid, Eye, Code2, Target, Trophy, Sparkles,
 } from 'lucide-react';
 import styles from '../styles/App.module.css';
 
@@ -8,12 +8,12 @@ const NAV_ICONS = {
   Modules: LayoutGrid,
   Visualiser: Eye,
   'Code Space': Code2,
-  Exercise: Dumbbell,
+  Challenges: Target,
   Leaderboard: Trophy,
 };
 
 export function Sidebar({ screen, setScreen }) {
-  const items = ['Modules', 'Visualiser', 'Code Space', 'Exercise', 'Leaderboard'];
+  const items = ['Modules', 'Visualiser', 'Code Space', 'Challenges', 'Leaderboard'];
   return (
     <aside className={styles.sidebar}>
       <div className={styles.sideStreakBanner}>
