@@ -43,5 +43,156 @@
       { "input": "PYTHON strings", "expected": "Python Strings" },
       { "input": "a b c", "expected": "A B C" }
     ]
+  },
+  {
+    "id": "palindrome-check",
+    "title": "Palindrome Check",
+    "difficulty": "Easy",
+    "description": "Read a single line of text and print True if it reads the same forwards and backwards, otherwise print False. Ignore letter case.",
+    "hint": "Lowercase the text, then compare it to its reverse: text == text[::-1].",
+    "io": { "input": "A single line of text.", "output": "True or False." },
+    "starter_code": "text = input()\n# print True if text is a palindrome (case-insensitive), else False\n",
+    "tests": [
+      { "input": "racecar", "expected": "True" },
+      { "input": "Hello", "expected": "False" },
+      { "input": "Level", "expected": "True" },
+      { "input": "noon", "expected": "True" },
+      { "input": "python", "expected": "False" }
+    ]
+  },
+  {
+    "id": "count-words",
+    "title": "Count the Words",
+    "difficulty": "Easy",
+    "description": "Read a single line of text and print how many words it contains. Words are separated by one or more spaces.",
+    "hint": "The split() method with no arguments breaks text into a list of words; len() counts them.",
+    "io": { "input": "A single line of text.", "output": "A single integer: the word count." },
+    "starter_code": "text = input()\n# print the number of words\n",
+    "tests": [
+      { "input": "hello world", "expected": "2" },
+      { "input": "one", "expected": "1" },
+      { "input": "the quick brown fox", "expected": "4" },
+      { "input": "a b c d e", "expected": "5" }
+    ]
+  },
+  {
+    "id": "shout-uppercase",
+    "title": "Shout It Out",
+    "difficulty": "Easy",
+    "description": "Read a single line of text and print it entirely in uppercase.",
+    "hint": "Strings have an .upper() method that returns an uppercase copy.",
+    "io": { "input": "A single line of text.", "output": "The text in uppercase." },
+    "starter_code": "text = input()\n# print the text in uppercase\n",
+    "tests": [
+      { "input": "hello", "expected": "HELLO" },
+      { "input": "Python", "expected": "PYTHON" },
+      { "input": "MixEd case", "expected": "MIXED CASE" },
+      { "input": "abc123", "expected": "ABC123" }
+    ]
+  },
+  {
+    "id": "kebab-case",
+    "title": "Kebab Case",
+    "difficulty": "Easy",
+    "description": "Read a single line of text and print it with every space replaced by a hyphen ('-').",
+    "hint": "The .replace(old, new) method swaps every occurrence of a substring.",
+    "io": { "input": "A single line of text.", "output": "The text with spaces replaced by hyphens." },
+    "starter_code": "text = input()\n# replace spaces with hyphens and print\n",
+    "tests": [
+      { "input": "hello world", "expected": "hello-world" },
+      { "input": "a b c", "expected": "a-b-c" },
+      { "input": "python", "expected": "python" },
+      { "input": "one two three", "expected": "one-two-three" }
+    ]
+  },
+  {
+    "id": "first-and-last",
+    "title": "First and Last",
+    "difficulty": "Easy",
+    "description": "Read a single line of text and print its first and last character joined together (no space between them).",
+    "hint": "Index 0 is the first character; index -1 is the last. Concatenate them with +.",
+    "io": { "input": "A single line of text.", "output": "Two characters: first + last." },
+    "starter_code": "text = input()\n# print the first and last character together\n",
+    "tests": [
+      { "input": "hello", "expected": "ho" },
+      { "input": "Python", "expected": "Pn" },
+      { "input": "code", "expected": "ce" },
+      { "input": "abcdef", "expected": "af" }
+    ]
+  },
+  {
+    "id": "count-character",
+    "title": "Count a Character",
+    "difficulty": "Medium",
+    "description": "Read two lines of input: the first line is a single character, the second line is a piece of text. Print how many times the character appears in the text.",
+    "hint": "Read both lines with two input() calls, then use text.count(char).",
+    "io": { "input": "Line 1: a character. Line 2: the text.", "output": "A single integer: the count." },
+    "starter_code": "char = input()\ntext = input()\n# print how many times char appears in text\n",
+    "tests": [
+      { "input": "l\nhello world", "expected": "3" },
+      { "input": "o\nfoo boo", "expected": "4" },
+      { "input": "a\nbanana", "expected": "3" },
+      { "input": "z\nhello", "expected": "0" }
+    ]
+  },
+  {
+    "id": "remove-vowels",
+    "title": "Remove the Vowels",
+    "difficulty": "Medium",
+    "description": "Read a single line of text and print it with every vowel (a, e, i, o, u) removed. Removal is case-insensitive.",
+    "hint": "Build a new string from the characters whose lowercase form is not in 'aeiou'.",
+    "io": { "input": "A single line of text.", "output": "The text with all vowels removed." },
+    "starter_code": "text = input()\n# print the text with all vowels removed\n",
+    "tests": [
+      { "input": "hello", "expected": "hll" },
+      { "input": "education", "expected": "dctn" },
+      { "input": "python", "expected": "pythn" },
+      { "input": "aeiou", "expected": "" }
+    ]
+  },
+  {
+    "id": "acronym",
+    "title": "Make an Acronym",
+    "difficulty": "Medium",
+    "description": "Read a single line of words and print an acronym made from the first letter of each word, all in uppercase.",
+    "hint": "Split the text into words, take word[0] from each, uppercase it, then join them.",
+    "io": { "input": "A single line of words separated by spaces.", "output": "The uppercase acronym." },
+    "starter_code": "text = input()\n# print the acronym (first letter of each word, uppercase)\n",
+    "tests": [
+      { "input": "hyper text markup language", "expected": "HTML" },
+      { "input": "portable document format", "expected": "PDF" },
+      { "input": "as soon as possible", "expected": "ASAP" },
+      { "input": "for your information", "expected": "FYI" }
+    ]
+  },
+  {
+    "id": "is-anagram",
+    "title": "Anagram Detector",
+    "difficulty": "Medium",
+    "description": "Read two lines of text and print True if they are anagrams of each other, otherwise print False. Ignore letter case and spaces.",
+    "hint": "Lowercase both, strip out spaces, then compare their sorted characters.",
+    "io": { "input": "Line 1 and line 2: two pieces of text.", "output": "True or False." },
+    "starter_code": "first = input()\nsecond = input()\n# print True if the two are anagrams (ignore case & spaces)\n",
+    "tests": [
+      { "input": "listen\nsilent", "expected": "True" },
+      { "input": "hello\nworld", "expected": "False" },
+      { "input": "rail safety\nfairy tales", "expected": "True" },
+      { "input": "abc\nabd", "expected": "False" }
+    ]
+  },
+  {
+    "id": "run-length-encode",
+    "title": "Run-Length Encoding",
+    "difficulty": "Hard",
+    "description": "Read a single line of text and print its run-length encoding: each run of the same character is replaced by that character followed by the run length. For example, 'aaabbc' becomes 'a3b2c1'.",
+    "hint": "Walk the string, grouping consecutive equal characters, and append the character plus its count.",
+    "io": { "input": "A single line of text.", "output": "The run-length encoded string." },
+    "starter_code": "text = input()\n# print the run-length encoding, e.g. aaabb -> a3b2\n",
+    "tests": [
+      { "input": "aaabbc", "expected": "a3b2c1" },
+      { "input": "abc", "expected": "a1b1c1" },
+      { "input": "aaaa", "expected": "a4" },
+      { "input": "xxyz", "expected": "x2y1z1" }
+    ]
   }
 ]

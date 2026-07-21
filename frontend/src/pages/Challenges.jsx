@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Trophy, Play, CheckCircle2, XCircle, Lightbulb, Sparkles, RotateCcw, TerminalSquare,
+  Trophy, Play, CheckCircle2, XCircle, Lightbulb, RotateCcw, TerminalSquare, Search,
 } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { getApiUrl } from '../config/api';
@@ -56,6 +56,8 @@ export function Challenges() {
   const [solved, setSolved] = useState(() => new Set());
   const [showHint, setShowHint] = useState(false);
   const [running, setRunning] = useState(false);
+  const [query, setQuery] = useState('');
+  const [diffFilter, setDiffFilter] = useState('All');
 
   const textareaRef = useRef(null);
   const highlightRef = useRef(null);
@@ -88,6 +90,23 @@ export function Challenges() {
   const code = challenge ? (codeById[challenge.id] ?? '') : '';
   const result = challenge ? resultById[challenge.id] ?? null : null;
   const highlighted = useMemo(() => highlightPython(code), [code]);
+
+  const counts = useMemo(() => {
+    const by = { All: challenges.length, Easy: 0, Medium: 0, Hard: 0 };
+    challenges.forEach((c) => { by[c.difficulty] = (by[c.difficulty] ?? 0) + 1; });
+    return by;
+  }, [challenges]);
+
+  const visibleChallenges = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return challenges.filter((c) => {
+      const matchesQuery = !q
+        || c.title.toLowerCase().includes(q)
+        || c.description.toLowerCase().includes(q);
+      const matchesDiff = diffFilter === 'All' || c.difficulty === diffFilter;
+      return matchesQuery && matchesDiff;
+    });
+  }, [challenges, query, diffFilter]);
 
   useEffect(() => { setShowHint(false); }, [activeId]);
 
@@ -156,6 +175,7 @@ export function Challenges() {
   }
 
   const solvedCount = solved.size;
+  const pct = challenges.length ? Math.round((solvedCount / challenges.length) * 100) : 0;
 
   return (
     <div className={styles.challengeScreenLc}>
@@ -168,39 +188,75 @@ export function Challenges() {
             <p>LeetCode-style coding problems with stdin/stdout test cases.</p>
           </div>
         </div>
-        <div className={styles.challengeScoreLc}>
-          <Sparkles size={16} />
-          <span><b>{solvedCount}</b> of {challenges.length} solved</span>
+        <div className={styles.challengeProgressLc}>
+          <div className={styles.challengeProgressTopLc}>
+            <span className={styles.challengeProgressLabelLc}>Your progress</span>
+            <span className={styles.challengeProgressCountLc}>
+              <b>{solvedCount}</b> / {challenges.length} solved
+            </span>
+          </div>
+          <div className={styles.progressTrackLc}>
+            <div className={styles.progressFillLc} style={{ width: `${pct}%` }} />
+          </div>
         </div>
       </header>
 
-      {/* ── challenge tabs ── */}
-      <div className={styles.challengeTabsLc}>
-        {challenges.map((c, i) => {
-          const isSolved = solved.has(c.id);
-          return (
-            <button
-              key={c.id}
-              className={`${styles.challengeTabLc} ${c.id === activeId ? styles.challengeTabActiveLc : ''}`}
-              onClick={() => setActiveId(c.id)}
-            >
-              <span className={styles.challengeTabNoLc}>
-                {isSolved ? <CheckCircle2 size={16} /> : i + 1}
-              </span>
-              <span className={styles.challengeTabTextLc}>
-                <strong>{c.title}</strong>
-                <span className={`${styles.challengeDiffLc} ${styles[`diff${c.difficulty}`] ?? ''}`}>
-                  {c.difficulty}
-                </span>
-              </span>
-            </button>
-          );
-        })}
-      </div>
+      <div className={styles.challengeWorkspaceLc}>
+        {/* ── left rail: challenge browser ── */}
+        <aside className={styles.challengeBrowserLc}>
+          <div className={styles.browserSearchLc}>
+            <Search size={15} />
+            <input
+              className={styles.browserSearchInputLc}
+              placeholder="Search challenges…"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </div>
 
-      <main className={styles.challengeGridLc}>
-        {/* ── left: prompt + editor ── */}
-        <section className={styles.challengeLeftLc}>
+          <div className={styles.browserFiltersLc}>
+            {['All', 'Easy', 'Medium', 'Hard'].map((d) => (
+              <button
+                key={d}
+                className={`${styles.filterChipLc} ${diffFilter === d ? styles.filterChipActiveLc : ''}`}
+                onClick={() => setDiffFilter(d)}
+              >
+                {d}<span className={styles.filterCountLc}>{counts[d] ?? 0}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className={styles.browserListLc}>
+            {visibleChallenges.length === 0 && (
+              <p className={styles.browserEmptyLc}>No challenges match your search.</p>
+            )}
+            {visibleChallenges.map((c) => {
+              const isSolved = solved.has(c.id);
+              const active = c.id === activeId;
+              const idx = challenges.findIndex((x) => x.id === c.id);
+              return (
+                <button
+                  key={c.id}
+                  className={`${styles.browserItemLc} ${active ? styles.browserItemActiveLc : ''}`}
+                  onClick={() => setActiveId(c.id)}
+                >
+                  <span className={`${styles.browserItemNoLc} ${isSolved ? styles.browserItemNoDoneLc : ''}`}>
+                    {isSolved ? <CheckCircle2 size={15} /> : idx + 1}
+                  </span>
+                  <span className={styles.browserItemBodyLc}>
+                    <span className={styles.browserItemTitleLc}>{c.title}</span>
+                    <span className={`${styles.challengeDiffLc} ${styles[`diff${c.difficulty}`] ?? ''}`}>
+                      {c.difficulty}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </aside>
+
+        {/* ── main working area ── */}
+        <main className={styles.challengeMainLc}>
           <article className={styles.challengePromptLc}>
             <div className={styles.challengePromptHeadLc}>
               <h2>{challenge.title}</h2>
@@ -227,103 +283,105 @@ export function Challenges() {
             {showHint && <p className={styles.hintTextLc}>{challenge.hint}</p>}
           </article>
 
-          <article className={styles.challengeEditorCardLc}>
-            <div className={styles.challengeEditorHeadLc}>
-              <span className={styles.challengeFnTagLc}>Python 3 · stdin/stdout</span>
-              <button className={styles.resetBtnLc} onClick={handleReset} title="Reset to starter code">
-                <RotateCcw size={15} /> Reset
-              </button>
-            </div>
-            <div className={styles.challengeEditorBoxLc}>
-              <pre
-                ref={highlightRef}
-                className={styles.challengeHighlightLc}
-                aria-hidden="true"
-                dangerouslySetInnerHTML={{ __html: `${highlighted}\n` }}
-              />
-              <textarea
-                ref={textareaRef}
-                className={styles.challengeTextareaLc}
-                value={code}
-                onChange={(e) => updateCode(e.target.value)}
-                onScroll={(e) => syncScroll(e.target)}
-                onKeyDown={handleKeyDown}
-                spellCheck={false}
-              />
-            </div>
-            <div className={styles.challengeRunRowLc}>
-              <button className={styles.runTestsBtnLc} onClick={handleRun} disabled={running}>
-                <Play size={17} fill="currentColor" /> {running ? 'Running…' : 'Run Tests'}
-              </button>
-            </div>
-          </article>
-        </section>
+          <div className={styles.challengeWorkGridLc}>
+            {/* editor */}
+            <article className={styles.challengeEditorCardLc}>
+              <div className={styles.challengeEditorHeadLc}>
+                <span className={styles.challengeFnTagLc}>Python 3 · stdin/stdout</span>
+                <button className={styles.resetBtnLc} onClick={handleReset} title="Reset to starter code">
+                  <RotateCcw size={15} /> Reset
+                </button>
+              </div>
+              <div className={styles.challengeEditorBoxLc}>
+                <pre
+                  ref={highlightRef}
+                  className={styles.challengeHighlightLc}
+                  aria-hidden="true"
+                  dangerouslySetInnerHTML={{ __html: `${highlighted}\n` }}
+                />
+                <textarea
+                  ref={textareaRef}
+                  className={styles.challengeTextareaLc}
+                  value={code}
+                  onChange={(e) => updateCode(e.target.value)}
+                  onScroll={(e) => syncScroll(e.target)}
+                  onKeyDown={handleKeyDown}
+                  spellCheck={false}
+                />
+              </div>
+              <div className={styles.challengeRunRowLc}>
+                <button className={styles.runTestsBtnLc} onClick={handleRun} disabled={running}>
+                  <Play size={17} fill="currentColor" /> {running ? 'Running…' : 'Run Tests'}
+                </button>
+              </div>
+            </article>
 
-        {/* ── right: test results ── */}
-        <section className={styles.challengeResultsLc}>
-          <div className={styles.resultsHeadLc}>
-            <h2>Test Cases</h2>
-            {result && result.results?.length > 0 && (
-              <span className={`${styles.resultsScoreLc} ${result.all_passed ? styles.resultsScorePass : ''}`}>
-                {result.passed} / {result.total} passing
-              </span>
-            )}
-          </div>
-
-          {result?.all_passed && (
-            <div className={styles.challengeWinLc}>
-              <Trophy size={20} /> All tests passed, challenge solved! 🎉
-            </div>
-          )}
-
-          {result?.stderr && !result.results?.some((r) => r.passed) && result.results?.length === 0 && (
-            <pre className={styles.challengeErrorLc}>{result.stderr}</pre>
-          )}
-
-          <div className={styles.testListLc}>
-            {(result?.results?.length
-              ? result.results
-              : challenge.tests.map((t) => ({ ...t, pending: true }))
-            ).map((t, i) => {
-              const state = t.pending ? styles.testPending : t.passed ? styles.testPass : styles.testFail;
-              return (
-                <div key={i} className={`${styles.testCardLc} ${state}`}>
-                  <div className={styles.testCardHeadLc}>
-                    <span className={styles.testStatusLc}>
-                      {t.pending ? (
-                        <span className={styles.testDotLc} />
-                      ) : t.passed ? (
-                        <CheckCircle2 size={18} />
-                      ) : (
-                        <XCircle size={18} />
-                      )}
-                    </span>
-                    <code className={styles.testCallLc}>stdin test #{i + 1}</code>
-                  </div>
-                  <div className={styles.testRowsLc}>
-                    <div className={styles.testRowLc}>
-                      <span className={styles.testLabelLc}>input</span>
-                      <code>{formatValue(t.input)}</code>
-                    </div>
-                    <div className={styles.testRowLc}>
-                      <span className={styles.testLabelLc}>expected</span>
-                      <code>{formatValue(t.expected)}</code>
-                    </div>
-                    {!t.pending && (
-                      <div className={styles.testRowLc}>
-                        <span className={styles.testLabelLc}>{t.error ? 'error' : 'got'}</span>
-                        <code className={t.passed ? '' : styles.testGotBad}>
-                          {t.error ? t.error : formatValue(t.actual)}
-                        </code>
-                      </div>
-                    )}
-                  </div>
+            {/* test results */}
+            <section className={styles.challengeResultsLc}>
+              <div className={styles.resultsHeadLc}>
+                <h2>Test Cases</h2>
+                {result && result.results?.length > 0 && (
+                  <span className={`${styles.resultsScoreLc} ${result.all_passed ? styles.resultsScorePass : ''}`}>
+                    {result.passed} / {result.total} passing
+                  </span>
+                )}
+              </div>
+              {result?.all_passed && (
+                <div className={styles.challengeWinLc}>
+                  <Trophy size={20} /> All tests passed — challenge solved! 🎉
                 </div>
-              );
-            })}
+              )}
+
+              {result?.stderr && !result.results?.some((r) => r.passed) && result.results?.length === 0 && (
+                <pre className={styles.challengeErrorLc}>{result.stderr}</pre>
+              )}
+
+              <div className={styles.testListLc}>
+                {(result?.results?.length
+                  ? result.results
+                  : challenge.tests.map((t) => ({ ...t, pending: true }))
+                ).map((t, i) => {
+                  const state = t.pending ? styles.testPending : t.passed ? styles.testPass : styles.testFail;
+                  return (
+                    <div key={i} className={`${styles.testCardLc} ${state}`}>
+                      <div className={styles.testCardHeadLc}>
+                        <span className={styles.testStatusLc}>
+                          {t.pending ? (
+                            <span className={styles.testDotLc} />
+                          ) : t.passed ? (
+                            <CheckCircle2 size={18} />
+                          ) : (
+                            <XCircle size={18} />
+                          )}
+                        </span>
+                        <code className={styles.testCallLc}>stdin test #{i + 1}</code>
+                      </div>
+                      <div className={styles.testRowsLc}>
+                        <div className={styles.testRowLc}>
+                          <span className={styles.testLabelLc}>input</span>
+                          <code>{formatValue(t.input)}</code>
+                        </div>
+                        <div className={styles.testRowLc}>
+                          <span className={styles.testLabelLc}>expected</span>
+                          <code>{formatValue(t.expected)}</code>
+                        </div>
+                        {!t.pending && (
+                          <div className={styles.testRowLc}>
+                            <span className={styles.testLabelLc}>{t.error ? 'error' : 'got'}</span>
+                            <code className={t.passed ? '' : styles.testGotBad}>
+                              {t.error ? t.error : formatValue(t.actual)}
+                            </code>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
           </div>
-        </section>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

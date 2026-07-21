@@ -1,10 +1,10 @@
 import React from 'react';
-import { Bell, Search, BookOpen, LogOut } from 'lucide-react';
+import { Bell, Search, BookOpen } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { useAuth } from '../context/AuthContext';
 
 export function TopBar({ setScreen }) {
-  const { user, isGuest, canAccess, signOut } = useAuth();
+  const { user, isGuest, canAccess } = useAuth();
 
   return (
     <header className={styles.topbar}>
@@ -42,14 +42,6 @@ export function TopBar({ setScreen }) {
         <div className={styles.avatar} title={user?.name}>
           {user?.initials ?? '?'}
         </div>
-        <button
-          className={styles.signOutBtn}
-          onClick={signOut}
-          title={isGuest ? 'Sign in' : 'Sign out'}
-        >
-          <LogOut size={15} />
-          {isGuest ? 'Sign in' : 'Sign out'}
-        </button>
       </div>
     </header>
   );

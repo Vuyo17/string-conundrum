@@ -373,6 +373,44 @@ input {
   color: var(--fg);
 }
 
+.sideBottomSection {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.sideSectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px 8px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.sideSettingsList {
+  display: grid;
+  gap: 2px;
+}
+
+.sideSecondaryBtn {
+  color: color-mix(in hsl, var(--muted) 86%, var(--fg));
+}
+
+.sideSignOutBtn {
+  margin-top: 8px;
+  border: 1px solid var(--border) !important;
+  background: var(--surface) !important;
+  color: var(--fg) !important;
+}
+
+.sideSignOutBtn:hover {
+  background: color-mix(in hsl, var(--surface) 85%, var(--accent)) !important;
+}
+
 .sideActive {
   background: var(--primary) !important;
   color: var(--primary-fg) !important;
@@ -4223,6 +4261,272 @@ p {
   color: #334155;
   font-size: 13px;
 }
+
+/* header progress meter */
+.challengeProgressLc {
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.challengeProgressTopLc {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.challengeProgressLabelLc {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+}
+
+.challengeProgressCountLc {
+  font-size: 13px;
+  color: #475569;
+}
+
+.challengeProgressCountLc b {
+  color: #0f766e;
+  font-size: 15px;
+}
+
+.progressTrackLc {
+  height: 8px;
+  border-radius: 999px;
+  background: #eef2f6;
+  overflow: hidden;
+}
+
+.progressFillLc {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0f766e, #14b8a6);
+  transition: width 300ms ease;
+}
+
+/* two-panel workspace: browser rail + working area */
+.challengeWorkspaceLc {
+  display: grid;
+  grid-template-columns: 288px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+@media (max-width: 1000px) {
+  .challengeWorkspaceLc {
+    grid-template-columns: 1fr;
+  }
+}
+
+.challengeBrowserLc {
+  position: sticky;
+  top: 78px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #e6e9ef;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 6px 20px hsl(214 22% 15% / 0.05);
+  max-height: calc(100vh - 100px);
+}
+
+@media (max-width: 1000px) {
+  .challengeBrowserLc {
+    position: static;
+    max-height: none;
+  }
+}
+
+.browserSearchLc {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 11px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #94a3b8;
+}
+
+.browserSearchLc:focus-within {
+  border-color: #14b8a6;
+  background: #fff;
+  box-shadow: 0 0 0 3px hsl(174 71% 40% / 0.12);
+}
+
+.browserSearchInputLc {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  width: 100%;
+  font-size: 13.5px;
+  color: #0f172a;
+}
+
+.browserFiltersLc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filterChipLc {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #64748b;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 130ms ease;
+}
+
+.filterChipLc:hover {
+  border-color: #cbd5e1;
+}
+
+.filterChipActiveLc {
+  border-color: #0f766e;
+  background: #0f766e;
+  color: #fff;
+}
+
+.filterCountLc {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: hsl(210 20% 96%);
+  color: #64748b;
+  font-size: 10.5px;
+  font-weight: 800;
+}
+
+.filterChipActiveLc .filterCountLc {
+  background: hsl(0 0% 100% / 0.24);
+  color: #fff;
+}
+
+.browserListLc {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  margin: 0 -6px;
+  padding: 0 6px;
+}
+
+.browserEmptyLc {
+  margin: 6px 0;
+  color: #94a3b8;
+  font-size: 13px;
+  text-align: center;
+}
+
+.browserItemLc {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: all 130ms ease;
+}
+
+.browserItemLc:hover {
+  background: #f6f8fb;
+}
+
+.browserItemActiveLc {
+  border-color: #cdeede;
+  background: #f0fbf7;
+}
+
+.browserItemNoLc {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.browserItemActiveLc .browserItemNoLc {
+  background: #fff;
+  color: #0f766e;
+  box-shadow: inset 0 0 0 1px #cdeede;
+}
+
+.browserItemNoDoneLc {
+  background: #10755b !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+
+.browserItemBodyLc {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.browserItemTitleLc {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.browserItemActiveLc .browserItemTitleLc {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+/* main working area */
+.challengeMainLc {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.challengeWorkGridLc {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 12px;
+  align-items: start;
+}
+
+@media (max-width: 1240px) {
+  .challengeWorkGridLc {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 .challengeTabsLc {
   display: grid;
