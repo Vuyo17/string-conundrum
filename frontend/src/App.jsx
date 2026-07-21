@@ -9,6 +9,7 @@ import { Challenges } from "./pages/Challenges";
 import { Leaderboard } from "./pages/Leaderboard";
 import { Auth } from "./pages/Auth";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { ThemeProvider } from "./context/ThemeContext";
 
 function Shell() {
   const { isAuthed, isGuest, canAccess } = useAuth();
@@ -47,9 +48,11 @@ function Shell() {
 
 function App() {
   return (
-    <AuthProvider>
-      <Shell />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <Shell />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
