@@ -30,7 +30,7 @@ export const modules = [
     title: "String Immutability",
     desc: "See why strings cannot be changed in place.",
     progress: 0,
-    status: "Not started",
+    status: "Locked",
     time: "25 min",
   },
   {
@@ -38,7 +38,7 @@ export const modules = [
     title: "String Comparison",
     desc: "Compare strings using operators.",
     progress: 0,
-    status: "Not started",
+    status: "Locked",
     time: "20 min",
   },
   {
@@ -46,7 +46,7 @@ export const modules = [
     title: "Looping Through Strings",
     desc: "Iterate over characters in a string.",
     progress: 0,
-    status: "Not started",
+    status: "Locked",
     time: "30 min",
   },
   {
@@ -54,7 +54,7 @@ export const modules = [
     title: "String Methods",
     desc: "Explore built-in string methods.",
     progress: 0,
-    status: "Not started",
+    status: "Locked",
     time: "35 min",
   },
   {
@@ -62,7 +62,7 @@ export const modules = [
     title: "String Formatting",
     desc: "Format strings in various ways.",
     progress: 0,
-    status: "Not started",
+    status: "Locked",
     time: "35 min",
   },
 ];
