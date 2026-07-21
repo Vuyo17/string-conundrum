@@ -1,11 +1,9 @@
-// Module content: Introduction to Strings — aligned to CSC1015F lecture 5A
+// Module content: Introduction to Strings: aligned to CSC1015F lecture 5A
 // (string literals, escape sequences, Unicode/ord/chr, + * len).
 
 export const introModule = {
   id: 'intro',
   title: 'Introduction to Strings',
-  tagline:
-    'Text is data too. Learn how Python stores words as sequences of numbered characters, and the basic tools for building and measuring them.',
   minutes: 15,
   level: 'Beginner',
   prerequisite: null,
@@ -24,7 +22,7 @@ export const introModule = {
       blocks: [
         {
           kind: 'p',
-          text: 'A **string** is a sequence of characters: letters, digits, spaces and symbols, in a fixed order. Think of it as beads on a wire — each bead is one character, and the wire keeps them in order.',
+          text: 'A **string** is a sequence of characters: letters, digits, spaces and symbols, in a fixed order. Think of it as beads on a wire, where each bead is one character, and the wire keeps them in order.',
         },
         {
           kind: 'code',
@@ -41,7 +39,7 @@ export const introModule = {
           kind: 'callout',
           tone: 'tip',
           title: 'Quotes inside quotes',
-          text: 'A string like `it\'s cold` breaks single quotes — Python thinks the string ends at the apostrophe. Wrap it in double quotes instead: `"it\'s cold"`.',
+          text: 'A string like `it\'s cold` breaks single quotes, because Python thinks the string ends at the apostrophe. Wrap it in double quotes instead: `"it\'s cold"`.',
         },
       ],
     },
@@ -55,7 +53,7 @@ export const introModule = {
         },
         {
           kind: 'code',
-          code: 'print("Line 1\\nLine 2")   # \\n starts a new line\nprint("A\\\\B")             # prints A\\B  (one backslash)\nlen("Cape\\nTown")         # 9, not 10 — \\n is ONE character',
+          code: 'print("Line 1\\nLine 2")   # \\n starts a new line\nprint("A\\\\B")             # prints A\\B  (one backslash)\nlen("Cape\\nTown")         # 9, not 10, \\n is ONE character',
         },
         {
           kind: 'callout',
@@ -71,7 +69,7 @@ export const introModule = {
       blocks: [
         {
           kind: 'p',
-          text: 'The computer never stores letters — it stores numbers. **Unicode** is the agreed mapping between numbers and symbols: 65 is `A`, 66 is `B`, and 97 is `a`. Two functions move between the two worlds.',
+          text: 'The computer never stores letters; it stores numbers. **Unicode** is the agreed mapping between numbers and symbols: 65 is `A`, 66 is `B`, and 97 is `a`. Two functions move between the two worlds.',
         },
         {
           kind: 'table',
@@ -91,7 +89,7 @@ export const introModule = {
           kind: 'callout',
           tone: 'info',
           title: 'Numbers that look like text',
-          text: '`int("1234")` converts a numeric string to a real integer; `str(1234)` goes the other way. Until you convert, `"10"` is just two characters — it is never equal to the number `10`.',
+          text: '`int("1234")` converts a numeric string to a real integer; `str(1234)` goes the other way. Until you convert, `"10"` is just two characters, and it is never equal to the number `10`.',
         },
       ],
     },
@@ -107,7 +105,7 @@ export const introModule = {
           kind: 'callout',
           tone: 'warn',
           title: "Common mistake: expecting * to do maths on digit strings",
-          text: "`'23.4' * 2` is `'23.423.4'`, not 46.8. The quotes make it a string, and * repeats strings — it never adds their digits. This exact trap has appeared in a theory test.",
+          text: "`'23.4' * 2` is `'23.423.4'`, not 46.8. The quotes make it a string, and * repeats strings, and it never adds their digits. This exact trap has appeared in a theory test.",
         },
         {
           kind: 'callout',
@@ -173,7 +171,7 @@ export const introModule = {
           state: 'ord("c") = 99',
         },
         {
-          text: 'Adding 1 gives 100 — plain integer arithmetic.',
+          text: 'Adding 1 gives 100, just plain integer arithmetic.',
           highlight: [],
           state: '99 + 1 = 100',
         },
@@ -191,7 +189,7 @@ export const introModule = {
     type: 'indexing',
     title: 'Character Explorer',
     description:
-      'Every character in a string sits at a numbered position. Type a string and an index to see how Python reaches each character — the next module covers this in depth.',
+      'Every character in a string sits at a numbered position. Type a string and an index to see how Python reaches each character, and the next module covers this in depth.',
     defaults: { text: 'howzit', index: '0' },
   },
 

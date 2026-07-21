@@ -1,11 +1,9 @@
-// Module content: String Formatting — .format() with positional arguments,
+// Module content: String Formatting: .format() with positional arguments,
 // alignment and width, float precision, and f-strings (with the missing-f trap).
 
 export const formattingModule = {
   id: 'formatting',
   title: 'String Formatting',
-  tagline:
-    'A template with holes, and values to pour into them. Master the format language — position, alignment, width, precision — and the output questions read themselves.',
   minutes: 35,
   level: 'Intermediate',
   prerequisite: 'String Methods',
@@ -24,7 +22,7 @@ export const formattingModule = {
       blocks: [
         {
           kind: 'p',
-          text: 'Think of a **template** as a form letter: the fixed text is written once, with numbered holes where values get poured in. `{0}` means "the first argument of format()", `{1}` the second — and the same hole may be used more than once, in any order.',
+          text: 'Think of a **template** as a form letter: the fixed text is written once, with numbered holes where values get poured in. `{0}` means "the first argument of format()", `{1}` the second, and the same hole may be used more than once, in any order.',
         },
         {
           kind: 'code',
@@ -75,13 +73,13 @@ export const formattingModule = {
         },
         {
           kind: 'code',
-          code: '"{0:6.2f}".format(3.14159)   # \'  3.14\'\n"{0:5.3f}".format(1.23456789) # \'1.235\'  — rounded up\n"{0:.2f}".format(7)          # \'7.00\'   — width optional',
+          code: '"{0:6.2f}".format(3.14159)   # \'  3.14\'\n"{0:5.3f}".format(1.23456789) # \'1.235\'  (rounded up)\n"{0:.2f}".format(7)          # \'7.00\'   (width optional)',
         },
         {
           kind: 'callout',
           tone: 'tip',
           title: 'Count the field like an examiner',
-          text: "For '  3.14': the text 3.14 is 4 characters, the width is 6, so 2 spaces pad the left. Width counts EVERYTHING — digits, the decimal point and the sign.",
+          text: "For '  3.14': the text 3.14 is 4 characters, the width is 6, so 2 spaces pad the left. Width counts EVERYTHING: digits, the decimal point and the sign.",
         },
       ],
     },
@@ -101,7 +99,7 @@ export const formattingModule = {
           kind: 'callout',
           tone: 'warn',
           title: 'Common mistake: forgetting the f prefix',
-          text: 'Without the f, the string is ordinary text and `{name}` prints exactly as typed. No error, no substitution — which is precisely why it makes such a good exam question.',
+          text: 'Without the f, the string is ordinary text and `{name}` prints exactly as typed. No error, no substitution, which is precisely why it makes such a good exam question.',
         },
       ],
     },
@@ -116,7 +114,7 @@ export const formattingModule = {
             '`<`, `>`, `^` align the value left, right or centre inside the given width.',
             '`W.Pf` gives a float P rounded decimals inside a field W wide; numbers right-align by default.',
             'f-strings evaluate expressions in the braces: `f"R{amount:.2f}"`.',
-            'Without the f prefix, braces are just characters — `{name}` prints literally.',
+            'Without the f prefix, braces are just characters, so `{name}` prints literally.',
           ],
         },
       ],
@@ -127,12 +125,12 @@ export const formattingModule = {
     {
       id: 'ex-align',
       title: 'Reading a positional, centred hole',
-      intro: 'One hole, two arguments, a centre-align — every part of the format language in one line.',
+      intro: 'One hole, two arguments, a centre-align: every part of the format language in one line.',
       string: ' BB ',
       code: 'print("{1:^4}".format("AA", "BB"))',
       steps: [
         {
-          text: 'The 1 before the colon picks argument number 1 — counting from zero, that is "BB". "AA" is never used.',
+          text: 'The 1 before the colon picks argument number 1, counting from zero, that is "BB". "AA" is never used.',
           highlight: [],
           state: 'value: "BB"',
         },
@@ -157,7 +155,7 @@ export const formattingModule = {
       code: 'print("{0:6.2f}".format(3.14159))',
       steps: [
         {
-          text: 'The .2f part: keep exactly 2 digits after the decimal point, rounding — 3.14159 becomes 3.14.',
+          text: 'The .2f part: keep exactly 2 digits after the decimal point, rounding, so 3.14159 becomes 3.14.',
           highlight: [2, 3, 4, 5],
           state: 'rounded: 3.14',
         },

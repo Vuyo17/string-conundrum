@@ -24,7 +24,7 @@ export function Modules() {
     <div className={styles.screenStack}>
       <ScreenHeader
         title="Learning Modules"
-        subtitle="Master all string concepts step by step. Complete each module to unlock the next."
+        subtitle="Master all string concepts step by step. Every module is open, so jump in wherever you like."
       />
       <div className={styles.cardTopLine}>
         <span>All Modules</span>

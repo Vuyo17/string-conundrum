@@ -185,7 +185,7 @@ export function SlicingVisualizer({ config }) {
           <p className={m.vizNarration} aria-live="polite">
             {!finished && current !== null && `Collecting index ${current} → '${run.text[current]}' (step ${run.step > 0 ? '+' : ''}${run.step})`}
             {finished && run.picked.length > 0 && `Collected ${run.picked.length} character${run.picked.length === 1 ? '' : 's'} in order: indices ${run.picked.join(', ')}.`}
-            {finished && run.picked.length === 0 && 'No characters collected — the slice never moves from start towards stop.'}
+            {finished && run.picked.length === 0 && 'No characters collected, the slice never moves from start towards stop.'}
           </p>
         )}
       </div>
@@ -197,7 +197,7 @@ export function SlicingVisualizer({ config }) {
             <strong>s{run.notation} → '{resultValue}'</strong>
             <p>
               {run.picked.length === 0
-                ? 'An empty slice is not an error — slicing is forgiving where indexing is strict.'
+                ? 'An empty slice is not an error, and slicing is forgiving where indexing is strict.'
                 : run.step < 0
                   ? 'A negative step walks the string from back to front. With blanks, start defaults to the last character and stop to just before the first.'
                   : 'Start is included, stop is excluded, and step controls how far each hop moves.'}

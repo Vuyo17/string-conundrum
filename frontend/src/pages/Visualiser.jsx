@@ -129,7 +129,7 @@ function buildIfSteps(text, expression) {
       event: 'if',
       condition: expression,
       conditionResult: result,
-      description: `if ${expression}:  →  ${result ? 'True ✓ — body executes' : 'False ✗ — else branch (if any)'}`,
+      description: `if ${expression}:  →  ${result ? 'True ✓, body executes' : 'False ✗, else branch (if any)'}`,
       variables: { condition_result: result },
     },
     {
@@ -285,7 +285,7 @@ export function Visualiser() {
     <div className={styles.visualiserScreen}>
       <header className={styles.visualiserHeader}>
         <h1>String Visualiser</h1>
-        <p>Understand how Python strings work — including loops, conditions, and methods.</p>
+        <p>Understand how Python strings work, including loops, conditions, and methods.</p>
       </header>
 
       {/* ── control card ── */}
@@ -309,8 +309,8 @@ export function Visualiser() {
           <small>
             {{
               index: `Integer from -${Math.max(length, 1)} to ${Math.max(length - 1, 0)}`,
-              slice: 'start:stop:step — e.g. 1:5 or 0:10:2',
-              for_loop: 'start:stop:step — e.g. 0:13:1',
+              slice: 'start:stop:step, e.g. 1:5 or 0:10:2',
+              for_loop: 'start:stop:step, e.g. 0:13:1',
               while_loop: 'e.g. i < 5  (i starts at 0, increments by 1)',
               if_stmt: 'e.g. len(text) > 5  or  text[0] == "H"',
               method: 'upper · lower · reverse · strip · title · len()',

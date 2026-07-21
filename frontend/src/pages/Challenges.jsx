@@ -41,7 +41,7 @@ function highlightPython(code) {
 }
 
 function formatValue(value) {
-  if (value === undefined) return '—';
+  if (value === undefined) return '-';
   return JSON.stringify(value);
 }
 
@@ -272,7 +272,7 @@ export function Challenges() {
 
           {result?.all_passed && (
             <div className={styles.challengeWinLc}>
-              <Trophy size={20} /> All tests passed — challenge solved! 🎉
+              <Trophy size={20} /> All tests passed, challenge solved! 🎉
             </div>
           )}
 

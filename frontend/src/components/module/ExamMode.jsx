@@ -19,7 +19,7 @@ import { CodeBlock, InlineText } from './ContentBlocks';
 
 const STAR_BANDS = [
   { min: 85, stars: 3, badge: 'Mastered', blurb: 'Exam-ready. You could teach this.' },
-  { min: 70, stars: 2, badge: 'Proficient', blurb: 'Solid work — polish the last details below.' },
+  { min: 70, stars: 2, badge: 'Proficient', blurb: 'Solid work, polish the last details below.' },
   { min: 50, stars: 1, badge: 'Developing', blurb: 'The foundations are there. Review the misses and retry.' },
   { min: 0, stars: 0, badge: 'Keep practising', blurb: 'Revisit the lesson above, then take another attempt.' },
 ];

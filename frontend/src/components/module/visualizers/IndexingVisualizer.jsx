@@ -177,7 +177,7 @@ export function IndexingVisualizer({ config }) {
                 ? `Walking forward… ${run.walk.path[walkPos]} step${run.walk.path[walkPos] === 1 ? '' : 's'} from the start.`
                 : `Counting back… ${run.walk.path[walkPos] - run.text.length} from the end.`
             )}
-            {success && `Landed on index ${run.walk.path[run.walk.path.length - 1]} — the character '${resultChar}'.`}
+            {success && `Landed on index ${run.walk.path[run.walk.path.length - 1]}, the character '${resultChar}'.`}
             {failure && `Ran out of boxes. ${run.index} is outside the valid range.`}
           </p>
         )}
@@ -215,7 +215,7 @@ export function IndexingVisualizer({ config }) {
         <div className={m.vizIdle}>
           <Sparkles size={16} />
           Try an index like <code>0</code>, <code>{Math.max(text.length - 1, 0)}</code>,{' '}
-          <code>-1</code> — or something out of range to see what happens.
+          <code>-1</code>, or something out of range to see what happens.
         </div>
       )}
     </div>

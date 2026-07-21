@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  LayoutGrid, Eye, Code2, Dumbbell, Trophy, Sparkles, Lock, Target,
+  LayoutGrid, Eye, Code2, Trophy, Sparkles, Lock, Target,
 } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { useAuth } from '../context/AuthContext';
@@ -10,13 +10,12 @@ const NAV_ICONS = {
   Visualiser: Eye,
   'Code Space': Code2,
   Challenges: Target,
-  Exercise: Dumbbell,
   Leaderboard: Trophy,
 };
 
 export function Sidebar({ screen, setScreen }) {
   const { isGuest, canAccess, signOut } = useAuth();
-  const items = ['Modules', 'Visualiser', 'Code Space', 'Challenges', 'Exercise', 'Leaderboard'];
+  const items = ['Modules', 'Visualiser', 'Code Space', 'Challenges', 'Leaderboard'];
 
   return (
     <aside className={styles.sidebar}>

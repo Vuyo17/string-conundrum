@@ -9,6 +9,7 @@ export function ModuleCard({ module, number, onOpen }) {
   const statusClass = {
     Completed: styles.statusCompleted,
     'In progress': styles.statusInProgress,
+    'Not started': styles.statusLocked,
     Locked: styles.statusLocked,
   }[module.status];
 

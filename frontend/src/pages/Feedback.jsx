@@ -3,19 +3,19 @@ import { Target } from 'lucide-react';
 import styles from '../styles/App.module.css';
 
 function renderSubmittedAnswer(exercise, submitted) {
-  if (!exercise || !submitted) return '—';
+  if (!exercise || !submitted) return '-';
   if (exercise.type === 'mcq' || exercise.type === 'fill_blank') return submitted.answer || '(no answer)';
   if (exercise.type === 'select_all') return (submitted.answers ?? []).join(', ') || '(none selected)';
   if (exercise.type === 'write_code') return submitted.code || '(no code)';
-  return '—';
+  return '-';
 }
 
 function renderCorrectAnswer(exercise) {
-  if (!exercise) return '—';
+  if (!exercise) return '-';
   if (exercise.type === 'mcq' || exercise.type === 'fill_blank') return exercise.answer;
   if (exercise.type === 'select_all') return (exercise.answers ?? []).join(', ');
   if (exercise.type === 'write_code') return 'Any code passing all test cases';
-  return '—';
+  return '-';
 }
 
 export function Feedback({ lastAttempt }) {

@@ -1,12 +1,10 @@
-// Module content: String Length and Built-in Methods — the five core
+// Module content: String Length and Built-in Methods: the five core
 // methods (count, find, replace, lower, upper), dot notation, and the
 // find-vs-count and non-overlap traps from past papers.
 
 export const methodsModule = {
   id: 'methods',
   title: 'String Methods',
-  tagline:
-    'Strings are objects: they carry their own toolbox. Five methods do most of the work — knowing exactly what each returns is what exams test.',
   minutes: 35,
   level: 'Intermediate',
   prerequisite: 'Looping Through Strings',
@@ -25,11 +23,11 @@ export const methodsModule = {
       blocks: [
         {
           kind: 'p',
-          text: 'Every Python string is an **object** — a value that bundles data (the characters) with behaviour (its methods). Functions take the string as a parameter, like `len(s)`; methods are called ON the string with a dot, like `s.lower()`.',
+          text: 'Every Python string is an **object**, a value that bundles data (the characters) with behaviour (its methods). Functions take the string as a parameter, like `len(s)`; methods are called ON the string with a dot, like `s.lower()`.',
         },
         {
           kind: 'code',
-          code: 's = "Howzit"\nlen(s)        # function — string goes in the brackets\ns.lower()     # method  — called on the string with a dot\ns.len()       # AttributeError — len is not a method',
+          code: 's = "Howzit"\nlen(s)        # function (string goes in the brackets)\ns.lower()     # method  (called on the string with a dot)\ns.len()       # AttributeError (len is not a method)',
         },
         {
           kind: 'callout',
@@ -70,7 +68,7 @@ export const methodsModule = {
           kind: 'callout',
           tone: 'warn',
           title: 'Common mistake: expecting overlaps to count',
-          text: '`"banana".count("ana")` is 1, not 2. After matching at index 1, counting continues AFTER the match — the overlapping "ana" at index 3 is never seen.',
+          text: '`"banana".count("ana")` is 1, not 2. After matching at index 1, counting continues AFTER the match, so the overlapping "ana" at index 3 is never seen.',
         },
         {
           kind: 'callout',
@@ -91,7 +89,7 @@ export const methodsModule = {
         {
           kind: 'code',
           code: 'spell = "Alakazam"\nprint(spell.replace("aka", "oo").upper())\n# step 1: replace → "Aloozam"\n# step 2: upper   → "ALOOZAM"',
-          caption: 'Note the capital A does not match lowercase "aka" — replace is case-sensitive too.',
+          caption: 'Note the capital A does not match lowercase "aka", because replace is case-sensitive too.',
         },
         {
           kind: 'callout',
@@ -110,7 +108,7 @@ export const methodsModule = {
           items: [
             'Methods use dot notation (`s.upper()`); functions take the string as a parameter (`len(s)`).',
             '`count()` = how many (non-overlapping); `find()` = index of the first, or -1.',
-            '`replace()`, `lower()` and `upper()` all return NEW strings — the original never changes.',
+            '`replace()`, `lower()` and `upper()` all return NEW strings, and the original never changes.',
             'Chained calls resolve left to right: work out each intermediate string.',
             'Every method is case-sensitive; normalise with lower() when case should not matter.',
           ],
@@ -123,12 +121,12 @@ export const methodsModule = {
     {
       id: 'ex-chain',
       title: 'Resolving a method chain',
-      intro: 'Chained calls are just a pipeline. Trace one link at a time — never both at once.',
+      intro: 'Chained calls are just a pipeline. Trace one link at a time, never both at once.',
       string: 'Alakazam',
       code: 'spell = "Alakazam"\nprint(spell.replace("aka", "oo").upper())',
       steps: [
         {
-          text: 'First call: replace("aka", "oo"). Scan for lowercase "aka" — it starts at index 2. The capital A at index 0 cannot start a match.',
+          text: 'First call: replace("aka", "oo"). Scan for lowercase "aka", and it starts at index 2. The capital A at index 0 cannot start a match.',
           highlight: [2, 3, 4],
           state: 'match at index 2',
         },
@@ -148,7 +146,7 @@ export const methodsModule = {
     {
       id: 'ex-overlap',
       title: 'Why count() misses the overlap',
-      intro: 'A three-character search inside "banana" — the result surprises almost everyone once.',
+      intro: 'A three-character search inside "banana", and the result surprises almost everyone once.',
       string: 'banana',
       code: 'print("banana".count("ana"))',
       steps: [
@@ -158,7 +156,7 @@ export const methodsModule = {
           state: 'match #1 at index 1',
         },
         {
-          text: 'Counting resumes AFTER the whole match — at index 4, not index 2. From index 4 only "na" remains: too short to match.',
+          text: 'Counting resumes AFTER the whole match, at index 4, not index 2. From index 4 only "na" remains: too short to match.',
           highlight: [4, 5],
           state: 'no further match',
         },

@@ -6,7 +6,7 @@ import styles from '../styles/App.module.css';
 import { getApiUrl } from '../config/api';
 
 // ─── default starter code ────────────────────────────────────────────────────
-const DEFAULT_CODE = `# Try the debugger — step through this code
+const DEFAULT_CODE = `# Try the debugger, step through this code
 text = "Hello, World!"
 
 # Index access

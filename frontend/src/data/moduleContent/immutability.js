@@ -1,11 +1,9 @@
-// Module content: String Immutability — strings are read-only; every
+// Module content: String Immutability: strings are read-only; every
 // "change" builds a new string. A quiet but persistent exam theme.
 
 export const immutabilityModule = {
   id: 'immutability',
   title: 'String Immutability',
-  tagline:
-    'Strings cannot be edited — ever. Understanding what that really means explains why methods "don\'t work" and why s = s.upper() does.',
   minutes: 20,
   level: 'Beginner',
   prerequisite: 'String Slicing',
@@ -28,7 +26,7 @@ export const immutabilityModule = {
         },
         {
           kind: 'code',
-          code: 's = "cat"\nprint(s[0])   # \'c\' — reading is fine\ns[0] = "b"    # TypeError: \'str\' object does not\n              # support item assignment',
+          code: 's = "cat"\nprint(s[0])   # \'c\' (reading is fine)\ns[0] = "b"    # TypeError: \'str\' object does not\n              # support item assignment',
         },
         {
           kind: 'callout',
@@ -44,7 +42,7 @@ export const immutabilityModule = {
       blocks: [
         {
           kind: 'p',
-          text: 'If strings cannot change, what do `upper()` and `replace()` do? They build and RETURN a brand-new string. The original survives untouched — so if you ignore the return value, nothing visible happens.',
+          text: 'If strings cannot change, what do `upper()` and `replace()` do? They build and RETURN a brand-new string. The original survives untouched, so if you ignore the return value, nothing visible happens.',
         },
         {
           kind: 'code',
@@ -54,11 +52,11 @@ export const immutabilityModule = {
           kind: 'callout',
           tone: 'warn',
           title: 'Common mistake: calling a method and ignoring the result',
-          text: 'The single most common immutability trap in tests: a line like `s.upper()` on its own changes nothing. Always ask — where does the returned string GO?',
+          text: 'The single most common immutability trap in tests: a line like `s.upper()` on its own changes nothing. Always ask: where does the returned string GO?',
         },
         {
           kind: 'code',
-          code: 's = "cat"\nt = s.replace("c", "b")\nprint(s, t)      # cat bat  — s is unchanged, t holds the copy',
+          code: 's = "cat"\nt = s.replace("c", "b")\nprint(s, t)      # cat bat  (s is unchanged, t holds the copy)',
         },
       ],
     },
@@ -72,18 +70,18 @@ export const immutabilityModule = {
         },
         {
           kind: 'code',
-          code: 's = "cat"\ns = "b" + s[1:]        # \'bat\'  — new first letter\ns = s[:2] + "d"        # \'bad\'  — new last letter',
+          code: 's = "cat"\ns = "b" + s[1:]        # \'bat\'  (new first letter)\ns = s[:2] + "d"        # \'bad\'  (new last letter)',
           caption: 'The variable now points at a NEW string; the old one is discarded.',
         },
         {
           kind: 'callout',
           tone: 'info',
           title: 'Why functions cannot modify string parameters',
-          text: 'Inside a function, `s = s + "!"` makes the LOCAL name point at a new string. The caller\'s variable still points at the original — a favourite "what is printed?" exam setup.',
+          text: 'Inside a function, `s = s + "!"` makes the LOCAL name point at a new string. The caller\'s variable still points at the original, a favourite "what is printed?" exam setup.',
         },
         {
           kind: 'code',
-          code: 'def extend(s):\n    s = s + "!"      # rebinds the local name only\n\nword = "go"\nextend(word)\nprint(word)          # go  — not \'go!\'',
+          code: 'def extend(s):\n    s = s + "!"      # rebinds the local name only\n\nword = "go"\nextend(word)\nprint(word)          # go  (not \'go!\')',
         },
       ],
     },
@@ -95,7 +93,7 @@ export const immutabilityModule = {
           kind: 'keypoints',
           items: [
             'Strings are immutable: `s[0] = "x"` always raises TypeError.',
-            'Methods like `upper()` and `replace()` return NEW strings — the original is never modified.',
+            'Methods like `upper()` and `replace()` return NEW strings, and the original is never modified.',
             'A method call whose result is not captured achieves nothing visible.',
             'To "change" a string, rebuild it: `s = "b" + s[1:]`.',
             'Reassigning a string parameter inside a function does not affect the caller\'s variable.',
@@ -109,7 +107,7 @@ export const immutabilityModule = {
     {
       id: 'ex-lost-result',
       title: 'The vanishing uppercase',
-      intro: 'Trace this test-style snippet carefully — the trap is in what happens to the return value.',
+      intro: 'Trace this test-style snippet carefully, because the trap is in what happens to the return value.',
       string: 'cat',
       code: 's = "cat"\ns.upper()\nprint(s)',
       steps: [
@@ -162,7 +160,7 @@ export const immutabilityModule = {
     type: 'indexing',
     title: 'Read-Only Explorer',
     description:
-      'Indexing can reach any character — but only to read it. Explore the boxes, and remember: no expression here could ever change one.',
+      'Indexing can reach any character, but only to read it. Explore the boxes, and remember: no expression here could ever change one.',
     defaults: { text: 'immutable', index: '3' },
   },
 

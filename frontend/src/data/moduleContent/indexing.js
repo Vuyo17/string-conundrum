@@ -4,7 +4,7 @@
 // This file is the reference for authoring module content. Everything on the
 // module page is driven by this plain-data structure, so creating a new
 // module means writing a file like this one and registering it in
-// `data/moduleContent/index.js` — no new components required.
+// `data/moduleContent/index.js` (no new components required).
 //
 // Supported learn blocks (rendered by components/module/ContentBlocks.jsx):
 //   { kind: 'p',         text }                            paragraph, `code` spans allowed
@@ -18,8 +18,6 @@
 export const indexingModule = {
   id: 'indexing',
   title: 'String Indexing',
-  tagline:
-    'Every character in a string has an address. Learn how Python numbers them — starting from zero — and how to read any character you want.',
   minutes: 20,
   level: 'Beginner',
   prerequisite: 'Introduction to Strings',
@@ -39,7 +37,7 @@ export const indexingModule = {
       blocks: [
         {
           kind: 'p',
-          text: 'A string looks like one solid block of text, but Python sees it as a row of numbered boxes — one character per box. The number on each box is called its **index**.',
+          text: 'A string looks like one solid block of text, but Python sees it as a row of numbered boxes, one character per box. The number on each box is called its **index**.',
         },
         {
           kind: 'string',
@@ -71,7 +69,7 @@ export const indexingModule = {
       blocks: [
         {
           kind: 'p',
-          text: 'Humans count "first, second, third…", so it feels natural that the first character should be number 1. Python — like almost every programming language — starts at **0** instead. The index really measures *how far from the start* a character is: the first character is 0 steps in, the second is 1 step in, and so on.',
+          text: 'Humans count "first, second, third…", so it feels natural that the first character should be number 1. Python, like almost every programming language, starts at **0** instead. The index really measures *how far from the start* a character is: the first character is 0 steps in, the second is 1 step in, and so on.',
         },
         {
           kind: 'string',
@@ -82,7 +80,7 @@ export const indexingModule = {
         },
         {
           kind: 'code',
-          code: 'word = "python"\nprint(word[1])   # y  — the SECOND character, not the first',
+          code: 'word = "python"\nprint(word[1])   # y  (the SECOND character, not the first)',
         },
         {
           kind: 'callout',
@@ -98,7 +96,7 @@ export const indexingModule = {
       blocks: [
         {
           kind: 'p',
-          text: 'Sometimes you care about the *end* of a string — the last character, or the one before it. Instead of first working out the length, Python lets you count backwards with negative numbers. `-1` is always the last character, `-2` the one before it, and so on.',
+          text: 'Sometimes you care about the *end* of a string, like the last character, or the one before it. Instead of first working out the length, Python lets you count backwards with negative numbers. `-1` is always the last character, `-2` the one before it, and so on.',
         },
         {
           kind: 'string',
@@ -109,7 +107,7 @@ export const indexingModule = {
         },
         {
           kind: 'code',
-          code: 'word = "python"\nprint(word[-1])   # n  — last character\nprint(word[-6])   # p  — same box as word[0]',
+          code: 'word = "python"\nprint(word[-1])   # n  (last character)\nprint(word[-6])   # p  (same box as word[0])',
         },
         {
           kind: 'callout',
@@ -139,7 +137,7 @@ export const indexingModule = {
           kind: 'table',
           head: ['Expression', 'Result', 'Why'],
           rows: [
-            ['word[0]', "'p'", 'First box — 0 steps from the start'],
+            ['word[0]', "'p'", 'First box, 0 steps from the start'],
             ['word[5]', "'n'", 'Last box: len(word) - 1 = 5'],
             ['word[len(word) - 1]', "'n'", 'Always the last character, whatever the length'],
             ['word[6]', 'IndexError', 'len(word) is one past the end'],
@@ -161,23 +159,23 @@ export const indexingModule = {
       blocks: [
         {
           kind: 'p',
-          text: 'Past papers reuse the same handful of indexing traps year after year. Each row below is a mistake that has cost real marks — check yourself against all four before any test.',
+          text: 'Past papers reuse the same handful of indexing traps year after year. Each row below is a mistake that has cost real marks, so check yourself against all four before any test.',
         },
         {
           kind: 'table',
           head: ['Trap', 'Wrong instinct', 'The truth'],
           rows: [
-            ['First character', 's[1] is the first letter', 's[0] is — counting starts at zero'],
+            ['First character', 's[1] is the first letter', 's[0] is, since counting starts at zero'],
             ['Last character', 's[len(s)] is the last letter', 's[len(s) - 1] or s[-1]; len(s) is out of range'],
             ['Negative start', 'negative indices start at 0', 'they start at -1 for the LAST character'],
-            ['Writing', "s[0] = 'x' changes the string", 'TypeError — indexing is read-only'],
+            ['Writing', "s[0] = 'x' changes the string", 'TypeError: indexing is read-only'],
           ],
         },
         {
           kind: 'callout',
           tone: 'info',
           title: 'How this is examined',
-          text: 'A recurring MCQ lists index expressions and asks which will cause an error — mixing s[len(s)], s[-len(s)] and arithmetic like s[-8//2]. Work each one out to a plain number first, then test it against the safe range.',
+          text: 'A recurring MCQ lists index expressions and asks which will cause an error, mixing s[len(s)], s[-len(s)] and arithmetic like s[-8//2]. Work each one out to a plain number first, then test it against the safe range.',
         },
       ],
     },
@@ -189,7 +187,7 @@ export const indexingModule = {
           kind: 'keypoints',
           items: [
             'Strings are rows of numbered boxes; `string[index]` reads one box.',
-            'Counting starts at 0 — the index measures distance from the start.',
+            'Counting starts at 0, and the index measures distance from the start.',
             'Negative indices count from the end: `-1` is always the last character.',
             'Valid indices run from `-len(s)` up to `len(s) - 1`. Anything else raises an IndexError.',
             'The last character is `s[len(s) - 1]`, or simply `s[-1]`.',
@@ -239,7 +237,7 @@ export const indexingModule = {
       code: 's = "robot"\nmid = len(s) // 2\nprint(s[mid])',
       steps: [
         {
-          text: '`len(s)` is 5 — the string has five boxes, indexed 0 to 4.',
+          text: '`len(s)` is 5, so the string has five boxes, indexed 0 to 4.',
           highlight: [],
           state: 'len(s) = 5',
         },
@@ -249,7 +247,7 @@ export const indexingModule = {
           state: 'mid = 2',
         },
         {
-          text: '`s[2]` walks two steps in from the start and lands on `"b"` — exactly the middle box, with two boxes on each side.',
+          text: '`s[2]` walks two steps in from the start and lands on `"b"`, exactly the middle box, with two boxes on each side.',
           highlight: [2],
           state: 's[2] = "b"',
           output: 'b',
@@ -269,7 +267,7 @@ export const indexingModule = {
           state: 'valid: 0..3',
         },
         {
-          text: '`city[3]` is inside the range — it reads the last box and prints `"e"`.',
+          text: '`city[3]` is inside the range, so it reads the last box and prints `"e"`.',
           highlight: [3],
           state: 'city[3] = "e"',
           output: 'e',
@@ -291,7 +289,7 @@ export const indexingModule = {
     type: 'indexing',
     title: 'Index Explorer',
     description:
-      'Type any string and any index — positive or negative — then press Visualize to watch Python walk the boxes and resolve your expression step by step.',
+      'Type any string and any index, positive or negative, then press Visualize to watch Python walk the boxes and resolve your expression step by step.',
     defaults: { text: 'conundrum', index: '-2' },
   },
 

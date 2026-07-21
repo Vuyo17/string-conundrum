@@ -6,7 +6,7 @@
 //      `indexing.js` (the reference module).
 //   2. Import it below and add it to MODULE_CONTENT.
 //   3. Make sure the module in `data/modules.js` uses the same `id`.
-// That's it — the ModulePage renders everything from the content object.
+// That's it: the ModulePage renders everything from the content object.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { introModule } from './intro';

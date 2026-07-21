@@ -6,7 +6,6 @@ import { Modules } from "./pages/Modules";
 import { Visualiser } from "./pages/Visualiser";
 import { CodeSpace } from "./pages/CodeSpace";
 import { Challenges } from "./pages/Challenges";
-import { Exercise } from "./pages/Exercise";
 import { Leaderboard } from "./pages/Leaderboard";
 import { Auth } from "./pages/Auth";
 import { AuthProvider, useAuth } from "./context/AuthContext";
@@ -30,7 +29,6 @@ function Shell() {
     Visualiser,
     "Code Space": CodeSpace,
     Challenges,
-    Exercise,
     Leaderboard,
   }[safeScreen];
 

@@ -1,11 +1,9 @@
-// Module content: String Comparison — lexicographic order, case
+// Module content: String Comparison: lexicographic order, case
 // sensitivity, and the `in` operator. Exam questions here hinge on Unicode.
 
 export const comparisonModule = {
   id: 'comparison',
   title: 'String Comparison',
-  tagline:
-    'Strings can be compared just like numbers — but the rules come from the dictionary and from Unicode, and the exams know exactly where that surprises people.',
   minutes: 20,
   level: 'Beginner',
   prerequisite: 'String Immutability',
@@ -28,7 +26,7 @@ export const comparisonModule = {
         },
         {
           kind: 'code',
-          code: '"bat" < "man"        # True   — decided at b vs m\n"apple" < "apricot"  # True   — ap equal, then p < r\n"app" < "apple"      # True   — a prefix is smaller',
+          code: '"bat" < "man"        # True   (decided at b vs m)\n"apple" < "apricot"  # True   (ap equal, then p < r)\n"app" < "apple"      # True   (a prefix is smaller)',
         },
         {
           kind: 'callout',
@@ -44,7 +42,7 @@ export const comparisonModule = {
     },
     {
       id: 'case-sensitivity',
-      title: 'Case matters — everywhere',
+      title: 'Case matters everywhere',
       blocks: [
         {
           kind: 'p',
@@ -64,7 +62,7 @@ export const comparisonModule = {
           kind: 'callout',
           tone: 'warn',
           title: "Common mistake: assuming 'a' < 'Z'",
-          text: 'Alphabet intuition says a comes before Z — Unicode says otherwise. `\'a\' > \'Z\'` is True because 97 > 90. This exact comparison style appears in multiple past papers.',
+          text: 'Alphabet intuition says a comes before Z, but Unicode says otherwise. `\'a\' > \'Z\'` is True because 97 > 90. This exact comparison style appears in multiple past papers.',
         },
         {
           kind: 'callout',
@@ -80,17 +78,17 @@ export const comparisonModule = {
       blocks: [
         {
           kind: 'p',
-          text: '`x in s` is True when the string `x` appears somewhere inside `s` as a contiguous run of characters. It is the cleanest membership test Python offers — and it is also case-sensitive.',
+          text: '`x in s` is True when the string `x` appears somewhere inside `s` as a contiguous run of characters. It is the cleanest membership test Python offers, and it is also case-sensitive.',
         },
         {
           kind: 'code',
-          code: '"gram" in "programming"          # True\n"python" in "Python programming" # False — case!\n"xyz" not in "programming"       # True',
+          code: '"gram" in "programming"          # True\n"python" in "Python programming" # False (case!)\n"xyz" not in "programming"       # True',
         },
         {
           kind: 'callout',
           tone: 'info',
           title: 'How this is examined',
-          text: 'Past MCQs list several `in` expressions and ask which is True. The wrong options nearly always differ from the right one only by the case of a single letter — read every character.',
+          text: 'Past MCQs list several `in` expressions and ask which is True. The wrong options nearly always differ from the right one only by the case of a single letter, so read every character.',
         },
       ],
     },
@@ -103,7 +101,7 @@ export const comparisonModule = {
           items: [
             'Strings compare in dictionary order: the first differing character decides.',
             'Every character comparison is an `ord()` comparison underneath.',
-            'All UPPERCASE letters sort before all lowercase letters — so `\'a\' > \'Z\'` is True.',
+            'All UPPERCASE letters sort before all lowercase letters, so `\'a\' > \'Z\'` is True.',
             '`==` between a string and a number is always False, even for `"10"` and 10.',
             '`x in s` tests for a substring, and it is case-sensitive like everything else.',
           ],
@@ -121,7 +119,7 @@ export const comparisonModule = {
       code: 'print("apple" < "apricot")',
       steps: [
         {
-          text: 'Compare index 0 of both words: `a` vs `a`. Equal — keep going.',
+          text: 'Compare index 0 of both words: `a` vs `a`. Equal, so keep going.',
           highlight: [0],
           state: 'a == a',
         },

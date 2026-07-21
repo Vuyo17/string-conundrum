@@ -164,7 +164,7 @@ function DragDropWarmup({ config }) {
         <p className={`${m.warmupVerdict} ${allCorrect ? m.warmupVerdictOk : m.warmupVerdictNo}`}>
           {allCorrect
             ? <><CheckCircle2 size={15} /> Every character is at its address. You're ready for the graded questions.</>
-            : <><XCircle size={15} /> Some tiles are in the wrong box — the highlighted slots need another look.</>}
+            : <><XCircle size={15} /> Some tiles are in the wrong box, and the highlighted slots need another look.</>}
         </p>
       )}
     </div>
@@ -328,7 +328,7 @@ function PracticeRunner({ practice, exercises }) {
           You answered <strong>{correctCount} of {exercises.length}</strong> correctly ({percent}%)
           and earned <strong>{stars} {stars === 1 ? 'star' : 'stars'}</strong> <Star size={14} className={m.inlineStar} />.
           {percent >= 70
-            ? ' That clears the 70% bar — the next module is within reach.'
+            ? ' That clears the 70% bar, and the next module is within reach.'
             : ' Aim for 70% to unlock the next module. Revisit the lesson above and try again.'}
         </p>
         <button type="button" className={m.solidButton} onClick={restart}>
