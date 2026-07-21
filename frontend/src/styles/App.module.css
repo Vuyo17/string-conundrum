@@ -4623,3 +4623,98 @@ p {
   font-weight: 700;
 }
 
+/* ─── REVAMPED CHROME (auth / guest / clickable modules) ─────────────────── */
+/* Added to bridge the revamped components onto the original stylesheet.     */
+
+/* Sidebar: locked (guest) nav items */
+.sideLocked {
+  opacity: 0.55;
+}
+.sideLocked:hover {
+  background: transparent !important;
+  color: var(--muted) !important;
+}
+.sideLockIcon {
+  margin-left: auto;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.sideUnlockBtn {
+  margin-top: 10px;
+  width: 100%;
+  border: 0;
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  background: var(--primary);
+  color: var(--primary-fg);
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px hsl(174 71% 30% / 0.25);
+  transition: background 0.15s;
+}
+.sideUnlockBtn:hover {
+  background: var(--primary-dark);
+}
+
+/* TopBar: guest chip + sign-out button */
+.guestChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.signOutBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--fg);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.signOutBtn:hover {
+  background: var(--surface-2);
+}
+
+/* ModuleCard: clickable (unlocked) cards + "Open →" hint */
+.moduleCardOpenable {
+  cursor: pointer;
+}
+.moduleOpenHint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  align-self: flex-start;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.2s, transform 0.2s;
+}
+.moduleCardOpenable:hover .moduleOpenHint {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Visualiser: active marker highlight */
+.markerActive {
+  color: var(--primary);
+  font-weight: 900;
+}
+.markerActive strong,
+.markerActive small {
+  color: var(--primary) !important;
+}

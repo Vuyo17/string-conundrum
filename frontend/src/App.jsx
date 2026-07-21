@@ -6,29 +6,52 @@ import { Modules } from "./pages/Modules";
 import { Visualiser } from "./pages/Visualiser";
 import { CodeSpace } from "./pages/CodeSpace";
 import { Challenges } from "./pages/Challenges";
+import { Exercise } from "./pages/Exercise";
 import { Leaderboard } from "./pages/Leaderboard";
+import { Auth } from "./pages/Auth";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
-function App() {
-  const [screen, setScreen] = useState("Visualiser");
+function Shell() {
+  const { isAuthed, isGuest, canAccess } = useAuth();
+  // Guests land on the Visualiser; signed-in users on Modules.
+  const [screen, setScreen] = useState(isGuest ? "Visualiser" : "Modules");
+
+  if (!isAuthed) return <Auth />;
+
+  // Navigation guard: guests can only open guest screens.
+  function go(next) {
+    if (canAccess(next)) setScreen(next);
+  }
+
+  const safeScreen = canAccess(screen) ? screen : "Visualiser";
 
   const CurrentScreen = {
     Modules,
     Visualiser,
     "Code Space": CodeSpace,
     Challenges,
+    Exercise,
     Leaderboard,
-  }[screen];
+  }[safeScreen];
 
   return (
     <div className={styles.app}>
-      <TopBar screen={screen} setScreen={setScreen} />
+      <TopBar screen={safeScreen} setScreen={go} />
       <main className={styles.shell}>
-        <Sidebar screen={screen} setScreen={setScreen} />
+        <Sidebar screen={safeScreen} setScreen={go} />
         <section className={styles.content}>
-          <CurrentScreen setScreen={setScreen} />
+          <CurrentScreen setScreen={go} />
         </section>
       </main>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <Shell />
+    </AuthProvider>
   );
 }
 

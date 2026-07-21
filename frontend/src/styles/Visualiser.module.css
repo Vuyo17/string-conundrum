@@ -1,0 +1,343 @@
+/* ─── VISUALISER SCREEN ─────────────────────────────────────────────────── */
+
+.screen {
+  display: grid;
+  gap: 18px;
+  animation: pageIn 0.4s ease both;
+}
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* hero */
+.hero { text-align: center; padding-top: 6px; }
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 10px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: hsl(174, 71%, 26%);
+  background: var(--primary-soft, hsl(173, 55%, 93%));
+  border: 1px solid hsl(174 50% 60% / 0.35);
+}
+
+.hero h1 {
+  margin: 0 0 8px;
+  font-size: clamp(30px, 3.4vw, 42px);
+  font-weight: 600;
+}
+.hero h1 em {
+  font-style: italic;
+  background: linear-gradient(90deg, hsl(174, 71%, 30%), hsl(33, 90%, 48%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.sub { margin: 0; color: var(--muted); font-size: 15px; }
+
+/* mode pills */
+.modes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.modes button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--muted);
+  transition: all 0.2s;
+}
+.modes button:hover { border-color: hsl(174, 50%, 55%); color: var(--fg); }
+.modes .modeActive {
+  color: white;
+  background: linear-gradient(135deg, hsl(174, 71%, 34%), hsl(174, 71%, 25%));
+  border-color: transparent;
+  box-shadow: 0 5px 16px hsl(174 71% 26% / 0.32);
+}
+
+/* controls */
+.controls {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius, 20px);
+  padding: 20px 22px 16px;
+  box-shadow: var(--shadow-soft);
+}
+
+.field { display: grid; gap: 6px; }
+.field > span { font-size: 12.5px; font-weight: 700; }
+.field input {
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field input:focus {
+  outline: none;
+  border-color: hsl(174, 71%, 34%);
+  box-shadow: 0 0 0 3px hsl(174 71% 30% / 0.14);
+}
+.field small { font-size: 11.5px; color: var(--muted); }
+
+.presets {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.presets > span { font-weight: 700; }
+.presets button {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  color: var(--fg);
+  transition: all 0.18s;
+}
+.presets button:hover { border-color: hsl(33, 90%, 55%); background: var(--accent-soft); }
+.presets .presetActive {
+  background: hsl(33, 90%, 52%);
+  border-color: hsl(33, 90%, 52%);
+  color: white;
+}
+
+/* the dark board */
+.board {
+  position: relative;
+  background:
+    radial-gradient(700px 340px at 85% -20%, hsl(174 70% 32% / 0.3), transparent 60%),
+    hsl(189, 46%, 9%);
+  border-radius: 24px;
+  padding: 22px 26px 24px;
+  border: 1px solid hsl(188, 30%, 18%);
+  box-shadow: 0 16px 44px hsl(189 46% 8% / 0.35);
+  overflow: hidden;
+}
+.board::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(hsl(174 60% 70% / 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(174 60% 70% / 0.04) 1px, transparent 1px);
+  background-size: 42px 42px;
+  pointer-events: none;
+}
+.board > * { position: relative; }
+
+.codeLine {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 15px;
+  color: hsl(168, 55%, 78%);
+}
+.prompt { color: hsl(33, 92%, 62%); font-weight: 700; }
+.codeLine code { color: hsl(168, 55%, 80%); }
+
+.stepPill {
+  margin-left: auto;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: hsl(168, 70%, 65%);
+  background: hsl(174 60% 40% / 0.14);
+  border: 1px solid hsl(174 60% 45% / 0.3);
+}
+
+.progressTrack {
+  height: 4px;
+  border-radius: 999px;
+  background: hsl(188, 30%, 18%);
+  margin-bottom: 18px;
+  overflow: hidden;
+}
+.progressFill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, hsl(174, 70%, 45%), hsl(33, 92%, 55%));
+  transition: width 0.35s ease;
+}
+
+/* step info */
+.stepInfo {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: hsl(188 35% 14% / 0.8);
+  border: 1px solid hsl(174, 30%, 22%);
+}
+.stepInfo p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: hsl(168, 22%, 82%);
+}
+
+.condBadge {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.condTrue { color: hsl(152, 70%, 65%); background: hsl(152 60% 40% / 0.16); border: 1px solid hsl(152 60% 45% / 0.35); }
+.condFalse { color: hsl(0, 80%, 70%); background: hsl(0 70% 50% / 0.14); border: 1px solid hsl(0 70% 55% / 0.35); }
+
+.varRow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.varChip {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12.5px;
+  padding: 5px 11px;
+  border-radius: 9px;
+  color: hsl(168, 40%, 78%);
+  background: hsl(174 60% 40% / 0.12);
+  border: 1px solid hsl(174 60% 45% / 0.28);
+}
+.varChip b { color: hsl(38, 95%, 66%); }
+.varChip code { color: hsl(168, 55%, 80%); }
+
+/* output */
+.output {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 16px;
+  padding: 13px 18px;
+  border-radius: 14px;
+  background: hsl(189, 50%, 6%);
+  border: 1px solid hsl(174, 30%, 20%);
+}
+.output > span {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: hsl(168, 14%, 50%);
+}
+.output code {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 16px;
+  font-weight: 600;
+  color: hsl(152, 65%, 62%);
+}
+.cursor {
+  display: inline-block;
+  width: 8px;
+  height: 17px;
+  margin-left: 3px;
+  vertical-align: text-bottom;
+  background: hsl(152, 65%, 62%);
+  animation: blink 1.05s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* playback bar */
+.playbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.playbar > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--fg);
+  transition: all 0.18s;
+}
+.playbar > button:hover:not(:disabled) { border-color: hsl(174, 50%, 50%); transform: translateY(-1px); }
+.playbar > button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.playMain.playMain {
+  color: white;
+  background: linear-gradient(135deg, hsl(33, 92%, 55%), hsl(28, 90%, 48%));
+  border-color: transparent;
+  box-shadow: 0 6px 18px hsl(33 90% 48% / 0.35);
+  padding: 10px 24px;
+}
+
+.speed {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 11px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+.speed button {
+  padding: 6px 11px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--muted);
+  transition: all 0.15s;
+}
+.speed button:disabled { opacity: 0.45; cursor: not-allowed; }
+.speed .speedActive { background: white; color: var(--fg); box-shadow: 0 1px 4px hsl(185 40% 14% / 0.14); }
+
+.kbdHint {
+  width: 100%;
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+.kbdHint kbd {
+  padding: 2px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10.5px;
+}
+
+@media (max-width: 720px) {
+  .controls { grid-template-columns: 1fr; }
+  .board { padding: 16px 14px 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen { animation: none; }
+  .cursor { animation: none; }
+  .progressFill { transition: none; }
+}

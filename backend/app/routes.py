@@ -1,6 +1,5 @@
 from flask import Blueprint, request
 
-from .services.challenges import grade_challenge, list_challenges
 from .services.feedback import evaluate_answer, get_module_exercises
 from .services.sandbox import execute_code, trace_steps
 from .services.visualizer import build_visual_state
@@ -68,18 +67,24 @@ def list_module_exercises(module_id: str):
 
 
 @api_bp.get("/challenges")
-def get_challenges():
-    """Return every coding challenge for the Challenges screen."""
+def list_all_challenges():
+    """Return every coding challenge (used to render the Challenges screen)."""
+    from .services.challenges import list_challenges
+
     return {"ok": True, "challenges": list_challenges()}
 
 
 @api_bp.post("/challenges/run")
-def run_challenge_submission():
-    """Run submitted code against a challenge's test cases."""
+def run_challenge():
+    """Grade submitted code against a challenge's test cases."""
+    from .services.challenges import grade_challenge
+
     payload = request.get_json(silent=True) or {}
-    challenge_id = payload.get("challenge_id", "")
-    code = payload.get("code", "")
-    return grade_challenge(challenge_id=challenge_id, code=code)
+    result = grade_challenge(
+        challenge_id=payload.get("challenge_id", ""),
+        code=payload.get("code", ""),
+    )
+    return result
 
 
 @api_bp.get("/progress/<user_id>")
@@ -96,3 +101,34 @@ def get_progress(user_id: str):
             }
         ],
     }
+
+
+# ─── authentication ──────────────────────────────────────────────────────────
+
+@api_bp.post("/auth/signup")
+def auth_signup():
+    from .services.auth_store import signup
+
+    payload = request.get_json(silent=True) or {}
+    session, error = signup(
+        name=payload.get("name", ""),
+        email=payload.get("email", ""),
+        password=payload.get("password", ""),
+    )
+    if error:
+        return {"ok": False, "error": error}, 400
+    return {"ok": True, **session}
+
+
+@api_bp.post("/auth/login")
+def auth_login():
+    from .services.auth_store import login
+
+    payload = request.get_json(silent=True) or {}
+    session, error = login(
+        email=payload.get("email", ""),
+        password=payload.get("password", ""),
+    )
+    if error:
+        return {"ok": False, "error": error}, 401
+    return {"ok": True, **session}

@@ -1,11 +1,17 @@
 import React from 'react';
-import { Bell, Search, BookOpen } from 'lucide-react';
+import { Bell, Search, BookOpen, LogOut } from 'lucide-react';
 import styles from '../styles/App.module.css';
+import { useAuth } from '../context/AuthContext';
 
-export function TopBar({ screen, setScreen }) {
+export function TopBar({ setScreen }) {
+  const { user, isGuest, canAccess, signOut } = useAuth();
+
   return (
     <header className={styles.topbar}>
-      <button className={styles.brandButton} onClick={() => setScreen('Modules')}>
+      <button
+        className={styles.brandButton}
+        onClick={() => setScreen(canAccess('Modules') ? 'Modules' : 'Visualiser')}
+      >
         <span className={styles.logo}>
           <BookOpen size={18} />
         </span>
@@ -24,12 +30,26 @@ export function TopBar({ screen, setScreen }) {
       </div>
 
       <div className={styles.topActions}>
-        <span className={styles.streak}>🔥 7 days</span>
-        <button className={styles.notifBtn}>
-          <Bell size={17} />
-          <span className={styles.notifDot} />
+        {isGuest
+          ? <span className={styles.guestChip}>Guest</span>
+          : <span className={styles.streak}>🔥 7 days</span>}
+        {!isGuest && (
+          <button className={styles.notifBtn}>
+            <Bell size={17} />
+            <span className={styles.notifDot} />
+          </button>
+        )}
+        <div className={styles.avatar} title={user?.name}>
+          {user?.initials ?? '?'}
+        </div>
+        <button
+          className={styles.signOutBtn}
+          onClick={signOut}
+          title={isGuest ? 'Sign in' : 'Sign out'}
+        >
+          <LogOut size={15} />
+          {isGuest ? 'Sign in' : 'Sign out'}
         </button>
-        <div className={styles.avatar}>HK</div>
       </div>
     </header>
   );
