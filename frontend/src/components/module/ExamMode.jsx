@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import {
-  AlertTriangle, Award, CheckCircle2, ChevronLeft, ChevronRight,
+  AlertTriangle, Award, CheckCircle2, ChevronLeft, ChevronRight, Eye,
   GraduationCap, RefreshCcw, Star, Target, TrendingUp, XCircle,
 } from 'lucide-react';
 import m from '../../styles/ModulePage.module.css';
 import { CodeExercise } from './CodeExercise';
 import { CodeBlock, InlineText } from './ContentBlocks';
+import { presetForExercise } from './visualizers/presets';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ExamMode — the test-conditions counterpart to the practice runner.
@@ -112,7 +113,7 @@ function drawExam(exercises, count) {
   return shuffle(exercises).slice(0, Math.min(count, exercises.length));
 }
 
-export function ExamMode({ practice, exercises }) {
+export function ExamMode({ practice, exercises, onVisualize }) {
   const questionCount = practice.exam?.questionCount ?? 10;
 
   const [paper, setPaper] = useState(() => drawExam(exercises, questionCount));
@@ -256,6 +257,9 @@ export function ExamMode({ practice, exercises }) {
             const a = answers[ex.question_id];
             const { title, code } = splitPrompt(ex.prompt);
             const studentAnswer = describeStudentAnswer(ex, a);
+            // Offer the visualizer only where we can actually load the
+            // question into it, and only where it would teach something.
+            const preset = r.correct || !onVisualize ? null : presetForExercise(ex, a);
             return (
               <div
                 key={ex.question_id}
@@ -292,6 +296,17 @@ export function ExamMode({ practice, exercises }) {
                   <p className={m.reviewExplanation}>
                     <InlineText text={ex.explanation ?? r.feedback} />
                   </p>
+                )}
+                {preset && (
+                  <div className={m.reviewActions}>
+                    <button
+                      type="button"
+                      className={m.ghostButton}
+                      onClick={() => onVisualize(preset)}
+                    >
+                      <Eye size={15} /> Watch this in the visualizer
+                    </button>
+                  </div>
                 )}
               </div>
             );

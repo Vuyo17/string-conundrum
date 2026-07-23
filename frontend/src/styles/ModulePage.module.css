@@ -1702,6 +1702,12 @@
   line-height: 1.55;
 }
 
+.reviewActions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 2px;
+}
+
 /* ── responsive + a11y for exam mode ── */
 
 @media (max-width: 640px) {

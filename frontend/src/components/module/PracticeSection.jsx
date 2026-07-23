@@ -173,7 +173,7 @@ function DragDropWarmup({ config }) {
 
 // ─── section wrapper: fetches once, offers Practice and Exam modes ────────────
 
-export function PracticeSection({ practice }) {
+export function PracticeSection({ practice, onVisualize }) {
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
@@ -230,7 +230,7 @@ export function PracticeSection({ practice }) {
       )}
 
       {mode === 'exam' && hasExam ? (
-        <ExamMode practice={practice} exercises={exercises} />
+        <ExamMode practice={practice} exercises={exercises} onVisualize={onVisualize} />
       ) : (
         <PracticeRunner practice={practice} exercises={exercises} />
       )}

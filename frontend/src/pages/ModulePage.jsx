@@ -20,9 +20,15 @@ const ALL_SECTIONS = [
   { id: 'practice', label: 'Practice', icon: Dumbbell },
 ];
 
+// Sections stay mounted and are hidden with an inline style rather than being
+// unmounted: a student sent from their exam results to the visualizer has to
+// find those results still there when they come back.
+const HIDDEN = { display: 'none' };
+
 export function ModulePage({ moduleId, moduleNumber, onBack }) {
   const content = getModuleContent(moduleId);
   const [activeSection, setActiveSection] = useState('learn');
+  const [visualizerPreset, setVisualizerPreset] = useState(null);
   const topRef = useRef(null);
 
   const Visualizer = useMemo(
@@ -60,6 +66,14 @@ export function ModulePage({ moduleId, moduleNumber, onBack }) {
   }
 
   const goTo = (id) => setActiveSection(id);
+
+  // Jump to the Visualize page with a question's own values loaded. A fresh
+  // object every time, so asking twice for the same values still replays.
+  const showInVisualizer = (values) => {
+    setVisualizerPreset({ ...values });
+    setActiveSection('visualize');
+  };
+
   const goPrev = () => { if (!atFirst) setActiveSection(sections[activeIndex - 1].id); };
   const goNext = () => { if (!atLast) setActiveSection(sections[activeIndex + 1].id); };
   const sectionIndex = (id) => sections.findIndex((s) => s.id === id);
@@ -119,58 +133,55 @@ export function ModulePage({ moduleId, moduleNumber, onBack }) {
           })}
         </nav>
 
-        {/* ── main content: only the active section renders ── */}
+        {/* ── main content: every section is mounted, one is shown ── */}
         <div className={m.sections}>
           <span ref={topRef} aria-hidden="true" />
 
-          {current.id === 'learn' && (
-            <section className={m.section}>
-              <SectionHeading index={sectionIndex('learn')} title="Learn" subtitle="The core ideas, one small step at a time" />
-              {content.learnSections.map((learnSection) => (
-                <div key={learnSection.id} className={m.learnBlock}>
-                  <h2 className={m.learnTitle}>{learnSection.title}</h2>
-                  <ContentBlocks blocks={learnSection.blocks} />
-                </div>
-              ))}
-            </section>
-          )}
-
-          {current.id === 'examples' && (
-            <section className={m.section}>
-              <SectionHeading
-                index={sectionIndex('examples')}
-                title="Worked examples"
-                subtitle="Step through the reasoning, not just the answer"
-              />
-              <div className={m.exampleStack}>
-                {content.examples.map((example, i) => (
-                  <WorkedExample key={example.id} example={example} number={i + 1} />
-                ))}
+          <SectionPage active={current.id === 'learn'}>
+            <SectionHeading index={sectionIndex('learn')} title="Learn" subtitle="The core ideas, one small step at a time" />
+            {content.learnSections.map((learnSection) => (
+              <div key={learnSection.id} className={m.learnBlock}>
+                <h2 className={m.learnTitle}>{learnSection.title}</h2>
+                <ContentBlocks blocks={learnSection.blocks} />
               </div>
-            </section>
-          )}
+            ))}
+          </SectionPage>
 
-          {current.id === 'visualize' && Visualizer && (
-            <section className={m.section}>
+          <SectionPage active={current.id === 'examples'}>
+            <SectionHeading
+              index={sectionIndex('examples')}
+              title="Worked examples"
+              subtitle="Step through the reasoning, not just the answer"
+            />
+            <div className={m.exampleStack}>
+              {content.examples.map((example, i) => (
+                <WorkedExample key={example.id} example={example} number={i + 1} />
+              ))}
+            </div>
+          </SectionPage>
+
+          {Visualizer && (
+            <SectionPage active={current.id === 'visualize'}>
               <SectionHeading
                 index={sectionIndex('visualize')}
                 title={content.visualizer.title ?? 'Visualize'}
                 subtitle={content.visualizer.description}
               />
-              <Visualizer config={content.visualizer} />
-            </section>
+              <Visualizer config={content.visualizer} preset={visualizerPreset} />
+            </SectionPage>
           )}
 
-          {current.id === 'practice' && (
-            <section className={m.section}>
-              <SectionHeading
-                index={sectionIndex('practice')}
-                title="Practice"
-                subtitle="Graded questions with instant, misconception-aware feedback"
-              />
-              <PracticeSection practice={content.practice} />
-            </section>
-          )}
+          <SectionPage active={current.id === 'practice'}>
+            <SectionHeading
+              index={sectionIndex('practice')}
+              title="Practice"
+              subtitle="Graded questions with instant, misconception-aware feedback"
+            />
+            <PracticeSection
+              practice={content.practice}
+              onVisualize={Visualizer ? showInVisualizer : undefined}
+            />
+          </SectionPage>
 
           {/* ── pager: Next to move on, or press an icon above ── */}
           <div className={m.pager}>
@@ -197,6 +208,16 @@ export function ModulePage({ moduleId, moduleNumber, onBack }) {
         </div>
       </div>
     </div>
+  );
+}
+
+// Declared at module scope so the section keeps its identity across renders —
+// inlining it would remount the practice runner every time you switch pages.
+function SectionPage({ active, children }) {
+  return (
+    <section className={m.section} style={active ? undefined : HIDDEN} hidden={!active}>
+      {children}
+    </section>
   );
 }
 

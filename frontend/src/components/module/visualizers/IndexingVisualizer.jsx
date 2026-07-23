@@ -30,12 +30,13 @@ function buildWalk(text, index) {
   return { path, valid: index >= -length, direction: 'backward' };
 }
 
-export function IndexingVisualizer({ config }) {
+export function IndexingVisualizer({ config, preset }) {
   const [text, setText] = useState(config.defaults?.text ?? 'python');
   const [indexInput, setIndexInput] = useState(config.defaults?.index ?? '0');
   const [run, setRun] = useState(null);       // { text, index, walk }
   const [walkPos, setWalkPos] = useState(-1); // position within walk.path
   const [done, setDone] = useState(false);
+  const [autoRun, setAutoRun] = useState(false);
   const timerRef = useRef(null);
 
   const parsedIndex = useMemo(() => {
@@ -86,6 +87,24 @@ export function IndexingVisualizer({ config }) {
   }, [run, done]);
 
   useEffect(() => stopTimer, []);
+
+  // A missed exam question can hand us the exact string and index it was built
+  // from. Load them, then run on the *next* render so startRun reads the
+  // committed state instead of the values it closed over here.
+  useEffect(() => {
+    if (!preset) return;
+    setText(preset.text);
+    setIndexInput(String(preset.index));
+    setRun(null);
+    setDone(false);
+    setAutoRun(true);
+  }, [preset]);
+
+  useEffect(() => {
+    if (!autoRun) return;
+    setAutoRun(false);
+    startRun();
+  }, [autoRun]);
 
   const chars = (run?.text ?? text).split('');
   const pointerCell = run && walkPos >= 0 ? run.walk.path[walkPos] : null;
