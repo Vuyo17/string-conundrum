@@ -117,10 +117,6 @@ function ForLoopDiagram({ loop }) {
         <span className={styles.flpLoopBack} title="repeats for the next element">↺</span>
       </div>
 
-      {/* progress through the sequence */}
-      <div className={styles.flpProgress}>
-        <div className={styles.flpProgressFill} style={{ width: `${pct}%` }} />
-      </div>
     </div>
   );
 }
@@ -709,20 +705,28 @@ export function CodeSpace() {
                 </p>
               )}
 
-              {step && Object.keys(step.variables).length > 0 && (
-                <div className={styles.dbgVarChips}>
-                  {Object.entries(step.variables).map(([k, v]) => (
-                    <span key={k} className={styles.dbgVarChip}>
-                      <b>{k}</b>
-                      <span className={styles.dbgVarEq}>=</span>
-                      <code>{typeof v === 'string' ? `"${v}"` : String(v)}</code>
-                    </span>
-                  ))}
-                </div>
-              )}
             </>
           )}
+
         </section>
+          {step && Object.keys(step.variables).length > 0 && (
+      <table className={styles.dbgVarsTable}>
+        <thead>
+          <tr>
+            <th>Variable</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.entries(step.variables).map(([k, v]) => (
+            <tr key={k}>
+              <td className={styles.dbgVarName}>{k}</td>
+              <td className={styles.dbgVarValue}>{typeof v === 'string' ? `"${v}"` : String(v)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
       </main>
     </div>
   );
