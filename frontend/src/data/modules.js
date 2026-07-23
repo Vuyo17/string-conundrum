@@ -30,7 +30,7 @@ export const modules = [
     title: "String Immutability",
     desc: "See why strings cannot be changed in place.",
     progress: 0,
-    status: "Locked",
+    status: "Not started",
     time: "25 min",
   },
   {
@@ -38,7 +38,7 @@ export const modules = [
     title: "String Comparison",
     desc: "Compare strings using operators.",
     progress: 0,
-    status: "Locked",
+    status: "Not started",
     time: "20 min",
   },
   {
