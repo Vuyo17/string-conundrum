@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   LayoutGrid, Eye, Code2, Trophy, Sparkles, Lock, Target,
-  Settings, User, Bell, Zap, LogOut,
+  Settings, LogOut,
 } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { useAuth } from '../context/AuthContext';
@@ -17,29 +17,22 @@ const NAV_ICONS = {
 export function Sidebar({ screen, setScreen }) {
   const { isGuest, canAccess, signOut } = useAuth();
   const items = ['Modules', 'Visualiser', 'Code Space', 'Challenges', 'Leaderboard'];
-  const settingsItems = [
-    { label: 'Profile', icon: User },
-    { label: 'Notifications', icon: Bell },
-    { label: 'Learning Pace', icon: Zap },
-  ];
 
   return (
     <aside className={styles.sidebar}>
-      <div className={styles.sideStreakBanner}>
-        <div className={styles.sideStreakLabel}>
-          <Sparkles size={12} /> {isGuest ? 'Guest mode' : 'Student portal'}
-        </div>
-        <p className={styles.sideStreakText}>
-          {isGuest
-            ? 'Sign in to unlock modules, exercises and the leaderboard.'
-            : "You're on a 7-day streak 🔥 Keep it up!"}
-        </p>
-        {isGuest && (
+      {isGuest && (
+        <div className={styles.sideStreakBanner}>
+          <div className={styles.sideStreakLabel}>
+            <Sparkles size={12} /> Guest mode
+          </div>
+          <p className={styles.sideStreakText}>
+            Sign in to unlock modules, exercises and the leaderboard.
+          </p>
           <button className={styles.sideUnlockBtn} onClick={signOut}>
             Sign in to unlock
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
       {items.map((item) => {
         const Icon = NAV_ICONS[item];
@@ -59,26 +52,13 @@ export function Sidebar({ screen, setScreen }) {
       })}
 
       <div className={styles.sideBottomSection}>
-        <div className={styles.sideSectionTitle}>
-          <Settings size={13} />
+        <button
+          className={screen === 'Settings' ? styles.sideActive : ''}
+          onClick={() => setScreen('Settings')}
+        >
+          <Settings size={17} />
           Settings
-        </div>
-        <div className={styles.sideSettingsList}>
-          {settingsItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.label}
-                className={styles.sideSecondaryBtn}
-                title="Settings option coming soon"
-                onClick={() => {}}
-              >
-                <Icon size={15} />
-                {item.label}
-              </button>
-            );
-          })}
-        </div>
+        </button>
 
         <button
           className={styles.sideSignOutBtn}

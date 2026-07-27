@@ -32,9 +32,7 @@ export function TopBar({ setScreen }) {
       </div>
 
       <div className={styles.topActions}>
-        {isGuest
-          ? <span className={styles.guestChip}>Guest</span>
-          : <span className={styles.streak}>🔥 7 days</span>}
+        {isGuest && <span className={styles.guestChip}>Guest</span>}
         {!isGuest && (
           <button className={styles.notifBtn}>
             <Bell size={17} />

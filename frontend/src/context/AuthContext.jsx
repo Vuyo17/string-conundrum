@@ -4,8 +4,9 @@ import { getApiUrl } from '../config/api';
 const AuthContext = createContext(null);
 const STORAGE_KEY = 'sc-session';
 
-// Screens a guest is allowed to open.
-export const GUEST_SCREENS = ['Visualiser', 'Code Space'];
+// Screens a guest is allowed to open. Settings is included so guests can still
+// reach the theme control and the sign-in action.
+export const GUEST_SCREENS = ['Visualiser', 'Code Space', 'Settings'];
 
 function readStoredSession() {
   try {

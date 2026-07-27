@@ -7,6 +7,7 @@ import { Visualiser } from "./pages/Visualiser";
 import { CodeSpace } from "./pages/CodeSpace";
 import { Challenges } from "./pages/Challenges";
 import { Leaderboard } from "./pages/Leaderboard";
+import { Settings } from "./pages/Settings";
 import { Auth } from "./pages/Auth";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -31,6 +32,7 @@ function Shell() {
     "Code Space": CodeSpace,
     Challenges,
     Leaderboard,
+    Settings,
   }[safeScreen];
 
   return (

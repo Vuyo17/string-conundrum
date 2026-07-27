@@ -265,20 +265,6 @@ input {
   border: 2px solid var(--surface);
 }
 
-.streak {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 5px 12px;
-  background: var(--surface);
-  font-weight: 700;
-  font-size: 13px;
-  white-space: nowrap;
-  color: var(--accent);
-}
-
 .avatar,
 .profileAvatar {
   border-radius: 50%;
@@ -401,11 +387,6 @@ input {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
-}
-
-.sideSettingsList {
-  display: grid;
-  gap: 2px;
 }
 
 .sideSecondaryBtn {
@@ -1468,9 +1449,6 @@ p {
     grid-template-columns: 1fr;
   }
 
-  .streak {
-    display: none;
-  }
   .content {
     padding: 12px 14px 28px;
   }
@@ -5117,6 +5095,75 @@ body,
   transform: rotate(180deg) scale(0.9);
 }
 
+/* ─── SETTINGS SCREEN ───────────────────────────────────────────────────── */
+.settingsSectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 14px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.settingsProfile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.settingsProfileName {
+  font-size: 17px;
+}
+
+.settingsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.settingsRowHint {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 3px;
+}
+
+.settingsChoice {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+
+.settingsChoice button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: calc(var(--radius-sm) - 3px);
+  padding: 7px 14px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--muted);
+  background: transparent;
+  transition: all 0.15s;
+}
+
+.settingsChoice button:hover {
+  color: var(--fg);
+}
+
+.settingsChoiceActive {
+  color: var(--primary-fg) !important;
+  background: var(--primary) !important;
+}
+
 /* ── dark chrome: flat surfaces, no glow ── */
 :root[data-theme="dark"] .app {
   background: var(--bg);
@@ -5149,7 +5196,6 @@ body,
 :root[data-theme="dark"] .visualiserControls .playButton,
 :root[data-theme="dark"] .pagerPrimary,
 :root[data-theme="dark"] .sideUnlockBtn,
-:root[data-theme="dark"] .streak,
 :root[data-theme="dark"] .notifBtn {
   box-shadow: none;
 }
