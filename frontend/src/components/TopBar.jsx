@@ -1,20 +1,24 @@
 import React from 'react';
-import { Bell, BookOpen, Moon, Sun } from 'lucide-react';
+import { Bell, LogOut, Search, BookOpen } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
-import { GlobalSearch } from './GlobalSearch';
 
-export function TopBar({ setScreen, onSearchSelect }) {
-  const { user, isGuest, canAccess } = useAuth();
-  const { isDark, toggleTheme } = useTheme();
+function initialsFor(user) {
+  const source = user?.displayName || user?.email || '?';
+  return source
+    .split(/[\s@.]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
+    .join('');
+}
+
+export function TopBar({ screen, setScreen }) {
+  const { user, logout } = useAuth();
 
   return (
     <header className={styles.topbar}>
-      <button
-        className={styles.brandButton}
-        onClick={() => setScreen(canAccess('Modules') ? 'Modules' : 'Visualiser')}
-      >
+      <button className={styles.brandButton} onClick={() => setScreen('Modules')}>
         <span className={styles.logo}>
           <BookOpen size={18} />
         </span>
@@ -24,28 +28,24 @@ export function TopBar({ setScreen, onSearchSelect }) {
         </span>
       </button>
 
-      <GlobalSearch onSelect={onSearchSelect} />
+      <div className={styles.topSearch}>
+        <Search className={styles.topSearchIcon} />
+        <input
+          className={styles.topSearchInput}
+          placeholder="Search modules, topics…"
+        />
+      </div>
 
       <div className={styles.topActions}>
-        {isGuest && <span className={styles.guestChip}>Guest</span>}
-        {!isGuest && (
-          <button className={styles.notifBtn}>
-            <Bell size={17} />
-            <span className={styles.notifDot} />
-          </button>
-        )}
-        <button
-          type="button"
-          className={styles.themeToggle}
-          onClick={toggleTheme}
-          title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-          aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-        >
-          {isDark ? <Sun size={17} /> : <Moon size={17} />}
+        <span className={styles.streak}>🔥 7 days</span>
+        <button className={styles.notifBtn}>
+          <Bell size={17} />
+          <span className={styles.notifDot} />
         </button>
-        <div className={styles.avatar} title={user?.name}>
-          {user?.initials ?? '?'}
-        </div>
+        <div className={styles.avatar} title={user?.email ?? ''}>{initialsFor(user)}</div>
+        <button className={styles.notifBtn} onClick={logout} title="Log out" aria-label="Log out">
+          <LogOut size={16} />
+        </button>
       </div>
     </header>
   );

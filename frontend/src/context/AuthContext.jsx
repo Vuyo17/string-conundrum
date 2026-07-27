@@ -1,89 +1,84 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { getApiUrl } from '../config/api';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import {
+  createUserWithEmailAndPassword,
+  isSignInWithEmailLink,
+  onAuthStateChanged,
+  sendPasswordResetEmail,
+  sendSignInLinkToEmail,
+  signInAnonymously,
+  signInWithEmailAndPassword,
+  signInWithEmailLink,
+  signOut,
+  updatePassword,
+} from 'firebase/auth';
+import { auth } from '../firebase';
 
 const AuthContext = createContext(null);
-const STORAGE_KEY = 'sc-session';
 
-// Screens a guest is allowed to open. Settings is included so guests can still
-// reach the theme control and the sign-in action.
-export const GUEST_SCREENS = ['Visualiser', 'Code Space', 'Settings'];
-
-function readStoredSession() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
+// Firebase requires the address back on the device that opens the sign-in link.
+const EMAIL_STORAGE_KEY = 'stringConundrum.signUpEmail';
 
 export function AuthProvider({ children }) {
-  const [session, setSession] = useState(readStoredSession);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Read once, before any sign-in can happen: opening a sign-in link signs the
+  // student in immediately, and App must keep showing the auth flow until they
+  // have finished choosing a password.
+  const [emailLinkPending, setEmailLinkPending] = useState(
+    () => isSignInWithEmailLink(auth, window.location.href),
+  );
 
   useEffect(() => {
-    try {
-      if (session) localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
-      else localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      // storage unavailable — session just won't persist
-    }
-  }, [session]);
+    const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
+      setUser(nextUser);
+      setLoading(false);
+    });
+    return unsubscribe;
+  }, []);
 
-  async function callAuth(path, body) {
-    let res;
-    try {
-      res = await fetch(getApiUrl(path), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+  const value = {
+    user,
+    loading,
+    emailLinkPending,
+
+    signup: (email, password) => createUserWithEmailAndPassword(auth, email, password),
+    login: (email, password) => signInWithEmailAndPassword(auth, email, password),
+    logout: () => signOut(auth),
+
+    continueAsGuest: () => signInAnonymously(auth),
+
+    sendSignUpLink: async (email) => {
+      await sendSignInLinkToEmail(auth, email, {
+        url: window.location.origin,
+        handleCodeInApp: true,
       });
-    } catch {
-      throw new Error('Cannot reach the server. Check that the backend is running.');
-    }
+      window.localStorage.setItem(EMAIL_STORAGE_KEY, email);
+    },
+    storedSignUpEmail: () => window.localStorage.getItem(EMAIL_STORAGE_KEY) ?? '',
+    completeSignUpLink: async (email) => {
+      const credential = await signInWithEmailLink(auth, email, window.location.href);
+      window.localStorage.removeItem(EMAIL_STORAGE_KEY);
+      return credential;
+    },
+    setAccountPassword: (password) => updatePassword(auth.currentUser, password),
 
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok || !data.ok) {
-      throw new Error(data.error || 'Something went wrong. Please try again.');
-    }
-    return data;
-  }
-
-  const value = useMemo(() => ({
-    session,
-    user: session?.user ?? null,
-    isGuest: session?.mode === 'guest',
-    isAuthed: Boolean(session),
-
-    async signIn(email, password) {
-      const data = await callAuth('/api/auth/login', { email, password });
-      setSession({ mode: 'user', token: data.token, user: data.user });
+    // Clears the link out of the address bar and hands control back to the app.
+    finishEmailLinkFlow: () => {
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setEmailLinkPending(false);
     },
 
-    async signUp(name, email, password) {
-      const data = await callAuth('/api/auth/signup', { name, email, password });
-      setSession({ mode: 'user', token: data.token, user: data.user });
-    },
-
-    continueAsGuest() {
-      setSession({ mode: 'guest', user: { name: 'Guest', initials: 'G' } });
-    },
-
-    signOut() {
-      setSession(null);
-    },
-
-    canAccess(screen) {
-      if (!session) return false;
-      if (session.mode === 'guest') return GUEST_SCREENS.includes(screen);
-      return true;
-    },
-  }), [session]);
+    sendPasswordReset: (email) => sendPasswordResetEmail(auth, email),
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used inside <AuthProvider>');
-  return ctx;
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }
