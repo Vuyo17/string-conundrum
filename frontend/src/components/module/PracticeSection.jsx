@@ -7,7 +7,6 @@ import m from '../../styles/ModulePage.module.css';
 import { CodeExercise } from './CodeExercise';
 import { CodeBlock, InlineText } from './ContentBlocks';
 import { ExamMode } from './ExamMode';
-import { apiFetch } from '../../api';
 
 // Star value of an exercise. The bank's legacy `xp` field is stars * 10;
 // newer questions carry `stars` directly. The UI speaks ONLY in stars.
@@ -182,7 +181,7 @@ export function PracticeSection({ practice, onVisualize }) {
 
   useEffect(() => {
     let cancelled = false;
-    apiFetch(`/api/exercises/${practice.apiModuleId}`)
+    fetch(`/api/exercises/${practice.apiModuleId}`)
       .then((res) => res.json())
       .then((data) => {
         if (cancelled) return;
@@ -276,7 +275,7 @@ function PracticeRunner({ practice, exercises }) {
     if (exercise.type === 'write_code') payload.code = answer?.code ?? '';
 
     try {
-      const res = await apiFetch('/api/exercises/submit', {
+      const res = await fetch('/api/exercises/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

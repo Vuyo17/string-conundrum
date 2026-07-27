@@ -14,6 +14,7 @@ import {
 import { auth } from '../firebase';
 
 const AuthContext = createContext(null);
+const GUEST_SCREENS = ['Visualiser', 'Code Space', 'Settings'];
 
 // Firebase requires the address back on the device that opens the sign-in link.
 const EMAIL_STORAGE_KEY = 'stringConundrum.signUpEmail';
@@ -41,10 +42,19 @@ export function AuthProvider({ children }) {
     user,
     loading,
     emailLinkPending,
+    isGuest: Boolean(user?.isAnonymous),
+    isAuthed: Boolean(user),
 
     signup: (email, password) => createUserWithEmailAndPassword(auth, email, password),
     login: (email, password) => signInWithEmailAndPassword(auth, email, password),
     logout: () => signOut(auth),
+    signOut: () => signOut(auth),
+
+    canAccess: (screen) => {
+      if (!user) return false;
+      if (!user.isAnonymous) return true;
+      return GUEST_SCREENS.includes(screen);
+    },
 
     continueAsGuest: () => signInAnonymously(auth),
 

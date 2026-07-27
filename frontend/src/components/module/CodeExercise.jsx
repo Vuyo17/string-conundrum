@@ -4,7 +4,6 @@ import {
 } from 'lucide-react';
 import m from '../../styles/ModulePage.module.css';
 import { highlightPython } from '../../utils/pythonHighlight';
-import { apiFetch } from '../../api';
 
 const INDENT = '    ';
 
@@ -57,12 +56,12 @@ export function CodeExercise({ code, onCodeChange, disabled }) {
     setStepIndex(0);
     try {
       const [execRes, debugRes] = await Promise.all([
-        apiFetch('/api/execute', {
+        fetch('/api/execute', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ code }),
         }),
-        apiFetch('/api/debug', {
+        fetch('/api/debug', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ code }),

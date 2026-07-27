@@ -96,7 +96,7 @@
 .heroMeta svg { color: var(--primary); }
 
 .outcomesCard {
-  background: var(--primary);
+  background: linear-gradient(150deg, var(--primary-dark), var(--primary));
   color: var(--primary-fg);
   border-radius: var(--radius);
   padding: 20px 22px;
@@ -984,7 +984,7 @@
 .progressFill {
   height: 100%;
   border-radius: 999px;
-  background: var(--primary);
+  background: linear-gradient(90deg, var(--primary), hsl(174, 60%, 42%));
   transition: width 0.35s ease;
 }
 

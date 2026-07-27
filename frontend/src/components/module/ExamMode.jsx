@@ -1,12 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import {
-  AlertTriangle, Award, CheckCircle2, ChevronLeft, ChevronRight,
+  AlertTriangle, Award, CheckCircle2, ChevronLeft, ChevronRight, Eye,
   GraduationCap, RefreshCcw, Star, Target, TrendingUp, XCircle,
 } from 'lucide-react';
 import m from '../../styles/ModulePage.module.css';
 import { CodeExercise } from './CodeExercise';
 import { CodeBlock, InlineText } from './ContentBlocks';
-import { apiFetch } from '../../api';
+import { presetForExercise } from './visualizers/presets';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ExamMode — the test-conditions counterpart to the practice runner.
@@ -20,7 +20,7 @@ import { apiFetch } from '../../api';
 
 const STAR_BANDS = [
   { min: 85, stars: 3, badge: 'Mastered', blurb: 'Exam-ready. You could teach this.' },
-  { min: 70, stars: 2, badge: 'Proficient', blurb: 'Solid work — polish the last details below.' },
+  { min: 70, stars: 2, badge: 'Proficient', blurb: 'Solid work, polish the last details below.' },
   { min: 50, stars: 1, badge: 'Developing', blurb: 'The foundations are there. Review the misses and retry.' },
   { min: 0, stars: 0, badge: 'Keep practising', blurb: 'Revisit the lesson above, then take another attempt.' },
 ];
@@ -113,7 +113,7 @@ function drawExam(exercises, count) {
   return shuffle(exercises).slice(0, Math.min(count, exercises.length));
 }
 
-export function ExamMode({ practice, exercises }) {
+export function ExamMode({ practice, exercises, onVisualize }) {
   const questionCount = practice.exam?.questionCount ?? 10;
 
   const [paper, setPaper] = useState(() => drawExam(exercises, questionCount));
@@ -154,7 +154,7 @@ export function ExamMode({ practice, exercises }) {
       if (ex.type === 'select_all') payload.answers = a.selected ?? [];
       if (ex.type === 'write_code') payload.code = a.code ?? '';
       try {
-        const res = await apiFetch('/api/exercises/submit', {
+        const res = await fetch('/api/exercises/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
@@ -257,6 +257,9 @@ export function ExamMode({ practice, exercises }) {
             const a = answers[ex.question_id];
             const { title, code } = splitPrompt(ex.prompt);
             const studentAnswer = describeStudentAnswer(ex, a);
+            // Offer the visualizer only where we can actually load the
+            // question into it, and only where it would teach something.
+            const preset = r.correct || !onVisualize ? null : presetForExercise(ex, a);
             return (
               <div
                 key={ex.question_id}
@@ -289,10 +292,27 @@ export function ExamMode({ practice, exercises }) {
                     <dd>{describeCorrectAnswer(ex)}</dd>
                   </div>
                 </dl>
-                {(ex.explanation || (!r.correct && r.feedback)) && (
-                  <p className={m.reviewExplanation}>
-                    <InlineText text={ex.explanation ?? r.feedback} />
+                {!r.correct && r.feedback && (
+                  <p className={m.reviewFeedback}>
+                    <InlineText text={r.feedback} />
                   </p>
+                )}
+                {(r.explanation ?? ex.explanation) && (
+                  <p className={m.reviewExplanation}>
+                    <strong className={m.reviewWhy}>Why:</strong>{' '}
+                    <InlineText text={r.explanation ?? ex.explanation} />
+                  </p>
+                )}
+                {preset && (
+                  <div className={m.reviewActions}>
+                    <button
+                      type="button"
+                      className={m.ghostButton}
+                      onClick={() => onVisualize(preset)}
+                    >
+                      <Eye size={15} /> Watch this in the visualizer
+                    </button>
+                  </div>
                 )}
               </div>
             );
