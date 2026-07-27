@@ -25,7 +25,52 @@ MISCONCEPTION_FEEDBACK = {
     "string_vs_list_confusion": "A sequence of unquoted characters in brackets is a list of names, not a string.",
     "concatenation_adds_space": "The + operator joins strings exactly as they are, with no added space.",
     "concatenation_requires_same_type_fear": "Two strings can always be joined with +, regardless of what they contain.",
+    "repetition_confused_with_multiplication": "The * operator repeats a string instead of doing arithmetic, so \"ab\" * 3 builds \"ababab\". The number never appears in the result.",
 }
+
+# The rule each module teaches. Used to explain *why* an answer is what it is
+# when a question carries no more specific concept of its own.
+MODULE_EXPLANATIONS = {
+    "intro": "A string is a sequence of characters written inside quotes. The quotes mark where the text starts and ends; they are not part of the value itself.",
+    "indexing": "Indexing reads a single character by its position. Python counts from 0, so the first character is at index 0 and the last is at index len(text) - 1. Negative indices count backwards from -1 at the end.",
+    "slicing": "A slice text[start:stop:step] copies a section of a string. It begins at start, stops just before stop, and hands back a brand new string, leaving the original untouched.",
+    "immutability": "Strings are immutable: once one exists, its characters cannot be changed. Anything that looks like a change actually builds a new string, so the result must be reassigned to be kept.",
+    "comparison": "Comparing strings with == matches the characters exactly, including case. The < and > operators compare in dictionary (lexicographic) order, character by character.",
+    "looping": "A for loop over a string visits one character at a time, left to right. Looping over range(len(text)) instead gives you the positions, which you need when the index itself matters.",
+    "methods": "String methods such as upper(), strip() and replace() never modify the original string. Each one returns a new string, so the result has to be stored or used straight away.",
+    "formatting": "Formatting builds a string out of values. An f-string needs the f prefix before the opening quote for {} placeholders to be filled in; without it the braces stay as literal text.",
+    "challenge": "Work through the code one step at a time, tracking what each string operation returns, and remember that string operations produce new strings rather than changing the original.",
+}
+
+
+def _explanation_for(exercise: dict, misconception_id: "str | None" = None) -> str:
+    """Explain the rule behind an answer, most specific source first.
+
+    Order: an explanation authored on the exercise, then the concept the
+    question's distractors probe, then the module's rule. When the learner
+    already got targeted misconception feedback we deliberately fall back to
+    the module rule so the same sentence is not shown twice.
+    """
+    authored = exercise.get("explanation")
+    if authored:
+        return authored
+
+    module_rule = MODULE_EXPLANATIONS.get(exercise.get("module_id", ""), "")
+
+    if misconception_id and misconception_id in MISCONCEPTION_FEEDBACK:
+        return module_rule
+
+    # A question can probe more than one concept, one per distractor. Cover each
+    # of them rather than arbitrarily picking whichever happens to come first.
+    concepts = [
+        MISCONCEPTION_FEEDBACK[mid]
+        for mid in dict.fromkeys((exercise.get("misconception_map") or {}).values())
+        if mid in MISCONCEPTION_FEEDBACK
+    ]
+    if concepts:
+        return " ".join(concepts)
+
+    return module_rule
 
 
 def _load_exercises() -> list[dict]:
@@ -43,13 +88,23 @@ def _find_exercise(module_id: str, question_id: str) -> dict | None:
 def _grade_mcq(exercise: dict, answer: str) -> dict:
     is_correct = answer.strip() == exercise["answer"]
     if is_correct:
-        return {"correct": True, "misconception_id": None, "feedback": "Correct."}
+        return {
+            "correct": True,
+            "misconception_id": None,
+            "feedback": f"Correct. The answer is {exercise['answer']}.",
+            "explanation": _explanation_for(exercise),
+        }
 
     misconception_id = exercise.get("misconception_map", {}).get(answer.strip())
-    feedback = MISCONCEPTION_FEEDBACK.get(
-        misconception_id, f"Not quite. The correct answer is: {exercise['answer']}"
-    )
-    return {"correct": False, "misconception_id": misconception_id, "feedback": feedback}
+    correction = f"Not quite. The correct answer is: {exercise['answer']}"
+    specific = MISCONCEPTION_FEEDBACK.get(misconception_id)
+    feedback = f"{correction} — {specific}" if specific else correction
+    return {
+        "correct": False,
+        "misconception_id": misconception_id,
+        "feedback": feedback,
+        "explanation": _explanation_for(exercise, misconception_id),
+    }
 
 
 def _grade_fill_blank(exercise: dict, answer: str) -> dict:
@@ -58,13 +113,23 @@ def _grade_fill_blank(exercise: dict, answer: str) -> dict:
     is_correct = normalized == correct_normalized
 
     if is_correct:
-        return {"correct": True, "misconception_id": None, "feedback": "Correct."}
+        return {
+            "correct": True,
+            "misconception_id": None,
+            "feedback": f"Correct. The answer is {exercise['answer']}.",
+            "explanation": _explanation_for(exercise),
+        }
 
     misconception_id = exercise.get("misconception_map", {}).get(answer.strip())
-    feedback = MISCONCEPTION_FEEDBACK.get(
-        misconception_id, f"Not quite. The correct answer is: {exercise['answer']}"
-    )
-    return {"correct": False, "misconception_id": misconception_id, "feedback": feedback}
+    correction = f"Not quite. The correct answer is: {exercise['answer']}"
+    specific = MISCONCEPTION_FEEDBACK.get(misconception_id)
+    feedback = f"{correction} — {specific}" if specific else correction
+    return {
+        "correct": False,
+        "misconception_id": misconception_id,
+        "feedback": feedback,
+        "explanation": _explanation_for(exercise, misconception_id),
+    }
 
 
 def _grade_select_all(exercise: dict, answers: list[str]) -> dict:
@@ -73,7 +138,12 @@ def _grade_select_all(exercise: dict, answers: list[str]) -> dict:
     is_correct = submitted == correct_set
 
     if is_correct:
-        return {"correct": True, "misconception_id": None, "feedback": "Correct."}
+        return {
+            "correct": True,
+            "misconception_id": None,
+            "feedback": "Correct. You picked exactly the right set.",
+            "explanation": _explanation_for(exercise),
+        }
 
     misconception_id = None
     for option, mid in exercise.get("misconception_map", {}).items():
@@ -81,11 +151,15 @@ def _grade_select_all(exercise: dict, answers: list[str]) -> dict:
             misconception_id = mid
             break
 
-    feedback = MISCONCEPTION_FEEDBACK.get(
-        misconception_id,
-        f"Not quite. The correct selection is: {', '.join(sorted(correct_set))}",
-    )
-    return {"correct": False, "misconception_id": misconception_id, "feedback": feedback}
+    correction = f"Not quite. The correct selection is: {', '.join(sorted(correct_set))}"
+    specific = MISCONCEPTION_FEEDBACK.get(misconception_id)
+    feedback = f"{correction} — {specific}" if specific else correction
+    return {
+        "correct": False,
+        "misconception_id": misconception_id,
+        "feedback": feedback,
+        "explanation": _explanation_for(exercise, misconception_id),
+    }
 
 
 def _grade_write_code(exercise: dict, code: str) -> dict:
@@ -107,12 +181,18 @@ def _grade_write_code(exercise: dict, code: str) -> dict:
             )
 
     if not failures:
-        return {"correct": True, "misconception_id": None, "feedback": "All test cases passed."}
+        return {
+            "correct": True,
+            "misconception_id": None,
+            "feedback": "All test cases passed.",
+            "explanation": _explanation_for(exercise),
+        }
 
     return {
         "correct": False,
         "misconception_id": None,
         "feedback": " | ".join(failures),
+        "explanation": _explanation_for(exercise),
     }
 
 

@@ -292,9 +292,15 @@ export function ExamMode({ practice, exercises, onVisualize }) {
                     <dd>{describeCorrectAnswer(ex)}</dd>
                   </div>
                 </dl>
-                {(ex.explanation || (!r.correct && r.feedback)) && (
+                {!r.correct && r.feedback && (
+                  <p className={m.reviewFeedback}>
+                    <InlineText text={r.feedback} />
+                  </p>
+                )}
+                {(r.explanation ?? ex.explanation) && (
                   <p className={m.reviewExplanation}>
-                    <InlineText text={ex.explanation ?? r.feedback} />
+                    <strong className={m.reviewWhy}>Why:</strong>{' '}
+                    <InlineText text={r.explanation ?? ex.explanation} />
                   </p>
                 )}
                 {preset && (

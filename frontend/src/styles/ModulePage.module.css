@@ -1693,6 +1693,12 @@
   overflow-wrap: anywhere;
 }
 
+.reviewFeedback {
+  margin: 0 0 8px;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
 .reviewExplanation {
   margin: 0;
   padding-top: 10px;
@@ -1700,6 +1706,10 @@
   font-size: 13.5px;
   color: var(--muted);
   line-height: 1.55;
+}
+
+.reviewWhy {
+  color: var(--fg);
 }
 
 .reviewActions {

@@ -456,7 +456,7 @@ function PracticeRunner({ practice, exercises }) {
                 <p><InlineText text={result.feedback ?? ''} /></p>
                 {result.explanation && (
                   <p className={m.feedbackExplanation}>
-                    <InlineText text={result.explanation} />
+                    <strong>Why:</strong> <InlineText text={result.explanation} />
                   </p>
                 )}
               </div>
