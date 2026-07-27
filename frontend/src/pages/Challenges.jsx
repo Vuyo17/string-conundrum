@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Trophy, Play, CheckCircle2, XCircle, Lightbulb, RotateCcw, TerminalSquare, Search,
+  BookOpen,
 } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { getApiUrl } from '../config/api';
@@ -55,6 +56,10 @@ export function Challenges() {
   const [resultById, setResultById] = useState({});
   const [solved, setSolved] = useState(() => new Set());
   const [showHint, setShowHint] = useState(false);
+  const [showSolution, setShowSolution] = useState(false);
+  const [solutionById, setSolutionById] = useState({});
+  const [solutionLoading, setSolutionLoading] = useState(false);
+  const [solutionError, setSolutionError] = useState('');
   const [running, setRunning] = useState(false);
   const [query, setQuery] = useState('');
   const [diffFilter, setDiffFilter] = useState('All');
@@ -108,7 +113,11 @@ export function Challenges() {
     });
   }, [challenges, query, diffFilter]);
 
-  useEffect(() => { setShowHint(false); }, [activeId]);
+  useEffect(() => {
+    setShowHint(false);
+    setShowSolution(false);
+    setSolutionError('');
+  }, [activeId]);
 
   function updateCode(next) {
     if (!challenge) return;
@@ -155,6 +164,32 @@ export function Challenges() {
       }));
     } finally {
       setRunning(false);
+    }
+  }
+
+  // Solutions are fetched on demand so they never ship with the challenge list.
+  async function handleToggleSolution() {
+    if (!challenge) return;
+    if (showSolution) {
+      setShowSolution(false);
+      return;
+    }
+    setShowSolution(true);
+    if (solutionById[challenge.id] !== undefined) return;
+
+    setSolutionLoading(true);
+    setSolutionError('');
+    try {
+      const res = await fetch(getApiUrl(`/api/challenges/${challenge.id}/solution`));
+      const data = await res.json();
+      if (!data.ok || !data.solution) {
+        throw new Error(data.error || 'No solution available for this challenge.');
+      }
+      setSolutionById((prev) => ({ ...prev, [challenge.id]: data.solution }));
+    } catch {
+      setSolutionError('Could not load the solution. Is the backend running?');
+    } finally {
+      setSolutionLoading(false);
     }
   }
 
@@ -277,10 +312,35 @@ export function Challenges() {
               </div>
             </div>
 
-            <button className={styles.hintToggleLc} onClick={() => setShowHint((s) => !s)}>
-              <Lightbulb size={15} /> {showHint ? 'Hide hint' : 'Show hint'}
-            </button>
+            <div className={styles.challengeHelpRowLc}>
+              <button className={styles.hintToggleLc} onClick={() => setShowHint((s) => !s)}>
+                <Lightbulb size={15} /> {showHint ? 'Hide hint' : 'Show hint'}
+              </button>
+              <button className={styles.hintToggleLc} onClick={handleToggleSolution}>
+                <BookOpen size={15} /> {showSolution ? 'Hide solution' : 'Show solution'}
+              </button>
+            </div>
             {showHint && <p className={styles.hintTextLc}>{challenge.hint}</p>}
+
+            {showSolution && (
+              <div className={styles.solutionBoxLc}>
+                {solutionLoading && <p className={styles.hintTextLc}>Loading solution…</p>}
+                {solutionError && <p className={styles.challengeErrorLc}>{solutionError}</p>}
+                {!solutionLoading && !solutionError && solutionById[challenge.id] && (
+                  <>
+                    <p className={styles.solutionNoteLc}>
+                      One way to solve it — there are others. Try it yourself first.
+                    </p>
+                    <pre
+                      className={styles.solutionCodeLc}
+                      dangerouslySetInnerHTML={{
+                        __html: highlightPython(solutionById[challenge.id].replace(/\n$/, '')),
+                      }}
+                    />
+                  </>
+                )}
+              </div>
+            )}
           </article>
 
           <div className={styles.challengeWorkGridLc}>

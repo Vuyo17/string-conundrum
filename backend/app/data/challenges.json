@@ -7,6 +7,7 @@
     "hint": "A slice with a negative step walks a string backwards: text[::-1].",
     "io": { "input": "A single line of text.", "output": "The same text, reversed." },
     "starter_code": "text = input()\n# print the reversed text\n",
+    "solution": "text = input()\nprint(text[::-1])\n",
     "tests": [
       { "input": "hello", "expected": "olleh" },
       { "input": "Python", "expected": "nohtyP" },
@@ -22,6 +23,7 @@
     "hint": "Lowercase the text, then count the characters that appear in 'aeiou'.",
     "io": { "input": "A single line of text.", "output": "A single integer: the vowel count." },
     "starter_code": "text = input()\n# print the number of vowels\n",
+    "solution": "text = input()\ncount = 0\nfor char in text.lower():\n    if char in 'aeiou':\n        count += 1\nprint(count)\n",
     "tests": [
       { "input": "hello", "expected": "2" },
       { "input": "PYTHON", "expected": "1" },
@@ -37,6 +39,7 @@
     "hint": "Split on spaces, capitalise each word, then join them back together with a space.",
     "io": { "input": "A single line of words separated by spaces.", "output": "The line with each word capitalised." },
     "starter_code": "text = input()\n# print the text with each word capitalised\n",
+    "solution": "text = input()\nwords = text.split(' ')\nprint(' '.join(word.capitalize() for word in words))\n",
     "tests": [
       { "input": "hello world", "expected": "Hello World" },
       { "input": "the quick brown fox", "expected": "The Quick Brown Fox" },
@@ -52,6 +55,7 @@
     "hint": "Lowercase the text, then compare it to its reverse: text == text[::-1].",
     "io": { "input": "A single line of text.", "output": "True or False." },
     "starter_code": "text = input()\n# print True if text is a palindrome (case-insensitive), else False\n",
+    "solution": "text = input().lower()\nprint(text == text[::-1])\n",
     "tests": [
       { "input": "racecar", "expected": "True" },
       { "input": "Hello", "expected": "False" },
@@ -68,6 +72,7 @@
     "hint": "The split() method with no arguments breaks text into a list of words; len() counts them.",
     "io": { "input": "A single line of text.", "output": "A single integer: the word count." },
     "starter_code": "text = input()\n# print the number of words\n",
+    "solution": "text = input()\nprint(len(text.split()))\n",
     "tests": [
       { "input": "hello world", "expected": "2" },
       { "input": "one", "expected": "1" },
@@ -83,6 +88,7 @@
     "hint": "Strings have an .upper() method that returns an uppercase copy.",
     "io": { "input": "A single line of text.", "output": "The text in uppercase." },
     "starter_code": "text = input()\n# print the text in uppercase\n",
+    "solution": "text = input()\nprint(text.upper())\n",
     "tests": [
       { "input": "hello", "expected": "HELLO" },
       { "input": "Python", "expected": "PYTHON" },
@@ -98,6 +104,7 @@
     "hint": "The .replace(old, new) method swaps every occurrence of a substring.",
     "io": { "input": "A single line of text.", "output": "The text with spaces replaced by hyphens." },
     "starter_code": "text = input()\n# replace spaces with hyphens and print\n",
+    "solution": "text = input()\nprint(text.replace(' ', '-'))\n",
     "tests": [
       { "input": "hello world", "expected": "hello-world" },
       { "input": "a b c", "expected": "a-b-c" },
@@ -113,6 +120,7 @@
     "hint": "Index 0 is the first character; index -1 is the last. Concatenate them with +.",
     "io": { "input": "A single line of text.", "output": "Two characters: first + last." },
     "starter_code": "text = input()\n# print the first and last character together\n",
+    "solution": "text = input()\nprint(text[0] + text[-1])\n",
     "tests": [
       { "input": "hello", "expected": "ho" },
       { "input": "Python", "expected": "Pn" },
@@ -128,6 +136,7 @@
     "hint": "Read both lines with two input() calls, then use text.count(char).",
     "io": { "input": "Line 1: a character. Line 2: the text.", "output": "A single integer: the count." },
     "starter_code": "char = input()\ntext = input()\n# print how many times char appears in text\n",
+    "solution": "char = input()\ntext = input()\nprint(text.count(char))\n",
     "tests": [
       { "input": "l\nhello world", "expected": "3" },
       { "input": "o\nfoo boo", "expected": "4" },
@@ -143,6 +152,7 @@
     "hint": "Build a new string from the characters whose lowercase form is not in 'aeiou'.",
     "io": { "input": "A single line of text.", "output": "The text with all vowels removed." },
     "starter_code": "text = input()\n# print the text with all vowels removed\n",
+    "solution": "text = input()\nresult = ''\nfor char in text:\n    if char.lower() not in 'aeiou':\n        result += char\nprint(result)\n",
     "tests": [
       { "input": "hello", "expected": "hll" },
       { "input": "education", "expected": "dctn" },
@@ -158,6 +168,7 @@
     "hint": "Split the text into words, take word[0] from each, uppercase it, then join them.",
     "io": { "input": "A single line of words separated by spaces.", "output": "The uppercase acronym." },
     "starter_code": "text = input()\n# print the acronym (first letter of each word, uppercase)\n",
+    "solution": "text = input()\nprint(''.join(word[0] for word in text.split()).upper())\n",
     "tests": [
       { "input": "hyper text markup language", "expected": "HTML" },
       { "input": "portable document format", "expected": "PDF" },
@@ -173,6 +184,7 @@
     "hint": "Lowercase both, strip out spaces, then compare their sorted characters.",
     "io": { "input": "Line 1 and line 2: two pieces of text.", "output": "True or False." },
     "starter_code": "first = input()\nsecond = input()\n# print True if the two are anagrams (ignore case & spaces)\n",
+    "solution": "first = input().lower().replace(' ', '')\nsecond = input().lower().replace(' ', '')\nprint(sorted(first) == sorted(second))\n",
     "tests": [
       { "input": "listen\nsilent", "expected": "True" },
       { "input": "hello\nworld", "expected": "False" },
@@ -188,11 +200,96 @@
     "hint": "Walk the string, grouping consecutive equal characters, and append the character plus its count.",
     "io": { "input": "A single line of text.", "output": "The run-length encoded string." },
     "starter_code": "text = input()\n# print the run-length encoding, e.g. aaabb -> a3b2\n",
+    "solution": "text = input()\nresult = ''\nindex = 0\nwhile index < len(text):\n    char = text[index]\n    run = 0\n    while index < len(text) and text[index] == char:\n        run += 1\n        index += 1\n    result += char + str(run)\nprint(result)\n",
     "tests": [
       { "input": "aaabbc", "expected": "a3b2c1" },
       { "input": "abc", "expected": "a1b1c1" },
       { "input": "aaaa", "expected": "a4" },
       { "input": "xxyz", "expected": "x2y1z1" }
+    ]
+  },
+  {
+    "id": "run-length-decode",
+    "title": "Run-Length Decoding",
+    "difficulty": "Hard",
+    "description": "Read a run-length encoded line such as 'a3b2c1' and print the text it stands for: every character is followed by the number of times it repeats. Counts may have more than one digit.",
+    "hint": "After reading a character, keep collecting the digits that follow it until the next non-digit. char * int(digits) repeats the character that many times.",
+    "io": { "input": "A run-length encoded line.", "output": "The decoded text." },
+    "starter_code": "text = input()\n# print the decoded text, e.g. a3b2 -> aaabb\n",
+    "solution": "text = input()\nresult = ''\nindex = 0\nwhile index < len(text):\n    char = text[index]\n    index += 1\n    digits = ''\n    while index < len(text) and text[index].isdigit():\n        digits += text[index]\n        index += 1\n    result += char * int(digits)\nprint(result)\n",
+    "tests": [
+      { "input": "a3b2c1", "expected": "aaabbc" },
+      { "input": "a1b1c1", "expected": "abc" },
+      { "input": "a4", "expected": "aaaa" },
+      { "input": "x2y1z1", "expected": "xxyz" },
+      { "input": "a12", "expected": "aaaaaaaaaaaa" }
+    ]
+  },
+  {
+    "id": "first-unique-char",
+    "title": "First Unique Character",
+    "difficulty": "Hard",
+    "description": "Read a single line of text and print the first character that appears exactly once. If every character is repeated, print None.",
+    "hint": "text.count(char) tells you how often a character appears in the whole line. Walk the text in order and stop at the first character whose count is 1.",
+    "io": { "input": "A single line of text.", "output": "The first non-repeating character, or None." },
+    "starter_code": "text = input()\n# print the first character that appears only once, or None\n",
+    "solution": "text = input()\nanswer = None\nfor char in text:\n    if text.count(char) == 1:\n        answer = char\n        break\nprint(answer)\n",
+    "tests": [
+      { "input": "swiss", "expected": "w" },
+      { "input": "aabbcc", "expected": "None" },
+      { "input": "python", "expected": "p" },
+      { "input": "aabbc", "expected": "c" },
+      { "input": "moon", "expected": "m" }
+    ]
+  },
+  {
+    "id": "balanced-brackets",
+    "title": "Balanced Brackets",
+    "difficulty": "Hard",
+    "description": "Read a single line and print True if every bracket in it is closed in the right order, otherwise print False. The brackets are (), [] and {}. Any other character is ignored.",
+    "hint": "Use a list as a stack: append every opening bracket, and when you meet a closing bracket pop the last one and check it matches. The line is balanced only if nothing is left over.",
+    "io": { "input": "A single line of text containing brackets.", "output": "True or False." },
+    "starter_code": "text = input()\n# print True if the brackets are balanced, else False\n",
+    "solution": "text = input()\npairs = {')': '(', ']': '[', '}': '{'}\nstack = []\nbalanced = True\nfor char in text:\n    if char in '([{':\n        stack.append(char)\n    elif char in pairs:\n        if not stack or stack.pop() != pairs[char]:\n            balanced = False\n            break\nprint(balanced and not stack)\n",
+    "tests": [
+      { "input": "(a[b]{c})", "expected": "True" },
+      { "input": "([)]", "expected": "False" },
+      { "input": "(()", "expected": "False" },
+      { "input": "hello", "expected": "True" },
+      { "input": "{[()]}", "expected": "True" }
+    ]
+  },
+  {
+    "id": "longest-palindrome-substring",
+    "title": "Longest Palindromic Substring",
+    "difficulty": "Hard",
+    "description": "Read a single line of text and print the longest run of characters inside it that reads the same forwards and backwards. If two are equally long, print the one that starts earliest.",
+    "hint": "Every slice text[start:end] is a candidate. A slice is a palindrome when it equals its reverse, piece == piece[::-1]. Keep the longest one you have seen so far.",
+    "io": { "input": "A single line of text.", "output": "The longest palindromic substring." },
+    "starter_code": "text = input()\n# print the longest palindromic substring\n",
+    "solution": "text = input()\nbest = ''\nfor start in range(len(text)):\n    for end in range(start + 1, len(text) + 1):\n        piece = text[start:end]\n        if piece == piece[::-1] and len(piece) > len(best):\n            best = piece\nprint(best)\n",
+    "tests": [
+      { "input": "babad", "expected": "bab" },
+      { "input": "cbbd", "expected": "bb" },
+      { "input": "racecar", "expected": "racecar" },
+      { "input": "abc", "expected": "a" },
+      { "input": "forgeeksskeegfor", "expected": "geeksskeeg" }
+    ]
+  },
+  {
+    "id": "word-frequency",
+    "title": "Most Common Word",
+    "difficulty": "Hard",
+    "description": "Read a single line of words and print the word that appears most often. If two words appear the same number of times, print the one that comes first in the line.",
+    "hint": "Split the line into a list of words, then use words.count(word) on each one. Only replace your best answer when you find a strictly larger count, so earlier words win ties.",
+    "io": { "input": "A single line of words separated by spaces.", "output": "The most frequent word." },
+    "starter_code": "text = input()\n# print the word that appears most often\n",
+    "solution": "words = input().split()\nbest = ''\nbest_count = 0\nfor word in words:\n    count = words.count(word)\n    if count > best_count:\n        best = word\n        best_count = count\nprint(best)\n",
+    "tests": [
+      { "input": "the cat the dog the bird", "expected": "the" },
+      { "input": "a b a b c", "expected": "a" },
+      { "input": "one two three", "expected": "one" },
+      { "input": "hello hello world world hello", "expected": "hello" }
     ]
   }
 ]

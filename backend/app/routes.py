@@ -74,6 +74,18 @@ def list_all_challenges():
     return {"ok": True, "challenges": list_challenges()}
 
 
+@api_bp.get("/challenges/<challenge_id>/solution")
+def challenge_solution(challenge_id: str):
+    """Return one challenge's reference solution, fetched on demand."""
+    from .services.challenges import get_solution
+
+    solution = get_solution(challenge_id)
+    if solution is None:
+        return {"ok": False, "error": "No solution available for this challenge."}, 404
+
+    return {"ok": True, "challenge_id": challenge_id, "solution": solution}
+
+
 @api_bp.post("/challenges/run")
 def run_challenge():
     """Grade submitted code against a challenge's test cases."""

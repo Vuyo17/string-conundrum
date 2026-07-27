@@ -12,8 +12,15 @@ def _load_challenges() -> list[dict]:
 
 
 def list_challenges() -> list[dict]:
-    """Return all challenges (used to render the Challenges screen)."""
-    return _load_challenges()
+    """Return all challenges (used to render the Challenges screen).
+
+    The reference solution is stripped: it is served separately by
+    ``get_solution`` so it never reaches the browser until asked for.
+    """
+    return [
+        {k: v for k, v in challenge.items() if k != "solution"}
+        for challenge in _load_challenges()
+    ]
 
 
 def find_challenge(challenge_id: str) -> dict | None:
@@ -21,6 +28,14 @@ def find_challenge(challenge_id: str) -> dict | None:
         if challenge["id"] == challenge_id:
             return challenge
     return None
+
+
+def get_solution(challenge_id: str) -> str | None:
+    """Return a challenge's reference solution, or None if there isn't one."""
+    challenge = find_challenge(challenge_id)
+    if challenge is None:
+        return None
+    return challenge.get("solution")
 
 
 def grade_challenge(challenge_id: str, code: str) -> dict:
