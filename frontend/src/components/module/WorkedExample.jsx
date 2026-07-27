@@ -7,13 +7,13 @@ import { CodeBlock, InlineText, StringFigure } from './ContentBlocks';
 
 // An interactive worked example: the learner steps through the reasoning while
 // the string figure highlights the cells each step is talking about.
-export function WorkedExample({ example, number }) {
+export function WorkedExample({ example, number, id }) {
   const [stepIndex, setStepIndex] = useState(0);
   const step = example.steps[stepIndex];
   const isLast = stepIndex === example.steps.length - 1;
 
   return (
-    <article className={m.exampleCard}>
+    <article id={id} className={m.exampleCard}>
       <header className={m.exampleHeader}>
         <span className={m.exampleBadge}>Example {number}</span>
         <h3 className={m.exampleTitle}>{example.title}</h3>

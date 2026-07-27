@@ -25,11 +25,16 @@ const ALL_SECTIONS = [
 // find those results still there when they come back.
 const HIDDEN = { display: 'none' };
 
-export function ModulePage({ moduleId, moduleNumber, onBack }) {
+export function ModulePage({
+  moduleId, moduleNumber, onBack, initialSection, anchor, entryKey,
+}) {
   const content = getModuleContent(moduleId);
-  const [activeSection, setActiveSection] = useState('learn');
+  const [activeSection, setActiveSection] = useState(initialSection ?? 'learn');
   const [visualizerPreset, setVisualizerPreset] = useState(null);
   const topRef = useRef(null);
+  // An id to scroll to once its section is actually on screen; cleared as soon
+  // as it has been used, so ordinary section changes go back to the top.
+  const pendingAnchor = useRef(anchor ?? null);
 
   const Visualizer = useMemo(
     () => (content?.visualizer ? getVisualizer(content.visualizer.type) : null),
@@ -48,10 +53,28 @@ export function ModulePage({ moduleId, moduleNumber, onBack }) {
   const atFirst = activeIndex === 0;
   const atLast = activeIndex === sections.length - 1;
 
-  // Each section is a page, so bring the reader back to the top on a change.
+  // Arriving from global search: jump to the section the hit lives in.
   useEffect(() => {
+    if (entryKey === undefined) return;
+    if (initialSection) setActiveSection(initialSection);
+    pendingAnchor.current = anchor ?? null;
+  }, [initialSection, anchor, entryKey]);
+
+  // Each section is a page, so bring the reader back to the top on a change —
+  // unless a search sent us to something further down.
+  useEffect(() => {
+    const targetId = pendingAnchor.current;
+    if (targetId) {
+      const el = document.getElementById(targetId);
+      // `offsetParent` is null while the owning section is still hidden; leave
+      // the anchor pending and retry when that section becomes visible.
+      if (!el || !el.offsetParent) return;
+      pendingAnchor.current = null;
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
     topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, [activeSection]);
+  }, [activeSection, entryKey]);
 
   if (!content) {
     return (
@@ -140,7 +163,8 @@ export function ModulePage({ moduleId, moduleNumber, onBack }) {
           <SectionPage active={current.id === 'learn'}>
             <SectionHeading index={sectionIndex('learn')} title="Learn" subtitle="The core ideas, one small step at a time" />
             {content.learnSections.map((learnSection) => (
-              <div key={learnSection.id} className={m.learnBlock}>
+              // id doubles as the global-search scroll target (see searchIndex).
+              <div key={learnSection.id} id={`learn-${learnSection.id}`} className={m.learnBlock}>
                 <h2 className={m.learnTitle}>{learnSection.title}</h2>
                 <ContentBlocks blocks={learnSection.blocks} />
               </div>
@@ -155,7 +179,12 @@ export function ModulePage({ moduleId, moduleNumber, onBack }) {
             />
             <div className={m.exampleStack}>
               {content.examples.map((example, i) => (
-                <WorkedExample key={example.id} example={example} number={i + 1} />
+                <WorkedExample
+                  key={example.id}
+                  id={`example-${example.id}`}
+                  example={example}
+                  number={i + 1}
+                />
               ))}
             </div>
           </SectionPage>

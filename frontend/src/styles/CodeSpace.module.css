@@ -26,7 +26,7 @@
   height: 46px;
   border-radius: 14px;
   color: white;
-  background: linear-gradient(135deg, hsl(174, 71%, 34%), hsl(174, 71%, 24%));
+  background: hsl(174, 71%, 30%);
   box-shadow: 0 6px 18px hsl(174 71% 26% / 0.35);
 }
 .hero h1 { margin: 0; font-size: 26px; }

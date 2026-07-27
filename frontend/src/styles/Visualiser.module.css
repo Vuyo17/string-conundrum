@@ -67,7 +67,7 @@
 .modes button:hover { border-color: hsl(174, 50%, 55%); color: var(--fg); }
 .modes .modeActive {
   color: white;
-  background: linear-gradient(135deg, hsl(174, 71%, 34%), hsl(174, 71%, 25%));
+  background: hsl(174, 71%, 30%);
   border-color: transparent;
   box-shadow: 0 5px 16px hsl(174 71% 26% / 0.32);
 }
@@ -185,7 +185,7 @@
 .progressFill {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, hsl(174, 70%, 45%), hsl(33, 92%, 55%));
+  background: hsl(174, 70%, 45%);
   transition: width 0.35s ease;
 }
 

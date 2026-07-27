@@ -1,21 +1,41 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '../styles/App.module.css';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { ModuleCard } from '../components/ModuleCard';
 import { ModulePage } from './ModulePage';
 import { modules } from '../data/modules';
 
-export function Modules() {
+export function Modules({ target }) {
   // Which module is open, if any. Null shows the card grid.
   const [openModule, setOpenModule] = useState(null);
+  // Where inside that module to land, when a search result sent us here.
+  const [entry, setEntry] = useState(null);
+
+  // A search hit on a module, topic, example or practice section opens it.
+  useEffect(() => {
+    if (!target?.moduleId) return;
+    const mod = modules.find((m) => m.id === target.moduleId);
+    if (!mod) return;
+    setOpenModule(mod);
+    setEntry({ section: target.section, anchor: target.anchor, nonce: target.nonce });
+  }, [target]);
+
+  function closeModule() {
+    setOpenModule(null);
+    setEntry(null);
+  }
 
   if (openModule) {
     const number = modules.findIndex((mod) => mod.id === openModule.id) + 1;
     return (
       <ModulePage
+        key={openModule.id}
         moduleId={openModule.id}
         moduleNumber={number}
-        onBack={() => setOpenModule(null)}
+        onBack={closeModule}
+        initialSection={entry?.section}
+        anchor={entry?.anchor}
+        entryKey={entry?.nonce}
       />
     );
   }

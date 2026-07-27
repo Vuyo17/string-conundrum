@@ -1,10 +1,11 @@
 import React from 'react';
-import { Bell, Search, BookOpen, Moon, Sun } from 'lucide-react';
+import { Bell, BookOpen, Moon, Sun } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { GlobalSearch } from './GlobalSearch';
 
-export function TopBar({ setScreen }) {
+export function TopBar({ setScreen, onSearchSelect }) {
   const { user, isGuest, canAccess } = useAuth();
   const { isDark, toggleTheme } = useTheme();
 
@@ -23,13 +24,7 @@ export function TopBar({ setScreen }) {
         </span>
       </button>
 
-      <div className={styles.topSearch}>
-        <Search className={styles.topSearchIcon} />
-        <input
-          className={styles.topSearchInput}
-          placeholder="Search modules, topics…"
-        />
-      </div>
+      <GlobalSearch onSelect={onSearchSelect} />
 
       <div className={styles.topActions}>
         {isGuest && <span className={styles.guestChip}>Guest</span>}

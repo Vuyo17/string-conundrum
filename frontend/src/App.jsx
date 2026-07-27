@@ -16,12 +16,30 @@ function Shell() {
   const { isAuthed, isGuest, canAccess } = useAuth();
   // Guests land on the Visualiser; signed-in users on Modules.
   const [screen, setScreen] = useState(isGuest ? "Visualiser" : "Modules");
+  // Set by a search result so the Modules screen can open straight onto a
+  // module — and, when the hit was a topic, onto the right section of it.
+  const [moduleTarget, setModuleTarget] = useState(null);
 
   if (!isAuthed) return <Auth />;
 
   // Navigation guard: guests can only open guest screens.
   function go(next) {
-    if (canAccess(next)) setScreen(next);
+    if (!canAccess(next)) return;
+    setScreen(next);
+    setModuleTarget(null);
+  }
+
+  // A search result carries its own destination (see data/searchIndex.js).
+  function openSearchResult(result) {
+    if (!canAccess(result.screen)) return;
+    setScreen(result.screen);
+    setModuleTarget(
+      result.moduleId
+        // `nonce` makes every pick a new target, so choosing the same result
+        // twice still re-opens and re-scrolls it.
+        ? { ...result, nonce: Date.now() }
+        : null,
+    );
   }
 
   const safeScreen = canAccess(screen) ? screen : "Visualiser";
@@ -37,11 +55,14 @@ function Shell() {
 
   return (
     <div className={styles.app}>
-      <TopBar screen={safeScreen} setScreen={go} />
+      <TopBar screen={safeScreen} setScreen={go} onSearchSelect={openSearchResult} />
       <main className={styles.shell}>
         <Sidebar screen={safeScreen} setScreen={go} />
         <section className={styles.content}>
-          <CurrentScreen setScreen={go} />
+          <CurrentScreen
+            setScreen={go}
+            {...(safeScreen === "Modules" ? { target: moduleTarget } : {})}
+          />
         </section>
       </main>
     </div>
