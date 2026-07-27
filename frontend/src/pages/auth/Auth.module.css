@@ -1,0 +1,705 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   Authentication — editorial / academic direction.
+
+   Deliberately flat: paper tones, 1px rules, a real type scale and whitespace
+   do the work. No gradients on surfaces or buttons, no glass, no glow, no
+   pill shapes, no floating decoration. Tokens come from App.module.css :root.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 43fr) minmax(0, 57fr);
+  background: var(--surface);
+  color: var(--fg);
+}
+
+/* ─── left: context panel ───────────────────────────────────────────────── */
+.aside {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 44px 48px 40px;
+  background: var(--surface-2);
+  border-right: 1px solid var(--border);
+}
+
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.wordmarkBadge {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--primary);
+  color: var(--primary-fg);
+}
+.wordmark strong {
+  display: block;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+.wordmark small {
+  display: block;
+  margin-top: 1px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Centred in the space between the wordmark and the footnote, so the column
+   reads as balanced against the form rather than bottom-heavy. */
+.asideBody {
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: 40px 0;
+  max-width: 420px;
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: 18px;
+  padding-bottom: 7px;
+  border-bottom: 2px solid var(--primary);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.asideBody h1 {
+  margin: 0 0 14px;
+  font-size: 31px;
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+}
+
+.asideBody p {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--muted);
+  max-width: 37ch;
+}
+
+/* index specimen — the product's own subject matter as the visual motif */
+.specimen {
+  margin: 34px 0 0;
+  padding: 22px 24px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+.specimenRow {
+  display: flex;
+  gap: 2px;
+}
+.specimenCell {
+  width: 34px;
+  display: grid;
+  justify-items: center;
+  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+}
+.specimenChar {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--fg);
+  line-height: 1.9;
+}
+.specimenTick {
+  width: 1px;
+  height: 7px;
+  background: var(--border);
+}
+.specimenRule {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 0;
+}
+.specimenIndex {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 2;
+}
+.specimenHighlight .specimenChar {
+  color: var(--primary);
+}
+.specimenHighlight .specimenIndex {
+  color: var(--primary);
+  font-weight: 700;
+}
+.specimenCaption {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.asideFoot {
+  margin-top: 40px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 40ch;
+}
+
+/* ─── right: form panel ─────────────────────────────────────────────────── */
+.panel {
+  display: grid;
+  justify-items: start;
+  align-content: center;
+  padding: 56px 64px;
+}
+
+.panelInner {
+  width: 100%;
+  max-width: 390px;
+}
+
+/* Shown only once the aside drops away (see the 860px breakpoint). */
+.panelWordmark {
+  display: none;
+}
+
+.heading {
+  margin: 0 0 7px;
+  font-size: 25px;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.subheading {
+  margin: 0 0 26px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* ─── fields ────────────────────────────────────────────────────────────── */
+.fields {
+  display: grid;
+  gap: 17px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.fieldLabelRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.field label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.inputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.inputWrap > svg {
+  position: absolute;
+  left: 13px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.input {
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 14px 11px 40px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--fg);
+  font-size: 15px;
+  outline: none;
+  transition:
+    border-color 0.14s ease,
+    box-shadow 0.14s ease;
+}
+.input::placeholder {
+  color: hsl(185 9% 62%);
+}
+.input:hover:not(:focus) {
+  border-color: hsl(40 10% 80%);
+}
+.input:focus-visible {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px hsl(174 71% 30% / 0.14);
+}
+.inputWithToggle {
+  padding-right: 46px;
+}
+.inputInvalid {
+  border-color: var(--danger);
+}
+.inputInvalid:focus-visible {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px hsl(0 72% 53% / 0.13);
+}
+
+.toggleVisibility {
+  position: absolute;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  transition:
+    color 0.14s ease,
+    background 0.14s ease;
+}
+.toggleVisibility:hover {
+  color: var(--fg);
+  background: var(--surface-2);
+}
+
+.fieldHint {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* error text carries an icon, never colour alone */
+.fieldError {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--danger);
+}
+.fieldError svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ─── alert banner ──────────────────────────────────────────────────────── */
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-bottom: 20px;
+  padding: 12px 14px;
+  border: 1px solid;
+  border-left-width: 3px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.alert svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.alertError {
+  background: var(--danger-soft);
+  border-color: hsl(0 72% 53% / 0.28);
+  color: hsl(0 62% 40%);
+}
+.alertInfo {
+  background: var(--primary-soft);
+  border-color: hsl(174 71% 30% / 0.28);
+  color: var(--primary-dark);
+}
+.alertSuccess {
+  background: var(--success-soft);
+  border-color: hsl(152 56% 38% / 0.3);
+  color: hsl(152 56% 27%);
+}
+
+/* ─── buttons ───────────────────────────────────────────────────────────── */
+.submit,
+.secondary {
+  width: 100%;
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 8px;
+  font-size: 14.5px;
+  font-weight: 700;
+  transition:
+    background 0.14s ease,
+    border-color 0.14s ease,
+    color 0.14s ease;
+}
+
+.submit {
+  margin-top: 22px;
+  border: 1px solid var(--primary);
+  background: var(--primary);
+  color: var(--primary-fg);
+}
+.submit:hover:not(:disabled) {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+.submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.secondary {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--fg);
+}
+.secondary:hover:not(:disabled) {
+  background: var(--surface-2);
+  border-color: hsl(40 10% 80%);
+}
+.secondary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.linkButton {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: var(--primary);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+.linkButton:hover {
+  text-decoration: underline;
+}
+
+.inlineLink {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: inherit;
+  text-underline-offset: 3px;
+}
+.inlineLink:hover {
+  text-decoration: underline;
+}
+
+.spin {
+  animation: authSpin 0.75s linear infinite;
+}
+@keyframes authSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spin {
+    animation: none;
+  }
+  .input,
+  .submit,
+  .secondary,
+  .toggleVisibility {
+    transition: none;
+  }
+}
+
+/* ─── guest / secondary action ──────────────────────────────────────────── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 18px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.guestNote {
+  margin-top: 9px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.footerNote {
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ─── password strength ─────────────────────────────────────────────────── */
+.strength {
+  margin-top: 12px;
+}
+.strengthTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 7px;
+}
+.strengthLabel {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.strengthValue {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--fg);
+}
+.strengthTrack {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+.strengthSegment {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  transition: background 0.18s ease;
+}
+.strengthOn1 {
+  background: var(--danger);
+}
+.strengthOn2 {
+  background: var(--warning);
+}
+.strengthOn3 {
+  background: hsl(88 55% 42%);
+}
+.strengthOn4 {
+  background: var(--success);
+}
+
+.rules {
+  display: grid;
+  gap: 6px;
+  margin: 13px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.rule {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: var(--muted);
+  transition: color 0.14s ease;
+}
+.ruleIcon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: transparent;
+}
+.ruleMet {
+  color: var(--fg);
+}
+.ruleMet .ruleIcon {
+  border-color: var(--success);
+  background: var(--success);
+  color: white;
+}
+
+.matchRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 9px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.matchOk {
+  color: var(--success);
+}
+.matchNo {
+  color: var(--danger);
+}
+
+/* ─── status panels (email sent, success, already signed in) ────────────── */
+.status {
+  width: 100%;
+  max-width: 390px;
+}
+.statusIcon {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--primary);
+}
+.statusIconSuccess {
+  border-color: hsl(152 56% 38% / 0.3);
+  background: var(--success-soft);
+  color: var(--success);
+}
+.statusAddress {
+  display: inline-block;
+  margin-top: 2px;
+  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-size: 13px;
+  color: var(--fg);
+  word-break: break-all;
+}
+.statusSteps {
+  margin: 22px 0 0;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-2);
+}
+.statusSteps ol {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.statusActions {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+.statusActionsRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 4px;
+}
+
+/* ─── boot / redirect screen ────────────────────────────────────────────── */
+.boot {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ─── focus visibility (accessibility) ──────────────────────────────────── */
+.shell :focus-visible,
+.boot :focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.input:focus-visible {
+  outline: none;
+}
+
+/* ─── responsive ────────────────────────────────────────────────────────── */
+@media (max-width: 1040px) {
+  .aside {
+    padding: 36px 36px 32px;
+  }
+  .panel {
+    padding: 48px 40px;
+  }
+  .asideBody h1 {
+    font-size: 27px;
+  }
+}
+
+/* Below the split point the form becomes the whole page. */
+@media (max-width: 860px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+  .aside {
+    display: none;
+  }
+  .panel {
+    align-content: start;
+    padding: 40px 22px 48px;
+    justify-items: stretch;
+  }
+  /* Wordmark shares the form column's width so the two stay left-aligned. */
+  .panelWordmark,
+  .panelInner,
+  .status {
+    width: 100%;
+    max-width: 440px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .panelWordmark {
+    display: flex;
+    margin-bottom: 32px;
+  }
+}
+
+@media (max-width: 420px) {
+  .panel {
+    padding: 32px 18px 40px;
+  }
+  .heading {
+    font-size: 22px;
+  }
+  .statusActionsRow {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 
+from .firebase_admin_init import init_firebase_admin
 from .routes import api_bp
 
 
@@ -23,6 +24,8 @@ def create_app() -> Flask:
             "supports_credentials": True
         }
     })
+
+    init_firebase_admin()
 
     app.register_blueprint(api_bp)
 

@@ -4,6 +4,7 @@ import styles from '../styles/App.module.css';
 import { Progress } from '../components/Progress';
 import { StringCells } from '../components/StringCells';
 import { exerciseModules } from '../data/exerciseModules';
+import { apiFetch } from '../api';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -49,7 +50,7 @@ export function Exercise() {
     setIndex(0);
     setResult(null);
 
-    fetch(`/api/exercises/${moduleId}`)
+    apiFetch(`/api/exercises/${moduleId}`)
       .then((res) => res.json())
       .then((data) => {
         if (cancelled) return;
@@ -88,7 +89,7 @@ export function Exercise() {
     if (exercise.type === 'write_code') payload.code = answerState?.code ?? '';
 
     try {
-      const res = await fetch('/api/exercises/submit', {
+      const res = await apiFetch('/api/exercises/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

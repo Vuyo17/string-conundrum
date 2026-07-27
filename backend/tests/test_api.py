@@ -1,4 +1,12 @@
+from unittest.mock import patch
+
 from app import create_app
+
+AUTH_HEADERS = {'Authorization': 'Bearer testtoken'}
+
+
+def mock_verified_token(uid='demo-user'):
+    return patch('app.auth.firebase_auth.verify_id_token', return_value={'uid': uid, 'email': 'test@example.com'})
 
 
 def test_health_endpoint():
@@ -39,20 +47,34 @@ def test_submit_exercise_stub_response_shape():
     app = create_app()
     client = app.test_client()
 
-    response = client.post(
-        '/api/exercises/submit',
-        json={
-            'module_id': 'immutability',
-            'question_id': 'immut-01',
-            'answer': 'changes in place',
-        },
-    )
+    with mock_verified_token():
+        response = client.post(
+            '/api/exercises/submit',
+            json={
+                'module_id': 'immutability',
+                'question_id': 'immut-01',
+                'answer': 'changes in place',
+            },
+            headers=AUTH_HEADERS,
+        )
     payload = response.get_json()
 
     assert response.status_code == 200
     assert payload['ok'] is True
     assert 'correct' in payload
     assert 'feedback' in payload
+
+
+def test_submit_exercise_requires_auth():
+    app = create_app()
+    client = app.test_client()
+
+    response = client.post(
+        '/api/exercises/submit',
+        json={'module_id': 'immutability', 'question_id': 'immut-01', 'answer': 'x'},
+    )
+
+    assert response.status_code == 401
 
 
 def test_list_module_exercises():
@@ -72,14 +94,16 @@ def test_submit_select_all_exercise():
     app = create_app()
     client = app.test_client()
 
-    response = client.post(
-        '/api/exercises/submit',
-        json={
-            'module_id': 'indexing',
-            'question_id': 'indexing-17',
-            'answers': ['mL[11]', 'mL[-12]'],
-        },
-    )
+    with mock_verified_token():
+        response = client.post(
+            '/api/exercises/submit',
+            json={
+                'module_id': 'indexing',
+                'question_id': 'indexing-17',
+                'answers': ['mL[11]', 'mL[-12]'],
+            },
+            headers=AUTH_HEADERS,
+        )
     payload = response.get_json()
 
     assert response.status_code == 200
@@ -90,14 +114,16 @@ def test_submit_write_code_exercise():
     app = create_app()
     client = app.test_client()
 
-    response = client.post(
-        '/api/exercises/submit',
-        json={
-            'module_id': 'challenge',
-            'question_id': 'challenge-07',
-            'code': 'w = input()\nprint(w[::-1])',
-        },
-    )
+    with mock_verified_token():
+        response = client.post(
+            '/api/exercises/submit',
+            json={
+                'module_id': 'challenge',
+                'question_id': 'challenge-07',
+                'code': 'w = input()\nprint(w[::-1])',
+            },
+            headers=AUTH_HEADERS,
+        )
     payload = response.get_json()
 
     assert response.status_code == 200
@@ -108,10 +134,30 @@ def test_progress_endpoint_response_shape():
     app = create_app()
     client = app.test_client()
 
-    response = client.get('/api/progress/demo-user')
+    with mock_verified_token('demo-user'):
+        response = client.get('/api/progress/demo-user', headers=AUTH_HEADERS)
     payload = response.get_json()
 
     assert response.status_code == 200
     assert payload['ok'] is True
     assert payload['user_id'] == 'demo-user'
     assert isinstance(payload['modules'], list)
+
+
+def test_progress_endpoint_requires_auth():
+    app = create_app()
+    client = app.test_client()
+
+    response = client.get('/api/progress/demo-user')
+
+    assert response.status_code == 401
+
+
+def test_progress_endpoint_forbids_other_users():
+    app = create_app()
+    client = app.test_client()
+
+    with mock_verified_token('someone-else'):
+        response = client.get('/api/progress/demo-user', headers=AUTH_HEADERS)
+
+    assert response.status_code == 403

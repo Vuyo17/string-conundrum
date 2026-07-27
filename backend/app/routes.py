@@ -1,5 +1,6 @@
-from flask import Blueprint, request
+from flask import Blueprint, g, request
 
+from .auth import require_auth
 from .services.feedback import evaluate_answer, get_module_exercises
 from .services.sandbox import execute_code, trace_steps
 from .services.visualizer import build_visual_state
@@ -41,6 +42,7 @@ def debug():
 
 
 @api_bp.post("/exercises/submit")
+@require_auth
 def submit_exercise():
     payload = request.get_json(silent=True) or {}
     module_id = payload.get("module_id", "")
@@ -100,7 +102,11 @@ def run_challenge():
 
 
 @api_bp.get("/progress/<user_id>")
+@require_auth
 def get_progress(user_id: str):
+    if g.uid != user_id:
+        return {"ok": False, "error": "forbidden"}, 403
+
     return {
         "ok": True,
         "user_id": user_id,
