@@ -2034,6 +2034,65 @@ p {
   color: var(--fg);
 }
 
+/* ─── PLAYBACK SPEED (shared: Visualiser + Code Space) ──────────────────── */
+/* Spans the full controls grid so it reads as a second, centred row under
+   the Previous / Play / Next buttons on both screens. */
+.speedControl {
+  grid-column: 1 / -1;
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.speedLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.speedOptions {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+
+/* Two classes deep so it outranks `.visualiserControls button` and
+   `.playerControls button`, which would otherwise force 42px pill buttons. */
+.speedOptions .speedOption {
+  min-width: 46px;
+  height: 26px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.speedOptions .speedOption:hover:not(:disabled) {
+  color: var(--fg);
+}
+.speedOptions .speedOptionActive {
+  background: var(--primary);
+  color: var(--primary-fg);
+}
+.speedOptions .speedOption:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .playerControls button:disabled {
   opacity: 0.45;
   cursor: not-allowed;
@@ -2751,25 +2810,50 @@ p {
   letter-spacing: 0.08em;
   margin-bottom: 8px;
 }
+/* Variables panel: the last block inside the Code Space visualiser, pushed to
+   its foot so the diagram above it keeps the room it needs. */
+.dbgVarsBlock {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.dbgVarsCaption {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.dbgVarsScroll {
+  max-height: 240px;
+  overflow: auto;
+}
+
 .dbgVarsTable {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
 }
+.dbgVarsTable thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
 .dbgVarsTable th {
   text-align: left;
   padding: 6px 10px;
-  background: #f5f7ff;
-  color: #4d5574;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
   font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  border-bottom: 1px solid #dfe5f2;
+  border-bottom: 1px solid var(--border);
 }
 .dbgVarsTable td {
   padding: 7px 10px;
-  border-bottom: 1px solid #f0f2f8;
+  border-bottom: 1px solid var(--border);
   vertical-align: middle;
 }
 .dbgVarName {
@@ -2779,7 +2863,7 @@ p {
 }
 .dbgVarValue {
   font-family: ui-monospace, Menlo, monospace;
-  color: #10172e;
+  color: var(--fg);
 }
 .dbgVarType {
   color: #888;
@@ -5432,14 +5516,8 @@ body,
   border-color: hsl(170 25% 26%);
   color: hsl(170 45% 66%);
 }
-:root[data-theme="dark"] .dbgVarsTable th {
-  background: hsl(162 5% 17%);
-  color: hsl(155 8% 70%);
-  border-bottom-color: hsl(160 5% 24%);
-}
-:root[data-theme="dark"] .dbgVarsTable td {
-  border-bottom-color: hsl(162 5% 18%);
-}
+/* The variables table is themed with tokens now (soft teal header on
+   --primary-soft), so dark mode needs no colour overrides of its own. */
 :root[data-theme="dark"] .dbgHint {
   color: hsl(155 6% 60%) !important;
 }

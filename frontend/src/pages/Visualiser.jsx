@@ -1,6 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, ChevronDown, Pause, Play } from 'lucide-react';
 import styles from '../styles/App.module.css';
+import { SpeedControl } from '../components/SpeedControl';
+
+// How long one step is held at 1× speed; the speed picker divides this.
+const STEP_INTERVAL_MS = 800;
 
 // ─── pure helpers ─────────────────────────────────────────────────────────────
 
@@ -162,6 +166,7 @@ export function Visualiser() {
   const [methodInput, setMethodInput] = useState('upper');
   const [stepIndex, setStepIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [speed, setSpeed] = useState(1);
   // Bumped by the Visualise button to replay the highlight animation.
   const [runId, setRunId] = useState(0);
   const playTimer = useRef(null);
@@ -230,6 +235,8 @@ export function Visualiser() {
   }, [mode, forInput, whileInput, ifInput, stringInput]);
 
   // ── auto-play ─────────────────────────────────────────────────────────────
+  // `speed` is a multiplier on the base interval; changing it mid-play rebuilds
+  // the timer, so the new pace takes effect immediately.
   useEffect(() => {
     if (!isPlaying || activeSteps.length === 0) return;
     playTimer.current = setInterval(() => {
@@ -237,9 +244,9 @@ export function Visualiser() {
         if (prev >= activeSteps.length - 1) { setIsPlaying(false); return prev; }
         return prev + 1;
       });
-    }, 800);
+    }, STEP_INTERVAL_MS / speed);
     return () => clearInterval(playTimer.current);
-  }, [isPlaying, activeSteps.length]);
+  }, [isPlaying, activeSteps.length, speed]);
 
   function stopPlay() { clearInterval(playTimer.current); setIsPlaying(false); }
 
@@ -518,6 +525,7 @@ export function Visualiser() {
         <button onClick={nextStep} disabled={!isStepped || stepIndex === activeSteps.length - 1}>
           Next <ChevronRight size={28} />
         </button>
+        <SpeedControl value={speed} onChange={setSpeed} disabled={!isStepped} />
       </section>
     </div>
   );

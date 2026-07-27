@@ -4,6 +4,10 @@ import {
 } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { getApiUrl } from '../config/api';
+import { SpeedControl } from '../components/SpeedControl';
+
+// How long one step is held at 1× speed; the speed picker divides this.
+const STEP_INTERVAL_MS = 700;
 
 // ─── default starter code ────────────────────────────────────────────────────
 const DEFAULT_CODE = `# Try the debugger, step through this code
@@ -328,6 +332,7 @@ export function CodeSpace() {
   const [steps, setSteps] = useState([]);
   const [stepIndex, setStepIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [speed, setSpeed] = useState(1);
   const [editorLine, setEditorLine] = useState(1);
   const playTimer = useRef(null);
   const textareaRef = useRef(null);
@@ -374,6 +379,8 @@ export function CodeSpace() {
     setPlaying(true);
   }
 
+  // `speed` is a multiplier on the base step interval; changing it mid-play
+  // rebuilds the timer, so the new pace takes effect immediately.
   useEffect(() => {
     if (!playing) return;
     playTimer.current = setInterval(() => {
@@ -381,9 +388,9 @@ export function CodeSpace() {
         if (prev >= steps.length - 1) { stopPlay(); return prev; }
         return prev + 1;
       });
-    }, 700);
+    }, STEP_INTERVAL_MS / speed);
     return () => clearInterval(playTimer.current);
-  }, [playing, steps.length]);
+  }, [playing, steps.length, speed]);
 
   useEffect(() => {
     if (!pendingSelectionRef.current || !textareaRef.current) return;
@@ -673,6 +680,11 @@ export function CodeSpace() {
             <button onClick={next} disabled={!debugging || stepIndex === steps.length - 1}>
               Next <ArrowRight size={24} />
             </button>
+            <SpeedControl
+              value={speed}
+              onChange={setSpeed}
+              disabled={!debugging || steps.length === 0}
+            />
           </div>
 
           {debugging && (
@@ -708,25 +720,34 @@ export function CodeSpace() {
             </>
           )}
 
-        </section>
+          {/* Variables live at the foot of the visualiser: they describe the
+              step being shown here, not the program's printed output. */}
           {step && Object.keys(step.variables).length > 0 && (
-      <table className={styles.dbgVarsTable}>
-        <thead>
-          <tr>
-            <th>Variable</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.entries(step.variables).map(([k, v]) => (
-            <tr key={k}>
-              <td className={styles.dbgVarName}>{k}</td>
-              <td className={styles.dbgVarValue}>{typeof v === 'string' ? `"${v}"` : String(v)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    )}
+            <div className={styles.dbgVarsBlock}>
+              <h3 className={styles.dbgVarsCaption}>Variables at this step</h3>
+              <div className={styles.dbgVarsScroll}>
+                <table className={styles.dbgVarsTable}>
+                  <thead>
+                    <tr>
+                      <th>Variable</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(step.variables).map(([k, v]) => (
+                      <tr key={k}>
+                        <td className={styles.dbgVarName}>{k}</td>
+                        <td className={styles.dbgVarValue}>
+                          {typeof v === 'string' ? `"${v}"` : String(v)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </section>
       </main>
     </div>
   );
