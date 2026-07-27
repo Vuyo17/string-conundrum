@@ -1483,7 +1483,8 @@ p {
 .codeSpaceScreen {
   min-height: calc(100vh - 64px);
   padding: 10px 14px 12px;
-  background: var(--surface);
+  /* No page background: the app surface shows through, as on every other
+     screen. The editor, output and visualiser panels keep their own. */
   color: var(--fg);
   overflow: hidden;
 }
