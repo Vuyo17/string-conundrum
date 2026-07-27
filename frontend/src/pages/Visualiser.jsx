@@ -162,6 +162,8 @@ export function Visualiser() {
   const [methodInput, setMethodInput] = useState('upper');
   const [stepIndex, setStepIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  // Bumped by the Visualise button to replay the highlight animation.
+  const [runId, setRunId] = useState(0);
   const playTimer = useRef(null);
 
   const text = useMemo(() => parseStringInput(stringInput), [stringInput]);
@@ -240,6 +242,17 @@ export function Visualiser() {
   }, [isPlaying, activeSteps.length]);
 
   function stopPlay() { clearInterval(playTimer.current); setIsPlaying(false); }
+
+  // The board is derived live from the inputs, so "Visualise" is about *running*
+  // it: stepped modes replay from the first step, and every mode re-triggers the
+  // highlight animation so the press has a visible effect.
+  function handleVisualise() {
+    stopPlay();
+    setStepIndex(0);
+    setRunId((n) => n + 1);
+    if (isStepped && activeSteps.length > 0) setIsPlaying(true);
+  }
+
   function prevStep() { stopPlay(); setStepIndex(i => Math.max(0, i - 1)); }
   function nextStep() { stopPlay(); setStepIndex(i => Math.min(activeSteps.length - 1, i + 1)); }
   function togglePlay() {
@@ -333,8 +346,14 @@ export function Visualiser() {
           </div>
         </label>
 
-        <button className={styles.visualiseButton} onClick={() => { setStepIndex(0); stopPlay(); }}>
-          Visualise
+        <button
+          type="button"
+          className={styles.visualiseButton}
+          onClick={handleVisualise}
+          disabled={length === 0}
+          title={length === 0 ? 'Enter a string first' : 'Run the visualisation'}
+        >
+          {isStepped && isPlaying ? 'Playing…' : 'Visualise'}
         </button>
       </section>
 
@@ -407,14 +426,24 @@ export function Visualiser() {
 
           <div className={styles.rowLabel}>Char</div>
           <div className={styles.visualGrid} style={{ '--cells': Math.max(length, 1) }}>
-            {chars.map((char, index) => (
-              <span
-                key={`${char}-${index}`}
-                className={`${styles.visualChar} ${highlighted.includes(index) ? styles.visualCharActive : ''}`}
-              >
-                {char === ' ' ? '\u00b7' : char}
-              </span>
-            ))}
+            {chars.map((char, index) => {
+              const active = highlighted.includes(index);
+              return (
+                <span
+                  // runId is part of the key so a Visualise press remounts the
+                  // cells and replays the highlight animation.
+                  key={`${char}-${index}-${runId}`}
+                  className={[
+                    styles.visualChar,
+                    active ? styles.visualCharActive : '',
+                    active ? styles.visualCharPulse : '',
+                  ].join(' ')}
+                  style={active ? { animationDelay: `${Math.min(highlighted.indexOf(index) * 60, 600)}ms` } : undefined}
+                >
+                  {char === ' ' ? '\u00b7' : char}
+                </span>
+              );
+            })}
           </div>
 
           {/* markers row */}
