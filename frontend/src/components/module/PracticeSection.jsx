@@ -7,6 +7,7 @@ import m from '../../styles/ModulePage.module.css';
 import { CodeExercise } from './CodeExercise';
 import { CodeBlock, InlineText } from './ContentBlocks';
 import { ExamMode } from './ExamMode';
+import { apiFetch } from '../../api';
 
 // Star value of an exercise. The bank's legacy `xp` field is stars * 10;
 // newer questions carry `stars` directly. The UI speaks ONLY in stars.
@@ -275,12 +276,16 @@ function PracticeRunner({ practice, exercises }) {
     if (exercise.type === 'write_code') payload.code = answer?.code ?? '';
 
     try {
-      const res = await fetch('/api/exercises/submit', {
+      const res = await apiFetch('/api/exercises/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
       const data = await res.json();
+      if (!res.ok) {
+        setResult({ correct: false, feedback: 'This answer could not be marked — your session may have expired. Sign in again and retry.' });
+        return;
+      }
       setResult(data);
       if (data.correct) {
         setStars((prev) => prev + starsOf(exercise));

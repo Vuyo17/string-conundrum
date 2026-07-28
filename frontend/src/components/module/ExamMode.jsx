@@ -7,6 +7,7 @@ import m from '../../styles/ModulePage.module.css';
 import { CodeExercise } from './CodeExercise';
 import { CodeBlock, InlineText } from './ContentBlocks';
 import { presetForExercise } from './visualizers/presets';
+import { apiFetch } from '../../api';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ExamMode — the test-conditions counterpart to the practice runner.
@@ -154,12 +155,17 @@ export function ExamMode({ practice, exercises, onVisualize }) {
       if (ex.type === 'select_all') payload.answers = a.selected ?? [];
       if (ex.type === 'write_code') payload.code = a.code ?? '';
       try {
-        const res = await fetch('/api/exercises/submit', {
+        const res = await apiFetch('/api/exercises/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
-        graded[ex.question_id] = await res.json();
+        const data = await res.json();
+        // A rejected request still parses as JSON, so check the status rather
+        // than letting an unmarked question look like a wrong answer.
+        graded[ex.question_id] = res.ok
+          ? data
+          : { correct: false, feedback: 'This question could not be marked — your session may have expired. Sign in again and retry.' };
       } catch {
         graded[ex.question_id] = { correct: false, feedback: 'Could not reach the server for this question.' };
       }

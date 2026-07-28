@@ -4,6 +4,7 @@ import styles from '../styles/App.module.css';
 import { Progress } from '../components/Progress';
 import { StringCells } from '../components/StringCells';
 import { exerciseModules } from '../data/exerciseModules';
+import { apiFetch } from '../api';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -88,12 +89,16 @@ export function Exercise() {
     if (exercise.type === 'write_code') payload.code = answerState?.code ?? '';
 
     try {
-      const res = await fetch('/api/exercises/submit', {
+      const res = await apiFetch('/api/exercises/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
       const data = await res.json();
+      if (!res.ok) {
+        setResult({ ok: false, correct: false, feedback: 'This answer could not be marked — your session may have expired. Sign in again and retry.' });
+        return;
+      }
       setResult(data);
       if (data.correct) setStars((prev) => prev + (exercise.stars ?? Math.max(1, Math.round((exercise.xp ?? 10) / 10))));
     } catch {
@@ -272,6 +277,11 @@ export function Exercise() {
             <p style={{ color: 'var(--success)', fontSize: '14px', marginBottom: '14px' }}>
               {result.feedback}
             </p>
+            {result.explanation && (
+              <p style={{ color: 'var(--muted)', fontSize: '14px', lineHeight: '1.6', marginBottom: '14px' }}>
+                <strong>Why:</strong> {result.explanation}
+              </p>
+            )}
             {letters && <StringCells letters={letters} indexes={letters.map((_, i) => i)} highlight={[]} compact />}
           </>
         )}
@@ -283,6 +293,11 @@ export function Exercise() {
             <p style={{ color: 'var(--muted)', fontSize: '14px', marginTop: '8px', lineHeight: '1.6' }}>
               {result.feedback}
             </p>
+            {result.explanation && (
+              <p style={{ color: 'var(--muted)', fontSize: '14px', marginTop: '12px', lineHeight: '1.6' }}>
+                <strong>Why:</strong> {result.explanation}
+              </p>
+            )}
             <h3 style={{ marginTop: '20px' }}>Recommended next step</h3>
             <button className={styles.primaryButton} style={{ marginTop: '4px' }}>
               <Target size={15} /> Review this concept
