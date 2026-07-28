@@ -44,9 +44,15 @@ export function TopBar({ setScreen, onSearchSelect }) {
         >
           {isDark ? <Sun size={17} /> : <Moon size={17} />}
         </button>
-        <div className={styles.avatar} title={user?.email || displayNameFor(user)}>
+        <button
+          type="button"
+          className={styles.avatar}
+          onClick={() => setScreen('Settings')}
+          title={user?.email || displayNameFor(user)}
+          aria-label="Open profile settings"
+        >
           {initialsFor(user)}
-        </div>
+        </button>
       </div>
     </header>
   );
