@@ -5,47 +5,47 @@ import {
 } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
-const NAV_ICONS = {
-  Modules: LayoutGrid,
-  Visualiser: Eye,
-  'Code Space': Code2,
-  Challenges: Target,
-  Leaderboard: Trophy,
-};
+// Screen ids stay English — they key the router, `canAccess` and the screen map
+// in App.jsx. Only the visible label is translated, via `labelKey`.
+const NAV_ITEMS = [
+  { id: 'Modules', icon: LayoutGrid, labelKey: 'nav.modules' },
+  { id: 'Visualiser', icon: Eye, labelKey: 'nav.visualiser' },
+  { id: 'Code Space', icon: Code2, labelKey: 'nav.codeSpace' },
+  { id: 'Challenges', icon: Target, labelKey: 'nav.challenges' },
+  { id: 'Leaderboard', icon: Trophy, labelKey: 'nav.leaderboard' },
+];
 
 export function Sidebar({ screen, setScreen }) {
   const { isGuest, canAccess, signOut } = useAuth();
-  const items = ['Modules', 'Visualiser', 'Code Space', 'Challenges', 'Leaderboard'];
+  const { t } = useLanguage();
 
   return (
     <aside className={styles.sidebar}>
       {isGuest && (
         <div className={styles.sideStreakBanner}>
           <div className={styles.sideStreakLabel}>
-            <Sparkles size={12} /> Guest mode
+            <Sparkles size={12} /> {t('nav.guestMode')}
           </div>
-          <p className={styles.sideStreakText}>
-            Sign in to unlock modules, exercises and the leaderboard.
-          </p>
+          <p className={styles.sideStreakText}>{t('nav.guestBlurb')}</p>
           <button className={styles.sideUnlockBtn} onClick={signOut}>
-            Sign in to unlock
+            {t('nav.signInToUnlock')}
           </button>
         </div>
       )}
 
-      {items.map((item) => {
-        const Icon = NAV_ICONS[item];
-        const locked = !canAccess(item);
+      {NAV_ITEMS.map(({ id, icon: Icon, labelKey }) => {
+        const locked = !canAccess(id);
         return (
           <button
-            key={item}
-            className={`${screen === item ? styles.sideActive : ''} ${locked ? styles.sideLocked : ''}`}
-            onClick={() => (locked ? signOut() : setScreen(item))}
-            title={locked ? 'Sign in to unlock' : undefined}
+            key={id}
+            className={`${screen === id ? styles.sideActive : ''} ${locked ? styles.sideLocked : ''}`}
+            onClick={() => (locked ? signOut() : setScreen(id))}
+            title={locked ? t('nav.signInToUnlock') : undefined}
           >
             {Icon && <Icon size={17} />}
-            {item}
+            {t(labelKey)}
             {locked && <Lock size={13} className={styles.sideLockIcon} />}
           </button>
         );
@@ -57,16 +57,16 @@ export function Sidebar({ screen, setScreen }) {
           onClick={() => setScreen('Settings')}
         >
           <Settings size={17} />
-          Settings
+          {t('nav.settings')}
         </button>
 
         <button
           className={styles.sideSignOutBtn}
           onClick={signOut}
-          title={isGuest ? 'Sign in' : 'Sign out'}
+          title={isGuest ? t('nav.signIn') : t('nav.signOut')}
         >
           <LogOut size={15} />
-          {isGuest ? 'Sign in' : 'Sign out'}
+          {isGuest ? t('nav.signIn') : t('nav.signOut')}
         </button>
       </div>
     </aside>

@@ -10,6 +10,7 @@ import { ForgotPasswordForm } from './ForgotPasswordForm';
 import { PasswordSetupForm } from './PasswordSetupForm';
 import { useAuth } from '../../context/AuthContext';
 import { friendlyAuthError } from './authErrors';
+import { useLanguage } from '../../context/LanguageContext';
 
 /**
  * One container, many steps. Every authentication state renders inside the same
@@ -18,6 +19,7 @@ import { friendlyAuthError } from './authErrors';
 export function AuthPage() {
   const { user, emailLinkPending, storedSignUpEmail, sendSignUpLink, logout, finishEmailLinkFlow } =
     useAuth();
+  const { t } = useLanguage();
 
   // Whether a session already existed when this page mounted. Redeeming a link
   // signs the student in part-way through setup, so the "already signed in"
@@ -52,11 +54,11 @@ export function AuthPage() {
       <AuthLayout>
         <AuthStatusPanel
           icon={ShieldCheck}
-          title="You are already signed in"
+          title={t('auth.alreadySignedIn')}
           actions={
             <>
               <button type="button" className={s.submit} onClick={finishEmailLinkFlow}>
-                Continue to String Conundrum
+                {t('auth.continueToApp')}
               </button>
               <button
                 type="button"
@@ -66,14 +68,12 @@ export function AuthPage() {
                   finishEmailLinkFlow();
                 }}
               >
-                Sign in with a different account
+                {t('auth.differentAccount')}
               </button>
             </>
           }
         >
-          You are signed in as{' '}
-          <span className={s.statusAddress}>{user?.email ?? 'a guest'}</span>.
-          This link has already been used.
+          {t('auth.signedInAs', { email: user?.email ?? t('common.guest') })}
         </AuthStatusPanel>
       </AuthLayout>
     );
@@ -102,12 +102,12 @@ export function AuthPage() {
       {view === 'emailSent' && (
         <AuthStatusPanel
           icon={Inbox}
-          title="Check your UCT inbox"
+          title={t('auth.checkInbox')}
           actions={
             <>
               {resendState.sent && (
                 <AuthError tone="success">
-                  Link sent again. It can take a minute to arrive.
+                  {t('auth.linkSentAgain')}
                 </AuthError>
               )}
               {resendState.error && <AuthError>{resendState.error}</AuthError>}
@@ -119,10 +119,10 @@ export function AuthPage() {
               >
                 {resendState.busy ? (
                   <>
-                    <Loader2 size={16} className={s.spin} aria-hidden="true" /> Resending...
+                    <Loader2 size={16} className={s.spin} aria-hidden="true" /> {t('auth.resending')}
                   </>
                 ) : (
-                  'Resend email'
+                  t('auth.resendEmail')
                 )}
               </button>
             </>
@@ -130,22 +130,20 @@ export function AuthPage() {
           footer={
             <>
               <button type="button" className={s.inlineLink} onClick={() => go('signUp')}>
-                Change email
+                {t('auth.changeEmail')}
               </button>
               <button type="button" className={s.inlineLink} onClick={() => go('signIn')}>
-                Back to sign in
+                {t('auth.backToSignIn')}
               </button>
             </>
           }
         >
-          We sent a verification link to{' '}
-          <span className={s.statusAddress}>{email}</span>. Open it to finish
-          setting up your account.
+          {t('auth.verificationSent', { email })}
           <div className={s.statusSteps}>
             <ol>
-              <li>Open your UCT student email inbox.</li>
-              <li>Find the message from String Conundrum.</li>
-              <li>Follow the link to choose a password.</li>
+              <li>{t('auth.step1')}</li>
+              <li>{t('auth.step2')}</li>
+              <li>{t('auth.step3')}</li>
             </ol>
           </div>
         </AuthStatusPanel>
@@ -168,15 +166,14 @@ export function AuthPage() {
         <AuthStatusPanel
           icon={CheckCircle2}
           tone="success"
-          title="Your account is ready"
+          title={t('auth.accountReady')}
           actions={
             <button type="button" className={s.submit} onClick={finishEmailLinkFlow}>
-              Continue to String Conundrum
+              {t('auth.continueToApp')}
             </button>
           }
         >
-          Welcome to String Conundrum. Your progress will be saved to{' '}
-          <span className={s.statusAddress}>{email}</span> from now on.
+          {t('auth.accountReadyBlurb', { email })}
         </AuthStatusPanel>
       )}
 
@@ -194,10 +191,10 @@ export function AuthPage() {
       {view === 'resetSent' && (
         <AuthStatusPanel
           icon={MailCheck}
-          title="Check your inbox"
+          title={t('auth.checkInboxShort')}
           actions={
             <button type="button" className={s.secondary} onClick={() => go('forgotPassword')}>
-              Resend reset email
+              {t('auth.resendReset')}
             </button>
           }
           footer={

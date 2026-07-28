@@ -1,13 +1,14 @@
 import React from 'react';
 import { Gauge } from 'lucide-react';
 import styles from '../styles/App.module.css';
+import { useLanguage } from '../context/LanguageContext';
 
 // Multipliers on each visualiser's own base interval, so "1×" stays whatever
 // pace that screen was already playing at.
 export const SPEEDS = [
-  { value: 0.5, label: '0.5×', name: 'Slow' },
-  { value: 1, label: '1×', name: 'Normal' },
-  { value: 2, label: '2×', name: 'Fast' },
+  { value: 0.5, label: '0.5×', nameKey: 'common.speedSlow' },
+  { value: 1, label: '1×', nameKey: 'common.speedNormal' },
+  { value: 2, label: '2×', nameKey: 'common.speedFast' },
 ];
 
 /**
@@ -15,10 +16,12 @@ export const SPEEDS = [
  * debugger. Sits as its own centred row inside a controls grid.
  */
 export function SpeedControl({ value, onChange, disabled = false }) {
+  const { t } = useLanguage();
+
   return (
-    <div className={styles.speedControl} role="radiogroup" aria-label="Playback speed">
+    <div className={styles.speedControl} role="radiogroup" aria-label={t('common.speed')}>
       <span className={styles.speedLabel}>
-        <Gauge size={14} /> Speed
+        <Gauge size={14} /> {t('common.speed')}
       </span>
       <div className={styles.speedOptions}>
         {SPEEDS.map((speed) => {
@@ -32,7 +35,7 @@ export function SpeedControl({ value, onChange, disabled = false }) {
               className={`${styles.speedOption} ${active ? styles.speedOptionActive : ''}`}
               onClick={() => onChange(speed.value)}
               disabled={disabled}
-              title={`${speed.name} (${speed.label})`}
+              title={`${t(speed.nameKey)} (${speed.label})`}
             >
               {speed.label}
             </button>

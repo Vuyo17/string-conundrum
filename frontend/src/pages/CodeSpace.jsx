@@ -5,6 +5,7 @@ import {
 import styles from '../styles/App.module.css';
 import { getApiUrl } from '../config/api';
 import { SpeedControl } from '../components/SpeedControl';
+import { useLanguage } from '../context/LanguageContext';
 
 // How long one step is held at 1× speed; the speed picker divides this.
 const STEP_INTERVAL_MS = 700;
@@ -56,18 +57,19 @@ function displayLoopItem(raw, kind) {
 }
 
 function ForLoopDiagram({ loop }) {
+  const { t } = useLanguage();
   const { var: varName, iteration, total, items, kind } = loop;
   const current = iteration - 1; // 0-based index of the active item
   const currentRaw = items[current] ?? '';
   const currentDisplay = displayLoopItem(currentRaw, kind);
   const pct = total > 0 ? (iteration / total) * 100 : 0;
-  const sequenceLabel = kind === 'char' ? 'characters' : 'sequence';
+  const sequenceLabel = kind === 'char' ? t('codeSpace.characters') : t('codeSpace.sequence');
 
   return (
     <div className={styles.flpDiagram}>
       {/* header: badge + loop signature + counter */}
       <div className={styles.flpHeader}>
-        <span className={styles.flpBadge}>for&nbsp;loop</span>
+        <span className={styles.flpBadge}>{t('codeSpace.forLoop')}</span>
         <div className={styles.flpSignature}>
           <span className={styles.flpKw}>for</span>
           <span className={styles.flpVar}>{varName}</span>
@@ -76,14 +78,14 @@ function ForLoopDiagram({ loop }) {
           <span className={styles.flpColon}>:</span>
         </div>
         <span className={styles.flpCounter}>
-          pass <b>{iteration}</b> of {total}
+          {t('codeSpace.pass')} <b>{iteration}</b> {t('codeSpace.of')} {total}
         </span>
       </div>
 
       {/* the sequence being walked, one cell per element */}
       <div className={styles.flpTrackWrap}>
         <div className={styles.flpTrackHead}>
-          <span>The loop walks through each element, left to right</span>
+          <span>{t('codeSpace.loopWalks')}</span>
         </div>
         <div className={styles.flpTrack}>
           {items.map((it, i) => {
@@ -103,22 +105,22 @@ function ForLoopDiagram({ loop }) {
       {/* flow: current element → loop variable → body → back to top */}
       <div className={styles.flpFlow}>
         <div className={styles.flpFlowNode}>
-          <span className={styles.flpFlowLabel}>current element</span>
+          <span className={styles.flpFlowLabel}>{t('codeSpace.currentElement')}</span>
           <span className={styles.flpFlowValue}>{currentDisplay}</span>
         </div>
         <span className={styles.flpFlowArrow}>→</span>
         <div className={`${styles.flpFlowNode} ${styles.flpFlowVar}`}>
-          <span className={styles.flpFlowLabel}>loop variable</span>
+          <span className={styles.flpFlowLabel}>{t('codeSpace.loopVariable')}</span>
           <span className={styles.flpFlowValue}>
             <code>{varName}</code> = <code>{currentDisplay}</code>
           </span>
         </div>
         <span className={styles.flpFlowArrow}>→</span>
         <div className={`${styles.flpFlowNode} ${styles.flpFlowBody}`}>
-          <span className={styles.flpFlowLabel}>runs</span>
-          <span className={styles.flpFlowValue}>loop body</span>
+          <span className={styles.flpFlowLabel}>{t('codeSpace.runs')}</span>
+          <span className={styles.flpFlowValue}>{t('codeSpace.loopBody')}</span>
         </div>
-        <span className={styles.flpLoopBack} title="repeats for the next element">↺</span>
+        <span className={styles.flpLoopBack} title={t('codeSpace.repeatsNext')}>↺</span>
       </div>
 
     </div>
@@ -324,6 +326,7 @@ function highlightPython(code) {
 
 // ─── component ────────────────────────────────────────────────────────────────
 export function CodeSpace() {
+  const { t } = useLanguage();
   const [code, setCode] = useState(DEFAULT_CODE);
   const [stdout, setStdout] = useState('');
   const [stderr, setStderr] = useState('');
@@ -540,7 +543,7 @@ export function CodeSpace() {
       setSteps(debugData.steps ?? []);
       setDebugging((debugData.steps ?? []).length > 0);
     } catch {
-      setStderr('Cannot reach server. Is the backend running?');
+      setStderr(t('codeSpace.serverUnreachable'));
     } finally {
       setLoading(false);
     }
@@ -567,8 +570,8 @@ export function CodeSpace() {
         <div className={styles.codeTitleGroup}>
           <div className={styles.purpleIcon}><Code2 size={26} /></div>
           <div>
-            <h1>Code Space</h1>
-            <p>Write Python code and step through it like a debugger.</p>
+            <h1>{t('codeSpace.title')}</h1>
+            <p>{t('codeSpace.subtitle')}</p>
           </div>
         </div>
         <div className={styles.codeHeroActions}>
@@ -578,7 +581,7 @@ export function CodeSpace() {
             disabled={!debugging || steps.length === 0}
           />
           <button className={styles.codeClearButton} onClick={handleClear}>
-            <Trash2 size={22} /> Clear
+            <Trash2 size={22} /> {t('common.clear')}
           </button>
         </div>
       </header>
@@ -589,14 +592,14 @@ export function CodeSpace() {
           <article className={styles.codePanel}>
             <div className={styles.codePanelHeader}>
               <span className={styles.softIcon}><Code2 size={22} /></span>
-              <h2>Code Editor</h2>
+              <h2>{t('codeSpace.codeEditor')}</h2>
               <div className={styles.codePanelHeaderActions}>
                 <button
                   className={styles.codeRunIconButton}
                   onClick={handleRun}
                   disabled={loading}
-                  title={loading ? 'Running...' : 'Run code'}
-                  aria-label={loading ? 'Running code' : 'Run code'}
+                  title={loading ? t('codeSpace.running') : t('codeSpace.runCode')}
+                  aria-label={loading ? t('codeSpace.running') : t('codeSpace.runCode')}
                 >
                   <Play size={18} fill="currentColor" />
                 </button>
@@ -648,7 +651,7 @@ export function CodeSpace() {
           <article className={styles.codePanel}>
             <div className={styles.codePanelHeader}>
               <span className={styles.softIcon}><Terminal size={22} /></span>
-              <h2>Output</h2>
+              <h2>{t('codeSpace.output')}</h2>
             </div>
             <pre ref={outputRef} className={styles.codeOutput}>
               {stderr
@@ -663,29 +666,29 @@ export function CodeSpace() {
           <div className={styles.dbgTopBar}>
             <div className={styles.dbgTopLeft}>
               <span className={styles.eyeIcon}><Eye size={26} /></span>
-              <h2>Visualiser</h2>
+              <h2>{t('codeSpace.visualiser')}</h2>
             </div>
             {debugging && (
               <div className={styles.dbgTopRight}>
                 <span className={styles.dbgStepPill}>
                   {stepIndex + 1} / {steps.length}
                 </span>
-                {step && <span className={styles.dbgLineTag}>Line {step.line}</span>}
+                {step && <span className={styles.dbgLineTag}>{t('codeSpace.line')} {step.line}</span>}
               </div>
             )}
           </div>
 
           <div className={styles.playerControls}>
             <button onClick={prev} disabled={!debugging || stepIndex === 0}>
-              <ArrowLeft size={22} /> Previous
+              <ArrowLeft size={22} /> {t('common.previous')}
             </button>
             <button onClick={togglePlay} disabled={!debugging || steps.length === 0}>
               {playing
-                ? <><Pause size={20} fill="currentColor" /> Pause</>
-                : <><Play size={20} fill="currentColor" /> Play</>}
+                ? <><Pause size={20} fill="currentColor" /> {t('common.pause')}</>
+                : <><Play size={20} fill="currentColor" /> {t('common.play')}</>}
             </button>
             <button onClick={next} disabled={!debugging || stepIndex === steps.length - 1}>
-              Next <ArrowRight size={24} />
+              {t('common.next')} <ArrowRight size={24} />
             </button>
           </div>
 

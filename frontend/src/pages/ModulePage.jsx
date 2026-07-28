@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import m from '../styles/ModulePage.module.css';
 import { getModuleContent } from '../data/moduleContent';
+import { useLanguage } from '../context/LanguageContext';
 import { ContentBlocks } from '../components/module/ContentBlocks';
 import { WorkedExample } from '../components/module/WorkedExample';
 import { getVisualizer } from '../components/module/visualizers';
@@ -28,7 +29,8 @@ const HIDDEN = { display: 'none' };
 export function ModulePage({
   moduleId, moduleNumber, onBack, initialSection, anchor, entryKey,
 }) {
-  const content = getModuleContent(moduleId);
+  const { lang } = useLanguage();
+  const content = getModuleContent(moduleId, lang);
   const [activeSection, setActiveSection] = useState(initialSection ?? 'learn');
   const [visualizerPreset, setVisualizerPreset] = useState(null);
   const topRef = useRef(null);

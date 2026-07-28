@@ -5,6 +5,7 @@ import { Progress } from '../components/Progress';
 import { StringCells } from '../components/StringCells';
 import { exerciseModules } from '../data/exerciseModules';
 import { apiFetch } from '../api';
+import { useLanguage } from '../context/LanguageContext';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -30,6 +31,7 @@ function defaultAnswerState(exercise) {
 // ─── component ──────────────────────────────────────────────────────────────
 
 export function Exercise() {
+  const { t, lang } = useLanguage();
   const [moduleId, setModuleId] = useState('indexing');
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -50,7 +52,7 @@ export function Exercise() {
     setIndex(0);
     setResult(null);
 
-    fetch(`/api/exercises/${moduleId}`)
+    fetch(`/api/exercises/${moduleId}?lang=${lang}`)
       .then((res) => res.json())
       .then((data) => {
         if (cancelled) return;
@@ -67,7 +69,7 @@ export function Exercise() {
     return () => {
       cancelled = true;
     };
-  }, [moduleId]);
+  }, [moduleId, lang]);
 
   // ── reset the answer input whenever the question changes ─────────────────
   useEffect(() => {
@@ -82,7 +84,7 @@ export function Exercise() {
     if (!exercise) return;
     setSubmitting(true);
 
-    const payload = { module_id: exercise.module_id, question_id: exercise.question_id };
+    const payload = { module_id: exercise.module_id, question_id: exercise.question_id, lang };
     if (exercise.type === 'mcq') payload.answer = answerState?.selected ?? '';
     if (exercise.type === 'fill_blank') payload.answer = answerState?.value ?? '';
     if (exercise.type === 'select_all') payload.answers = answerState?.selected ?? [];
@@ -96,13 +98,13 @@ export function Exercise() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setResult({ ok: false, correct: false, feedback: 'This answer could not be marked — your session may have expired. Sign in again and retry.' });
+        setResult({ ok: false, correct: false, feedback: t('exercise.markFailed') });
         return;
       }
       setResult(data);
       if (data.correct) setStars((prev) => prev + (exercise.stars ?? Math.max(1, Math.round((exercise.xp ?? 10) / 10))));
     } catch {
-      setResult({ ok: false, correct: false, feedback: 'Cannot reach server. Is the backend running?' });
+      setResult({ ok: false, correct: false, feedback: t('codeSpace.serverUnreachable') });
     } finally {
       setSubmitting(false);
     }
@@ -233,18 +235,18 @@ export function Exercise() {
             {/* ── result banner ── */}
             {result && (
               <div className={`${styles.resultBanner} ${result.correct ? styles.resultBannerCorrect : styles.resultBannerIncorrect}`}>
-                <strong>{result.correct ? 'Correct! 🎉' : 'Not quite.'}</strong>
+                <strong>{result.correct ? t('exercise.correctHeading') : t('exercise.notQuite')}</strong>
                 <p style={{ marginTop: '6px' }}>{result.feedback}</p>
               </div>
             )}
 
             <div className={styles.exerciseNavRow}>
               <button className={styles.secondaryButton} onClick={handleSkip} disabled={index >= exercises.length - 1 && !result}>
-                Skip
+                {t('common.skip')}
               </button>
               {!result ? (
                 <button className={styles.primaryButton} onClick={handleCheck} disabled={!canCheck || submitting}>
-                  {submitting ? 'Checking…' : 'Check Answer'}
+                  {submitting ? t('exercise.checking') : t('exercise.checkAnswer')}
                 </button>
               ) : (
                 <button
@@ -252,7 +254,7 @@ export function Exercise() {
                   onClick={handleNext}
                   disabled={index >= exercises.length - 1}
                 >
-                  Next Question <ChevronRight size={14} />
+                  {t('exercise.nextQuestion')} <ChevronRight size={14} />
                 </button>
               )}
             </div>
@@ -263,23 +265,22 @@ export function Exercise() {
       <aside className={result?.correct ? styles.feedbackSuccess : styles.misconceptionCard}>
         {!result && (
           <>
-            <h3>Tips</h3>
+            <h3>{t('exercise.tips')}</h3>
             <p style={{ color: 'var(--muted)', fontSize: '14px' }}>
-              Read the prompt carefully, work through the code line by line, then check your answer.
-              If you get it wrong, the feedback panel will explain the misconception behind it.
+              {t('exercise.tipsBlurb')}
             </p>
           </>
         )}
 
         {result?.correct && (
           <>
-            <h3>Correct! 🎉</h3>
+            <h3>{t('exercise.correctHeading')}</h3>
             <p style={{ color: 'var(--success)', fontSize: '14px', marginBottom: '14px' }}>
               {result.feedback}
             </p>
             {result.explanation && (
               <p style={{ color: 'var(--muted)', fontSize: '14px', lineHeight: '1.6', marginBottom: '14px' }}>
-                <strong>Why:</strong> {result.explanation}
+                <strong>{t('common.why')}</strong> {result.explanation}
               </p>
             )}
             {letters && <StringCells letters={letters} indexes={letters.map((_, i) => i)} highlight={[]} compact />}
@@ -288,8 +289,8 @@ export function Exercise() {
 
         {result && !result.correct && (
           <>
-            <div className={styles.errorPill}>✗ Incorrect Answer</div>
-            <h2>Misconception Detected</h2>
+            <div className={styles.errorPill}>✗ {t('exercise.incorrectAnswer')}</div>
+            <h2>{t('exercise.misconceptionDetected')}</h2>
             <p style={{ color: 'var(--muted)', fontSize: '14px', marginTop: '8px', lineHeight: '1.6' }}>
               {result.feedback}
             </p>
@@ -298,9 +299,9 @@ export function Exercise() {
                 <strong>Why:</strong> {result.explanation}
               </p>
             )}
-            <h3 style={{ marginTop: '20px' }}>Recommended next step</h3>
+            <h3 style={{ marginTop: '20px' }}>{t('exercise.recommendedNextStep')}</h3>
             <button className={styles.primaryButton} style={{ marginTop: '4px' }}>
-              <Target size={15} /> Review this concept
+              <Target size={15} /> {t('exercise.reviewConcept')}
             </button>
           </>
         )}

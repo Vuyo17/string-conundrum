@@ -50,6 +50,7 @@ def submit_exercise():
     answer = payload.get("answer", "")
     answers = payload.get("answers")
     code = payload.get("code")
+    lang = payload.get("lang")
 
     evaluation = evaluate_answer(
         module_id=module_id,
@@ -57,6 +58,7 @@ def submit_exercise():
         answer=answer,
         answers=answers,
         code=code,
+        lang=lang,
     )
     return {"ok": True, **evaluation}
 
@@ -64,7 +66,7 @@ def submit_exercise():
 @api_bp.get("/exercises/<module_id>")
 def list_module_exercises(module_id: str):
     """Return every exercise for a module, e.g. to render the Exercise screen."""
-    exercises = get_module_exercises(module_id)
+    exercises = get_module_exercises(module_id, request.args.get("lang"))
     return {"ok": True, "module_id": module_id, "exercises": exercises}
 
 

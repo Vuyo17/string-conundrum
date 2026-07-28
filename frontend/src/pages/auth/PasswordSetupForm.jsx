@@ -7,6 +7,7 @@ import { PasswordStrengthIndicator } from './PasswordStrengthIndicator';
 import { useAuth } from '../../context/AuthContext';
 import { friendlyAuthError, validateEmailShape } from './authErrors';
 import { meetsPolicy } from './passwordPolicy';
+import { useLanguage } from '../../context/LanguageContext';
 
 /**
  * Reached by opening the emailed link. Firebase needs the address back to
@@ -15,6 +16,7 @@ import { meetsPolicy } from './passwordPolicy';
  */
 export function PasswordSetupForm({ email, needsEmail, onEmailConfirmed, onComplete, onRestart }) {
   const { completeSignUpLink, setAccountPassword } = useAuth();
+  const { t } = useLanguage();
 
   const [emailInput, setEmailInput] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -58,17 +60,16 @@ export function PasswordSetupForm({ email, needsEmail, onEmailConfirmed, onCompl
   if (needsEmail) {
     return (
       <div className={s.panelInner}>
-        <h2 className={s.heading}>Confirm your email</h2>
+        <h2 className={s.heading}>{t('auth.confirmEmail')}</h2>
         <p className={s.subheading}>
-          You opened this link on a different device. Enter the UCT email address
-          you signed up with to continue.
+          {t('auth.confirmEmailBlurb')}
         </p>
 
         <form onSubmit={handleEmailSubmit} noValidate>
           <div className={s.fields}>
             <AuthField
               id="confirm-email"
-              label="UCT student email"
+              label={t("auth.uctEmail")}
               type="email"
               icon={Mail}
               autoComplete="email"
@@ -78,12 +79,12 @@ export function PasswordSetupForm({ email, needsEmail, onEmailConfirmed, onCompl
               error={emailError}
             />
           </div>
-          <button type="submit" className={s.submit}>Continue</button>
+          <button type="submit" className={s.submit}>{t('common.continue')}</button>
         </form>
 
         <p className={s.footerNote}>
           <button type="button" className={s.inlineLink} onClick={onRestart}>
-            Start over
+            {t('auth.startOver')}
           </button>
         </p>
       </div>
@@ -92,9 +93,9 @@ export function PasswordSetupForm({ email, needsEmail, onEmailConfirmed, onCompl
 
   return (
     <div className={s.panelInner}>
-      <h2 className={s.heading}>Choose a password</h2>
+      <h2 className={s.heading}>{t('auth.choosePassword')}</h2>
       <p className={s.subheading}>
-        Setting up <span className={s.statusAddress}>{email}</span>
+        {t('auth.settingUpAccount', { email })}
       </p>
 
       <AuthError>{formError}</AuthError>
@@ -103,7 +104,7 @@ export function PasswordSetupForm({ email, needsEmail, onEmailConfirmed, onCompl
         <div className={s.fields}>
           <AuthField
             id="new-password"
-            label="Password"
+            label={t("auth.password")}
             type="password"
             icon={Lock}
             autoComplete="new-password"
@@ -117,25 +118,25 @@ export function PasswordSetupForm({ email, needsEmail, onEmailConfirmed, onCompl
         <div className={s.fields} style={{ marginTop: 18 }}>
           <AuthField
             id="confirm-password"
-            label="Confirm password"
+            label={t("auth.confirmPassword")}
             type="password"
             icon={Lock}
             autoComplete="new-password"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             onBlur={() => setTouchedConfirm(true)}
-            error={touchedConfirm && confirm && !matches ? 'Passwords do not match.' : ''}
+            error={touchedConfirm && confirm && !matches ? t('auth.passwordsDoNotMatch') : ''}
           />
         </div>
 
         {confirm.length > 0 && matches && (
           <p className={`${s.matchRow} ${s.matchOk}`}>
-            <Check size={14} aria-hidden="true" /> Passwords match
+            <Check size={14} aria-hidden="true" /> {t('auth.passwordsMatch')}
           </p>
         )}
         {confirm.length > 0 && !matches && !touchedConfirm && (
           <p className={`${s.matchRow} ${s.matchNo}`}>
-            <AlertCircle size={14} aria-hidden="true" /> Passwords do not match yet
+            <AlertCircle size={14} aria-hidden="true" /> {t('auth.passwordsNotMatchYet')}
           </p>
         )}
 
@@ -146,10 +147,10 @@ export function PasswordSetupForm({ email, needsEmail, onEmailConfirmed, onCompl
         >
           {busy ? (
             <>
-              <Loader2 size={16} className={s.spin} aria-hidden="true" /> Creating account...
+              <Loader2 size={16} className={s.spin} aria-hidden="true" /> {t('auth.creatingAccount')}
             </>
           ) : (
-            'Create account'
+            t('auth.createAccount')
           )}
         </button>
       </form>

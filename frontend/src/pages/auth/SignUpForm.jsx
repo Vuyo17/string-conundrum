@@ -5,9 +5,11 @@ import { AuthField } from './AuthField';
 import { AuthError } from './AuthError';
 import { useAuth } from '../../context/AuthContext';
 import { UCT_DOMAIN, friendlyAuthError, validateUctEmail } from './authErrors';
+import { useLanguage } from '../../context/LanguageContext';
 
 export function SignUpForm({ initialEmail = '', onSent, onSignIn }) {
   const { sendSignUpLink } = useAuth();
+  const { t } = useLanguage();
 
   const [email, setEmail] = useState(initialEmail);
   const [fieldError, setFieldError] = useState('');
@@ -36,14 +38,13 @@ export function SignUpForm({ initialEmail = '', onSent, onSignIn }) {
 
   return (
     <div className={s.panelInner}>
-      <h2 className={s.heading}>Create your account</h2>
+      <h2 className={s.heading}>{t('auth.createAccountTitle')}</h2>
       <p className={s.subheading}>
-        Registration is currently open to UCT students only.
+        {t('auth.createAccountSubtitle')}
       </p>
 
       <AuthError tone="info">
-        Use your university address ending in <strong>{UCT_DOMAIN}</strong>. We
-        will email you a secure link to finish setting up.
+        {t('auth.uctOnlyNote', { domain: UCT_DOMAIN })}
       </AuthError>
 
       <AuthError>{formError}</AuthError>
@@ -52,7 +53,7 @@ export function SignUpForm({ initialEmail = '', onSent, onSignIn }) {
         <div className={s.fields}>
           <AuthField
             id="signup-email"
-            label="UCT student email"
+            label={t("auth.uctEmail")}
             type="email"
             icon={GraduationCap}
             autoComplete="email"
@@ -60,27 +61,27 @@ export function SignUpForm({ initialEmail = '', onSent, onSignIn }) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             error={fieldError}
-            hint="You will need to open the link from your UCT inbox."
+            hint={t("auth.inboxHint")}
           />
         </div>
 
         <button type="submit" className={s.submit} disabled={busy}>
           {busy ? (
             <>
-              <Loader2 size={16} className={s.spin} aria-hidden="true" /> Sending link...
+              <Loader2 size={16} className={s.spin} aria-hidden="true" /> {t('auth.sendingLink')}
             </>
           ) : (
             <>
-              <Mail size={16} aria-hidden="true" /> Send verification link
+              <Mail size={16} aria-hidden="true" /> {t('auth.sendLink')}
             </>
           )}
         </button>
       </form>
 
       <p className={s.footerNote}>
-        Already have an account?{' '}
+        {t('auth.alreadyHaveAccount')}{' '}
         <button type="button" className={s.inlineLink} onClick={onSignIn}>
-          Sign in
+          {t('auth.signInTitle')}
         </button>
       </p>
     </div>

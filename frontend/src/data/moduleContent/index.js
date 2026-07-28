@@ -7,6 +7,11 @@
 //   2. Import it below and add it to MODULE_CONTENT.
 //   3. Make sure the module in `data/modules.js` uses the same `id`.
 // That's it: the ModulePage renders everything from the content object.
+//
+// Translations live in `data/moduleContent/<lang>/<id>.js` and hold the SAME
+// shape, but may be partial — `getModuleContent` deep-merges them over the
+// English base, so an untranslated field falls back to English rather than
+// blanking the lesson. Ids and every `code` block stay English.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { introModule } from './intro';
@@ -17,6 +22,8 @@ import { comparisonModule } from './comparison';
 import { loopingModule } from './looping';
 import { methodsModule } from './methods';
 import { formattingModule } from './formatting';
+
+import { introModuleXh } from './xh/intro';
 
 export const MODULE_CONTENT = {
   [introModule.id]: introModule,
@@ -29,8 +36,37 @@ export const MODULE_CONTENT = {
   [formattingModule.id]: formattingModule,
 };
 
-export function getModuleContent(id) {
-  return MODULE_CONTENT[id] ?? null;
+// Partial overlays. A module with no entry here simply renders in English.
+const TRANSLATIONS = {
+  xh: {
+    [introModule.id]: introModuleXh,
+  },
+};
+
+// Arrays merge by position, so a translation can localise the first three
+// blocks of a section and leave the rest in English.
+function deepMerge(base, overlay) {
+  if (overlay === undefined || overlay === null) return base;
+  if (Array.isArray(base)) {
+    if (!Array.isArray(overlay)) return overlay;
+    return base.map((item, i) => deepMerge(item, overlay[i]));
+  }
+  if (base && typeof base === 'object') {
+    if (typeof overlay !== 'object' || Array.isArray(overlay)) return overlay;
+    const out = { ...base };
+    for (const key of Object.keys(overlay)) {
+      out[key] = deepMerge(base[key], overlay[key]);
+    }
+    return out;
+  }
+  return overlay;
+}
+
+export function getModuleContent(id, lang = 'en') {
+  const base = MODULE_CONTENT[id] ?? null;
+  if (!base) return null;
+  const overlay = TRANSLATIONS[lang]?.[id];
+  return overlay ? deepMerge(base, overlay) : base;
 }
 
 export function hasModuleContent(id) {

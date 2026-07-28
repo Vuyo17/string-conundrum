@@ -1,14 +1,16 @@
 import React from 'react';
-import { User, Palette, LogOut, Moon, Sun } from 'lucide-react';
+import { User, Palette, LogOut, Moon, Sun, Languages } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 import { displayNameFor, initialsFor } from '../utils/profile';
 
 export function Settings() {
   const { user, isGuest, signOut } = useAuth();
   const { isDark, toggleTheme } = useTheme();
+  const { lang, setLang, languages, t } = useLanguage();
 
   // ThemeContext only exposes a toggle, so only flip when the pick differs.
   function chooseTheme(wantDark) {
@@ -17,20 +19,18 @@ export function Settings() {
 
   return (
     <div className={styles.screenStack}>
-      <ScreenHeader title="Settings" subtitle="Your profile, appearance and account options." />
+      <ScreenHeader title={t('settings.title')} subtitle={t('settings.subtitle')} />
 
       <section className={styles.card}>
         <div className={styles.settingsSectionTitle}>
-          <User size={15} /> Profile
+          <User size={15} /> {t('settings.profile')}
         </div>
         <div className={styles.settingsProfile}>
           <div className={styles.profileAvatar}>{initialsFor(user)}</div>
           <div>
             <strong className={styles.settingsProfileName}>{displayNameFor(user)}</strong>
             <p className={styles.settingsRowHint}>
-              {isGuest
-                ? 'Browsing as a guest — your progress is not saved.'
-                : user?.email}
+              {isGuest ? t('settings.guestHint') : user?.email}
             </p>
           </div>
         </div>
@@ -38,12 +38,12 @@ export function Settings() {
 
       <section className={styles.card}>
         <div className={styles.settingsSectionTitle}>
-          <Palette size={15} /> Appearance
+          <Palette size={15} /> {t('settings.appearance')}
         </div>
         <div className={styles.settingsRow}>
           <div>
-            <strong>Theme</strong>
-            <p className={styles.settingsRowHint}>Choose how String Conundrum looks.</p>
+            <strong>{t('settings.theme')}</strong>
+            <p className={styles.settingsRowHint}>{t('settings.themeHint')}</p>
           </div>
           <div className={styles.settingsChoice}>
             <button
@@ -52,7 +52,7 @@ export function Settings() {
               aria-pressed={!isDark}
               onClick={() => chooseTheme(false)}
             >
-              <Sun size={14} /> Light
+              <Sun size={14} /> {t('settings.light')}
             </button>
             <button
               type="button"
@@ -60,27 +60,45 @@ export function Settings() {
               aria-pressed={isDark}
               onClick={() => chooseTheme(true)}
             >
-              <Moon size={14} /> Dark
+              <Moon size={14} /> {t('settings.dark')}
             </button>
+          </div>
+        </div>
+
+        <div className={styles.settingsRow}>
+          <div>
+            <strong>{t('settings.language')}</strong>
+            <p className={styles.settingsRowHint}>{t('settings.languageHint')}</p>
+          </div>
+          <div className={styles.settingsChoice}>
+            {languages.map((option) => (
+              <button
+                key={option.code}
+                type="button"
+                className={lang === option.code ? styles.settingsChoiceActive : ''}
+                aria-pressed={lang === option.code}
+                onClick={() => setLang(option.code)}
+              >
+                <Languages size={14} /> {option.label}
+              </button>
+            ))}
           </div>
         </div>
       </section>
 
       <section className={styles.card}>
         <div className={styles.settingsSectionTitle}>
-          <LogOut size={15} /> Account
+          <LogOut size={15} /> {t('settings.account')}
         </div>
         <div className={styles.settingsRow}>
           <div>
-            <strong>{isGuest ? 'Sign in' : 'Sign out'}</strong>
+            <strong>{isGuest ? t('nav.signIn') : t('nav.signOut')}</strong>
             <p className={styles.settingsRowHint}>
-              {isGuest
-                ? 'Sign in to unlock modules, exercises and the leaderboard.'
-                : 'End your session on this device.'}
+              {isGuest ? t('settings.signInHint') : t('settings.signOutHint')}
             </p>
           </div>
           <button type="button" className={styles.secondaryButton} onClick={signOut}>
-            <LogOut size={14} /> {isGuest ? 'Sign in' : 'Sign out'}
+            <LogOut size={14} /> {isGuest ? t('nav.signIn') : t('nav.signOut')}
           </button>
         </div>
       </section>

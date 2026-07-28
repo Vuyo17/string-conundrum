@@ -13,9 +13,11 @@ import { AuthPage } from "./pages/auth/AuthPage";
 import auth from "./pages/auth/Auth.module.css";
 import { useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
+import { LanguageProvider, useLanguage } from "./context/LanguageContext";
 
 function Shell() {
   const { user, loading, emailLinkPending, isGuest, canAccess } = useAuth();
+  const { t } = useLanguage();
   // Guests land on the Visualiser; signed-in users on Modules.
   const [screen, setScreen] = useState(isGuest ? "Visualiser" : "Modules");
   // Set by a search result so the Modules screen can open straight onto a
@@ -26,7 +28,7 @@ function Shell() {
     return (
       <div className={auth.boot}>
         <Loader2 size={20} className={auth.spin} aria-hidden="true" />
-        <p>Loading your account...</p>
+        <p>{t('auth.loadingAccount')}</p>
       </div>
     );
   }
@@ -82,9 +84,11 @@ function Shell() {
 
 function App() {
   return (
-    <ThemeProvider>
-      <Shell />
-    </ThemeProvider>
+    <LanguageProvider>
+      <ThemeProvider>
+        <Shell />
+      </ThemeProvider>
+    </LanguageProvider>
   );
 }
 

@@ -2,6 +2,12 @@ import json
 from pathlib import Path
 
 from .sandbox import run_for_grading
+from .i18n import (
+    MISCONCEPTION_FEEDBACK_XH,
+    MODULE_EXPLANATIONS_XH,
+    TEMPLATES,
+    normalise_lang,
+)
 
 _DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "exercises.json"
 
@@ -43,7 +49,29 @@ MODULE_EXPLANATIONS = {
 }
 
 
-def _explanation_for(exercise: dict, misconception_id: "str | None" = None) -> str:
+_MISCONCEPTIONS_BY_LANG = {"en": MISCONCEPTION_FEEDBACK, "xh": MISCONCEPTION_FEEDBACK_XH}
+_MODULE_EXPLANATIONS_BY_LANG = {"en": MODULE_EXPLANATIONS, "xh": MODULE_EXPLANATIONS_XH}
+
+
+def _misconceptions(lang: str) -> dict:
+    """isiXhosa entries fall back to English individually, not as a whole dict."""
+    if lang == "en":
+        return MISCONCEPTION_FEEDBACK
+    return {**MISCONCEPTION_FEEDBACK, **_MISCONCEPTIONS_BY_LANG.get(lang, {})}
+
+
+def _module_explanations(lang: str) -> dict:
+    if lang == "en":
+        return MODULE_EXPLANATIONS
+    return {**MODULE_EXPLANATIONS, **_MODULE_EXPLANATIONS_BY_LANG.get(lang, {})}
+
+
+def _tpl(lang: str, key: str, **kwargs) -> str:
+    table = TEMPLATES.get(lang, TEMPLATES["en"])
+    return table.get(key, TEMPLATES["en"][key]).format(**kwargs)
+
+
+def _explanation_for(exercise: dict, misconception_id: "str | None" = None, lang: str = "en") -> str:
     """Explain the rule behind an answer, most specific source first.
 
     Order: an explanation authored on the exercise, then the concept the
@@ -51,21 +79,23 @@ def _explanation_for(exercise: dict, misconception_id: "str | None" = None) -> s
     already got targeted misconception feedback we deliberately fall back to
     the module rule so the same sentence is not shown twice.
     """
+    # An authored explanation is English-only; the generated banks carry none.
     authored = exercise.get("explanation")
     if authored:
         return authored
 
-    module_rule = MODULE_EXPLANATIONS.get(exercise.get("module_id", ""), "")
+    misconceptions = _misconceptions(lang)
+    module_rule = _module_explanations(lang).get(exercise.get("module_id", ""), "")
 
-    if misconception_id and misconception_id in MISCONCEPTION_FEEDBACK:
+    if misconception_id and misconception_id in misconceptions:
         return module_rule
 
     # A question can probe more than one concept, one per distractor. Cover each
     # of them rather than arbitrarily picking whichever happens to come first.
     concepts = [
-        MISCONCEPTION_FEEDBACK[mid]
+        misconceptions[mid]
         for mid in dict.fromkeys((exercise.get("misconception_map") or {}).values())
-        if mid in MISCONCEPTION_FEEDBACK
+        if mid in misconceptions
     ]
     if concepts:
         return " ".join(concepts)
@@ -85,29 +115,29 @@ def _find_exercise(module_id: str, question_id: str) -> dict | None:
     return None
 
 
-def _grade_mcq(exercise: dict, answer: str) -> dict:
+def _grade_mcq(exercise: dict, answer: str, lang: str) -> dict:
     is_correct = answer.strip() == exercise["answer"]
     if is_correct:
         return {
             "correct": True,
             "misconception_id": None,
-            "feedback": f"Correct. The answer is {exercise['answer']}.",
-            "explanation": _explanation_for(exercise),
+            "feedback": _tpl(lang, "correct", answer=exercise["answer"]),
+            "explanation": _explanation_for(exercise, lang=lang),
         }
 
     misconception_id = exercise.get("misconception_map", {}).get(answer.strip())
-    correction = f"Not quite. The correct answer is: {exercise['answer']}"
-    specific = MISCONCEPTION_FEEDBACK.get(misconception_id)
+    correction = _tpl(lang, "not_quite", answer=exercise["answer"])
+    specific = _misconceptions(lang).get(misconception_id)
     feedback = f"{correction} — {specific}" if specific else correction
     return {
         "correct": False,
         "misconception_id": misconception_id,
         "feedback": feedback,
-        "explanation": _explanation_for(exercise, misconception_id),
+        "explanation": _explanation_for(exercise, misconception_id, lang),
     }
 
 
-def _grade_fill_blank(exercise: dict, answer: str) -> dict:
+def _grade_fill_blank(exercise: dict, answer: str, lang: str) -> dict:
     normalized = answer.strip().lower()
     correct_normalized = exercise["answer"].strip().lower()
     is_correct = normalized == correct_normalized
@@ -116,23 +146,23 @@ def _grade_fill_blank(exercise: dict, answer: str) -> dict:
         return {
             "correct": True,
             "misconception_id": None,
-            "feedback": f"Correct. The answer is {exercise['answer']}.",
-            "explanation": _explanation_for(exercise),
+            "feedback": _tpl(lang, "correct", answer=exercise["answer"]),
+            "explanation": _explanation_for(exercise, lang=lang),
         }
 
     misconception_id = exercise.get("misconception_map", {}).get(answer.strip())
-    correction = f"Not quite. The correct answer is: {exercise['answer']}"
-    specific = MISCONCEPTION_FEEDBACK.get(misconception_id)
+    correction = _tpl(lang, "not_quite", answer=exercise["answer"])
+    specific = _misconceptions(lang).get(misconception_id)
     feedback = f"{correction} — {specific}" if specific else correction
     return {
         "correct": False,
         "misconception_id": misconception_id,
         "feedback": feedback,
-        "explanation": _explanation_for(exercise, misconception_id),
+        "explanation": _explanation_for(exercise, misconception_id, lang),
     }
 
 
-def _grade_select_all(exercise: dict, answers: list[str]) -> dict:
+def _grade_select_all(exercise: dict, answers: list[str], lang: str) -> dict:
     submitted = set(a.strip() for a in answers)
     correct_set = set(exercise["answers"])
     is_correct = submitted == correct_set
@@ -141,8 +171,8 @@ def _grade_select_all(exercise: dict, answers: list[str]) -> dict:
         return {
             "correct": True,
             "misconception_id": None,
-            "feedback": "Correct. You picked exactly the right set.",
-            "explanation": _explanation_for(exercise),
+            "feedback": _tpl(lang, "correct_selection"),
+            "explanation": _explanation_for(exercise, lang=lang),
         }
 
     misconception_id = None
@@ -151,18 +181,18 @@ def _grade_select_all(exercise: dict, answers: list[str]) -> dict:
             misconception_id = mid
             break
 
-    correction = f"Not quite. The correct selection is: {', '.join(sorted(correct_set))}"
-    specific = MISCONCEPTION_FEEDBACK.get(misconception_id)
+    correction = _tpl(lang, "not_quite_selection", answer=", ".join(sorted(correct_set)))
+    specific = _misconceptions(lang).get(misconception_id)
     feedback = f"{correction} — {specific}" if specific else correction
     return {
         "correct": False,
         "misconception_id": misconception_id,
         "feedback": feedback,
-        "explanation": _explanation_for(exercise, misconception_id),
+        "explanation": _explanation_for(exercise, misconception_id, lang),
     }
 
 
-def _grade_write_code(exercise: dict, code: str) -> dict:
+def _grade_write_code(exercise: dict, code: str, lang: str) -> dict:
     test_cases = exercise.get("test_cases", [])
     failures = []
 
@@ -172,27 +202,28 @@ def _grade_write_code(exercise: dict, code: str) -> dict:
         expected = case["expected_output"].rstrip("\n")
 
         if result["stderr"]:
-            failures.append(
-                f"Test case {i + 1} raised an error: {result['stderr'].strip().splitlines()[-1]}"
-            )
+            failures.append(_tpl(
+                lang, "test_error", n=i + 1,
+                error=result["stderr"].strip().splitlines()[-1],
+            ))
         elif actual != expected:
-            failures.append(
-                f"Test case {i + 1} expected \"{expected}\" but got \"{actual}\""
-            )
+            failures.append(_tpl(
+                lang, "test_mismatch", n=i + 1, expected=expected, actual=actual,
+            ))
 
     if not failures:
         return {
             "correct": True,
             "misconception_id": None,
-            "feedback": "All test cases passed.",
-            "explanation": _explanation_for(exercise),
+            "feedback": _tpl(lang, "all_tests_passed"),
+            "explanation": _explanation_for(exercise, lang=lang),
         }
 
     return {
         "correct": False,
         "misconception_id": None,
         "feedback": " | ".join(failures),
-        "explanation": _explanation_for(exercise),
+        "explanation": _explanation_for(exercise, lang=lang),
     }
 
 
@@ -202,6 +233,7 @@ def evaluate_answer(
     answer: str = "",
     answers: "list[str] | None" = None,
     code: "str | None" = None,
+    lang: "str | None" = None,
 ) -> dict:
     """Evaluate a learner's submission against the exercise bank.
 
@@ -210,30 +242,33 @@ def evaluate_answer(
       - select_all: compares `answers` against the stored answer set
       - write_code: runs `code` against the exercise's test_cases
     """
+    lang = normalise_lang(lang)
     exercise = _find_exercise(module_id, question_id)
 
     if exercise is None:
         return {
             "correct": False,
             "misconception_id": None,
-            "feedback": f"No exercise found for module '{module_id}', question '{question_id}'.",
+            "feedback": _tpl(
+                lang, "no_exercise", module_id=module_id, question_id=question_id,
+            ),
         }
 
     ex_type = exercise["type"]
 
     if ex_type == "mcq":
-        return _grade_mcq(exercise, answer)
+        return _grade_mcq(exercise, answer, lang)
     if ex_type == "fill_blank":
-        return _grade_fill_blank(exercise, answer)
+        return _grade_fill_blank(exercise, answer, lang)
     if ex_type == "select_all":
-        return _grade_select_all(exercise, answers or [])
+        return _grade_select_all(exercise, answers or [], lang)
     if ex_type == "write_code":
-        return _grade_write_code(exercise, code or "")
+        return _grade_write_code(exercise, code or "", lang)
 
     return {
         "correct": False,
         "misconception_id": None,
-        "feedback": f"Unknown exercise type '{ex_type}'.",
+        "feedback": _tpl(lang, "unknown_type", ex_type=ex_type),
     }
 
 
@@ -242,6 +277,26 @@ def get_exercise(module_id: str, question_id: str) -> dict | None:
     return _find_exercise(module_id, question_id)
 
 
-def get_module_exercises(module_id: str) -> list[dict]:
+def _localise(exercise: dict, lang: str) -> dict:
+    """Swap in `<field>_<lang>` variants where the bank carries them.
+
+    Fields are localised individually, so a question with a translated prompt
+    but untranslated options still renders — the prompt in isiXhosa, the
+    options in English — rather than being skipped entirely.
+    """
+    if lang == "en":
+        return exercise
+    out = dict(exercise)
+    for field in ("prompt", "options", "answer", "answers", "explanation", "hint"):
+        translated = exercise.get(f"{field}_{lang}")
+        if translated:
+            out[field] = translated
+    return out
+
+
+def get_module_exercises(module_id: str, lang: "str | None" = None) -> list[dict]:
     """Return all exercises for a given module, in bank order."""
-    return [e for e in _load_exercises() if e["module_id"] == module_id]
+    lang = normalise_lang(lang)
+    return [
+        _localise(e, lang) for e in _load_exercises() if e["module_id"] == module_id
+    ]

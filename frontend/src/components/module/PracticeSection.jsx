@@ -8,6 +8,7 @@ import { CodeExercise } from './CodeExercise';
 import { CodeBlock, InlineText } from './ContentBlocks';
 import { ExamMode } from './ExamMode';
 import { apiFetch } from '../../api';
+import { useLanguage } from '../../context/LanguageContext';
 
 // Star value of an exercise. The bank's legacy `xp` field is stars * 10;
 // newer questions carry `stars` directly. The UI speaks ONLY in stars.
@@ -175,6 +176,7 @@ function DragDropWarmup({ config }) {
 // ─── section wrapper: fetches once, offers Practice and Exam modes ────────────
 
 export function PracticeSection({ practice, onVisualize }) {
+  const { lang } = useLanguage();
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
@@ -182,7 +184,7 @@ export function PracticeSection({ practice, onVisualize }) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/exercises/${practice.apiModuleId}`)
+    fetch(`/api/exercises/${practice.apiModuleId}?lang=${lang}`)
       .then((res) => res.json())
       .then((data) => {
         if (cancelled) return;
@@ -195,7 +197,7 @@ export function PracticeSection({ practice, onVisualize }) {
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [practice.apiModuleId]);
+  }, [practice.apiModuleId, lang]);
 
   if (loading) return <p className={m.practiceStatus}>Loading exercises…</p>;
   if (loadError) return <p className={m.practiceStatus}>{loadError}</p>;
@@ -242,6 +244,7 @@ export function PracticeSection({ practice, onVisualize }) {
 // ─── graded exercise runner (real backend pipeline) ───────────────────────────
 
 function PracticeRunner({ practice, exercises }) {
+  const { t, lang } = useLanguage();
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState(() => defaultAnswer(exercises[0]));
   const [result, setResult] = useState(null);
@@ -269,7 +272,7 @@ function PracticeRunner({ practice, exercises }) {
   async function handleCheck() {
     if (!exercise) return;
     setSubmitting(true);
-    const payload = { module_id: exercise.module_id, question_id: exercise.question_id };
+    const payload = { module_id: exercise.module_id, question_id: exercise.question_id, lang };
     if (exercise.type === 'mcq') payload.answer = answer?.selected ?? '';
     if (exercise.type === 'fill_blank') payload.answer = answer?.value ?? '';
     if (exercise.type === 'select_all') payload.answers = answer?.selected ?? [];
@@ -283,7 +286,7 @@ function PracticeRunner({ practice, exercises }) {
       });
       const data = await res.json();
       if (!res.ok) {
-        setResult({ correct: false, feedback: 'This answer could not be marked — your session may have expired. Sign in again and retry.' });
+        setResult({ correct: false, feedback: t('exercise.markFailed') });
         return;
       }
       setResult(data);
@@ -292,7 +295,7 @@ function PracticeRunner({ practice, exercises }) {
         setCorrectCount((prev) => prev + 1);
       }
     } catch {
-      setResult({ correct: false, feedback: 'Cannot reach the server. Is the backend running?' });
+      setResult({ correct: false, feedback: t('codeSpace.serverUnreachable') });
     } finally {
       setSubmitting(false);
     }
@@ -328,7 +331,7 @@ function PracticeRunner({ practice, exercises }) {
     return (
       <div className={m.completionCard}>
         <span className={m.completionIcon}><Award size={30} /></span>
-        <h3>Practice complete</h3>
+        <h3>{t('exercise.practiceComplete')}</h3>
         <p>
           You answered <strong>{correctCount} of {exercises.length}</strong> correctly ({percent}%)
           and earned <strong>{stars} {stars === 1 ? 'star' : 'stars'}</strong> <Star size={14} className={m.inlineStar} />.
@@ -461,7 +464,7 @@ function PracticeRunner({ practice, exercises }) {
                 <p><InlineText text={result.feedback ?? ''} /></p>
                 {result.explanation && (
                   <p className={m.feedbackExplanation}>
-                    <strong>Why:</strong> <InlineText text={result.explanation} />
+                    <strong>{t('common.why')}</strong> <InlineText text={result.explanation} />
                   </p>
                 )}
               </div>

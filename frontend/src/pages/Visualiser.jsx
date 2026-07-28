@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, ChevronDown, Pause, Play } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { SpeedControl } from '../components/SpeedControl';
+import { useLanguage } from '../context/LanguageContext';
 
 // How long one step is held at 1× speed; the speed picker divides this.
 const STEP_INTERVAL_MS = 800;
@@ -44,17 +45,18 @@ function parseSlice(value, length) {
   return { start: safeStart, stop: safeStop, step: safeStep, normalStart, normalStop, highlighted };
 }
 
-function modeLabel(mode) {
+function modeLabel(mode, t) {
   const map = {
-    index: 'Index Access', slice: 'Slicing', for_loop: 'For Loop',
-    while_loop: 'While Loop', if_stmt: 'If Statement', method: 'String Method',
+    index: 'visualiser.modeIndex', slice: 'visualiser.modeSlicing',
+    for_loop: 'visualiser.modeForLoop', while_loop: 'visualiser.modeWhileLoop',
+    if_stmt: 'visualiser.modeIfStatement', method: 'visualiser.modeStringMethod',
   };
-  return map[mode] || mode;
+  return map[mode] ? t(map[mode]) : mode;
 }
 
 // ─── build steps for each mode ────────────────────────────────────────────────
 
-function buildForSteps(text, rangeInput) {
+function buildForSteps(text, rangeInput, t) {
   // rangeInput is like "0:5:1" — we use the chars at those indices
   const { highlighted } = parseSlice(rangeInput, text.length);
   const chars = text.split('');
@@ -64,12 +66,12 @@ function buildForSteps(text, rangeInput) {
     charIndex: idx,
     char: chars[idx] ?? '',
     highlight: [idx],
-    description: `for c in text:  iteration ${iteration + 1} of ${highlighted.length}  →  c = "${chars[idx] ?? ''}"`,
+    description: t('visualiser.descForLoop', { n: iteration + 1, total: highlighted.length, ch: chars[idx] ?? '' }),
     variables: { c: chars[idx] ?? '', i: idx },
   }));
 }
 
-function buildWhileSteps(text, whileInput) {
+function buildWhileSteps(text, whileInput, t) {
   // whileInput: "i < N" style — we simulate i=0..N-1 stepping through string
   const maxMatch = whileInput.match(/i\s*[<=>]+\s*(\d+)/);
   const limit = maxMatch ? Math.min(Number(maxMatch[1]), text.length) : Math.min(5, text.length);
@@ -85,7 +87,7 @@ function buildWhileSteps(text, whileInput) {
       event: 'while-cond',
       condition: whileInput,
       conditionResult: i < limit,
-      description: `while ${whileInput}:  i=${i}  →  condition = True, visiting text[${i}] = "${text[i] ?? ''}"`,
+      description: t('visualiser.descWhileTrue', { cond: whileInput, i, ch: text[i] ?? '' }),
       variables: { i, 'text[i]': text[i] ?? '' },
     });
   }
@@ -99,13 +101,13 @@ function buildWhileSteps(text, whileInput) {
     event: 'while-cond',
     condition: whileInput,
     conditionResult: false,
-    description: `while ${whileInput}:  i=${limit}  →  condition = False, loop ends`,
+    description: t('visualiser.descWhileFalse', { cond: whileInput, i: limit }),
     variables: { i: limit },
   });
   return steps;
 }
 
-function buildIfSteps(text, expression) {
+function buildIfSteps(text, expression, t) {
   // expression: e.g. "len(text) > 5" or "text[0] == 'H'"
   let result = false;
   let detail = '';
@@ -118,9 +120,9 @@ function buildIfSteps(text, expression) {
       });
     // eslint-disable-next-line no-new-func
     result = Boolean(new Function(`return (${safe})`)());
-    detail = `Evaluates to ${result}`;
+    detail = t('visualiser.evaluatesTo', { result });
   } catch {
-    detail = 'Could not evaluate';
+    detail = t('visualiser.couldNotEvaluate');
   }
 
   return [
@@ -133,7 +135,9 @@ function buildIfSteps(text, expression) {
       event: 'if',
       condition: expression,
       conditionResult: result,
-      description: `if ${expression}:  →  ${result ? 'True ✓, body executes' : 'False ✗, else branch (if any)'}`,
+      description: result
+        ? t('visualiser.descIfTrue', { expr: expression })
+        : t('visualiser.descIfFalse', { expr: expression }),
       variables: { condition_result: result },
     },
     {
@@ -146,8 +150,8 @@ function buildIfSteps(text, expression) {
       condition: expression,
       conditionResult: result,
       description: result
-        ? 'if body has been executed.'
-        : 'else branch would execute here.',
+        ? t('visualiser.descIfDone')
+        : t('visualiser.descElseDone'),
       variables: { condition_result: result },
     },
   ];
@@ -156,6 +160,7 @@ function buildIfSteps(text, expression) {
 // ─── component ────────────────────────────────────────────────────────────────
 
 export function Visualiser() {
+  const { t } = useLanguage();
   const [mode, setMode] = useState('slice');
   const [stringInput, setStringInput] = useState('word = "Hello, World!"');
   const [indexInput, setIndexInput] = useState('2');
@@ -184,9 +189,9 @@ export function Visualiser() {
 
   const slice = useMemo(() => parseSlice(sliceInput, length), [sliceInput, length]);
 
-  const forSteps = useMemo(() => buildForSteps(text, forInput), [text, forInput]);
-  const whileSteps = useMemo(() => buildWhileSteps(text, whileInput), [text, whileInput]);
-  const ifSteps = useMemo(() => buildIfSteps(text, ifInput), [text, ifInput]);
+  const forSteps = useMemo(() => buildForSteps(text, forInput, t), [text, forInput, t]);
+  const whileSteps = useMemo(() => buildWhileSteps(text, whileInput, t), [text, whileInput, t]);
+  const ifSteps = useMemo(() => buildIfSteps(text, ifInput, t), [text, ifInput, t]);
 
   const methodResult = useMemo(() => {
     const m = methodInput.trim().toLowerCase();
@@ -304,20 +309,20 @@ export function Visualiser() {
   return (
     <div className={styles.visualiserScreen}>
       <header className={styles.visualiserHeader}>
-        <h1>String Visualiser</h1>
-        <p>Understand how Python strings work, including loops, conditions, and methods.</p>
+        <h1>{t('visualiser.title')}</h1>
+        <p>{t('visualiser.subtitle')}</p>
       </header>
 
       {/* ── control card ── */}
       <section className={styles.visualiserControlCard}>
         <label className={styles.visualiserField}>
-          <span>Enter a string</span>
+          <span>{t('visualiser.enterString')}</span>
           <input
             value={stringInput}
             onChange={e => setStringInput(e.target.value)}
             maxLength={50}
           />
-          <small>{text.length} / 50 characters</small>
+          <small>{t('visualiser.characterCount', { count: text.length })}</small>
         </label>
 
         <label className={styles.visualiserField}>
@@ -339,14 +344,14 @@ export function Visualiser() {
         </label>
 
         <label className={styles.visualiserField}>
-          <span>Select a mode</span>
+          <span>{t('visualiser.selectMode')}</span>
           <div className={styles.visualiserSelectWrap}>
             <select value={mode} onChange={e => setMode(e.target.value)}>
-              <option value="slice">Slicing</option>
-              <option value="index">Index Access</option>
-              <option value="for_loop">For Loop</option>
-              <option value="while_loop">While Loop</option>
-              <option value="if_stmt">If Statement</option>
+              <option value="slice">{t('visualiser.modeSlicing')}</option>
+              <option value="index">{t('visualiser.modeIndex')}</option>
+              <option value="for_loop">{t('visualiser.modeForLoop')}</option>
+              <option value="while_loop">{t('visualiser.modeWhileLoop')}</option>
+              <option value="if_stmt">{t('visualiser.modeIfStatement')}</option>
               <option value="method">String Method</option>
             </select>
             <ChevronDown size={22} />
@@ -371,7 +376,7 @@ export function Visualiser() {
             <span>{stringInput.includes('=') ? `"${text}"` : text}</span>
           </div>
           <div className={styles.operationBadge}>{operationText}</div>
-          <div><strong>Mode:</strong> <span>{modeLabel(mode)}</span></div>
+          <div><strong>{t('visualiser.modeLabel')}</strong> <span>{modeLabel(mode, t)}</span></div>
         </div>
 
         {/* stepped-mode progress + description */}
@@ -400,7 +405,7 @@ export function Visualiser() {
               )}
               {currentStep.iteration && mode === 'for_loop' && (
                 <span className={styles.visIterBadge}>
-                  Iteration {currentStep.iteration} / {currentStep.total}
+                  {t('visualiser.iteration', { current: currentStep.iteration, total: currentStep.total })}
                 </span>
               )}
             </div>
@@ -464,10 +469,10 @@ export function Visualiser() {
                 }}
               />
               <span className={styles.sliceStart} style={{ gridColumn: `${slice.normalStart + 1}` }}>
-                ▲<strong>Start: {slice.start}</strong><small>(Inclusive)</small>
+                ▲<strong>{t('visualiser.start')}: {slice.start}</strong><small>{t('visualiser.inclusive')}</small>
               </span>
               <span className={styles.sliceStop} style={{ gridColumn: `${slice.normalStop + 1}` }}>
-                ▲<strong>Stop: {slice.stop}</strong><small>(Exclusive)</small>
+                ▲<strong>{t('visualiser.stop')}: {slice.stop}</strong><small>{t('visualiser.exclusive')}</small>
               </span>
             </div>
           ) : (
@@ -498,7 +503,7 @@ export function Visualiser() {
 
         {/* output box */}
         <div className={styles.visualiserOutput}>
-          <strong>Output:</strong>
+          <strong>{t('visualiser.output')}</strong>
           <code>
             {mode === 'if_stmt'
               ? (currentStep?.conditionResult !== undefined
@@ -517,7 +522,7 @@ export function Visualiser() {
       {/* ── playback controls ── */}
       <section className={styles.visualiserControls}>
         <button onClick={prevStep} disabled={!isStepped || stepIndex === 0}>
-          <ChevronLeft size={28} /> Previous
+          <ChevronLeft size={28} /> {t('common.previous')}
         </button>
         <button
           className={styles.playButton}
@@ -525,10 +530,10 @@ export function Visualiser() {
           disabled={!isStepped}
         >
           {isPlaying ? <Pause size={26} /> : <Play size={26} />}
-          {isPlaying ? 'Pause' : 'Play'}
+          {isPlaying ? t('common.pause') : t('common.play')}
         </button>
         <button onClick={nextStep} disabled={!isStepped || stepIndex === activeSteps.length - 1}>
-          Next <ChevronRight size={28} />
+          {t('common.next')} <ChevronRight size={28} />
         </button>
       </section>
     </div>

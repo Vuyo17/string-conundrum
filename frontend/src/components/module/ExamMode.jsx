@@ -8,6 +8,7 @@ import { CodeExercise } from './CodeExercise';
 import { CodeBlock, InlineText } from './ContentBlocks';
 import { presetForExercise } from './visualizers/presets';
 import { apiFetch } from '../../api';
+import { useLanguage } from '../../context/LanguageContext';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ExamMode — the test-conditions counterpart to the practice runner.
@@ -115,6 +116,7 @@ function drawExam(exercises, count) {
 }
 
 export function ExamMode({ practice, exercises, onVisualize }) {
+  const { t, lang } = useLanguage();
   const questionCount = practice.exam?.questionCount ?? 10;
 
   const [paper, setPaper] = useState(() => drawExam(exercises, questionCount));
@@ -149,7 +151,7 @@ export function ExamMode({ practice, exercises, onVisualize }) {
     const graded = {};
     await Promise.all(paper.map(async (ex) => {
       const a = answers[ex.question_id] ?? blankAnswer(ex);
-      const payload = { module_id: ex.module_id, question_id: ex.question_id };
+      const payload = { module_id: ex.module_id, question_id: ex.question_id, lang };
       if (ex.type === 'mcq') payload.answer = a.selected ?? '';
       if (ex.type === 'fill_blank') payload.answer = a.value ?? '';
       if (ex.type === 'select_all') payload.answers = a.selected ?? [];
@@ -165,7 +167,7 @@ export function ExamMode({ practice, exercises, onVisualize }) {
         // than letting an unmarked question look like a wrong answer.
         graded[ex.question_id] = res.ok
           ? data
-          : { correct: false, feedback: 'This question could not be marked — your session may have expired. Sign in again and retry.' };
+          : { correct: false, feedback: t('exercise.markFailed') };
       } catch {
         graded[ex.question_id] = { correct: false, feedback: 'Could not reach the server for this question.' };
       }
@@ -207,19 +209,19 @@ export function ExamMode({ practice, exercises, onVisualize }) {
       <div className={m.examResults}>
         <div className={m.examScoreCard}>
           <span className={m.completionIcon}><Award size={30} /></span>
-          <h3>Exam complete</h3>
+          <h3>{t('exercise.examComplete')}</h3>
           <div className={m.examScoreRow}>
             <div className={m.examScoreStat}>
               <strong>{correct.length} / {paper.length}</strong>
-              <span>score</span>
+              <span>{t('exercise.score')}</span>
             </div>
             <div className={m.examScoreStat}>
               <strong>{percent}%</strong>
-              <span>percentage</span>
+              <span>{t('exercise.percentage')}</span>
             </div>
             <div className={m.examScoreStat}>
               <strong>{earnedStars} <Star size={16} className={m.inlineStar} /></strong>
-              <span>stars earned</span>
+              <span>{t('exercise.starsEarned')}</span>
             </div>
           </div>
           <div className={m.starRow} aria-label={`${band.stars} of 3 mastery stars`}>
@@ -236,13 +238,13 @@ export function ExamMode({ practice, exercises, onVisualize }) {
           </span>
           <p className={m.examBlurb}>{band.blurb}</p>
           <button type="button" className={m.solidButton} onClick={retry}>
-            <RefreshCcw size={15} /> Retry with new questions
+            <RefreshCcw size={15} /> {t('exercise.retryNewQuestions')}
           </button>
         </div>
 
         {Object.keys(weakAreas).length > 0 && (
           <div className={m.improveCard}>
-            <h4><TrendingUp size={16} /> Areas for improvement</h4>
+            <h4><TrendingUp size={16} /> {t('exercise.areasForImprovement')}</h4>
             <ul>
               {Object.entries(weakAreas)
                 .sort((a, b) => b[1] - a[1])
@@ -257,7 +259,7 @@ export function ExamMode({ practice, exercises, onVisualize }) {
         )}
 
         <div className={m.reviewStack}>
-          <h4 className={m.reviewHeading}>Question-by-question review</h4>
+          <h4 className={m.reviewHeading}>{t('exercise.questionReview')}</h4>
           {paper.map((ex, i) => {
             const r = results[ex.question_id] ?? {};
             const a = answers[ex.question_id];
@@ -275,7 +277,7 @@ export function ExamMode({ practice, exercises, onVisualize }) {
                   <span className={m.reviewIndex}>{i + 1}</span>
                   <span className={m.reviewVerdict}>
                     {r.correct ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
-                    {r.correct ? 'Correct' : 'Incorrect'}
+                    {r.correct ? t('common.correct') : t('common.incorrect')}
                   </span>
                   <span className={m.reviewStars}>
                     <Star size={13} /> {r.correct ? starsOf(ex) : 0}/{starsOf(ex)}
@@ -284,17 +286,17 @@ export function ExamMode({ practice, exercises, onVisualize }) {
                 <p className={m.reviewPrompt}><InlineText text={title} /></p>
                 {code && <CodeBlock code={code} />}
                 {ex.type === 'write_code' && a?.code && (
-                  <CodeBlock code={a.code} caption="Your code" />
+                  <CodeBlock code={a.code} caption={t('exercise.yourCode')} />
                 )}
                 <dl className={m.reviewAnswers}>
                   {studentAnswer !== null && (
                     <div>
-                      <dt>Your answer</dt>
+                      <dt>{t('common.yourAnswer')}</dt>
                       <dd>{studentAnswer}</dd>
                     </div>
                   )}
                   <div>
-                    <dt>{ex.type === 'write_code' ? 'Expected output' : 'Correct answer'}</dt>
+                    <dt>{ex.type === 'write_code' ? t('exercise.expectedOutput') : t('common.correctAnswer')}</dt>
                     <dd>{describeCorrectAnswer(ex)}</dd>
                   </div>
                 </dl>
@@ -305,7 +307,7 @@ export function ExamMode({ practice, exercises, onVisualize }) {
                 )}
                 {(r.explanation ?? ex.explanation) && (
                   <p className={m.reviewExplanation}>
-                    <strong className={m.reviewWhy}>Why:</strong>{' '}
+                    <strong className={m.reviewWhy}>{t('common.why')}</strong>{' '}
                     <InlineText text={r.explanation ?? ex.explanation} />
                   </p>
                 )}
@@ -316,7 +318,7 @@ export function ExamMode({ practice, exercises, onVisualize }) {
                       className={m.ghostButton}
                       onClick={() => onVisualize(preset)}
                     >
-                      <Eye size={15} /> Watch this in the visualizer
+                      <Eye size={15} /> {t('exercise.watchInVisualizer')}
                     </button>
                   </div>
                 )}
@@ -335,9 +337,9 @@ export function ExamMode({ practice, exercises, onVisualize }) {
     <div className={m.examStack}>
       <div className={m.examToolbar}>
         <span className={m.examProgressLabel}>
-          {answeredCount} of {paper.length} answered
+          {t('exercise.answered', { count: answeredCount, total: paper.length })}
         </span>
-        <div className={m.examPalette} role="tablist" aria-label="Exam questions">
+        <div className={m.examPalette} role="tablist" aria-label={t('exercise.exam')}>
           {paper.map((ex, i) => {
             const answered = isAnswered(ex, answers[ex.question_id]);
             return (
@@ -364,13 +366,13 @@ export function ExamMode({ practice, exercises, onVisualize }) {
       <div className={m.questionCard}>
         <header className={m.questionHeader}>
           <div className={m.questionMeta}>
-            <span className={m.questionType}><GraduationCap size={13} /> Exam question</span>
+            <span className={m.questionType}><GraduationCap size={13} /> {t('exercise.examQuestion')}</span>
             <span className={m.questionXp}>
               <Star size={13} /> {starsOf(exercise)} {starsOf(exercise) === 1 ? 'star' : 'stars'}
             </span>
           </div>
           <div className={m.questionProgress}>
-            <span>Question {current + 1} of {paper.length}</span>
+            <span>{t('exercise.question', { current: current + 1, total: paper.length })}</span>
           </div>
         </header>
 
@@ -423,7 +425,7 @@ export function ExamMode({ practice, exercises, onVisualize }) {
             className={m.fillInput}
             value={answer.value ?? ''}
             onChange={(e) => setCurrentAnswer({ value: e.target.value })}
-            placeholder="Type your answer"
+            placeholder={t('exercise.typeAnswer')}
             aria-label="Your answer"
           />
         )}
@@ -436,7 +438,7 @@ export function ExamMode({ practice, exercises, onVisualize }) {
             />
             {exercise.test_cases?.length > 0 && (
               <div className={m.testCases}>
-                <span className={m.testCasesLabel}>Expected output</span>
+                <span className={m.testCasesLabel}>{t('exercise.expectedOutput')}</span>
                 {exercise.test_cases.map((tc, i) => (
                   <code key={i}>
                     {tc.input ? `input: ${tc.input.trim()} → ` : ''}{tc.expected_output}
@@ -455,7 +457,7 @@ export function ExamMode({ practice, exercises, onVisualize }) {
               onClick={() => setCurrent((c) => Math.max(0, c - 1))}
               disabled={current === 0}
             >
-              <ChevronLeft size={15} /> Previous
+              <ChevronLeft size={15} /> {t('common.previous')}
             </button>
             <button
               type="button"
@@ -463,7 +465,7 @@ export function ExamMode({ practice, exercises, onVisualize }) {
               onClick={() => setCurrent((c) => Math.min(paper.length - 1, c + 1))}
               disabled={current === paper.length - 1}
             >
-              Next <ChevronRight size={15} />
+              {t('common.next')} <ChevronRight size={15} />
             </button>
           </div>
           <button
@@ -472,7 +474,7 @@ export function ExamMode({ practice, exercises, onVisualize }) {
             onClick={handleSubmitClick}
             disabled={phase === 'submitting'}
           >
-            {phase === 'submitting' ? 'Marking…' : 'Submit exam'}
+            {phase === 'submitting' ? t('exercise.marking') : t('exercise.submitExam')}
           </button>
         </footer>
       </div>
@@ -482,14 +484,14 @@ export function ExamMode({ practice, exercises, onVisualize }) {
           <AlertTriangle size={18} />
           <div>
             <strong>{paper.length - answeredCount} unanswered {paper.length - answeredCount === 1 ? 'question' : 'questions'}</strong>
-            <p>Unanswered questions are marked wrong. Submit anyway?</p>
+            <p>{t('exercise.unansweredWarning')}</p>
           </div>
           <div className={m.confirmActions}>
             <button type="button" className={m.ghostButton} onClick={() => setPhase('answering')}>
-              Keep answering
+              {t('exercise.keepAnswering')}
             </button>
             <button type="button" className={m.solidButton} onClick={gradeAll}>
-              <Target size={15} /> Submit now
+              <Target size={15} /> {t('exercise.submitNow')}
             </button>
           </div>
         </div>
