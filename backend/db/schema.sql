@@ -69,3 +69,13 @@ CREATE TABLE IF NOT EXISTS challenge_completions (
 
 CREATE INDEX IF NOT EXISTS idx_exercise_completions_user ON exercise_completions(user_id);
 CREATE INDEX IF NOT EXISTS idx_challenge_completions_user ON challenge_completions(user_id);
+
+-- ─── migrations for existing databases ──────────────────────────────────────
+-- CREATE TABLE IF NOT EXISTS above only builds a table that does not yet
+-- exist; it will NOT add a column to one already deployed. These run
+-- unconditionally and are idempotent, so applying schema.sql to a live
+-- database brings it up to date instead of leaving the app querying columns
+-- that are not there.
+ALTER TABLE exercises ADD COLUMN IF NOT EXISTS prompt_xh TEXT;
+ALTER TABLE exercises ADD COLUMN IF NOT EXISTS explanation_xh TEXT;
+ALTER TABLE exercises ADD COLUMN IF NOT EXISTS hint_xh TEXT;
