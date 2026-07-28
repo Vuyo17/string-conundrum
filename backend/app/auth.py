@@ -3,6 +3,8 @@ from functools import wraps
 from firebase_admin import auth as firebase_auth
 from flask import g, request
 
+from .services.progress import upsert_user
+
 
 def require_auth(view):
     @wraps(view)
@@ -19,6 +21,7 @@ def require_auth(view):
 
         g.uid = decoded['uid']
         g.user_email = decoded.get('email')
+        upsert_user(g.uid, g.user_email, decoded.get('name'))
         return view(*args, **kwargs)
 
     return wrapped

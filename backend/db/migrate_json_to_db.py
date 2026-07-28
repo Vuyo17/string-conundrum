@@ -1,0 +1,122 @@
+"""One-shot (and re-runnable) loader: seeds the `exercises` and `challenges`
+tables from the existing JSON content files. Safe to re-run after editing the
+JSON files — every row is an upsert keyed on its natural id.
+
+Usage:
+    cd backend
+    python db/migrate_json_to_db.py
+
+Requires DATABASE_URL to be set (backend/.env locally, or exported in the
+shell on the server) pointing at the target database.
+"""
+
+import json
+import sys
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+load_dotenv()
+
+from app.db import get_cursor  # noqa: E402
+
+_DATA_DIR = Path(__file__).resolve().parent.parent / "app" / "data"
+
+
+def _load(name: str) -> list[dict]:
+    with open(_DATA_DIR / name, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def migrate_exercises(cur) -> int:
+    exercises = _load("exercises.json")
+    for i, ex in enumerate(exercises):
+        cur.execute(
+            """
+            INSERT INTO exercises (
+                module_id, question_id, type, prompt, options, answer, answers,
+                misconception_map, starter_code, test_cases, explanation, stars, xp, sort_order
+            ) VALUES (
+                %(module_id)s, %(question_id)s, %(type)s, %(prompt)s, %(options)s, %(answer)s,
+                %(answers)s, %(misconception_map)s, %(starter_code)s, %(test_cases)s,
+                %(explanation)s, %(stars)s, %(xp)s, %(sort_order)s
+            )
+            ON CONFLICT (module_id, question_id) DO UPDATE SET
+                type = EXCLUDED.type,
+                prompt = EXCLUDED.prompt,
+                options = EXCLUDED.options,
+                answer = EXCLUDED.answer,
+                answers = EXCLUDED.answers,
+                misconception_map = EXCLUDED.misconception_map,
+                starter_code = EXCLUDED.starter_code,
+                test_cases = EXCLUDED.test_cases,
+                explanation = EXCLUDED.explanation,
+                stars = EXCLUDED.stars,
+                xp = EXCLUDED.xp,
+                sort_order = EXCLUDED.sort_order
+            """,
+            {
+                "module_id": ex["module_id"],
+                "question_id": ex["question_id"],
+                "type": ex["type"],
+                "prompt": ex["prompt"],
+                "options": json.dumps(ex["options"]) if "options" in ex else None,
+                "answer": ex.get("answer"),
+                "answers": json.dumps(ex["answers"]) if "answers" in ex else None,
+                "misconception_map": json.dumps(ex.get("misconception_map") or {}),
+                "starter_code": ex.get("starter_code"),
+                "test_cases": json.dumps(ex["test_cases"]) if "test_cases" in ex else None,
+                "explanation": ex.get("explanation"),
+                "stars": ex.get("stars"),
+                "xp": ex.get("xp"),
+                "sort_order": i,
+            },
+        )
+    return len(exercises)
+
+
+def migrate_challenges(cur) -> int:
+    challenges = _load("challenges.json")
+    for i, ch in enumerate(challenges):
+        cur.execute(
+            """
+            INSERT INTO challenges (
+                id, title, difficulty, description, hint, io, starter_code, solution, tests, sort_order
+            ) VALUES (
+                %(id)s, %(title)s, %(difficulty)s, %(description)s, %(hint)s, %(io)s,
+                %(starter_code)s, %(solution)s, %(tests)s, %(sort_order)s
+            )
+            ON CONFLICT (id) DO UPDATE SET
+                title = EXCLUDED.title,
+                difficulty = EXCLUDED.difficulty,
+                description = EXCLUDED.description,
+                hint = EXCLUDED.hint,
+                io = EXCLUDED.io,
+                starter_code = EXCLUDED.starter_code,
+                solution = EXCLUDED.solution,
+                tests = EXCLUDED.tests,
+                sort_order = EXCLUDED.sort_order
+            """,
+            {
+                "id": ch["id"],
+                "title": ch["title"],
+                "difficulty": ch.get("difficulty"),
+                "description": ch.get("description"),
+                "hint": ch.get("hint"),
+                "io": json.dumps(ch["io"]) if "io" in ch else None,
+                "starter_code": ch.get("starter_code"),
+                "solution": ch.get("solution"),
+                "tests": json.dumps(ch["tests"]) if "tests" in ch else None,
+                "sort_order": i,
+            },
+        )
+    return len(challenges)
+
+
+if __name__ == "__main__":
+    with get_cursor() as cur:
+        n_exercises = migrate_exercises(cur)
+        n_challenges = migrate_challenges(cur)
+    print(f"Upserted {n_exercises} exercises and {n_challenges} challenges.")

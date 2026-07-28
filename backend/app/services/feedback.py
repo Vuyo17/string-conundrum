@@ -1,9 +1,5 @@
-import json
-from pathlib import Path
-
+from ..db import get_cursor
 from .sandbox import run_for_grading
-
-_DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "exercises.json"
 
 MISCONCEPTION_FEEDBACK = {
     "immutability_in_place": "Strings are immutable. String operations return new strings rather than changing existing ones in place.",
@@ -74,8 +70,16 @@ def _explanation_for(exercise: dict, misconception_id: "str | None" = None) -> s
 
 
 def _load_exercises() -> list[dict]:
-    with open(_DATA_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            SELECT module_id, question_id, type, prompt, options, answer, answers,
+                   misconception_map, starter_code, test_cases, explanation, stars, xp
+            FROM exercises
+            ORDER BY sort_order
+            """
+        )
+        return [dict(row) for row in cur.fetchall()]
 
 
 def _find_exercise(module_id: str, question_id: str) -> dict | None:
@@ -196,6 +200,15 @@ def _grade_write_code(exercise: dict, code: str) -> dict:
     }
 
 
+def _stars_of(exercise: dict) -> int:
+    """Mirrors the frontend's starsOf(): stars if authored, else xp / 10."""
+    stars = exercise.get("stars")
+    if stars is not None:
+        return stars
+    xp = exercise.get("xp") or 10
+    return max(1, round(xp / 10))
+
+
 def evaluate_answer(
     module_id: str,
     question_id: str,
@@ -222,19 +235,22 @@ def evaluate_answer(
     ex_type = exercise["type"]
 
     if ex_type == "mcq":
-        return _grade_mcq(exercise, answer)
-    if ex_type == "fill_blank":
-        return _grade_fill_blank(exercise, answer)
-    if ex_type == "select_all":
-        return _grade_select_all(exercise, answers or [])
-    if ex_type == "write_code":
-        return _grade_write_code(exercise, code or "")
+        result = _grade_mcq(exercise, answer)
+    elif ex_type == "fill_blank":
+        result = _grade_fill_blank(exercise, answer)
+    elif ex_type == "select_all":
+        result = _grade_select_all(exercise, answers or [])
+    elif ex_type == "write_code":
+        result = _grade_write_code(exercise, code or "")
+    else:
+        return {
+            "correct": False,
+            "misconception_id": None,
+            "feedback": f"Unknown exercise type '{ex_type}'.",
+        }
 
-    return {
-        "correct": False,
-        "misconception_id": None,
-        "feedback": f"Unknown exercise type '{ex_type}'.",
-    }
+    result["stars_awarded"] = _stars_of(exercise) if result["correct"] else 0
+    return result
 
 
 def get_exercise(module_id: str, question_id: str) -> dict | None:

@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { getApiUrl } from '../config/api';
+import { apiFetch } from '../api';
 
 const INDENT = '    ';
 
@@ -147,7 +148,7 @@ export function Challenges() {
     if (!challenge) return;
     setRunning(true);
     try {
-      const res = await fetch(getApiUrl('/api/challenges/run'), {
+      const res = await apiFetch(getApiUrl('/api/challenges/run'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ challenge_id: challenge.id, code }),
