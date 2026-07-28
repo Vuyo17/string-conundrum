@@ -14,7 +14,7 @@ const NAV_ICONS = {
   Leaderboard: Trophy,
 };
 
-export function Sidebar({ screen, setScreen }) {
+export function Sidebar({ screen, setScreen, modulesComplete }) {
   const { isGuest, canAccess, signOut } = useAuth();
   const items = ['Modules', 'Visualiser', 'Code Space', 'Challenges', 'Leaderboard'];
 
@@ -36,13 +36,24 @@ export function Sidebar({ screen, setScreen }) {
 
       {items.map((item) => {
         const Icon = NAV_ICONS[item];
-        const locked = !canAccess(item);
+        const signedInOnly = !canAccess(item);
+        const needsModules = item === 'Challenges' && !modulesComplete;
+        const locked = signedInOnly || needsModules;
+        const lockMessage = signedInOnly
+          ? 'Sign in to unlock'
+          : needsModules
+          ? 'Complete all modules to unlock'
+          : undefined;
         return (
           <button
             key={item}
             className={`${screen === item ? styles.sideActive : ''} ${locked ? styles.sideLocked : ''}`}
-            onClick={() => (locked ? signOut() : setScreen(item))}
-            title={locked ? 'Sign in to unlock' : undefined}
+            onClick={() => {
+              if (signedInOnly) return signOut();
+              if (needsModules) return;
+              setScreen(item);
+            }}
+            title={lockMessage}
           >
             {Icon && <Icon size={17} />}
             {item}

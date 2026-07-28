@@ -13,9 +13,11 @@ import { AuthPage } from "./pages/auth/AuthPage";
 import auth from "./pages/auth/Auth.module.css";
 import { useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
+import { useProgress } from "./hooks/useProgress";
 
 function Shell() {
   const { user, loading, emailLinkPending, isGuest, canAccess } = useAuth();
+  const progress = useProgress();
   // Guests land on the Visualiser; signed-in users on Modules.
   const [screen, setScreen] = useState(isGuest ? "Visualiser" : "Modules");
   // Set by a search result so the Modules screen can open straight onto a
@@ -33,16 +35,23 @@ function Shell() {
 
   if (!user || emailLinkPending) return <AuthPage />;
 
+  // Challenges is the capstone: locked until every module is complete, on
+  // top of the guest/sign-in gating canAccess already handles.
+  function canAccessScreen(target) {
+    if (target === "Challenges" && !progress.allCompleted) return false;
+    return canAccess(target);
+  }
+
   // Navigation guard: guests can only open guest screens.
   function go(next) {
-    if (!canAccess(next)) return;
+    if (!canAccessScreen(next)) return;
     setScreen(next);
     setModuleTarget(null);
   }
 
   // A search result carries its own destination (see data/searchIndex.js).
   function openSearchResult(result) {
-    if (!canAccess(result.screen)) return;
+    if (!canAccessScreen(result.screen)) return;
     setScreen(result.screen);
     setModuleTarget(
       result.moduleId
@@ -53,7 +62,7 @@ function Shell() {
     );
   }
 
-  const safeScreen = canAccess(screen) ? screen : "Visualiser";
+  const safeScreen = canAccessScreen(screen) ? screen : "Visualiser";
 
   const CurrentScreen = {
     Modules,
@@ -68,11 +77,11 @@ function Shell() {
     <div className={styles.app}>
       <TopBar screen={safeScreen} setScreen={go} onSearchSelect={openSearchResult} />
       <main className={styles.shell}>
-        <Sidebar screen={safeScreen} setScreen={go} />
+        <Sidebar screen={safeScreen} setScreen={go} modulesComplete={progress.allCompleted} />
         <section className={styles.content}>
           <CurrentScreen
             setScreen={go}
-            {...(safeScreen === "Modules" ? { target: moduleTarget } : {})}
+            {...(safeScreen === "Modules" ? { target: moduleTarget, progress } : {})}
           />
         </section>
       </main>

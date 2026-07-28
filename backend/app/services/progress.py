@@ -69,6 +69,8 @@ def get_user_progress(user_id: str) -> list[dict]:
         {
             "module_id": row["module_id"],
             "completed": row["total_questions"] > 0 and row["answered_questions"] >= row["total_questions"],
+            "total_questions": row["total_questions"],
+            "answered_questions": row["answered_questions"],
             "score": row["score"],
             "last_session_at": row["last_session_at"].isoformat() if row["last_session_at"] else None,
         }
