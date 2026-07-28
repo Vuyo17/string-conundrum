@@ -571,9 +571,16 @@ export function CodeSpace() {
             <p>Write Python code and step through it like a debugger.</p>
           </div>
         </div>
-        <button className={styles.codeClearButton} onClick={handleClear}>
-          <Trash2 size={22} /> Clear
-        </button>
+        <div className={styles.codeHeroActions}>
+          <SpeedControl
+            value={speed}
+            onChange={setSpeed}
+            disabled={!debugging || steps.length === 0}
+          />
+          <button className={styles.codeClearButton} onClick={handleClear}>
+            <Trash2 size={22} /> Clear
+          </button>
+        </div>
       </header>
 
       <main className={styles.codeSpaceGrid}>
@@ -680,11 +687,6 @@ export function CodeSpace() {
             <button onClick={next} disabled={!debugging || stepIndex === steps.length - 1}>
               Next <ArrowRight size={24} />
             </button>
-            <SpeedControl
-              value={speed}
-              onChange={setSpeed}
-              disabled={!debugging || steps.length === 0}
-            />
           </div>
 
           {debugging && (

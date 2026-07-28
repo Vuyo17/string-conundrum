@@ -1622,10 +1622,16 @@ p {
 
 .codeHero {
   display: grid;
-  grid-template-columns: 1fr 120px;
+  grid-template-columns: 1fr auto;
   align-items: start;
   gap: 10px;
   margin-bottom: 10px;
+}
+
+.codeHeroActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .codeTitleGroup {
@@ -1693,9 +1699,9 @@ p {
 .codeClearButton {
   height: 42px;
   font-size: 13px;
-  justify-self: end;
   padding: 0 12px;
   color: var(--fg);
+  flex: 0 0 auto;
 }
 
 .codeSpaceGrid {
@@ -2119,8 +2125,7 @@ p {
     grid-template-columns: 1fr;
   }
 
-  .codeRunMain,
-  .codeClearButton {
+  .codeRunMain {
     width: 100%;
     justify-self: stretch;
   }
@@ -2129,6 +2134,11 @@ p {
     grid-template-columns: 1fr;
     gap: 8px;
     margin-bottom: 8px;
+  }
+
+  .codeHeroActions {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .playerControls {
@@ -2162,9 +2172,14 @@ p {
   color: var(--fg);
   height: calc(100vh - 110px);
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
   gap: 10px;
   overflow: hidden;
+}
+
+.visualiserSpeedRow {
+  display: flex;
+  justify-content: center;
 }
 
 .visualiserHeader {

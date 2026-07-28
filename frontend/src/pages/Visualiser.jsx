@@ -509,6 +509,11 @@ export function Visualiser() {
         </div>
       </section>
 
+      {/* ── speed picker (own row, above the playback controls) ── */}
+      <div className={styles.visualiserSpeedRow}>
+        <SpeedControl value={speed} onChange={setSpeed} disabled={!isStepped} />
+      </div>
+
       {/* ── playback controls ── */}
       <section className={styles.visualiserControls}>
         <button onClick={prevStep} disabled={!isStepped || stepIndex === 0}>
@@ -525,7 +530,6 @@ export function Visualiser() {
         <button onClick={nextStep} disabled={!isStepped || stepIndex === activeSteps.length - 1}>
           Next <ChevronRight size={28} />
         </button>
-        <SpeedControl value={speed} onChange={setSpeed} disabled={!isStepped} />
       </section>
     </div>
   );
