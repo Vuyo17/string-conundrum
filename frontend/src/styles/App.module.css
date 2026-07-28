@@ -2715,12 +2715,10 @@ p {
 /* step card */
 .dbgStepCard {
   border: 1px solid #dfe5f2;
-  border-left: 5px solid #4b27f4;
   border-radius: 12px;
   padding: 16px 18px;
   background: #fafbff;
   margin-bottom: 18px;
-  transition: border-left-color 0.2s;
 }
 .dbgStepHeader {
   display: flex;
@@ -4153,7 +4151,6 @@ p {
 .hintText {
   margin: 12px 0 0;
   padding: 12px 14px;
-  border-left: 3px solid var(--accent);
   border-radius: 8px;
   background: var(--accent-soft);
   color: hsl(33 60% 30%);
@@ -4952,7 +4949,6 @@ p {
 
 .hintTextLc {
   margin: 10px 0 0;
-  border-left: 3px solid #0ea5a8;
   padding: 10px 12px;
   border-radius: 8px;
   background: #f1fbfb;
@@ -5501,7 +5497,6 @@ body,
 :root[data-theme="dark"] .visStepPanel {
   background: hsl(162 5% 13%);
   border-color: hsl(160 5% 24%);
-  border-left-color: var(--primary);
 }
 :root[data-theme="dark"] .dbgProgress,
 :root[data-theme="dark"] .dbgProgressSlim,
@@ -5660,7 +5655,6 @@ body,
 }
 :root[data-theme="dark"] .hintTextLc {
   background: hsl(170 30% 11%);
-  border-left-color: var(--primary);
   color: hsl(170 40% 70%);
 }
 :root[data-theme="dark"] .solutionCodeLc {

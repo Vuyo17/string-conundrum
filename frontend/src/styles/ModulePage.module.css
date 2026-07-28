@@ -563,14 +563,11 @@
 .exampleBody { padding: 20px 26px 24px; display: grid; gap: 16px; }
 
 .exampleStep {
-  border-left: 3px solid var(--primary);
   background: var(--surface-2);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  border-radius: var(--radius-sm);
   padding: 13px 16px;
   min-height: 96px;
 }
-
-.exampleStepError { border-left-color: var(--danger); }
 
 .exampleStepMeta {
   display: flex;
@@ -1622,17 +1619,12 @@
 
 .reviewCard {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-left-width: 4px;
   border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-soft);
   padding: 18px 22px;
   display: grid;
   gap: 10px;
 }
-
-.reviewCorrect { border-left-color: var(--ok, #2e8b57); }
-
-.reviewWrong { border-left-color: var(--no, #c0392b); }
 
 .reviewCard header { display: flex; align-items: center; gap: 12px; }
 

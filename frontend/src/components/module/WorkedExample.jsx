@@ -25,7 +25,7 @@ export function WorkedExample({ example, number, id }) {
 
         <StringFigure value={example.string} highlight={step.highlight} negative dense />
 
-        <div className={`${m.exampleStep} ${step.error ? m.exampleStepError : ''}`}>
+        <div className={m.exampleStep}>
           <div className={m.exampleStepMeta}>
             <span className={m.exampleStepCount}>Step {stepIndex + 1} of {example.steps.length}</span>
             {step.state && (
