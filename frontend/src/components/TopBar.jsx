@@ -4,16 +4,7 @@ import styles from '../styles/App.module.css';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { GlobalSearch } from './GlobalSearch';
-
-function initialsFor(user) {
-  const source = user?.displayName || user?.email || user?.name || '?';
-  return source
-    .split(/[\s@.]+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0].toUpperCase())
-    .join('');
-}
+import { displayNameFor, initialsFor } from '../utils/profile';
 
 export function TopBar({ setScreen, onSearchSelect }) {
   const { user, isGuest, canAccess } = useAuth();
@@ -53,8 +44,8 @@ export function TopBar({ setScreen, onSearchSelect }) {
         >
           {isDark ? <Sun size={17} /> : <Moon size={17} />}
         </button>
-        <div className={styles.avatar} title={user?.displayName || user?.email || user?.name}>
-          {user?.initials ?? initialsFor(user)}
+        <div className={styles.avatar} title={user?.email || displayNameFor(user)}>
+          {initialsFor(user)}
         </div>
       </div>
     </header>

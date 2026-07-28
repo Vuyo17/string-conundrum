@@ -4,6 +4,7 @@ import styles from '../styles/App.module.css';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { displayNameFor, initialsFor } from '../utils/profile';
 
 export function Settings() {
   const { user, isGuest, signOut } = useAuth();
@@ -23,9 +24,9 @@ export function Settings() {
           <User size={15} /> Profile
         </div>
         <div className={styles.settingsProfile}>
-          <div className={styles.profileAvatar}>{user?.initials ?? '?'}</div>
+          <div className={styles.profileAvatar}>{initialsFor(user)}</div>
           <div>
-            <strong className={styles.settingsProfileName}>{user?.name ?? 'Unknown'}</strong>
+            <strong className={styles.settingsProfileName}>{displayNameFor(user)}</strong>
             <p className={styles.settingsRowHint}>
               {isGuest
                 ? 'Browsing as a guest — your progress is not saved.'
