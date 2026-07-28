@@ -38,7 +38,8 @@
     "signOut": "Sign out",
     "guestMode": "Guest mode",
     "guestBlurb": "Sign in to unlock modules, exercises and the leaderboard.",
-    "signInToUnlock": "Sign in to unlock"
+    "signInToUnlock": "Sign in to unlock",
+    "completeModulesToUnlock": "Complete all modules to unlock"
   },
   "topbar": {
     "search": "Search",

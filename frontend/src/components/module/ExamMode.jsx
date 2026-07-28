@@ -4,10 +4,11 @@ import {
   GraduationCap, RefreshCcw, Star, Target, TrendingUp, XCircle,
 } from 'lucide-react';
 import m from '../../styles/ModulePage.module.css';
+import { apiFetch } from '../../api';
+import { getApiUrl } from '../../config/api';
 import { CodeExercise } from './CodeExercise';
 import { CodeBlock, InlineText } from './ContentBlocks';
 import { presetForExercise } from './visualizers/presets';
-import { apiFetch } from '../../api';
 import { useLanguage } from '../../context/LanguageContext';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -157,7 +158,7 @@ export function ExamMode({ practice, exercises, onVisualize }) {
       if (ex.type === 'select_all') payload.answers = a.selected ?? [];
       if (ex.type === 'write_code') payload.code = a.code ?? '';
       try {
-        const res = await apiFetch('/api/exercises/submit', {
+        const res = await apiFetch(getApiUrl('/api/exercises/submit'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),

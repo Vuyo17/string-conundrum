@@ -1,6 +1,4 @@
-import json
-from pathlib import Path
-
+from ..db import get_cursor
 from .sandbox import run_for_grading
 from .i18n import (
     MISCONCEPTION_FEEDBACK_XH,
@@ -8,8 +6,6 @@ from .i18n import (
     TEMPLATES,
     normalise_lang,
 )
-
-_DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "exercises.json"
 
 MISCONCEPTION_FEEDBACK = {
     "immutability_in_place": "Strings are immutable. String operations return new strings rather than changing existing ones in place.",
@@ -79,8 +75,8 @@ def _explanation_for(exercise: dict, misconception_id: "str | None" = None, lang
     already got targeted misconception feedback we deliberately fall back to
     the module rule so the same sentence is not shown twice.
     """
-    # An authored explanation is English-only; the generated banks carry none.
-    authored = exercise.get("explanation")
+    # Prefer a translated authored explanation, then the English one.
+    authored = exercise.get(f"explanation_{lang}") or exercise.get("explanation")
     if authored:
         return authored
 
@@ -104,8 +100,17 @@ def _explanation_for(exercise: dict, misconception_id: "str | None" = None, lang
 
 
 def _load_exercises() -> list[dict]:
-    with open(_DATA_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            SELECT module_id, question_id, type, prompt, options, answer, answers,
+                   misconception_map, starter_code, test_cases, explanation, stars, xp,
+                   prompt_xh, explanation_xh, hint_xh
+            FROM exercises
+            ORDER BY sort_order
+            """
+        )
+        return [dict(row) for row in cur.fetchall()]
 
 
 def _find_exercise(module_id: str, question_id: str) -> dict | None:
@@ -227,6 +232,15 @@ def _grade_write_code(exercise: dict, code: str, lang: str) -> dict:
     }
 
 
+def _stars_of(exercise: dict) -> int:
+    """Mirrors the frontend's starsOf(): stars if authored, else xp / 10."""
+    stars = exercise.get("stars")
+    if stars is not None:
+        return stars
+    xp = exercise.get("xp") or 10
+    return max(1, round(xp / 10))
+
+
 def evaluate_answer(
     module_id: str,
     question_id: str,
@@ -257,19 +271,22 @@ def evaluate_answer(
     ex_type = exercise["type"]
 
     if ex_type == "mcq":
-        return _grade_mcq(exercise, answer, lang)
-    if ex_type == "fill_blank":
-        return _grade_fill_blank(exercise, answer, lang)
-    if ex_type == "select_all":
-        return _grade_select_all(exercise, answers or [], lang)
-    if ex_type == "write_code":
-        return _grade_write_code(exercise, code or "", lang)
+        result = _grade_mcq(exercise, answer, lang)
+    elif ex_type == "fill_blank":
+        result = _grade_fill_blank(exercise, answer, lang)
+    elif ex_type == "select_all":
+        result = _grade_select_all(exercise, answers or [], lang)
+    elif ex_type == "write_code":
+        result = _grade_write_code(exercise, code or "", lang)
+    else:
+        return {
+            "correct": False,
+            "misconception_id": None,
+            "feedback": _tpl(lang, "unknown_type", ex_type=ex_type),
+        }
 
-    return {
-        "correct": False,
-        "misconception_id": None,
-        "feedback": _tpl(lang, "unknown_type", ex_type=ex_type),
-    }
+    result["stars_awarded"] = _stars_of(exercise) if result["correct"] else 0
+    return result
 
 
 def get_exercise(module_id: str, question_id: str) -> dict | None:

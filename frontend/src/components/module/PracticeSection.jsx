@@ -4,10 +4,11 @@ import {
   PenLine, RefreshCcw, SquareMousePointer, Star, Target, XCircle,
 } from 'lucide-react';
 import m from '../../styles/ModulePage.module.css';
+import { apiFetch } from '../../api';
+import { getApiUrl } from '../../config/api';
 import { CodeExercise } from './CodeExercise';
 import { CodeBlock, InlineText } from './ContentBlocks';
 import { ExamMode } from './ExamMode';
-import { apiFetch } from '../../api';
 import { useLanguage } from '../../context/LanguageContext';
 
 // Star value of an exercise. The bank's legacy `xp` field is stars * 10;
@@ -184,7 +185,7 @@ export function PracticeSection({ practice, onVisualize }) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/exercises/${practice.apiModuleId}?lang=${lang}`)
+    fetch(getApiUrl(`/api/exercises/${practice.apiModuleId}?lang=${lang}`))
       .then((res) => res.json())
       .then((data) => {
         if (cancelled) return;
@@ -279,7 +280,7 @@ function PracticeRunner({ practice, exercises }) {
     if (exercise.type === 'write_code') payload.code = answer?.code ?? '';
 
     try {
-      const res = await apiFetch('/api/exercises/submit', {
+      const res = await apiFetch(getApiUrl('/api/exercises/submit'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

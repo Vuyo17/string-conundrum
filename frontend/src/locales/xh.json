@@ -38,7 +38,8 @@
     "signOut": "Phuma",
     "guestMode": "Imo yondwendwe",
     "guestBlurb": "Ngena ukuze uvule iimodyuli, imisebenzi kunye nebhodi yeenkokeli.",
-    "signInToUnlock": "Ngena ukuze uvule"
+    "signInToUnlock": "Ngena ukuze uvule",
+    "completeModulesToUnlock": "Gqiba zonke iimodyuli ukuze uvule"
   },
   "topbar": {
     "search": "Khangela",

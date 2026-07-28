@@ -2,6 +2,12 @@ from flask import Blueprint, g, request
 
 from .auth import require_auth
 from .services.feedback import evaluate_answer, get_module_exercises
+from .services.progress import (
+    get_leaderboard,
+    get_user_progress,
+    record_challenge_completion,
+    record_exercise_completion,
+)
 from .services.sandbox import execute_code, trace_steps
 from .services.visualizer import build_visual_state
 
@@ -60,6 +66,8 @@ def submit_exercise():
         code=code,
         lang=lang,
     )
+    if evaluation.get("correct"):
+        record_exercise_completion(g.uid, module_id, question_id, evaluation["stars_awarded"])
     return {"ok": True, **evaluation}
 
 
@@ -91,15 +99,19 @@ def challenge_solution(challenge_id: str):
 
 
 @api_bp.post("/challenges/run")
+@require_auth
 def run_challenge():
     """Grade submitted code against a challenge's test cases."""
     from .services.challenges import grade_challenge
 
     payload = request.get_json(silent=True) or {}
+    challenge_id = payload.get("challenge_id", "")
     result = grade_challenge(
-        challenge_id=payload.get("challenge_id", ""),
+        challenge_id=challenge_id,
         code=payload.get("code", ""),
     )
+    if result.get("all_passed"):
+        record_challenge_completion(g.uid, challenge_id, result["stars_awarded"])
     return result
 
 
@@ -112,15 +124,14 @@ def get_progress(user_id: str):
     return {
         "ok": True,
         "user_id": user_id,
-        "modules": [
-            {
-                "module_id": "intro",
-                "completed": False,
-                "score": 0,
-                "last_session_at": None,
-            }
-        ],
+        "modules": get_user_progress(user_id),
     }
+
+
+@api_bp.get("/leaderboard")
+def leaderboard():
+    """Return top scorers across exercises and challenges combined."""
+    return {"ok": True, "leaders": get_leaderboard()}
 
 
 # ─── authentication ──────────────────────────────────────────────────────────
