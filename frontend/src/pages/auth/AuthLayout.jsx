@@ -1,6 +1,8 @@
 import React from 'react';
 import { BookOpen } from 'lucide-react';
 import s from './Auth.module.css';
+import { AuthLanguageToggle } from './AuthLanguageToggle';
+import { useLanguage } from '../../context/LanguageContext';
 
 const SPECIMEN = 'STRINGS';
 const HIGHLIGHT = [2, 3, 4];
@@ -9,14 +11,16 @@ const HIGHLIGHT = [2, 3, 4];
 // on wide screens, the panel copy once the aside drops away. Typography is
 // shared so both render identically.
 function Wordmark({ variant }) {
+  const { t } = useLanguage();
+
   return (
     <div className={`${s.wordmark} ${variant === 'panel' ? s.panelWordmark : ''}`}>
       <span className={s.wordmarkBadge}>
         <BookOpen size={17} aria-hidden="true" />
       </span>
       <span>
-        <strong>String Conundrum</strong>
-        <small>Master Python Strings</small>
+        <strong>{t('common.appName')}</strong>
+        <small>{t('common.tagline')}</small>
       </span>
     </div>
   );
@@ -28,18 +32,17 @@ function Wordmark({ variant }) {
  * the whole page.
  */
 export function AuthLayout({ children }) {
+  const { t } = useLanguage();
+
   return (
     <div className={s.shell}>
       <aside className={s.aside}>
         <Wordmark variant="aside" />
 
         <div className={s.asideBody}>
-          <span className={s.eyebrow}>For UCT students</span>
-          <h1>Your learning space, built around your degree.</h1>
-          <p>
-            Work through Python strings the way they are actually assessed —
-            indexing, slicing, immutability and the edge cases that cost marks.
-          </p>
+          <span className={s.eyebrow}>{t('auth.asideEyebrow')}</span>
+          <h1>{t('auth.asideTitle')}</h1>
+          <p>{t('auth.asideBlurb')}</p>
 
           <figure className={s.specimen}>
             <div className={s.specimenRow}>
@@ -65,18 +68,18 @@ export function AuthLayout({ children }) {
               ))}
             </div>
             <figcaption className={s.specimenCaption}>
-              Every character has an index. That is where it starts.
+              {t('auth.asideCaption')}
             </figcaption>
           </figure>
         </div>
 
-        <p className={s.asideFoot}>
-          An independent project built by students, for students. Not an official
-          University of Cape Town service.
-        </p>
+        <p className={s.asideFoot}>{t('auth.asideFoot')}</p>
       </aside>
 
       <main className={s.panel}>
+        {/* Anchored to the panel rather than a step, so the switch stays in the
+            same place across every view the shell wraps. */}
+        <AuthLanguageToggle />
         <Wordmark variant="panel" />
         {children}
       </main>

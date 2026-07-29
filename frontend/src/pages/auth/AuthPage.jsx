@@ -9,8 +9,25 @@ import { SignUpForm } from './SignUpForm';
 import { ForgotPasswordForm } from './ForgotPasswordForm';
 import { PasswordSetupForm } from './PasswordSetupForm';
 import { useAuth } from '../../context/AuthContext';
-import { friendlyAuthError } from './authErrors';
+import { authErrorKey } from './authErrors';
 import { useLanguage } from '../../context/LanguageContext';
+
+/**
+ * Renders a translated sentence with the email address emphasised, splitting on
+ * the interpolated address rather than assuming it falls at a fixed position —
+ * isiXhosa puts it somewhere English does not.
+ */
+function SentenceWithAddress({ text, email }) {
+  if (!email) return text;
+  const [before, ...rest] = text.split(email);
+  return (
+    <>
+      {before}
+      <span className={s.statusAddress}>{email}</span>
+      {rest.join(email)}
+    </>
+  );
+}
 
 /**
  * One container, many steps. Every authentication state renders inside the same
@@ -44,7 +61,7 @@ export function AuthPage() {
       await sendSignUpLink(email);
       setResendState({ busy: false, sent: true, error: '' });
     } catch (error) {
-      setResendState({ busy: false, sent: false, error: friendlyAuthError(error) });
+      setResendState({ busy: false, sent: false, error: authErrorKey(error) });
     }
   }
 
@@ -110,7 +127,7 @@ export function AuthPage() {
                   {t('auth.linkSentAgain')}
                 </AuthError>
               )}
-              {resendState.error && <AuthError>{resendState.error}</AuthError>}
+              {resendState.error && <AuthError>{t(resendState.error)}</AuthError>}
               <button
                 type="button"
                 className={s.secondary}
@@ -199,13 +216,11 @@ export function AuthPage() {
           }
           footer={
             <button type="button" className={s.inlineLink} onClick={() => go('signIn')}>
-              Back to sign in
+              {t('auth.backToSignIn')}
             </button>
           }
         >
-          If an account exists for{' '}
-          <span className={s.statusAddress}>{email}</span>, we have sent
-          instructions to reset your password.
+          <SentenceWithAddress text={t('auth.resetSentBlurb', { email })} email={email} />
         </AuthStatusPanel>
       )}
     </AuthLayout>

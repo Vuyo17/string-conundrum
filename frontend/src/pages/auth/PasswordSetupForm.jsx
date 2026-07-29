@@ -5,7 +5,7 @@ import { AuthField } from './AuthField';
 import { AuthError } from './AuthError';
 import { PasswordStrengthIndicator } from './PasswordStrengthIndicator';
 import { useAuth } from '../../context/AuthContext';
-import { friendlyAuthError, validateEmailShape } from './authErrors';
+import { authErrorKey, validateEmailShape } from './authErrors';
 import { meetsPolicy } from './passwordPolicy';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -51,7 +51,7 @@ export function PasswordSetupForm({ email, needsEmail, onEmailConfirmed, onCompl
       await setAccountPassword(password);
       onComplete();
     } catch (error) {
-      setFormError(friendlyAuthError(error));
+      setFormError(authErrorKey(error));
     } finally {
       setBusy(false);
     }
@@ -76,7 +76,7 @@ export function PasswordSetupForm({ email, needsEmail, onEmailConfirmed, onCompl
               placeholder="you@myuct.ac.za"
               value={emailInput}
               onChange={(e) => setEmailInput(e.target.value)}
-              error={emailError}
+              error={emailError && t(emailError)}
             />
           </div>
           <button type="submit" className={s.submit}>{t('common.continue')}</button>
@@ -98,7 +98,7 @@ export function PasswordSetupForm({ email, needsEmail, onEmailConfirmed, onCompl
         {t('auth.settingUpAccount', { email })}
       </p>
 
-      <AuthError>{formError}</AuthError>
+      <AuthError>{formError && t(formError)}</AuthError>
 
       <form onSubmit={handleSubmit} noValidate>
         <div className={s.fields}>

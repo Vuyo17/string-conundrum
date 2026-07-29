@@ -159,10 +159,56 @@
 
 /* ─── right: form panel ─────────────────────────────────────────────────── */
 .panel {
+  position: relative;
   display: grid;
   justify-items: start;
   align-content: center;
   padding: 56px 64px;
+}
+
+/* ─── language switch ───────────────────────────────────────────────────── */
+/* Taken out of flow so the panel's vertical centring still measures only the
+   auth step itself. */
+.langSwitch {
+  position: absolute;
+  top: 28px;
+  right: 64px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px 3px 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface-2);
+}
+
+.langSwitchIcon {
+  margin-right: 4px;
+  color: var(--muted);
+}
+
+.langOption {
+  padding: 5px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.langOption:hover {
+  color: var(--fg);
+}
+
+.langOptionActive,
+.langOptionActive:hover {
+  background: var(--primary);
+  color: var(--primary-fg);
 }
 
 .panelInner {
@@ -658,6 +704,9 @@
   .panel {
     padding: 48px 40px;
   }
+  .langSwitch {
+    right: 40px;
+  }
   .asideBody h1 {
     font-size: 27px;
   }
@@ -673,8 +722,13 @@
   }
   .panel {
     align-content: start;
-    padding: 40px 22px 48px;
+    /* Extra headroom so the switch clears the wordmark it now sits above. */
+    padding: 72px 22px 48px;
     justify-items: stretch;
+  }
+  .langSwitch {
+    top: 20px;
+    right: 22px;
   }
   /* Wordmark shares the form column's width so the two stay left-aligned. */
   .panelWordmark,
@@ -693,7 +747,13 @@
 
 @media (max-width: 420px) {
   .panel {
-    padding: 32px 18px 40px;
+    padding: 64px 18px 40px;
+  }
+  .langSwitch {
+    right: 18px;
+  }
+  .langOption {
+    padding: 5px 8px;
   }
   .heading {
     font-size: 22px;

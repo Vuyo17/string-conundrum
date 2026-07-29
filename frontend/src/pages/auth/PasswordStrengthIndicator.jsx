@@ -1,7 +1,8 @@
 import React from 'react';
 import { Check } from 'lucide-react';
 import s from './Auth.module.css';
-import { PASSWORD_RULES, STRENGTH_LABELS, passwordScore } from './passwordPolicy';
+import { PASSWORD_RULES, STRENGTH_LABEL_KEYS, passwordScore } from './passwordPolicy';
+import { useLanguage } from '../../context/LanguageContext';
 
 /**
  * Four-segment meter plus a progressive requirements checklist. Every met rule
@@ -9,14 +10,15 @@ import { PASSWORD_RULES, STRENGTH_LABELS, passwordScore } from './passwordPolicy
  * polite live region so screen readers hear progress without interruption.
  */
 export function PasswordStrengthIndicator({ value }) {
+  const { t } = useLanguage();
   const score = passwordScore(value);
 
   return (
     <div className={s.strength}>
       <div className={s.strengthTop}>
-        <span className={s.strengthLabel}>Password strength</span>
+        <span className={s.strengthLabel}>{t('auth.passwordStrength')}</span>
         <span className={s.strengthValue} aria-live="polite">
-          {value ? STRENGTH_LABELS[score] : ''}
+          {value ? t(STRENGTH_LABEL_KEYS[score]) : ''}
         </span>
       </div>
 
@@ -26,7 +28,7 @@ export function PasswordStrengthIndicator({ value }) {
         aria-valuenow={score}
         aria-valuemin={0}
         aria-valuemax={PASSWORD_RULES.length}
-        aria-label="Password strength"
+        aria-label={t('auth.passwordStrength')}
       >
         {PASSWORD_RULES.map((rule, i) => (
           <span
@@ -44,8 +46,8 @@ export function PasswordStrengthIndicator({ value }) {
               <span className={s.ruleIcon} aria-hidden="true">
                 <Check size={10} strokeWidth={3.5} />
               </span>
-              <span>{rule.label}</span>
-              <span className={s.srOnly}>{met ? ' — met' : ' — not yet met'}</span>
+              <span>{t(rule.labelKey)}</span>
+              <span className={s.srOnly}>{met ? t('auth.ruleMet') : t('auth.ruleNotMet')}</span>
             </li>
           );
         })}

@@ -4,7 +4,7 @@ import s from './Auth.module.css';
 import { AuthField } from './AuthField';
 import { AuthError } from './AuthError';
 import { useAuth } from '../../context/AuthContext';
-import { friendlyAuthError, validateEmailShape } from './authErrors';
+import { authErrorKey, validateEmailShape } from './authErrors';
 import { useLanguage } from '../../context/LanguageContext';
 
 export function SignInForm({ onForgotPassword, onCreateAccount, onGuest }) {
@@ -13,6 +13,8 @@ export function SignInForm({ onForgotPassword, onCreateAccount, onGuest }) {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  // Errors are held as translation keys and resolved on render, so switching
+  // language re-renders a message that is already on screen.
   const [fieldErrors, setFieldErrors] = useState({});
   const [formError, setFormError] = useState('');
   const [busy, setBusy] = useState(null); // 'signin' | 'guest' | null
@@ -22,7 +24,7 @@ export function SignInForm({ onForgotPassword, onCreateAccount, onGuest }) {
     setFormError('');
 
     const emailError = validateEmailShape(email);
-    const passwordError = password ? '' : t('auth.enterPassword');
+    const passwordError = password ? '' : 'auth.enterPassword';
     setFieldErrors({ email: emailError, password: passwordError });
     if (emailError || passwordError) return;
 
@@ -30,7 +32,7 @@ export function SignInForm({ onForgotPassword, onCreateAccount, onGuest }) {
     try {
       await login(email.trim(), password);
     } catch (error) {
-      setFormError(friendlyAuthError(error));
+      setFormError(authErrorKey(error));
     } finally {
       setBusy(null);
     }
@@ -43,7 +45,7 @@ export function SignInForm({ onForgotPassword, onCreateAccount, onGuest }) {
       await continueAsGuest();
       onGuest?.();
     } catch (error) {
-      setFormError(friendlyAuthError(error));
+      setFormError(authErrorKey(error));
     } finally {
       setBusy(null);
     }
@@ -54,7 +56,7 @@ export function SignInForm({ onForgotPassword, onCreateAccount, onGuest }) {
       <h2 className={s.heading}>{t('auth.signInTitle')}</h2>
       <p className={s.subheading}>{t('auth.signInSubtitle')}</p>
 
-      <AuthError>{formError}</AuthError>
+      <AuthError>{formError && t(formError)}</AuthError>
 
       <form onSubmit={handleSubmit} noValidate>
         <div className={s.fields}>
@@ -67,7 +69,7 @@ export function SignInForm({ onForgotPassword, onCreateAccount, onGuest }) {
             placeholder="you@myuct.ac.za"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            error={fieldErrors.email}
+            error={fieldErrors.email && t(fieldErrors.email)}
           />
 
           <AuthField
@@ -78,7 +80,7 @@ export function SignInForm({ onForgotPassword, onCreateAccount, onGuest }) {
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            error={fieldErrors.password}
+            error={fieldErrors.password && t(fieldErrors.password)}
             action={
               <button type="button" className={s.linkButton} onClick={onForgotPassword}>
                 {t('auth.forgotPassword')}

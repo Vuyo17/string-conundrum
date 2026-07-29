@@ -4,7 +4,7 @@ import s from './Auth.module.css';
 import { AuthField } from './AuthField';
 import { AuthError } from './AuthError';
 import { useAuth } from '../../context/AuthContext';
-import { UCT_DOMAIN, friendlyAuthError, validateUctEmail } from './authErrors';
+import { UCT_DOMAIN, authErrorKey, validateUctEmail } from './authErrors';
 import { useLanguage } from '../../context/LanguageContext';
 
 export function SignUpForm({ initialEmail = '', onSent, onSignIn }) {
@@ -30,7 +30,7 @@ export function SignUpForm({ initialEmail = '', onSent, onSignIn }) {
       await sendSignUpLink(address);
       onSent(address);
     } catch (err) {
-      setFormError(friendlyAuthError(err));
+      setFormError(authErrorKey(err));
     } finally {
       setBusy(false);
     }
@@ -47,7 +47,7 @@ export function SignUpForm({ initialEmail = '', onSent, onSignIn }) {
         {t('auth.uctOnlyNote', { domain: UCT_DOMAIN })}
       </AuthError>
 
-      <AuthError>{formError}</AuthError>
+      <AuthError>{formError && t(formError)}</AuthError>
 
       <form onSubmit={handleSubmit} noValidate>
         <div className={s.fields}>
@@ -60,7 +60,7 @@ export function SignUpForm({ initialEmail = '', onSent, onSignIn }) {
             placeholder={`you${UCT_DOMAIN}`}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            error={fieldError}
+            error={fieldError && t(fieldError, { domain: UCT_DOMAIN })}
             hint={t("auth.inboxHint")}
           />
         </div>

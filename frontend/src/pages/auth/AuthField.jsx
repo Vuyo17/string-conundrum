@@ -1,6 +1,7 @@
 import React, { useId, useState } from 'react';
 import { AlertCircle, Eye, EyeOff } from 'lucide-react';
 import s from './Auth.module.css';
+import { useLanguage } from '../../context/LanguageContext';
 
 /**
  * Labelled input with an optional leading icon, password visibility toggle and
@@ -19,6 +20,7 @@ export function AuthField({
   onChange,
   ...rest
 }) {
+  const { t } = useLanguage();
   const generatedId = useId();
   const fieldId = id ?? generatedId;
   const errorId = `${fieldId}-error`;
@@ -60,7 +62,7 @@ export function AuthField({
             type="button"
             className={s.toggleVisibility}
             onClick={() => setRevealed((v) => !v)}
-            aria-label={revealed ? 'Hide password' : 'Show password'}
+            aria-label={revealed ? t('auth.hidePassword') : t('auth.showPassword')}
             aria-pressed={revealed}
           >
             {revealed ? <EyeOff size={16} /> : <Eye size={16} />}

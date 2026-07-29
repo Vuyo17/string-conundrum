@@ -4,12 +4,15 @@ import s from './Auth.module.css';
 import { AuthField } from './AuthField';
 import { AuthError } from './AuthError';
 import { useAuth } from '../../context/AuthContext';
-import { friendlyAuthError, validateEmailShape } from './authErrors';
+import { authErrorKey, validateEmailShape } from './authErrors';
+import { useLanguage } from '../../context/LanguageContext';
 
 export function ForgotPasswordForm({ initialEmail = '', onSent, onBack }) {
   const { sendPasswordReset } = useAuth();
+  const { t } = useLanguage();
 
   const [email, setEmail] = useState(initialEmail);
+  // Translation keys, resolved on render so the language toggle reaches them.
   const [fieldError, setFieldError] = useState('');
   const [formError, setFormError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -34,7 +37,7 @@ export function ForgotPasswordForm({ initialEmail = '', onSent, onBack }) {
         onSent(address);
         return;
       }
-      setFormError(friendlyAuthError(err));
+      setFormError(authErrorKey(err));
     } finally {
       setBusy(false);
     }
@@ -42,43 +45,40 @@ export function ForgotPasswordForm({ initialEmail = '', onSent, onBack }) {
 
   return (
     <div className={s.panelInner}>
-      <h2 className={s.heading}>Reset your password</h2>
-      <p className={s.subheading}>
-        Enter your email address and we will send you instructions to set a new
-        password.
-      </p>
+      <h2 className={s.heading}>{t('auth.resetTitle')}</h2>
+      <p className={s.subheading}>{t('auth.resetSubtitle')}</p>
 
-      <AuthError>{formError}</AuthError>
+      <AuthError>{formError && t(formError)}</AuthError>
 
       <form onSubmit={handleSubmit} noValidate>
         <div className={s.fields}>
           <AuthField
             id="reset-email"
-            label="Email address"
+            label={t('auth.emailAddress')}
             type="email"
             icon={Mail}
             autoComplete="email"
             placeholder="you@myuct.ac.za"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            error={fieldError}
+            error={fieldError && t(fieldError)}
           />
         </div>
 
         <button type="submit" className={s.submit} disabled={busy}>
           {busy ? (
             <>
-              <Loader2 size={16} className={s.spin} aria-hidden="true" /> Sending...
+              <Loader2 size={16} className={s.spin} aria-hidden="true" /> {t('auth.sending')}
             </>
           ) : (
-            'Send reset instructions'
+            t('auth.sendResetInstructions')
           )}
         </button>
       </form>
 
       <p className={s.footerNote}>
         <button type="button" className={s.inlineLink} onClick={onBack}>
-          Back to sign in
+          {t('auth.backToSignIn')}
         </button>
       </p>
     </div>
