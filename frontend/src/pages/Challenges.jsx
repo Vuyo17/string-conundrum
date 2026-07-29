@@ -6,6 +6,17 @@ import {
 import styles from '../styles/App.module.css';
 import { getApiUrl } from '../config/api';
 import { apiFetch } from '../api';
+import { useLanguage } from '../context/LanguageContext';
+
+// Difficulty codes come from the backend, so the filter keeps English values
+// and translates only the chip label.
+const DIFFICULTIES = ['All', 'Easy', 'Medium', 'Hard'];
+const DIFFICULTY_KEY = {
+  All: 'challenges.filterAll',
+  Easy: 'challenges.filterEasy',
+  Medium: 'challenges.filterMedium',
+  Hard: 'challenges.filterHard',
+};
 
 const INDENT = '    ';
 
@@ -49,6 +60,7 @@ function formatValue(value) {
 
 // ─── component ────────────────────────────────────────────────────────────────
 export function Challenges() {
+  const { t } = useLanguage();
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
@@ -81,7 +93,7 @@ export function Challenges() {
         setCodeById(Object.fromEntries(list.map((c) => [c.id, c.starter_code])));
       })
       .catch(() => {
-        if (!cancelled) setLoadError('Cannot reach server. Is the backend running?');
+        if (!cancelled) setLoadError('challenges.serverUnreachable');
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -161,7 +173,7 @@ export function Challenges() {
     } catch {
       setResultById((prev) => ({
         ...prev,
-        [challenge.id]: { ok: false, results: [], stderr: 'Cannot reach server. Is the backend running?' },
+        [challenge.id]: { ok: false, results: [], stderr: t('challenges.serverUnreachable') },
       }));
     } finally {
       setRunning(false);
@@ -184,11 +196,11 @@ export function Challenges() {
       const res = await fetch(getApiUrl(`/api/challenges/${challenge.id}/solution`));
       const data = await res.json();
       if (!data.ok || !data.solution) {
-        throw new Error(data.error || 'No solution available for this challenge.');
+        throw new Error(data.error || t('challenges.noSolution'));
       }
       setSolutionById((prev) => ({ ...prev, [challenge.id]: data.solution }));
     } catch {
-      setSolutionError('Could not load the solution. Is the backend running?');
+      setSolutionError('challenges.solutionFailed');
     } finally {
       setSolutionLoading(false);
     }
@@ -201,13 +213,13 @@ export function Challenges() {
   }
 
   if (loading) {
-    return <div className={styles.challengeLayout}><p className={styles.exerciseLoading}>Loading challenges…</p></div>;
+    return <div className={styles.challengeLayout}><p className={styles.exerciseLoading}>{t('challenges.loading')}</p></div>;
   }
   if (loadError) {
-    return <div className={styles.challengeLayout}><p className={styles.exerciseLoading}>{loadError}</p></div>;
+    return <div className={styles.challengeLayout}><p className={styles.exerciseLoading}>{t(loadError)}</p></div>;
   }
   if (!challenge) {
-    return <div className={styles.challengeLayout}><p className={styles.emptyState}>No challenges available yet.</p></div>;
+    return <div className={styles.challengeLayout}><p className={styles.emptyState}>{t('challenges.none')}</p></div>;
   }
 
   const solvedCount = solved.size;
@@ -220,15 +232,15 @@ export function Challenges() {
         <div className={styles.challengeTitleGroupLc}>
           <div className={styles.trophyIconLc}><TerminalSquare size={22} /></div>
           <div>
-            <h1>Challenges</h1>
-            <p>LeetCode-style coding problems with stdin/stdout test cases.</p>
+            <h1>{t('challenges.title')}</h1>
+            <p>{t('challenges.subtitle')}</p>
           </div>
         </div>
         <div className={styles.challengeProgressLc}>
           <div className={styles.challengeProgressTopLc}>
-            <span className={styles.challengeProgressLabelLc}>Your progress</span>
+            <span className={styles.challengeProgressLabelLc}>{t('challenges.yourProgress')}</span>
             <span className={styles.challengeProgressCountLc}>
-              <b>{solvedCount}</b> / {challenges.length} solved
+              <b>{solvedCount}</b> / {challenges.length} {t('challenges.solvedCount')}
             </span>
           </div>
           <div className={styles.progressTrackLc}>
@@ -244,27 +256,27 @@ export function Challenges() {
             <Search size={15} />
             <input
               className={styles.browserSearchInputLc}
-              placeholder="Search challenges…"
+              placeholder={t('challenges.searchPlaceholder')}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
           </div>
 
           <div className={styles.browserFiltersLc}>
-            {['All', 'Easy', 'Medium', 'Hard'].map((d) => (
+            {DIFFICULTIES.map((d) => (
               <button
                 key={d}
                 className={`${styles.filterChipLc} ${diffFilter === d ? styles.filterChipActiveLc : ''}`}
                 onClick={() => setDiffFilter(d)}
               >
-                {d}<span className={styles.filterCountLc}>{counts[d] ?? 0}</span>
+                {t(DIFFICULTY_KEY[d])}<span className={styles.filterCountLc}>{counts[d] ?? 0}</span>
               </button>
             ))}
           </div>
 
           <div className={styles.browserListLc}>
             {visibleChallenges.length === 0 && (
-              <p className={styles.browserEmptyLc}>No challenges match your search.</p>
+              <p className={styles.browserEmptyLc}>{t('challenges.noMatches')}</p>
             )}
             {visibleChallenges.map((c) => {
               const isSolved = solved.has(c.id);
@@ -282,7 +294,7 @@ export function Challenges() {
                   <span className={styles.browserItemBodyLc}>
                     <span className={styles.browserItemTitleLc}>{c.title}</span>
                     <span className={`${styles.challengeDiffLc} ${styles[`diff${c.difficulty}`] ?? ''}`}>
-                      {c.difficulty}
+                      {t(DIFFICULTY_KEY[c.difficulty] ?? c.difficulty)}
                     </span>
                   </span>
                 </button>
@@ -297,41 +309,40 @@ export function Challenges() {
             <div className={styles.challengePromptHeadLc}>
               <h2>{challenge.title}</h2>
               {solved.has(challenge.id) && (
-                <span className={styles.solvedPillLc}><CheckCircle2 size={14} /> Solved</span>
+                <span className={styles.solvedPillLc}><CheckCircle2 size={14} /> {t('challenges.solved')}</span>
               )}
             </div>
             <p className={styles.challengeDescLc}>{challenge.description}</p>
 
             <div className={styles.challengeIoGridLc}>
               <div className={styles.challengeIoCardLc}>
-                <h3>Input</h3>
-                <p>{challenge.io?.input ?? 'See test cases for exact stdin format.'}</p>
+                <h3>{t('challenges.input')}</h3>
+                <p>{challenge.io?.input ?? t('challenges.inputFallback')}</p>
               </div>
               <div className={styles.challengeIoCardLc}>
-                <h3>Output</h3>
-                <p>{challenge.io?.output ?? 'Print the expected output for each input.'}</p>
+                <h3>{t('challenges.output')}</h3>
+                <p>{challenge.io?.output ?? t('challenges.outputFallback')}</p>
               </div>
             </div>
 
             <div className={styles.challengeHelpRowLc}>
               <button className={styles.hintToggleLc} onClick={() => setShowHint((s) => !s)}>
-                <Lightbulb size={15} /> {showHint ? 'Hide hint' : 'Show hint'}
+                <Lightbulb size={15} /> {showHint ? t('challenges.hideHint') : t('challenges.showHint')}
               </button>
               <button className={styles.hintToggleLc} onClick={handleToggleSolution}>
-                <BookOpen size={15} /> {showSolution ? 'Hide solution' : 'Show solution'}
+                <BookOpen size={15} />{' '}
+                {showSolution ? t('challenges.hideSolution') : t('challenges.showSolution')}
               </button>
             </div>
             {showHint && <p className={styles.hintTextLc}>{challenge.hint}</p>}
 
             {showSolution && (
               <div className={styles.solutionBoxLc}>
-                {solutionLoading && <p className={styles.hintTextLc}>Loading solution…</p>}
-                {solutionError && <p className={styles.challengeErrorLc}>{solutionError}</p>}
+                {solutionLoading && <p className={styles.hintTextLc}>{t('challenges.loadingSolution')}</p>}
+                {solutionError && <p className={styles.challengeErrorLc}>{t(solutionError)}</p>}
                 {!solutionLoading && !solutionError && solutionById[challenge.id] && (
                   <>
-                    <p className={styles.solutionNoteLc}>
-                      One way to solve it — there are others. Try it yourself first.
-                    </p>
+                    <p className={styles.solutionNoteLc}>{t('challenges.solutionNote')}</p>
                     <pre
                       className={styles.solutionCodeLc}
                       dangerouslySetInnerHTML={{
@@ -348,9 +359,13 @@ export function Challenges() {
             {/* editor */}
             <article className={styles.challengeEditorCardLc}>
               <div className={styles.challengeEditorHeadLc}>
-                <span className={styles.challengeFnTagLc}>Python 3 · stdin/stdout</span>
-                <button className={styles.resetBtnLc} onClick={handleReset} title="Reset to starter code">
-                  <RotateCcw size={15} /> Reset
+                <span className={styles.challengeFnTagLc}>{t('challenges.runtimeTag')}</span>
+                <button
+                  className={styles.resetBtnLc}
+                  onClick={handleReset}
+                  title={t('challenges.resetToStarter')}
+                >
+                  <RotateCcw size={15} /> {t('challenges.reset')}
                 </button>
               </div>
               <div className={styles.challengeEditorBoxLc}>
@@ -372,7 +387,8 @@ export function Challenges() {
               </div>
               <div className={styles.challengeRunRowLc}>
                 <button className={styles.runTestsBtnLc} onClick={handleRun} disabled={running}>
-                  <Play size={17} fill="currentColor" /> {running ? 'Running…' : 'Run Tests'}
+                  <Play size={17} fill="currentColor" />{' '}
+                  {running ? t('challenges.running') : t('challenges.runTests')}
                 </button>
               </div>
             </article>
@@ -380,16 +396,16 @@ export function Challenges() {
             {/* test results */}
             <section className={styles.challengeResultsLc}>
               <div className={styles.resultsHeadLc}>
-                <h2>Test Cases</h2>
+                <h2>{t('challenges.testCases')}</h2>
                 {result && result.results?.length > 0 && (
                   <span className={`${styles.resultsScoreLc} ${result.all_passed ? styles.resultsScorePass : ''}`}>
-                    {result.passed} / {result.total} passing
+                    {t('challenges.passing', { passed: result.passed, total: result.total })}
                   </span>
                 )}
               </div>
               {result?.all_passed && (
                 <div className={styles.challengeWinLc}>
-                  <Trophy size={20} /> All tests passed — challenge solved! 🎉
+                  <Trophy size={20} /> {t('challenges.allPassed')}
                 </div>
               )}
 
@@ -398,39 +414,48 @@ export function Challenges() {
               )}
 
               <div className={styles.testListLc}>
+                {/* `test`, not `t` — the translate function owns that name here. */}
                 {(result?.results?.length
                   ? result.results
-                  : challenge.tests.map((t) => ({ ...t, pending: true }))
-                ).map((t, i) => {
-                  const state = t.pending ? styles.testPending : t.passed ? styles.testPass : styles.testFail;
+                  : challenge.tests.map((test) => ({ ...test, pending: true }))
+                ).map((test, i) => {
+                  const state = test.pending
+                    ? styles.testPending
+                    : test.passed
+                    ? styles.testPass
+                    : styles.testFail;
                   return (
                     <div key={i} className={`${styles.testCardLc} ${state}`}>
                       <div className={styles.testCardHeadLc}>
                         <span className={styles.testStatusLc}>
-                          {t.pending ? (
+                          {test.pending ? (
                             <span className={styles.testDotLc} />
-                          ) : t.passed ? (
+                          ) : test.passed ? (
                             <CheckCircle2 size={18} />
                           ) : (
                             <XCircle size={18} />
                           )}
                         </span>
-                        <code className={styles.testCallLc}>stdin test #{i + 1}</code>
+                        <code className={styles.testCallLc}>
+                          {t('challenges.stdinTest', { number: i + 1 })}
+                        </code>
                       </div>
                       <div className={styles.testRowsLc}>
                         <div className={styles.testRowLc}>
-                          <span className={styles.testLabelLc}>input</span>
-                          <code>{formatValue(t.input)}</code>
+                          <span className={styles.testLabelLc}>{t('challenges.testInput')}</span>
+                          <code>{formatValue(test.input)}</code>
                         </div>
                         <div className={styles.testRowLc}>
-                          <span className={styles.testLabelLc}>expected</span>
-                          <code>{formatValue(t.expected)}</code>
+                          <span className={styles.testLabelLc}>{t('challenges.testExpected')}</span>
+                          <code>{formatValue(test.expected)}</code>
                         </div>
-                        {!t.pending && (
+                        {!test.pending && (
                           <div className={styles.testRowLc}>
-                            <span className={styles.testLabelLc}>{t.error ? 'error' : 'got'}</span>
-                            <code className={t.passed ? '' : styles.testGotBad}>
-                              {t.error ? t.error : formatValue(t.actual)}
+                            <span className={styles.testLabelLc}>
+                              {test.error ? t('challenges.testError') : t('challenges.testGot')}
+                            </span>
+                            <code className={test.passed ? '' : styles.testGotBad}>
+                              {test.error ? test.error : formatValue(test.actual)}
                             </code>
                           </div>
                         )}

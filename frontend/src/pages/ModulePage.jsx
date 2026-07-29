@@ -15,10 +15,10 @@ import { PracticeSection } from '../components/module/PracticeSection';
 // page: the sticky rail switches between them, and a Next/Back pager walks
 // through them in order. Modules with `visualizer: null` skip Visualize.
 const ALL_SECTIONS = [
-  { id: 'learn', label: 'Learn', icon: BookOpen },
-  { id: 'examples', label: 'Examples', icon: Lightbulb },
-  { id: 'visualize', label: 'Visualize', icon: Eye },
-  { id: 'practice', label: 'Practice', icon: Dumbbell },
+  { id: 'learn', labelKey: 'modulePage.learn', icon: BookOpen },
+  { id: 'examples', labelKey: 'modulePage.examples', icon: Lightbulb },
+  { id: 'visualize', labelKey: 'modulePage.visualize', icon: Eye },
+  { id: 'practice', labelKey: 'modulePage.practice', icon: Dumbbell },
 ];
 
 // Sections stay mounted and are hidden with an inline style rather than being
@@ -29,7 +29,7 @@ const HIDDEN = { display: 'none' };
 export function ModulePage({
   moduleId, moduleNumber, onBack, initialSection, anchor, entryKey,
 }) {
-  const { lang } = useLanguage();
+  const { lang, t } = useLanguage();
   const content = getModuleContent(moduleId, lang);
   const [activeSection, setActiveSection] = useState(initialSection ?? 'learn');
   const [visualizerPreset, setVisualizerPreset] = useState(null);
@@ -81,10 +81,10 @@ export function ModulePage({
   if (!content) {
     return (
       <div className={m.missing}>
-        <h2>This module is still being written</h2>
-        <p>Content for this module hasn't been added yet. Check back soon.</p>
+        <h2>{t('modulePage.missingTitle')}</h2>
+        <p>{t('modulePage.missingBlurb')}</p>
         <button type="button" className={m.solidButton} onClick={onBack}>
-          <ArrowLeft size={15} /> Back to modules
+          <ArrowLeft size={15} /> {t('modulePage.backToModules')}
         </button>
       </div>
     );
@@ -108,25 +108,30 @@ export function ModulePage({
       {/* ── hero ── */}
       <header className={m.hero}>
         <button type="button" className={m.backLink} onClick={onBack}>
-          <ArrowLeft size={15} /> All modules
+          <ArrowLeft size={15} /> {t('modulePage.allModules')}
         </button>
 
         <div className={m.heroMain}>
           <div className={m.heroText}>
-            <span className={m.heroEyebrow}>Module {moduleNumber ?? ''} · Python Strings</span>
+            <span className={m.heroEyebrow}>
+              {t('modulePage.eyebrow', { number: moduleNumber ?? '' })}
+            </span>
             <h1 className={m.heroTitle}>{content.title}</h1>
 
             <div className={m.heroMeta}>
-              <span><Clock size={14} /> {content.minutes} min</span>
+              <span><Clock size={14} /> {t('modulePage.minutes', { count: content.minutes })}</span>
               <span><Signal size={14} /> {content.level}</span>
               {content.prerequisite && (
-                <span><GraduationCap size={14} /> After: {content.prerequisite}</span>
+                <span>
+                  <GraduationCap size={14} />{' '}
+                  {t('modulePage.after', { prerequisite: content.prerequisite })}
+                </span>
               )}
             </div>
           </div>
 
           <aside className={m.outcomesCard}>
-            <h2 className={m.outcomesTitle}><Target size={15} /> You'll be able to</h2>
+            <h2 className={m.outcomesTitle}><Target size={15} /> {t('modulePage.outcomesTitle')}</h2>
             <ul>
               {content.outcomes.map((outcome) => <li key={outcome}>{outcome}</li>)}
             </ul>
@@ -136,7 +141,7 @@ export function ModulePage({
 
       <div className={m.layout}>
         {/* ── sticky section rail: press an icon to jump straight to that page ── */}
-        <nav className={m.rail} aria-label="Module sections">
+        <nav className={m.rail} aria-label={t('modulePage.sectionsNav')}>
           {sections.map((section, i) => {
             const Icon = section.icon;
             const active = section.id === current.id;
@@ -152,7 +157,7 @@ export function ModulePage({
                   <Icon size={15} />
                   <span className={m.railIndex}>{i}</span>
                 </span>
-                <span className={m.railLabel}>{section.label}</span>
+                <span className={m.railLabel}>{t(section.labelKey)}</span>
               </button>
             );
           })}
@@ -163,7 +168,11 @@ export function ModulePage({
           <span ref={topRef} aria-hidden="true" />
 
           <SectionPage active={current.id === 'learn'}>
-            <SectionHeading index={sectionIndex('learn')} title="Learn" subtitle="The core ideas, one small step at a time" />
+            <SectionHeading
+              index={sectionIndex('learn')}
+              title={t('modulePage.learn')}
+              subtitle={t('modulePage.learnSubtitle')}
+            />
             {content.learnSections.map((learnSection) => (
               // id doubles as the global-search scroll target (see searchIndex).
               <div key={learnSection.id} id={`learn-${learnSection.id}`} className={m.learnBlock}>
@@ -176,8 +185,8 @@ export function ModulePage({
           <SectionPage active={current.id === 'examples'}>
             <SectionHeading
               index={sectionIndex('examples')}
-              title="Worked examples"
-              subtitle="Step through the reasoning, not just the answer"
+              title={t('modulePage.examplesTitle')}
+              subtitle={t('modulePage.examplesSubtitle')}
             />
             <div className={m.exampleStack}>
               {content.examples.map((example, i) => (
@@ -195,7 +204,7 @@ export function ModulePage({
             <SectionPage active={current.id === 'visualize'}>
               <SectionHeading
                 index={sectionIndex('visualize')}
-                title={content.visualizer.title ?? 'Visualize'}
+                title={content.visualizer.title ?? t('modulePage.visualize')}
                 subtitle={content.visualizer.description}
               />
               <Visualizer config={content.visualizer} preset={visualizerPreset} />
@@ -205,8 +214,8 @@ export function ModulePage({
           <SectionPage active={current.id === 'practice'}>
             <SectionHeading
               index={sectionIndex('practice')}
-              title="Practice"
-              subtitle="Graded questions with instant, misconception-aware feedback"
+              title={t('modulePage.practice')}
+              subtitle={t('modulePage.practiceSubtitle')}
             />
             <PracticeSection
               practice={content.practice}
@@ -221,18 +230,24 @@ export function ModulePage({
               className={`${m.pagerBtn} ${m.pagerGhost}`}
               onClick={atFirst ? onBack : goPrev}
             >
-              <ArrowLeft size={15} /> {atFirst ? 'All modules' : `Back: ${sections[activeIndex - 1].label}`}
+              <ArrowLeft size={15} />{' '}
+              {atFirst
+                ? t('modulePage.allModules')
+                : t('modulePage.backTo', { section: t(sections[activeIndex - 1].labelKey) })}
             </button>
 
-            <span className={m.pagerStatus}>Step {activeIndex + 1} of {sections.length}</span>
+            <span className={m.pagerStatus}>
+              {t('modulePage.step', { current: activeIndex + 1, total: sections.length })}
+            </span>
 
             {atLast ? (
               <button type="button" className={`${m.pagerBtn} ${m.pagerPrimary}`} onClick={onBack}>
-                <Check size={15} /> Finish module
+                <Check size={15} /> {t('modulePage.finishModule')}
               </button>
             ) : (
               <button type="button" className={`${m.pagerBtn} ${m.pagerPrimary}`} onClick={goNext}>
-                Next: {sections[activeIndex + 1].label} <ArrowRight size={15} />
+                {t('modulePage.nextTo', { section: t(sections[activeIndex + 1].labelKey) })}{' '}
+                <ArrowRight size={15} />
               </button>
             )}
           </div>

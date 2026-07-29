@@ -4,8 +4,10 @@ import { ScreenHeader } from '../components/ScreenHeader';
 import { ModuleCard } from '../components/ModuleCard';
 import { ModulePage } from './ModulePage';
 import { modules } from '../data/modules';
+import { useLanguage } from '../context/LanguageContext';
 
 export function Modules({ target, progress }) {
+  const { t } = useLanguage();
   // Which module is open, if any. Null shows the card grid.
   const [openModule, setOpenModule] = useState(null);
   // Where inside that module to land, when a search result sent us here.
@@ -76,13 +78,10 @@ export function Modules({ target, progress }) {
 
   return (
     <div className={styles.screenStack}>
-      <ScreenHeader
-        title="Learning Modules"
-        subtitle="Master all string concepts step by step. Complete each module to unlock the next."
-      />
+      <ScreenHeader title={t('modules.title')} subtitle={t('modules.subtitle')} />
       <div className={styles.cardTopLine}>
-        <span>All Modules</span>
-        <span>Overall Progress <strong>{overallProgress}%</strong></span>
+        <span>{t('modules.allModules')}</span>
+        <span>{t('modules.overallProgress')} <strong>{overallProgress}%</strong></span>
       </div>
       <div className={styles.moduleGrid}>
         {enrichedModules.map((mod, i) => (

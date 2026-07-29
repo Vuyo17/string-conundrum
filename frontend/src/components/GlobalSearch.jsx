@@ -5,6 +5,7 @@ import {
 import styles from '../styles/App.module.css';
 import { useAuth } from '../context/AuthContext';
 import { searchAll } from '../data/searchIndex';
+import { useLanguage } from '../context/LanguageContext';
 
 const KIND_ICON = {
   page: Compass,
@@ -15,13 +16,13 @@ const KIND_ICON = {
   practice: Dumbbell,
 };
 
-const KIND_LABEL = {
-  page: 'Page',
-  module: 'Module',
-  topic: 'Topic',
-  example: 'Example',
-  visualize: 'Visualize',
-  practice: 'Practice',
+const KIND_LABEL_KEY = {
+  page: 'search.kindPage',
+  module: 'search.kindModule',
+  topic: 'search.kindTopic',
+  example: 'search.kindExample',
+  visualize: 'search.kindVisualize',
+  practice: 'search.kindPractice',
 };
 
 /**
@@ -31,6 +32,7 @@ const KIND_LABEL = {
  */
 export function GlobalSearch({ onSelect }) {
   const { canAccess } = useAuth();
+  const { t } = useLanguage();
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -126,7 +128,7 @@ export function GlobalSearch({ onSelect }) {
         <input
           ref={inputRef}
           className={styles.topSearchInput}
-          placeholder="Search modules, topics…"
+          placeholder={t('search.placeholder')}
           value={query}
           onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
           onFocus={() => setOpen(true)}
@@ -134,7 +136,7 @@ export function GlobalSearch({ onSelect }) {
           type="text"
           autoComplete="off"
           spellCheck="false"
-          aria-label="Search modules, topics and pages"
+          aria-label={t('search.ariaLabel')}
           aria-controls="global-search-results"
           aria-autocomplete="list"
           aria-activedescendant={
@@ -146,7 +148,7 @@ export function GlobalSearch({ onSelect }) {
             type="button"
             className={styles.topSearchClear}
             onClick={reset}
-            aria-label="Clear search"
+            aria-label={t('search.clear')}
           >
             <X size={14} />
           </button>
@@ -163,7 +165,7 @@ export function GlobalSearch({ onSelect }) {
         >
           {results.length === 0 ? (
             <p className={styles.searchEmpty}>
-              No matches for “{query.trim()}”.
+              {t('search.noMatches', { query: query.trim() })}
             </p>
           ) : (
             <>
@@ -187,12 +189,13 @@ export function GlobalSearch({ onSelect }) {
                         <span className={styles.searchOptionSub}>{result.subtitle}</span>
                       )}
                     </span>
-                    <span className={styles.searchOptionKind}>{KIND_LABEL[result.kind]}</span>
+                    <span className={styles.searchOptionKind}>{t(KIND_LABEL_KEY[result.kind])}</span>
                   </button>
                 );
               })}
               <p className={styles.searchHint}>
-                <kbd>↑</kbd><kbd>↓</kbd> to move · <kbd>Enter</kbd> to open · <kbd>Esc</kbd> to close
+                <kbd>↑</kbd><kbd>↓</kbd> {t('search.hintMove')} · <kbd>Enter</kbd>{' '}
+                {t('search.hintOpen')} · <kbd>Esc</kbd> {t('search.hintClose')}
               </p>
             </>
           )}

@@ -54,6 +54,7 @@ function splitPrompt(prompt) {
 // ─── drag & drop warm-up (client-side, ungraded) ──────────────────────────────
 
 function DragDropWarmup({ config }) {
+  const { t } = useLanguage();
   const letters = useMemo(
     () => config.word.split('').map((char, i) => ({ id: `${char}-${i}`, char })),
     [config.word],
@@ -100,12 +101,12 @@ function DragDropWarmup({ config }) {
   return (
     <div className={m.warmupCard}>
       <div className={m.warmupHeader}>
-        <span className={m.warmupBadge}><SquareMousePointer size={13} /> Drag &amp; drop</span>
+        <span className={m.warmupBadge}><SquareMousePointer size={13} /> {t('practice.dragAndDrop')}</span>
         <h3>{config.title}</h3>
         <p>{config.prompt}</p>
       </div>
 
-      <div className={m.dndPool} aria-label="Character tiles">
+      <div className={m.dndPool} aria-label={t('a11y.characterTiles')}>
         {pool.map((tile) => (
           <button
             key={tile.id}
@@ -118,7 +119,7 @@ function DragDropWarmup({ config }) {
             {tile.char}
           </button>
         ))}
-        {pool.length === 0 && <span className={m.dndPoolEmpty}>All tiles placed</span>}
+        {pool.length === 0 && <span className={m.dndPoolEmpty}>{t('a11y.allTilesPlaced')}</span>}
       </div>
 
       <div className={m.dndSlots}>
@@ -140,7 +141,11 @@ function DragDropWarmup({ config }) {
                 if (picked) placeTile(picked, i);
                 else if (tile) returnTile(i);
               }}
-              aria-label={`Slot for index ${i}${tile ? `, holds ${tile.char}` : ', empty'}`}
+              aria-label={
+                tile
+                  ? t('practice.slotFilled', { index: i, char: tile.char })
+                  : t('practice.slotEmpty', { index: i })
+              }
             >
               {tile ? tile.char : ''}
             </button>
@@ -151,7 +156,7 @@ function DragDropWarmup({ config }) {
 
       <div className={m.warmupFooter}>
         <button type="button" className={m.ghostButton} onClick={reset}>
-          <RefreshCcw size={14} /> Shuffle again
+          <RefreshCcw size={14} /> {t('practice.shuffleAgain')}
         </button>
         <button
           type="button"
@@ -159,15 +164,15 @@ function DragDropWarmup({ config }) {
           onClick={() => setChecked(true)}
           disabled={!complete}
         >
-          Check placement
+          {t('practice.checkPlacement')}
         </button>
       </div>
 
       {checked && (
         <p className={`${m.warmupVerdict} ${allCorrect ? m.warmupVerdictOk : m.warmupVerdictNo}`}>
           {allCorrect
-            ? <><CheckCircle2 size={15} /> Every character is at its address. You're ready for the graded questions.</>
-            : <><XCircle size={15} /> Some tiles are in the wrong box, and the highlighted slots need another look.</>}
+            ? <><CheckCircle2 size={15} /> {t('practice.warmupAllCorrect')}</>
+            : <><XCircle size={15} /> {t('practice.warmupSomeWrong')}</>}
         </p>
       )}
     </div>
@@ -177,7 +182,7 @@ function DragDropWarmup({ config }) {
 // ─── section wrapper: fetches once, offers Practice and Exam modes ────────────
 
 export function PracticeSection({ practice, onVisualize }) {
-  const { lang } = useLanguage();
+  const { lang, t } = useLanguage();
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
@@ -192,7 +197,7 @@ export function PracticeSection({ practice, onVisualize }) {
         setExercises(data.exercises ?? []);
       })
       .catch(() => {
-        if (!cancelled) setLoadError('Cannot reach the server. Start the backend to load exercises.');
+        if (!cancelled) setLoadError('practice.serverUnreachable');
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -200,16 +205,16 @@ export function PracticeSection({ practice, onVisualize }) {
     return () => { cancelled = true; };
   }, [practice.apiModuleId, lang]);
 
-  if (loading) return <p className={m.practiceStatus}>Loading exercises…</p>;
-  if (loadError) return <p className={m.practiceStatus}>{loadError}</p>;
-  if (exercises.length === 0) return <p className={m.practiceStatus}>No exercises available for this module yet.</p>;
+  if (loading) return <p className={m.practiceStatus}>{t('practice.loading')}</p>;
+  if (loadError) return <p className={m.practiceStatus}>{t(loadError)}</p>;
+  if (exercises.length === 0) return <p className={m.practiceStatus}>{t('practice.noExercises')}</p>;
 
   const hasExam = Boolean(practice.exam);
 
   return (
     <div className={m.practiceStack}>
       {hasExam && (
-        <div className={m.modeTabs} role="tablist" aria-label="Practice mode">
+        <div className={m.modeTabs} role="tablist" aria-label={t('a11y.practiceMode')}>
           <button
             type="button"
             role="tab"
@@ -217,8 +222,8 @@ export function PracticeSection({ practice, onVisualize }) {
             className={`${m.modeTab} ${mode === 'practice' ? m.modeTabActive : ''}`}
             onClick={() => setMode('practice')}
           >
-            <Dumbbell size={15} /> Practice
-            <span className={m.modeTabHint}>one at a time, instant feedback</span>
+            <Dumbbell size={15} /> {t('practice.modePractice')}
+            <span className={m.modeTabHint}>{t('practice.modePracticeHint')}</span>
           </button>
           <button
             type="button"
@@ -227,8 +232,8 @@ export function PracticeSection({ practice, onVisualize }) {
             className={`${m.modeTab} ${mode === 'exam' ? m.modeTabActive : ''}`}
             onClick={() => setMode('exam')}
           >
-            <GraduationCap size={15} /> Exam
-            <span className={m.modeTabHint}>answer everything, then submit</span>
+            <GraduationCap size={15} /> {t('practice.modeExam')}
+            <span className={m.modeTabHint}>{t('practice.modeExamHint')}</span>
           </button>
         </div>
       )}
@@ -381,7 +386,7 @@ function PracticeRunner({ practice, exercises }) {
         {promptCode && <CodeBlock code={promptCode} />}
 
         {exercise.type === 'mcq' && (
-          <div className={m.choiceList} role="radiogroup" aria-label="Answer choices">
+          <div className={m.choiceList} role="radiogroup" aria-label={t('a11y.answerChoices')}>
             {exercise.options.map((choice, i) => (
               <button
                 key={choice}
@@ -428,9 +433,9 @@ function PracticeRunner({ practice, exercises }) {
             className={m.fillInput}
             value={answer?.value ?? ''}
             onChange={(e) => setAnswer({ value: e.target.value })}
-            placeholder="Type your answer"
+            placeholder={t('exercise.typeAnswer')}
             disabled={Boolean(result)}
-            aria-label="Your answer"
+            aria-label={t('a11y.yourAnswer')}
           />
         )}
 
@@ -443,7 +448,7 @@ function PracticeRunner({ practice, exercises }) {
             />
             {exercise.test_cases?.length > 0 && (
               <div className={m.testCases}>
-                <span className={m.testCasesLabel}>Expected output</span>
+                <span className={m.testCasesLabel}>{t('exercise.expectedOutput')}</span>
                 {exercise.test_cases.map((tc, i) => (
                   <code key={i}>
                     {tc.input ? `input: ${tc.input.trim()} → ` : ''}{tc.expected_output}

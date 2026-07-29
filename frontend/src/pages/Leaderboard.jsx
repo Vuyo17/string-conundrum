@@ -3,11 +3,14 @@ import styles from '../styles/App.module.css';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { getApiUrl } from '../config/api';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export function Leaderboard() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [leaders, setLeaders] = useState([]);
   const [loading, setLoading] = useState(true);
+  // A translation key, resolved on render so the language toggle reaches it.
   const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
@@ -19,7 +22,7 @@ export function Leaderboard() {
         setLeaders(data.leaders ?? []);
       })
       .catch(() => {
-        if (!cancelled) setLoadError('Cannot reach the server. Is the backend running?');
+        if (!cancelled) setLoadError('leaderboard.serverUnreachable');
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -32,11 +35,11 @@ export function Leaderboard() {
   return (
     <div className={styles.leaderboardLayout}>
       <section className={styles.card}>
-        <ScreenHeader title="Leaderboard" subtitle="Friendly competition to keep you motivated." />
-        {loading && <p className={styles.muted}>Loading leaderboard…</p>}
-        {loadError && <p className={styles.muted}>{loadError}</p>}
+        <ScreenHeader title={t('leaderboard.title')} subtitle={t('leaderboard.subtitle')} />
+        {loading && <p className={styles.muted}>{t('leaderboard.loading')}</p>}
+        {loadError && <p className={styles.muted}>{t(loadError)}</p>}
         {!loading && !loadError && leaders.length === 0 && (
-          <p className={styles.muted}>No scores yet. Complete an exercise or challenge to appear here.</p>
+          <p className={styles.muted}>{t('leaderboard.empty')}</p>
         )}
         {leaders.map((leader, i) => (
           <div
@@ -52,16 +55,14 @@ export function Leaderboard() {
       </section>
 
       <aside className={styles.card} style={{ textAlign: 'center' }}>
-        <h2 style={{ marginBottom: '4px' }}>Your Rank</h2>
-        <p style={{ color: 'var(--muted)', fontSize: '13px' }}>All time</p>
+        <h2 style={{ marginBottom: '4px' }}>{t('leaderboard.yourRank')}</h2>
+        <p style={{ color: 'var(--muted)', fontSize: '13px' }}>{t('leaderboard.allTime')}</p>
         <div className={styles.trophy}>🏆</div>
         <h1 style={{ fontSize: '52px', margin: '0', color: 'var(--primary)' }}>
           {myRank >= 0 ? `#${myRank + 1}` : '—'}
         </h1>
         <p style={{ color: 'var(--muted)', fontSize: '14px', marginTop: '8px' }}>
-          {myRank >= 0
-            ? 'Great work! Keep learning and climb the leaderboard.'
-            : 'Complete an exercise or challenge to get on the board.'}
+          {myRank >= 0 ? t('leaderboard.ranked') : t('leaderboard.unranked')}
         </p>
       </aside>
     </div>

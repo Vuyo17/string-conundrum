@@ -129,6 +129,7 @@ function ForLoopDiagram({ loop }) {
 
 // ─── while-loop diagram ───────────────────────────────────────────────────────
 function WhileLoopDiagram({ ctx, steps }) {
+  const { t } = useLanguage();
   const { condition, condition_eval: conditionEval, iteration, result, line } = ctx;
 
   // reconstruct every condition check for this loop from the trace
@@ -169,7 +170,7 @@ function WhileLoopDiagram({ ctx, steps }) {
       {/* one chip per condition check */}
       <div className={styles.flpTrackWrap}>
         <div className={styles.flpTrackHead}>
-          <span>Each pass re-checks the condition before the body runs</span>
+          <span>{t('codeSpace.whileLoopHint')}</span>
         </div>
         <div className={styles.flpTrack}>
           {passes.map((p) => {
@@ -729,13 +730,13 @@ export function CodeSpace() {
               step being shown here, not the program's printed output. */}
           {step && Object.keys(step.variables).length > 0 && (
             <div className={styles.dbgVarsBlock}>
-              <h3 className={styles.dbgVarsCaption}>Variables at this step</h3>
+              <h3 className={styles.dbgVarsCaption}>{t('codeSpace.variablesAtStep')}</h3>
               <div className={styles.dbgVarsScroll}>
                 <table className={styles.dbgVarsTable}>
                   <thead>
                     <tr>
-                      <th>Variable</th>
-                      <th>Value</th>
+                      <th>{t('codeSpace.variable')}</th>
+                      <th>{t('codeSpace.value')}</th>
                     </tr>
                   </thead>
                   <tbody>

@@ -3,6 +3,7 @@ import {
   AlertOctagon, CheckCircle2, Play, RotateCcw, Sparkles,
 } from 'lucide-react';
 import m from '../../../styles/ModulePage.module.css';
+import { useLanguage } from '../../../context/LanguageContext';
 
 const MAX_LENGTH = 14;
 const TICK_MS = 460;
@@ -51,6 +52,7 @@ function computeSlice(text, startRaw, stopRaw, stepRaw) {
 }
 
 export function SlicingVisualizer({ config }) {
+  const { t } = useLanguage();
   const [text, setText] = useState(config.defaults?.text ?? 'Jabberwocky');
   const [startIn, setStartIn] = useState(config.defaults?.start ?? '');
   const [stopIn, setStopIn] = useState(config.defaults?.stop ?? '');
@@ -117,34 +119,34 @@ export function SlicingVisualizer({ config }) {
     <div className={m.visualizerCard}>
       <div className={m.visualizerControls}>
         <label className={m.vizField}>
-          <span>String</span>
+          <span>{t('viz.string')}</span>
           <input
             value={text}
             maxLength={MAX_LENGTH}
             onChange={(e) => { setText(e.target.value); reset(); }}
-            aria-label="String to slice"
+            aria-label={t('a11y.stringToSlice')}
           />
         </label>
         <label className={`${m.vizField} ${m.vizFieldNarrow}`}>
-          <span>Start</span>
-          <input value={startIn} onChange={(e) => { setStartIn(e.target.value); reset(); }} placeholder="0" inputMode="numeric" aria-label="Slice start" />
+          <span>{t('viz.start')}</span>
+          <input value={startIn} onChange={(e) => { setStartIn(e.target.value); reset(); }} placeholder="0" inputMode="numeric" aria-label={t('a11y.sliceStart')} />
         </label>
         <label className={`${m.vizField} ${m.vizFieldNarrow}`}>
-          <span>Stop</span>
-          <input value={stopIn} onChange={(e) => { setStopIn(e.target.value); reset(); }} placeholder="end" inputMode="numeric" aria-label="Slice stop" />
+          <span>{t('viz.stop')}</span>
+          <input value={stopIn} onChange={(e) => { setStopIn(e.target.value); reset(); }} placeholder="end" inputMode="numeric" aria-label={t('a11y.sliceStop')} />
         </label>
         <label className={`${m.vizField} ${m.vizFieldNarrow}`}>
-          <span>Step</span>
-          <input value={stepIn} onChange={(e) => { setStepIn(e.target.value); reset(); }} placeholder="1" inputMode="numeric" aria-label="Slice step" />
+          <span>{t('viz.step')}</span>
+          <input value={stepIn} onChange={(e) => { setStepIn(e.target.value); reset(); }} placeholder="1" inputMode="numeric" aria-label={t('a11y.sliceStep')} />
         </label>
         <button type="button" className={m.solidButton} onClick={startRun} disabled={!inputsValid}>
           {finished ? <RotateCcw size={16} /> : <Play size={16} />}
-          {finished ? 'Replay' : 'Visualize'}
+          {finished ? t('viz.replay') : t('viz.visualize')}
         </button>
       </div>
 
       {!inputsValid && text.length > 0 && (
-        <p className={m.vizHint}>Start, stop and step must be whole numbers (or left blank for the default).</p>
+        <p className={m.vizHint}>{t('viz.sliceWholeNumbers')}</p>
       )}
 
       <div className={m.vizExpression}>
@@ -183,9 +185,16 @@ export function SlicingVisualizer({ config }) {
         </div>
         {run && !run.error && (
           <p className={m.vizNarration} aria-live="polite">
-            {!finished && current !== null && `Collecting index ${current} → '${run.text[current]}' (step ${run.step > 0 ? '+' : ''}${run.step})`}
-            {finished && run.picked.length > 0 && `Collected ${run.picked.length} character${run.picked.length === 1 ? '' : 's'} in order: indices ${run.picked.join(', ')}.`}
-            {finished && run.picked.length === 0 && 'No characters collected, the slice never moves from start towards stop.'}
+            {!finished && current !== null && t('viz.collecting', {
+              index: current,
+              char: run.text[current],
+              step: `${run.step > 0 ? '+' : ''}${run.step}`,
+            })}
+            {finished && run.picked.length > 0 && t(
+              run.picked.length === 1 ? 'viz.collectedOne' : 'viz.collected',
+              { count: run.picked.length, indices: run.picked.join(', ') },
+            )}
+            {finished && run.picked.length === 0 && t('viz.collectedNone')}
           </p>
         )}
       </div>
@@ -197,10 +206,10 @@ export function SlicingVisualizer({ config }) {
             <strong>s{run.notation} → '{resultValue}'</strong>
             <p>
               {run.picked.length === 0
-                ? 'An empty slice is not an error, and slicing is forgiving where indexing is strict.'
+                ? t('viz.sliceEmpty')
                 : run.step < 0
-                  ? 'A negative step walks the string from back to front. With blanks, start defaults to the last character and stop to just before the first.'
-                  : 'Start is included, stop is excluded, and step controls how far each hop moves.'}
+                  ? t('viz.sliceNegativeStep')
+                  : t('viz.sliceDefault')}
             </p>
           </div>
         </div>
@@ -210,7 +219,7 @@ export function SlicingVisualizer({ config }) {
         <div className={`${m.vizResult} ${m.vizResultError}`}>
           <AlertOctagon size={18} />
           <div>
-            <strong>ValueError: slice step cannot be zero</strong>
+            <strong>{t('viz.valueErrorTitle')}</strong>
             <p>{run.error}</p>
           </div>
         </div>
@@ -219,8 +228,8 @@ export function SlicingVisualizer({ config }) {
       {!run && (
         <div className={m.vizIdle}>
           <Sparkles size={16} />
-          Leave boxes blank to use Python's defaults. Try step <code>-1</code> to reverse,
-          or <code>2</code> to skip every second character.
+          {t('viz.sliceIdleBefore')} <code>-1</code> {t('viz.sliceIdleMiddle')}{' '}
+          <code>2</code> {t('viz.sliceIdleAfter')}
         </div>
       )}
     </div>

@@ -3,6 +3,7 @@ import {
   AlertOctagon, CheckCircle2, Play, RotateCcw, Sparkles,
 } from 'lucide-react';
 import m from '../../../styles/ModulePage.module.css';
+import { useLanguage } from '../../../context/LanguageContext';
 
 const MAX_LENGTH = 14;
 const TICK_MS = 420;
@@ -31,6 +32,7 @@ function buildWalk(text, index) {
 }
 
 export function IndexingVisualizer({ config, preset }) {
+  const { t } = useLanguage();
   const [text, setText] = useState(config.defaults?.text ?? 'python');
   const [indexInput, setIndexInput] = useState(config.defaults?.index ?? '0');
   const [run, setRun] = useState(null);       // { text, index, walk }
@@ -121,23 +123,23 @@ export function IndexingVisualizer({ config, preset }) {
     <div className={m.visualizerCard}>
       <div className={m.visualizerControls}>
         <label className={m.vizField}>
-          <span>String</span>
+          <span>{t('viz.string')}</span>
           <input
             value={text}
             maxLength={MAX_LENGTH}
             onChange={(e) => { setText(e.target.value); setRun(null); setDone(false); }}
-            placeholder="e.g. python"
-            aria-label="String to visualize"
+            placeholder={t('viz.stringExample')}
+            aria-label={t('a11y.stringToVisualize')}
           />
         </label>
         <label className={m.vizField}>
-          <span>Index</span>
+          <span>{t('viz.index')}</span>
           <input
             value={indexInput}
             onChange={(e) => { setIndexInput(e.target.value); setRun(null); setDone(false); }}
-            placeholder="e.g. -2"
+            placeholder={t('viz.indexExample')}
             inputMode="numeric"
-            aria-label="Index to access"
+            aria-label={t('a11y.indexToAccess')}
           />
         </label>
         <button
@@ -147,12 +149,12 @@ export function IndexingVisualizer({ config, preset }) {
           disabled={!canVisualize}
         >
           {finished ? <RotateCcw size={16} /> : <Play size={16} />}
-          {finished ? 'Replay' : 'Visualize'}
+          {finished ? t('viz.replay') : t('viz.visualize')}
         </button>
       </div>
 
       {parsedIndex === null && indexInput.trim() !== '' && (
-        <p className={m.vizHint}>The index must be a whole number, like 3 or -1.</p>
+        <p className={m.vizHint}>{t('viz.indexWholeNumber')}</p>
       )}
 
       <div className={m.vizExpression}>
@@ -193,11 +195,17 @@ export function IndexingVisualizer({ config, preset }) {
           <p className={m.vizNarration} aria-live="polite">
             {!finished && pointerCell !== null && (
               run.index >= 0
-                ? `Walking forward… ${run.walk.path[walkPos]} step${run.walk.path[walkPos] === 1 ? '' : 's'} from the start.`
-                : `Counting back… ${run.walk.path[walkPos] - run.text.length} from the end.`
+                ? t(
+                    run.walk.path[walkPos] === 1 ? 'viz.walkingForwardOne' : 'viz.walkingForward',
+                    { steps: run.walk.path[walkPos] },
+                  )
+                : t('viz.countingBack', { steps: run.walk.path[walkPos] - run.text.length })
             )}
-            {success && `Landed on index ${run.walk.path[run.walk.path.length - 1]}, the character '${resultChar}'.`}
-            {failure && `Ran out of boxes. ${run.index} is outside the valid range.`}
+            {success && t('viz.landedOn', {
+              index: run.walk.path[run.walk.path.length - 1],
+              char: resultChar,
+            })}
+            {failure && t('viz.ranOut', { index: run.index })}
           </p>
         )}
       </div>
@@ -208,9 +216,10 @@ export function IndexingVisualizer({ config, preset }) {
           <div>
             <strong>text[{run.index}] → '{resultChar}'</strong>
             <p>
-              This box has two addresses: index{' '}
-              <code>{run.walk.path[run.walk.path.length - 1]}</code> from the front and{' '}
-              <code>{run.walk.path[run.walk.path.length - 1] - run.text.length}</code> from the back.
+              {t('viz.twoAddressesBefore')}{' '}
+              <code>{run.walk.path[run.walk.path.length - 1]}</code> {t('viz.twoAddressesMiddle')}{' '}
+              <code>{run.walk.path[run.walk.path.length - 1] - run.text.length}</code>{' '}
+              {t('viz.twoAddressesAfter')}
             </p>
           </div>
         </div>
@@ -220,11 +229,13 @@ export function IndexingVisualizer({ config, preset }) {
         <div className={`${m.vizResult} ${m.vizResultError}`}>
           <AlertOctagon size={18} />
           <div>
-            <strong>IndexError: string index out of range</strong>
+            <strong>{t('viz.indexErrorTitle')}</strong>
             <p>
-              "{run.text}" has length <code>{run.text.length}</code>, so valid indices run from{' '}
-              <code>{-run.text.length}</code> to <code>{run.text.length - 1}</code>.{' '}
-              <code>{run.index}</code> falls outside that range.
+              {t('viz.indexErrorBodyBefore', { text: run.text })}{' '}
+              <code>{run.text.length}</code>{t('viz.indexErrorBodyMiddle')}{' '}
+              <code>{-run.text.length}</code> {t('viz.indexErrorBodyTo')}{' '}
+              <code>{run.text.length - 1}</code>. <code>{run.index}</code>{' '}
+              {t('viz.indexErrorBodyAfter')}
             </p>
           </div>
         </div>
@@ -233,8 +244,8 @@ export function IndexingVisualizer({ config, preset }) {
       {!run && (
         <div className={m.vizIdle}>
           <Sparkles size={16} />
-          Try an index like <code>0</code>, <code>{Math.max(text.length - 1, 0)}</code>,{' '}
-          <code>-1</code>, or something out of range to see what happens.
+          {t('viz.indexIdleBefore')} <code>0</code>, <code>{Math.max(text.length - 1, 0)}</code>,{' '}
+          <code>-1</code>, {t('viz.indexIdleAfter')}
         </div>
       )}
     </div>

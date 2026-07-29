@@ -4,6 +4,7 @@ import {
 } from 'lucide-react';
 import m from '../../styles/ModulePage.module.css';
 import { highlightPython } from '../../utils/pythonHighlight';
+import { useLanguage } from '../../context/LanguageContext';
 
 const INDENT = '    ';
 
@@ -19,6 +20,7 @@ const HIGHLIGHT_CLASSES = {
 // Runs against the existing backend: /api/execute for output and
 // /api/debug for the step-by-step trace used by "Visualize code".
 export function CodeExercise({ code, onCodeChange, disabled }) {
+  const { t } = useLanguage();
   const [stdout, setStdout] = useState('');
   const [stderr, setStderr] = useState('');
   const [running, setRunning] = useState(false);
@@ -96,29 +98,29 @@ export function CodeExercise({ code, onCodeChange, disabled }) {
           onKeyDown={handleKeyDown}
           spellCheck={false}
           disabled={disabled}
-          aria-label="Python code editor"
+          aria-label={t('a11y.codeEditor')}
         />
       </div>
 
       <div className={m.codeExerciseToolbar}>
         <button type="button" className={m.ghostButton} onClick={handleRun} disabled={running}>
-          <Play size={15} /> {running ? 'Running…' : 'Run code'}
+          <Play size={15} /> {running ? t('codeExercise.running') : t('codeExercise.runCode')}
         </button>
         <button
           type="button"
           className={m.ghostButton}
           onClick={() => setShowTrace((v) => !v)}
           disabled={steps.length === 0}
-          title={steps.length === 0 ? 'Run your code first, then visualize it' : undefined}
+          title={steps.length === 0 ? t('codeExercise.runFirst') : undefined}
         >
           {showTrace ? <EyeOff size={15} /> : <Eye size={15} />}
-          {showTrace ? 'Hide steps' : 'Visualize code'}
+          {showTrace ? t('codeExercise.hideSteps') : t('codeExercise.visualizeCode')}
         </button>
       </div>
 
       {(stdout || stderr) && (
         <pre className={`${m.codeExerciseOutput} ${stderr ? m.codeExerciseOutputError : ''}`}>
-          <span className={m.outputLabel}><Terminal size={13} /> Output</span>
+          <span className={m.outputLabel}><Terminal size={13} /> {t('codeExercise.output')}</span>
           {stderr || stdout}
         </pre>
       )}
@@ -126,13 +128,13 @@ export function CodeExercise({ code, onCodeChange, disabled }) {
       {showTrace && steps.length > 0 && (
         <div className={m.traceBox}>
           <div className={m.traceHeader}>
-            <span>Step {stepIndex + 1} of {steps.length}</span>
+            <span>{t('codeExercise.step', { current: stepIndex + 1, total: steps.length })}</span>
             <div className={m.traceNav}>
               <button
                 type="button"
                 onClick={() => setStepIndex((i) => Math.max(0, i - 1))}
                 disabled={stepIndex === 0}
-                aria-label="Previous step"
+                aria-label={t('a11y.previousStep')}
               >
                 <ChevronLeft size={16} />
               </button>
@@ -140,7 +142,7 @@ export function CodeExercise({ code, onCodeChange, disabled }) {
                 type="button"
                 onClick={() => setStepIndex((i) => Math.min(steps.length - 1, i + 1))}
                 disabled={stepIndex === steps.length - 1}
-                aria-label="Next step"
+                aria-label={t('a11y.nextStep')}
               >
                 <ChevronRight size={16} />
               </button>
@@ -150,7 +152,7 @@ export function CodeExercise({ code, onCodeChange, disabled }) {
           {step && (
             <>
               <p className={m.traceDescription}>
-                <span className={m.traceLine}>Line {step.line}</span>
+                <span className={m.traceLine}>{t('codeExercise.line', { number: step.line })}</span>
                 {step.description}
               </p>
               {step.variables && Object.keys(step.variables).length > 0 && (

@@ -215,7 +215,7 @@ export function Exercise() {
                 <input
                   value={answerState?.value ?? ''}
                   onChange={(e) => setAnswerState({ value: e.target.value })}
-                  placeholder="Type your answer"
+                  placeholder={t('exercise.typeAnswer')}
                   disabled={Boolean(result)}
                 />
               </div>

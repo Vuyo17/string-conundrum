@@ -15,6 +15,12 @@
 
 import { modules } from './modules';
 import { MODULE_CONTENT } from './moduleContent';
+import en from '../locales/en.json';
+
+// The index is built once at module load, so it is English-only — matching the
+// module content it searches, which is still largely English. Module titles now
+// live in the locale bundles, so read them from there.
+const moduleCopy = (id) => en.modules.items[id] ?? { title: id, desc: '' };
 
 // Screens, plus the words a learner is likely to type instead of the label.
 const PAGES = [
@@ -115,12 +121,13 @@ function buildIndex() {
 
   for (const mod of modules) {
     const content = MODULE_CONTENT[mod.id];
+    const { title: modTitle, desc: modDesc } = moduleCopy(mod.id);
 
     entries.push(entry({
       key: `module:${mod.id}`,
       kind: 'module',
-      title: mod.title,
-      subtitle: mod.desc,
+      title: modTitle,
+      subtitle: modDesc,
       screen: 'Modules',
       moduleId: mod.id,
       section: 'learn',
@@ -134,7 +141,7 @@ function buildIndex() {
         key: `topic:${mod.id}:${section.id}`,
         kind: 'topic',
         title: section.title,
-        subtitle: mod.title,
+        subtitle: modTitle,
         screen: 'Modules',
         moduleId: mod.id,
         section: 'learn',
@@ -148,7 +155,7 @@ function buildIndex() {
         key: `example:${mod.id}:${example.id}`,
         kind: 'example',
         title: example.title,
-        subtitle: `Worked example · ${mod.title}`,
+        subtitle: `Worked example · ${modTitle}`,
         screen: 'Modules',
         moduleId: mod.id,
         section: 'examples',
@@ -161,8 +168,8 @@ function buildIndex() {
       entries.push(entry({
         key: `visualize:${mod.id}`,
         kind: 'visualize',
-        title: content.visualizer.title ?? `Visualize ${mod.title}`,
-        subtitle: `Visualizer · ${mod.title}`,
+        title: content.visualizer.title ?? `Visualize ${modTitle}`,
+        subtitle: `Visualizer · ${modTitle}`,
         screen: 'Modules',
         moduleId: mod.id,
         section: 'visualize',
@@ -174,7 +181,7 @@ function buildIndex() {
       entries.push(entry({
         key: `practice:${mod.id}`,
         kind: 'practice',
-        title: `Practice: ${mod.title}`,
+        title: `Practice: ${modTitle}`,
         subtitle: 'Graded questions and exam mode',
         screen: 'Modules',
         moduleId: mod.id,

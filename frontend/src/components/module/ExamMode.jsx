@@ -225,7 +225,7 @@ export function ExamMode({ practice, exercises, onVisualize }) {
               <span>{t('exercise.starsEarned')}</span>
             </div>
           </div>
-          <div className={m.starRow} aria-label={`${band.stars} of 3 mastery stars`}>
+          <div className={m.starRow} aria-label={t('a11y.masteryStars', { stars: band.stars })}>
             {[1, 2, 3].map((n) => (
               <Star
                 key={n}
@@ -349,7 +349,10 @@ export function ExamMode({ practice, exercises, onVisualize }) {
                 type="button"
                 role="tab"
                 aria-selected={i === current}
-                aria-label={`Question ${i + 1}${answered ? ', answered' : ', not answered'}`}
+                aria-label={t(
+                  answered ? 'a11y.questionAnswered' : 'a11y.questionNotAnswered',
+                  { number: i + 1 },
+                )}
                 className={[
                   m.examPaletteItem,
                   answered ? m.examPaletteAnswered : '',
@@ -381,7 +384,7 @@ export function ExamMode({ practice, exercises, onVisualize }) {
         {promptCode && <CodeBlock code={promptCode} />}
 
         {exercise.type === 'mcq' && (
-          <div className={m.choiceList} role="radiogroup" aria-label="Answer choices">
+          <div className={m.choiceList} role="radiogroup" aria-label={t('a11y.answerChoices')}>
             {exercise.options.map((choice, i) => (
               <button
                 key={choice}
@@ -427,7 +430,7 @@ export function ExamMode({ practice, exercises, onVisualize }) {
             value={answer.value ?? ''}
             onChange={(e) => setCurrentAnswer({ value: e.target.value })}
             placeholder={t('exercise.typeAnswer')}
-            aria-label="Your answer"
+            aria-label={t('a11y.yourAnswer')}
           />
         )}
 
@@ -481,7 +484,7 @@ export function ExamMode({ practice, exercises, onVisualize }) {
       </div>
 
       {phase === 'confirm' && (
-        <div className={m.confirmBanner} role="alertdialog" aria-label="Unanswered questions">
+        <div className={m.confirmBanner} role="alertdialog" aria-label={t('a11y.unansweredQuestions')}>
           <AlertTriangle size={18} />
           <div>
             <strong>{paper.length - answeredCount} unanswered {paper.length - answeredCount === 1 ? 'question' : 'questions'}</strong>
