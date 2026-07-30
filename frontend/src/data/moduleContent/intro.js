@@ -195,6 +195,7 @@ export const introModule = {
 
   practice: {
     apiModuleId: 'intro',
-    exam: { questionCount: 10 },
+    questionCount: 3,
+    exam: { questionCount: 3 },
   },
 };

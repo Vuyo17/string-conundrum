@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, Palette, LogOut, Moon, Sun, Languages } from 'lucide-react';
+import { User, Palette, LogOut, Moon, Sun, Languages, Unlock } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { useAuth } from '../context/AuthContext';
@@ -7,10 +7,11 @@ import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 import { displayNameFor, initialsFor } from '../utils/profile';
 
-export function Settings() {
+export function Settings({ progress }) {
   const { user, isGuest, signOut } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const { lang, setLang, languages, t } = useLanguage();
+  const bypassUnlocks = progress?.bypassUnlocks ?? false;
 
   // ThemeContext only exposes a toggle, so only flip when the pick differs.
   function chooseTheme(wantDark) {
@@ -85,6 +86,38 @@ export function Settings() {
           </div>
         </div>
       </section>
+
+      {!isGuest && (
+        <section className={styles.card}>
+          <div className={styles.settingsSectionTitle}>
+            <Unlock size={15} /> {t('settings.learning')}
+          </div>
+          <div className={styles.settingsRow}>
+            <div>
+              <strong>{t('settings.unlockAll')}</strong>
+              <p className={styles.settingsRowHint}>{t('settings.unlockAllHint')}</p>
+            </div>
+            <div className={styles.settingsChoice}>
+              <button
+                type="button"
+                className={!bypassUnlocks ? styles.settingsChoiceActive : ''}
+                aria-pressed={!bypassUnlocks}
+                onClick={() => progress?.setBypassUnlocks(false)}
+              >
+                {t('settings.unlockAllOff')}
+              </button>
+              <button
+                type="button"
+                className={bypassUnlocks ? styles.settingsChoiceActive : ''}
+                aria-pressed={bypassUnlocks}
+                onClick={() => progress?.setBypassUnlocks(true)}
+              >
+                {t('settings.unlockAllOn')}
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className={styles.card}>
         <div className={styles.settingsSectionTitle}>

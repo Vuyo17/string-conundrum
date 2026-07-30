@@ -1,11 +1,14 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   AlertTriangle, Award, CheckCircle2, ChevronLeft, ChevronRight, Eye,
   GraduationCap, RefreshCcw, Star, Target, TrendingUp, XCircle,
 } from 'lucide-react';
 import m from '../../styles/ModulePage.module.css';
-import { apiFetch } from '../../api';
+import { apiFetch, markSectionComplete } from '../../api';
 import { getApiUrl } from '../../config/api';
+
+// Matches Practice's pass bar and the "Proficient" star band below.
+const PASS_THRESHOLD = 70;
 import { CodeExercise } from './CodeExercise';
 import { CodeBlock, InlineText } from './ContentBlocks';
 import { presetForExercise } from './visualizers/presets';
@@ -116,7 +119,7 @@ function drawExam(exercises, count) {
   return shuffle(exercises).slice(0, Math.min(count, exercises.length));
 }
 
-export function ExamMode({ practice, exercises, onVisualize }) {
+export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }) {
   const { t, lang } = useLanguage();
   const questionCount = practice.exam?.questionCount ?? 10;
 
@@ -125,6 +128,17 @@ export function ExamMode({ practice, exercises, onVisualize }) {
   const [current, setCurrent] = useState(0);
   const [phase, setPhase] = useState('answering'); // answering | confirm | submitting | results
   const [results, setResults] = useState({});      // question_id → grading result
+
+  // The exam only counts toward module progress once cleared at PASS_THRESHOLD
+  // in one sitting; "Retry with new questions" can re-trigger this.
+  useEffect(() => {
+    if (phase !== 'results') return;
+    const correctCount = paper.filter((ex) => results[ex.question_id]?.correct).length;
+    const percent = Math.round((correctCount / paper.length) * 100);
+    if (percent >= PASS_THRESHOLD) {
+      markSectionComplete(practice.apiModuleId, 'exam').then(() => onSectionComplete?.());
+    }
+  }, [phase]);
 
   const exercise = paper[current];
   const answer = answers[exercise?.question_id] ?? blankAnswer(exercise ?? { type: 'mcq' });

@@ -84,6 +84,7 @@ function Shell() {
           <CurrentScreen
             setScreen={go}
             {...(safeScreen === "Modules" ? { target: moduleTarget, progress } : {})}
+            {...(safeScreen === "Settings" ? { progress } : {})}
           />
         </section>
       </main>

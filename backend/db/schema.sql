@@ -67,8 +67,21 @@ CREATE TABLE IF NOT EXISTS challenge_completions (
     PRIMARY KEY (user_id, challenge_id)
 );
 
+-- Recorded once per (user, module, section) the first time a student reaches
+-- or passes that stage of a module (learn/examples/visualize/practice/exam).
+-- Drives the module card's progress bar and the next-module unlock, replacing
+-- the old "every exercise answered correctly" rule.
+CREATE TABLE IF NOT EXISTS module_section_completions (
+    user_id TEXT NOT NULL REFERENCES users(uid) ON DELETE CASCADE,
+    module_id TEXT NOT NULL,
+    section_id TEXT NOT NULL,
+    completed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (user_id, module_id, section_id)
+);
+
 CREATE INDEX IF NOT EXISTS idx_exercise_completions_user ON exercise_completions(user_id);
 CREATE INDEX IF NOT EXISTS idx_challenge_completions_user ON challenge_completions(user_id);
+CREATE INDEX IF NOT EXISTS idx_module_section_completions_user ON module_section_completions(user_id);
 
 -- ─── migrations for existing databases ──────────────────────────────────────
 -- CREATE TABLE IF NOT EXISTS above only builds a table that does not yet
@@ -79,3 +92,6 @@ CREATE INDEX IF NOT EXISTS idx_challenge_completions_user ON challenge_completio
 ALTER TABLE exercises ADD COLUMN IF NOT EXISTS prompt_xh TEXT;
 ALTER TABLE exercises ADD COLUMN IF NOT EXISTS explanation_xh TEXT;
 ALTER TABLE exercises ADD COLUMN IF NOT EXISTS hint_xh TEXT;
+-- Lets a student unlock every module/challenge from Settings, bypassing the
+-- sequential-completion gate entirely.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS bypass_unlocks BOOLEAN NOT NULL DEFAULT false;

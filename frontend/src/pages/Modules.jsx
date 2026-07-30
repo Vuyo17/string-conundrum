@@ -13,23 +13,23 @@ export function Modules({ target, progress }) {
   // Where inside that module to land, when a search result sent us here.
   const [entry, setEntry] = useState(null);
 
-  // Merge real per-module completion into the static module metadata, and
-  // lock every module until the one before it is complete. While progress
+  // Merge real per-module section progress into the static module metadata,
+  // and lock every module until the one before it is complete. While progress
   // is still loading, default everything past the first to locked so the UI
-  // never flashes an unlock it has to immediately take back.
+  // never flashes an unlock it has to immediately take back. The Settings
+  // "unlock everything" toggle bypasses all of this.
   const byModuleId = progress?.byModuleId ?? {};
   const progressLoading = progress?.loading ?? true;
+  const bypassUnlocks = progress?.bypassUnlocks ?? false;
 
   const enrichedModules = modules.map((mod, i) => {
     const p = byModuleId[mod.id];
     const completed = p?.completed ?? false;
-    const total = p?.total_questions ?? 0;
-    const answered = p?.answered_questions ?? 0;
-    const percent = total > 0 ? Math.round((answered / total) * 100) : 0;
+    const percent = p?.percent ?? 0;
 
     const prevId = modules[i - 1]?.id;
     const prevCompleted = i === 0 || (byModuleId[prevId]?.completed ?? false);
-    const locked = progressLoading ? i > 0 : !prevCompleted;
+    const locked = bypassUnlocks ? false : progressLoading ? i > 0 : !prevCompleted;
 
     const status = locked
       ? 'Locked'
@@ -72,6 +72,7 @@ export function Modules({ target, progress }) {
         initialSection={entry?.section}
         anchor={entry?.anchor}
         entryKey={entry?.nonce}
+        onProgressChange={progress?.refresh}
       />
     );
   }

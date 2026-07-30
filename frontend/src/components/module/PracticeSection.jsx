@@ -1,15 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Award, CheckCircle2, ChevronRight, Dumbbell, GraduationCap, ListChecks,
+  Award, CheckCircle2, ChevronRight, ListChecks,
   PenLine, RefreshCcw, SquareMousePointer, Star, Target, XCircle,
 } from 'lucide-react';
 import m from '../../styles/ModulePage.module.css';
-import { apiFetch } from '../../api';
+import { apiFetch, markSectionComplete } from '../../api';
 import { getApiUrl } from '../../config/api';
 import { CodeExercise } from './CodeExercise';
 import { CodeBlock, InlineText } from './ContentBlocks';
-import { ExamMode } from './ExamMode';
 import { useLanguage } from '../../context/LanguageContext';
+
+// A practice run only counts toward module progress once a student clears
+// this bar in one sitting — matches the Exam's own "Proficient" threshold.
+const PASS_THRESHOLD = 70;
 
 // Star value of an exercise. The bank's legacy `xp` field is stars * 10;
 // newer questions carry `stars` directly. The UI speaks ONLY in stars.
@@ -179,14 +182,13 @@ function DragDropWarmup({ config }) {
   );
 }
 
-// ─── section wrapper: fetches once, offers Practice and Exam modes ────────────
+// ─── section wrapper: fetches the module's exercise bank for Practice ─────────
 
-export function PracticeSection({ practice, onVisualize }) {
+export function PracticeSection({ practice, onSectionComplete }) {
   const { lang, t } = useLanguage();
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
-  const [mode, setMode] = useState('practice');
 
   useEffect(() => {
     let cancelled = false;
@@ -209,47 +211,22 @@ export function PracticeSection({ practice, onVisualize }) {
   if (loadError) return <p className={m.practiceStatus}>{t(loadError)}</p>;
   if (exercises.length === 0) return <p className={m.practiceStatus}>{t('practice.noExercises')}</p>;
 
-  const hasExam = Boolean(practice.exam);
+  // Optionally cap how many of the bank's questions a practice run covers;
+  // unset means "all of them" (the original behavior).
+  const runExercises = practice.questionCount
+    ? exercises.slice(0, practice.questionCount)
+    : exercises;
 
   return (
     <div className={m.practiceStack}>
-      {hasExam && (
-        <div className={m.modeTabs} role="tablist" aria-label={t('a11y.practiceMode')}>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mode === 'practice'}
-            className={`${m.modeTab} ${mode === 'practice' ? m.modeTabActive : ''}`}
-            onClick={() => setMode('practice')}
-          >
-            <Dumbbell size={15} /> {t('practice.modePractice')}
-            <span className={m.modeTabHint}>{t('practice.modePracticeHint')}</span>
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mode === 'exam'}
-            className={`${m.modeTab} ${mode === 'exam' ? m.modeTabActive : ''}`}
-            onClick={() => setMode('exam')}
-          >
-            <GraduationCap size={15} /> {t('practice.modeExam')}
-            <span className={m.modeTabHint}>{t('practice.modeExamHint')}</span>
-          </button>
-        </div>
-      )}
-
-      {mode === 'exam' && hasExam ? (
-        <ExamMode practice={practice} exercises={exercises} onVisualize={onVisualize} />
-      ) : (
-        <PracticeRunner practice={practice} exercises={exercises} />
-      )}
+      <PracticeRunner practice={practice} exercises={runExercises} onSectionComplete={onSectionComplete} />
     </div>
   );
 }
 
 // ─── graded exercise runner (real backend pipeline) ───────────────────────────
 
-function PracticeRunner({ practice, exercises }) {
+function PracticeRunner({ practice, exercises, onSectionComplete }) {
   const { t, lang } = useLanguage();
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState(() => defaultAnswer(exercises[0]));
@@ -260,6 +237,16 @@ function PracticeRunner({ practice, exercises }) {
   const [finished, setFinished] = useState(false);
 
   const exercise = exercises[index] ?? null;
+
+  // Practice only counts toward module progress once cleared at PASS_THRESHOLD
+  // in one sitting; retries via "Practice again" can re-trigger this.
+  useEffect(() => {
+    if (!finished) return;
+    const percent = Math.round((correctCount / exercises.length) * 100);
+    if (percent >= PASS_THRESHOLD) {
+      markSectionComplete(practice.apiModuleId, 'practice').then(() => onSectionComplete?.());
+    }
+  }, [finished]);
 
   useEffect(() => {
     setAnswer(defaultAnswer(exercise));
@@ -341,9 +328,9 @@ function PracticeRunner({ practice, exercises }) {
         <p>
           You answered <strong>{correctCount} of {exercises.length}</strong> correctly ({percent}%)
           and earned <strong>{stars} {stars === 1 ? 'star' : 'stars'}</strong> <Star size={14} className={m.inlineStar} />.
-          {percent >= 70
-            ? ' That clears the 70% bar, and the next module is within reach.'
-            : ' Aim for 70% to unlock the next module. Revisit the lesson above and try again.'}
+          {percent >= PASS_THRESHOLD
+            ? ' That clears the 70% bar — Practice is marked complete. On to the Exam.'
+            : ' Aim for 70% to clear Practice. Revisit the lesson above and try again.'}
         </p>
         <button type="button" className={m.solidButton} onClick={restart}>
           <RefreshCcw size={15} /> Practice again

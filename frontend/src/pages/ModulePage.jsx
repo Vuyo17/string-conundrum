@@ -6,20 +6,31 @@ import {
 import m from '../styles/ModulePage.module.css';
 import { getModuleContent } from '../data/moduleContent';
 import { useLanguage } from '../context/LanguageContext';
+import { markSectionComplete } from '../api';
 import { ContentBlocks } from '../components/module/ContentBlocks';
 import { WorkedExample } from '../components/module/WorkedExample';
 import { getVisualizer } from '../components/module/visualizers';
 import { PracticeSection } from '../components/module/PracticeSection';
+import { ExamSection } from '../components/module/ExamSection';
 
 // The top-level sections a module page can have. Each one is now its own
 // page: the sticky rail switches between them, and a Next/Back pager walks
-// through them in order. Modules with `visualizer: null` skip Visualize.
+// through them in order. Modules with `visualizer: null` skip Visualize;
+// modules with no `practice.exam` config skip Exam.
+//
+// Learn/Examples/Visualize are exposure-based: leaving one marks it complete.
+// Practice/Exam are score-gated (see PASS_THRESHOLD in PracticeSection.jsx
+// and ExamMode.jsx) — they mark themselves complete internally.
 const ALL_SECTIONS = [
   { id: 'learn', labelKey: 'modulePage.learn', icon: BookOpen },
   { id: 'examples', labelKey: 'modulePage.examples', icon: Lightbulb },
   { id: 'visualize', labelKey: 'modulePage.visualize', icon: Eye },
   { id: 'practice', labelKey: 'modulePage.practice', icon: Dumbbell },
+  { id: 'exam', labelKey: 'modulePage.exam', icon: GraduationCap },
 ];
+
+// Sections whose completion is exposure-based: reaching past them is enough.
+const EXPOSURE_SECTIONS = new Set(['learn', 'examples', 'visualize']);
 
 // Sections stay mounted and are hidden with an inline style rather than being
 // unmounted: a student sent from their exam results to the visualizer has to
@@ -27,7 +38,7 @@ const ALL_SECTIONS = [
 const HIDDEN = { display: 'none' };
 
 export function ModulePage({
-  moduleId, moduleNumber, onBack, initialSection, anchor, entryKey,
+  moduleId, moduleNumber, onBack, initialSection, anchor, entryKey, onProgressChange,
 }) {
   const { lang, t } = useLanguage();
   const content = getModuleContent(moduleId, lang);
@@ -42,11 +53,16 @@ export function ModulePage({
     () => (content?.visualizer ? getVisualizer(content.visualizer.type) : null),
     [content],
   );
+  const hasExam = Boolean(content?.practice?.exam);
 
-  // Rail sections for THIS module; indices shift up when Visualize is absent.
+  // Rail sections for THIS module; indices shift up when Visualize/Exam are absent.
   const sections = useMemo(
-    () => ALL_SECTIONS.filter((s) => s.id !== 'visualize' || Boolean(Visualizer)),
-    [Visualizer],
+    () => ALL_SECTIONS.filter((s) => {
+      if (s.id === 'visualize') return Boolean(Visualizer);
+      if (s.id === 'exam') return hasExam;
+      return true;
+    }),
+    [Visualizer, hasExam],
   );
 
   // Keep the active section valid (e.g. if Visualize drops out for a module).
@@ -61,6 +77,18 @@ export function ModulePage({
     if (initialSection) setActiveSection(initialSection);
     pendingAnchor.current = anchor ?? null;
   }, [initialSection, anchor, entryKey]);
+
+  // Exposure-based sections (Learn/Examples/Visualize) are marked complete the
+  // moment a student navigates away from them — whether via Next or the rail.
+  // Practice/Exam mark themselves complete internally, score-gated.
+  const prevSectionRef = useRef(null);
+  useEffect(() => {
+    const prev = prevSectionRef.current;
+    prevSectionRef.current = activeSection;
+    if (prev && prev !== activeSection && EXPOSURE_SECTIONS.has(prev)) {
+      markSectionComplete(moduleId, prev).then(() => onProgressChange?.());
+    }
+  }, [activeSection, moduleId, onProgressChange]);
 
   // Each section is a page, so bring the reader back to the top on a change —
   // unless a search sent us to something further down.
@@ -219,9 +247,24 @@ export function ModulePage({
             />
             <PracticeSection
               practice={content.practice}
-              onVisualize={Visualizer ? showInVisualizer : undefined}
+              onSectionComplete={onProgressChange}
             />
           </SectionPage>
+
+          {hasExam && (
+            <SectionPage active={current.id === 'exam'}>
+              <SectionHeading
+                index={sectionIndex('exam')}
+                title={t('modulePage.exam')}
+                subtitle={t('modulePage.examSubtitle')}
+              />
+              <ExamSection
+                practice={content.practice}
+                onVisualize={Visualizer ? showInVisualizer : undefined}
+                onSectionComplete={onProgressChange}
+              />
+            </SectionPage>
+          )}
 
           {/* ── pager: Next to move on, or press an icon above ── */}
           <div className={m.pager}>

@@ -3,15 +3,20 @@ from flask import Blueprint, g, request
 from .auth import require_auth
 from .services.feedback import evaluate_answer, get_module_exercises
 from .services.progress import (
+    get_bypass_unlocks,
     get_leaderboard,
-    get_user_progress,
+    get_section_progress,
     record_challenge_completion,
     record_exercise_completion,
+    record_section_completion,
+    set_bypass_unlocks,
 )
 from .services.sandbox import execute_code, trace_steps
 from .services.visualizer import build_visual_state
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
+
+_VALID_SECTION_IDS = {"learn", "examples", "visualize", "practice", "exam"}
 
 
 @api_bp.post("/visualize")
@@ -124,8 +129,28 @@ def get_progress(user_id: str):
     return {
         "ok": True,
         "user_id": user_id,
-        "modules": get_user_progress(user_id),
+        "modules": get_section_progress(user_id),
+        "bypass_unlocks": get_bypass_unlocks(user_id),
     }
+
+
+@api_bp.post("/modules/<module_id>/sections/<section_id>/complete")
+@require_auth
+def complete_section(module_id: str, section_id: str):
+    """Mark a module section (learn/examples/visualize/practice/exam) reached."""
+    if section_id not in _VALID_SECTION_IDS:
+        return {"ok": False, "error": "invalid section"}, 400
+    record_section_completion(g.uid, module_id, section_id)
+    return {"ok": True}
+
+
+@api_bp.patch("/settings")
+@require_auth
+def update_settings():
+    payload = request.get_json(silent=True) or {}
+    if "bypass_unlocks" in payload:
+        set_bypass_unlocks(g.uid, bool(payload["bypass_unlocks"]))
+    return {"ok": True, "bypass_unlocks": get_bypass_unlocks(g.uid)}
 
 
 @api_bp.get("/leaderboard")

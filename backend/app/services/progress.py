@@ -42,40 +42,49 @@ def record_challenge_completion(user_id: str, challenge_id: str, stars: int) -> 
         )
 
 
-def get_user_progress(user_id: str) -> list[dict]:
-    """Per-module completion/score, e.g. for GET /api/progress/<uid>."""
+def record_section_completion(user_id: str, module_id: str, section_id: str) -> None:
+    """Mark a module section (learn/examples/visualize/practice/exam) reached. A no-op on repeats."""
     with get_cursor() as cur:
         cur.execute(
             """
-            SELECT
-                e.module_id,
-                COUNT(DISTINCT e.question_id) AS total_questions,
-                COUNT(DISTINCT ec.question_id) AS answered_questions,
-                COALESCE(SUM(ec.stars_awarded), 0) AS score,
-                MAX(ec.completed_at) AS last_session_at
-            FROM exercises e
-            LEFT JOIN exercise_completions ec
-                ON ec.module_id = e.module_id
-                AND ec.question_id = e.question_id
-                AND ec.user_id = %s
-            GROUP BY e.module_id
-            ORDER BY MIN(e.sort_order)
+            INSERT INTO module_section_completions (user_id, module_id, section_id)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (user_id, module_id, section_id) DO NOTHING
+            """,
+            (user_id, module_id, section_id),
+        )
+
+
+def get_section_progress(user_id: str) -> list[dict]:
+    """Which sections have been reached per module, e.g. for GET /api/progress/<uid>."""
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            SELECT module_id, array_agg(section_id) AS sections_completed
+            FROM module_section_completions
+            WHERE user_id = %s
+            GROUP BY module_id
             """,
             (user_id,),
         )
         rows = cur.fetchall()
 
     return [
-        {
-            "module_id": row["module_id"],
-            "completed": row["total_questions"] > 0 and row["answered_questions"] >= row["total_questions"],
-            "total_questions": row["total_questions"],
-            "answered_questions": row["answered_questions"],
-            "score": row["score"],
-            "last_session_at": row["last_session_at"].isoformat() if row["last_session_at"] else None,
-        }
+        {"module_id": row["module_id"], "sections_completed": row["sections_completed"]}
         for row in rows
     ]
+
+
+def get_bypass_unlocks(user_id: str) -> bool:
+    with get_cursor() as cur:
+        cur.execute("SELECT bypass_unlocks FROM users WHERE uid = %s", (user_id,))
+        row = cur.fetchone()
+    return bool(row["bypass_unlocks"]) if row else False
+
+
+def set_bypass_unlocks(user_id: str, value: bool) -> None:
+    with get_cursor() as cur:
+        cur.execute("UPDATE users SET bypass_unlocks = %s WHERE uid = %s", (value, user_id))
 
 
 def get_leaderboard(limit: int = 20) -> list[dict]:
