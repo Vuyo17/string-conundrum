@@ -7,8 +7,12 @@ import m from '../../styles/ModulePage.module.css';
 import { apiFetch, markSectionComplete } from '../../api';
 import { getApiUrl } from '../../config/api';
 
-// Matches Practice's pass bar and the "Proficient" star band below.
-const PASS_THRESHOLD = 70;
+// The bar for a module to unlock the next one. Deliberately independent of
+// Practice's own pass bar below — module completion no longer requires
+// Practice at all, only Learn/Examples/Visualize exposure plus this Exam
+// score. Also independent of the "Proficient" star band further down, which
+// rates skill level and isn't the unlock gate.
+const PASS_THRESHOLD = 75;
 import { CodeExercise } from './CodeExercise';
 import { CodeBlock, InlineText } from './ContentBlocks';
 import { presetForExercise } from './visualizers/presets';

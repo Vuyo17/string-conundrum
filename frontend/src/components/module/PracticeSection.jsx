@@ -10,8 +10,10 @@ import { CodeExercise } from './CodeExercise';
 import { CodeBlock, InlineText } from './ContentBlocks';
 import { useLanguage } from '../../context/LanguageContext';
 
-// A practice run only counts toward module progress once a student clears
-// this bar in one sitting — matches the Exam's own "Proficient" threshold.
+// A practice run is recorded once a student clears this bar in one sitting.
+// Practice is no longer part of the module-completion gate (see
+// getModuleSectionIds in utils/moduleSections.js) — this only drives
+// Practice's own pass/fail display and stats, not module unlocking.
 const PASS_THRESHOLD = 70;
 
 // Star value of an exercise. The bank's legacy `xp` field is stars * 10;
