@@ -1310,15 +1310,21 @@ p {
   min-height: 0;
   display: grid;
   grid-template-columns: 1.1fr 1.15fr 0.9fr 150px;
+  /* label / control / hint — shared across every field so a field with no
+     hint text doesn't get centered as a shorter block and drift out of line
+     with the others. */
+  grid-template-rows: auto auto auto;
   gap: 16px;
-  align-items: center;
+  row-gap: 6px;
   padding: 14px 16px;
 }
 
 .visualiserField {
   min-width: 0;
   display: grid;
-  gap: 6px;
+  grid-template-rows: subgrid;
+  grid-row: span 3;
+  align-content: start;
   position: relative;
 }
 
@@ -1390,6 +1396,14 @@ p {
 }
 
 .visualiseButton {
+  /* Both axes pinned explicitly: an item with only one axis set (row here)
+     is placed by the auto-placement algorithm BEFORE items that only have a
+     span (our fields), so it would otherwise grab column 1 first and push
+     every field over by a column. Row 2 is the shared "control" row every
+     field's input/select sits in. */
+  grid-row: 2;
+  grid-column: 4;
+  align-self: center;
   height: 42px;
   border: 0;
   border-radius: 8px;
@@ -1619,6 +1633,14 @@ p {
 
   .visualiserField::before {
     display: none;
+  }
+
+  .visualiseButton {
+    /* Desktop pins the button to column 4 of a 4-column grid; stacked mobile
+       only has one column, so let it flow into its own row like the fields
+       instead of forcing a 4th (implicit) column back into existence. */
+    grid-column: 1;
+    grid-row: auto;
   }
 
   .visualiserBoardTop,
