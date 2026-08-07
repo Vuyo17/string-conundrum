@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, ChevronDown, Pause, Play } from 'lucide-reac
 import styles from '../styles/App.module.css';
 import { SpeedControl } from '../components/SpeedControl';
 import { useLanguage } from '../context/LanguageContext';
+import { parseIndexInput, resolveIndex, sliceFromNotation } from '../utils/pythonStringOps';
 
 // How long one step is held at 1× speed; the speed picker divides this.
 const STEP_INTERVAL_MS = 800;
@@ -14,35 +15,12 @@ function parseStringInput(value) {
   return match ? match[2] : value;
 }
 
-function normaliseIndex(index, length) {
-  return index < 0 ? length + index : index;
-}
-
-function parseSlice(value, length) {
-  const parts = value.split(':');
-  const rawStart = parts[0] ?? '';
-  const rawStop = parts[1] ?? '';
-  const rawStep = parts[2] ?? '';
-
-  const start = rawStart.trim() === '' ? 0 : Number(rawStart);
-  const stop = rawStop.trim() === '' ? length : Number(rawStop);
-  const step = rawStep.trim() === '' ? 1 : Number(rawStep);
-
-  const safeStart = Number.isFinite(start) ? start : 0;
-  const safeStop = Number.isFinite(stop) ? stop : length;
-  const safeStep = Number.isFinite(step) && step !== 0 ? step : 1;
-
-  const normalStart = Math.max(0, Math.min(length, normaliseIndex(safeStart, length)));
-  const normalStop = Math.max(0, Math.min(length, normaliseIndex(safeStop, length)));
-  const highlighted = [];
-
-  if (safeStep > 0) {
-    for (let i = normalStart; i < normalStop; i += safeStep) highlighted.push(i);
-  } else {
-    for (let i = normalStart; i > normalStop; i += safeStep) highlighted.push(i);
-  }
-
-  return { start: safeStart, stop: safeStop, step: safeStep, normalStart, normalStop, highlighted };
+// The shared slice resolver reports bounds in Python terms, where a negative
+// step legitimately stops at -1. Clamp to the grid before using them to place
+// the start/stop markers.
+function sliceMarkerBounds(slice, length) {
+  const clamp = (v) => Math.max(0, Math.min(length, v));
+  return { start: clamp(slice.start ?? 0), stop: clamp(slice.stop ?? 0) };
 }
 
 function modeLabel(mode, t) {
@@ -58,15 +36,15 @@ function modeLabel(mode, t) {
 
 function buildForSteps(text, rangeInput, t) {
   // rangeInput is like "0:5:1" — we use the chars at those indices
-  const { highlighted } = parseSlice(rangeInput, text.length);
+  const { picked } = sliceFromNotation(text, rangeInput);
   const chars = text.split('');
-  return highlighted.map((idx, iteration) => ({
+  return picked.map((idx, iteration) => ({
     iteration: iteration + 1,
-    total: highlighted.length,
+    total: picked.length,
     charIndex: idx,
     char: chars[idx] ?? '',
     highlight: [idx],
-    description: t('visualiser.descForLoop', { n: iteration + 1, total: highlighted.length, ch: chars[idx] ?? '' }),
+    description: t('visualiser.descForLoop', { n: iteration + 1, total: picked.length, ch: chars[idx] ?? '' }),
     variables: { c: chars[idx] ?? '', i: idx },
   }));
 }
@@ -181,13 +159,15 @@ export function Visualiser() {
   const length = chars.length;
 
   // ── derived per-mode state ────────────────────────────────────────────────
-  const selectedIndex = useMemo(() => {
-    const raw = Number(indexInput);
-    if (!Number.isFinite(raw)) return 0;
-    return Math.max(0, Math.min(length - 1, normaliseIndex(raw, length)));
-  }, [indexInput, length]);
+  // Out-of-range indices stay out of range: Python raises IndexError, and
+  // clamping to the nearest character would teach the opposite.
+  const indexLookup = useMemo(() => {
+    const parsed = parseIndexInput(indexInput);
+    if (parsed === null) return { resolved: null, valid: false, parsed: null };
+    return { ...resolveIndex(text, parsed), parsed };
+  }, [indexInput, text]);
 
-  const slice = useMemo(() => parseSlice(sliceInput, length), [sliceInput, length]);
+  const slice = useMemo(() => sliceFromNotation(text, sliceInput), [text, sliceInput]);
 
   const forSteps = useMemo(() => buildForSteps(text, forInput, t), [text, forInput, t]);
   const whileSteps = useMemo(() => buildWhileSteps(text, whileInput, t), [text, whileInput, t]);
@@ -217,20 +197,20 @@ export function Visualiser() {
 
   // ── computed highlight / output for simple modes ─────────────────────────
   const highlighted = useMemo(() => {
-    if (mode === 'index') return [selectedIndex];
-    if (mode === 'slice') return slice.highlighted;
+    if (mode === 'index') return indexLookup.valid ? [indexLookup.resolved] : [];
+    if (mode === 'slice') return slice.picked;
     if (mode === 'method') return chars.map((_, i) => i);
     if (currentStep) return currentStep.highlight;
     return [];
-  }, [mode, selectedIndex, slice.highlighted, chars, currentStep]);
+  }, [mode, indexLookup, slice.picked, chars, currentStep]);
 
   const output = useMemo(() => {
-    if (mode === 'index') return chars[selectedIndex] ?? '';
-    if (mode === 'slice') return slice.highlighted.map(i => chars[i] ?? '').join('');
+    if (mode === 'index') return indexLookup.valid ? chars[indexLookup.resolved] : '';
+    if (mode === 'slice') return slice.picked.map(i => chars[i] ?? '').join('');
     if (mode === 'method') return methodResult;
     if (currentStep) return currentStep.char || (currentStep.conditionResult !== undefined ? String(currentStep.conditionResult) : '');
     return '';
-  }, [mode, selectedIndex, chars, slice.highlighted, methodResult, currentStep]);
+  }, [mode, indexLookup, chars, slice.picked, methodResult, currentStep]);
 
   // ── reset step when mode / inputs change ──────────────────────────────────
   useEffect(() => {
@@ -276,6 +256,7 @@ export function Visualiser() {
 
   // ── label helpers ─────────────────────────────────────────────────────────
   const isStepped = ['for_loop', 'while_loop', 'if_stmt'].includes(mode);
+  const markerBounds = sliceMarkerBounds(slice, length);
 
   const fieldLabel = {
     index: 'Enter an index',
@@ -465,13 +446,13 @@ export function Visualiser() {
               <div
                 className={styles.sliceBracket}
                 style={{
-                  gridColumn: `${Math.min(slice.normalStart, slice.normalStop) + 1} / ${Math.max(slice.normalStart, slice.normalStop) + 1}`,
+                  gridColumn: `${Math.min(markerBounds.start, markerBounds.stop) + 1} / ${Math.max(markerBounds.start, markerBounds.stop) + 1}`,
                 }}
               />
-              <span className={styles.sliceStart} style={{ gridColumn: `${slice.normalStart + 1}` }}>
+              <span className={styles.sliceStart} style={{ gridColumn: `${markerBounds.start + 1}` }}>
                 ▲<strong>{t('visualiser.start')}: {slice.start}</strong><small>{t('visualiser.inclusive')}</small>
               </span>
-              <span className={styles.sliceStop} style={{ gridColumn: `${slice.normalStop + 1}` }}>
+              <span className={styles.sliceStop} style={{ gridColumn: `${markerBounds.stop + 1}` }}>
                 ▲<strong>{t('visualiser.stop')}: {slice.stop}</strong><small>{t('visualiser.exclusive')}</small>
               </span>
             </div>
@@ -509,7 +490,11 @@ export function Visualiser() {
               ? (currentStep?.conditionResult !== undefined
                   ? (currentStep.conditionResult ? 'True → if-body runs' : 'False → else runs')
                   : '?')
-              : `'${output}'`}
+              : mode === 'index' && !indexLookup.valid
+                ? (indexLookup.parsed === null
+                    ? '?'
+                    : `IndexError: string index out of range (valid: -${Math.max(length, 1)} to ${Math.max(length - 1, 0)})`)
+                : `'${output}'`}
           </code>
         </div>
       </section>

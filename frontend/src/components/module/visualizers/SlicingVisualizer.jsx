@@ -4,6 +4,7 @@ import {
 } from 'lucide-react';
 import m from '../../../styles/ModulePage.module.css';
 import { useLanguage } from '../../../context/LanguageContext';
+import { computeSlice, parseSlicePart } from '../../../utils/pythonStringOps';
 
 const MAX_LENGTH = 14;
 const TICK_MS = 460;
@@ -13,45 +14,7 @@ function prefersReducedMotion() {
     && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 }
 
-function parsePart(raw) {
-  const trimmed = raw.trim();
-  if (trimmed === '') return { empty: true, value: null, valid: true };
-  if (!/^-?\d+$/.test(trimmed)) return { empty: false, value: null, valid: false };
-  return { empty: false, value: Number(trimmed), valid: true };
-}
-
-// Reproduce Python slice semantics exactly, including the defaults the
-// CSC1015F lectures emphasise: with a negative step, start defaults to the
-// last character and stop to "before the first".
-function computeSlice(text, startRaw, stopRaw, stepRaw) {
-  const length = text.length;
-  const step = stepRaw.empty ? 1 : stepRaw.value;
-  if (step === 0) return { error: 'step cannot be zero (Python raises ValueError)' };
-
-  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-  const normalise = (v, forNegStepDefault) => {
-    if (v === null) return forNegStepDefault;
-    return v < 0 ? v + length : v;
-  };
-
-  let start;
-  let stop;
-  if (step > 0) {
-    start = clamp(normalise(startRaw.empty ? null : startRaw.value, 0) ?? 0, 0, length);
-    stop = clamp(normalise(stopRaw.empty ? null : stopRaw.value, length) ?? length, 0, length);
-  } else {
-    start = startRaw.empty ? length - 1 : clamp(normalise(startRaw.value, null), -1, length - 1);
-    stop = stopRaw.empty ? -1 : clamp(normalise(stopRaw.value, null), -1, length - 1);
-  }
-
-  const picked = [];
-  if (step > 0) for (let i = start; i < stop; i += step) picked.push(i);
-  else for (let i = start; i > stop; i += step) picked.push(i);
-
-  return { picked, step };
-}
-
-export function SlicingVisualizer({ config }) {
+export function SlicingVisualizer({ config, preset }) {
   const { t } = useLanguage();
   const [text, setText] = useState(config.defaults?.text ?? 'Jabberwocky');
   const [startIn, setStartIn] = useState(config.defaults?.start ?? '');
@@ -60,10 +23,11 @@ export function SlicingVisualizer({ config }) {
   const [run, setRun] = useState(null);   // { text, picked, notation, error }
   const [pos, setPos] = useState(-1);     // how many picks are revealed so far
   const [done, setDone] = useState(false);
+  const [autoRun, setAutoRun] = useState(false);
   const timerRef = useRef(null);
 
   const parts = useMemo(() => ({
-    start: parsePart(startIn), stop: parsePart(stopIn), step: parsePart(stepIn),
+    start: parseSlicePart(startIn), stop: parseSlicePart(stopIn), step: parseSlicePart(stepIn),
   }), [startIn, stopIn, stepIn]);
 
   const inputsValid = text.length > 0
@@ -106,6 +70,27 @@ export function SlicingVisualizer({ config }) {
   }, [run, done]);
 
   useEffect(() => stopTimer, []);
+
+  // A missed exam question can hand us the exact string and dials it was built
+  // from. Load them, then run on the *next* render so startRun reads the
+  // committed state instead of the values it closed over here.
+  useEffect(() => {
+    if (!preset) return;
+    setText(preset.text);
+    setStartIn(preset.start ?? '');
+    setStopIn(preset.stop ?? '');
+    setStepIn(preset.step ?? '');
+    setRun(null);
+    setPos(-1);
+    setDone(false);
+    setAutoRun(true);
+  }, [preset]);
+
+  useEffect(() => {
+    if (!autoRun) return;
+    setAutoRun(false);
+    startRun();
+  }, [autoRun]);
 
   const chars = (run?.text ?? text).split('');
   const revealed = run && !run.error ? run.picked.slice(0, pos + 1) : [];

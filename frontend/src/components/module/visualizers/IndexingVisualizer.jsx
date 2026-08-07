@@ -4,6 +4,7 @@ import {
 } from 'lucide-react';
 import m from '../../../styles/ModulePage.module.css';
 import { useLanguage } from '../../../context/LanguageContext';
+import { buildIndexWalk, parseIndexInput } from '../../../utils/pythonStringOps';
 
 const MAX_LENGTH = 14;
 const TICK_MS = 420;
@@ -11,24 +12,6 @@ const TICK_MS = 420;
 function prefersReducedMotion() {
   return typeof window !== 'undefined'
     && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-}
-
-// Build the walk the pointer takes to resolve text[index].
-// Positive index: walk forwards from 0. Negative: walk backwards from -1.
-function buildWalk(text, index) {
-  const length = text.length;
-
-  if (index >= 0) {
-    const target = Math.min(index, length); // length == first invalid position
-    const path = [];
-    for (let i = 0; i <= target && i < length; i++) path.push(i);
-    return { path, valid: index < length, direction: 'forward' };
-  }
-
-  const target = Math.max(index, -length - 1);
-  const path = [];
-  for (let i = -1; i >= target && i >= -length; i--) path.push(length + i);
-  return { path, valid: index >= -length, direction: 'backward' };
 }
 
 export function IndexingVisualizer({ config, preset }) {
@@ -41,11 +24,7 @@ export function IndexingVisualizer({ config, preset }) {
   const [autoRun, setAutoRun] = useState(false);
   const timerRef = useRef(null);
 
-  const parsedIndex = useMemo(() => {
-    const trimmed = indexInput.trim();
-    if (!/^-?\d+$/.test(trimmed)) return null;
-    return Number(trimmed);
-  }, [indexInput]);
+  const parsedIndex = useMemo(() => parseIndexInput(indexInput), [indexInput]);
 
   const canVisualize = text.length > 0 && parsedIndex !== null;
 
@@ -58,7 +37,7 @@ export function IndexingVisualizer({ config, preset }) {
     if (!canVisualize) return;
     stopTimer();
 
-    const walk = buildWalk(text, parsedIndex);
+    const walk = buildIndexWalk(text, parsedIndex);
     const nextRun = { text, index: parsedIndex, walk };
     setRun(nextRun);
 
