@@ -66,14 +66,6 @@
   line-height: 1.08;
 }
 
-.heroTagline {
-  margin: 0 0 16px;
-  max-width: 56ch;
-  color: var(--muted);
-  font-size: 16px;
-  line-height: 1.65;
-}
-
 .heroMeta {
   display: flex;
   flex-wrap: wrap;
@@ -1387,51 +1379,6 @@
   animation: pageIn 0.2s ease both;
 }
 
-/* ═══ Practice / Exam mode tabs ══════════════════════════════════════════ */
-
-.modeTabs {
-  display: flex;
-  gap: 10px;
-  background: var(--surface-sunken, rgba(0, 0, 0, 0.035));
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 6px;
-}
-
-.modeTab {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 12px 14px;
-  border: 1.5px solid transparent;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  font-weight: 700;
-  font-size: 14px;
-  color: var(--muted);
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-}
-
-.modeTab svg { margin-bottom: 2px; }
-
-.modeTab:hover { color: var(--ink); }
-
-.modeTabActive {
-  background: var(--surface);
-  border-color: var(--primary);
-  color: var(--primary);
-  box-shadow: var(--shadow-soft);
-}
-
-.modeTabHint {
-  font-size: 11.5px;
-  font-weight: 500;
-  color: var(--muted);
-}
-
 .runnerStack { display: grid; gap: 22px; }
 
 .feedbackExplanation {
@@ -1715,11 +1662,7 @@
   .examScoreRow { gap: 18px; }
   .confirmActions { margin-left: 0; width: 100%; justify-content: flex-end; }
   .reviewAnswers dt { min-width: 96px; }
-  .modeTabHint { display: none; }
-}
-
-.examPaletteItem:focus-visible,
-.modeTab:focus-visible {
+}.examPaletteItem:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }

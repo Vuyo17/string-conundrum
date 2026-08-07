@@ -68,7 +68,3 @@ export function getModuleContent(id, lang = 'en') {
   const overlay = TRANSLATIONS[lang]?.[id];
   return overlay ? deepMerge(base, overlay) : base;
 }
-
-export function hasModuleContent(id) {
-  return Boolean(MODULE_CONTENT[id]);
-}

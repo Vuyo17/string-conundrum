@@ -16,21 +16,3 @@ export const modules = [
   { id: "formatting", minutes: 35 },
 ];
 
-export const letters = [
-  "H",
-  "e",
-  "l",
-  "l",
-  "o",
-  ",",
-  " ",
-  "W",
-  "o",
-  "r",
-  "l",
-  "d",
-  "!",
-];
-export const positiveIndexes = letters.map((_, i) => i);
-export const negativeIndexes = letters.map((_, i) => i - letters.length);
-
