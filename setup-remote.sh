@@ -93,10 +93,10 @@ sudo systemctl status string-api
 # Step 10: Configure nginx
 echo ""
 echo "Step 10: Configuring nginx..."
-sudo tee /etc/nginx/sites-available/api.stringscon > /dev/null <<'EOF'
+sudo tee /etc/nginx/sites-available/string-conundrum > /dev/null <<'EOF'
 server {
     listen 80;
-    server_name api.stringscon.netlify.app;
+    server_name string-1.cs.uct.ac.za;
 
     location / {
         proxy_pass http://127.0.0.1:8000;
@@ -111,7 +111,7 @@ server {
 }
 EOF
 
-sudo ln -sf /etc/nginx/sites-available/api.stringscon /etc/nginx/sites-enabled/
+sudo ln -sf /etc/nginx/sites-available/string-conundrum /etc/nginx/sites-enabled/
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t
 sudo systemctl enable nginx
@@ -120,16 +120,16 @@ sudo systemctl start nginx
 # Step 11: Set up HTTPS with Let's Encrypt
 echo ""
 echo "Step 11: Setting up HTTPS with Let's Encrypt..."
-echo "This requires the domain api.stringscon.netlify.app to be pointing to this server!"
+echo "This requires string-1.cs.uct.ac.za to resolve to this server!"
 read -p "Is the domain already pointing to this server's IP? (yes/no): " domain_ready
 
 if [ "$domain_ready" = "yes" ]; then
-    sudo certbot --nginx -d api.stringscon.netlify.app --non-interactive --agree-tos --email your-email@example.com
+    sudo certbot --nginx -d string-1.cs.uct.ac.za --non-interactive --agree-tos --email your-email@example.com
     sudo systemctl reload nginx
     echo "✓ HTTPS configured!"
 else
     echo "Skipping HTTPS setup. Run later with:"
-    echo "  sudo certbot --nginx -d api.stringscon.netlify.app"
+    echo "  sudo certbot --nginx -d string-1.cs.uct.ac.za"
 fi
 
 # Step 12: Verify deployment
@@ -145,7 +145,7 @@ sudo systemctl status nginx --no-pager || echo "Nginx status check failed"
 echo ""
 echo "Test API endpoint:"
 echo "  curl http://localhost:8000/health"
-echo "  curl http://api.stringscon.netlify.app/health (after HTTPS is set up)"
+echo "  curl http://string-1.cs.uct.ac.za/health"
 
 echo ""
 echo "View logs:"
@@ -154,6 +154,6 @@ echo "  sudo tail -f /var/log/nginx/error.log"
 
 echo ""
 echo "Next steps:"
-echo "1. Ensure domain api.stringscon.netlify.app points to this server"
+echo "1. Ensure string-1.cs.uct.ac.za resolves to this server"
 echo "2. Set up HTTPS if not already done"
-echo "3. Deploy frontend to Netlify"
+echo "3. Build the frontend (npm run build) and publish frontend/dist to /var/www/string-conundrum"

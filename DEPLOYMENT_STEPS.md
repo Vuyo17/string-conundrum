@@ -1,9 +1,15 @@
 # Quick Deployment Steps
 
+Everything runs on one UCT host, `string-1.cs.uct.ac.za` (137.158.61.235):
+Nginx serves the built frontend and proxies `/api` to Gunicorn/Flask on the
+same origin. Because it is same-origin, the browser never issues a CORS
+preflight in normal operation.
+
 ## Step 1: Prepare Local Code
-Your code is already updated to support remote deployment:
-- ✅ Frontend API client automatically uses `https://api.stringscon.netlify.app` in production
-- ✅ Backend CORS configured to accept requests from `https://stringscon.netlify.app`
+- ✅ Frontend API client falls back to same-origin relative paths when
+  `VITE_API_BASE_URL` is unset — which is what this deployment wants
+- ✅ Backend CORS lists the host (and its IP) for the case where the frontend
+  is ever built against a different API origin
 - ✅ WSGI entry point created for production deployment
 
 ## Step 2: Deploy Backend to Remote Server
@@ -87,16 +93,26 @@ sudo systemctl start nginx
 
 ### Create nginx config:
 ```bash
-sudo nano /etc/nginx/sites-available/api.stringscon
+sudo nano /etc/nginx/sites-available/string-conundrum
 ```
 
-Paste this content:
+Serve the built frontend and proxy the API from the same origin, so the
+browser treats both as one site:
 ```nginx
 server {
     listen 80;
-    server_name api.stringscon.netlify.app;
+    server_name string-1.cs.uct.ac.za;
 
+    # Built React app (see Step 7)
+    root /var/www/string-conundrum;
+    index index.html;
+
+    # SPA fallback: unknown paths return the app shell, not a 404
     location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /api/ {
         proxy_pass http://127.0.0.1:8000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -106,21 +122,27 @@ server {
         proxy_set_header Connection "";
         proxy_redirect off;
     }
+
+    location /health {
+        proxy_pass http://127.0.0.1:8000;
+    }
 }
 ```
 
 Enable the site:
 ```bash
-sudo ln -s /etc/nginx/sites-available/api.stringscon /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/string-conundrum /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-## Step 5: Set Up HTTPS (Let's Encrypt)
+## Step 5: Set Up HTTPS (Let's Encrypt) — optional
 
+The site currently serves over plain HTTP, which is why browsers show a
+"Not secure" warning. To fix that:
 ```bash
 sudo apt install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d api.stringscon.netlify.app
+sudo certbot --nginx -d string-1.cs.uct.ac.za
 
 # Choose to redirect HTTP to HTTPS when prompted
 sudo systemctl reload nginx
@@ -130,7 +152,7 @@ sudo systemctl reload nginx
 
 ### Test backend endpoint:
 ```bash
-curl https://api.stringscon.netlify.app/health
+curl http://string-1.cs.uct.ac.za/health
 # Should return: {"status":"ok"}
 ```
 
@@ -146,19 +168,33 @@ sudo journalctl -u string-api -f
 sudo tail -f /var/log/nginx/error.log
 ```
 
-## Step 7: Deploy Frontend to Netlify
+## Step 7: Build and Publish the Frontend
 
-1. Push code to GitHub
-2. Connect repo to Netlify
-3. Build command: `npm run build`
-4. Publish directory: `dist`
-5. Environment variables: (none needed, it's baked into the code)
+Build locally, leaving `VITE_API_BASE_URL` unset so the app calls `/api/...`
+on its own origin:
+```bash
+cd frontend
+npm ci
+npm run build          # emits frontend/dist
+```
+
+Copy the build to the location Nginx serves (Step 4's `root`):
+```bash
+scp -r frontend/dist/* mtmluv001@string-1.cs.uct.ac.za:/tmp/sc-dist/
+ssh mtmluv001@string-1.cs.uct.ac.za \
+  'sudo mkdir -p /var/www/string-conundrum && sudo rm -rf /var/www/string-conundrum/* \
+   && sudo cp -r /tmp/sc-dist/* /var/www/string-conundrum/ && rm -rf /tmp/sc-dist'
+```
+
+> Do **not** set `VITE_API_BASE_URL` to the bare IP. The app would then be
+> loaded from the hostname but call the IP, making every request cross-origin
+> and subject to the CORS list in `backend/app/__init__.py`.
 
 ## Testing
 
-1. Open https://stringscon.netlify.app in browser
-2. Try submitting exercises - should send requests to https://api.stringscon.netlify.app
-3. Check network tab in DevTools to see API calls
+1. Open http://string-1.cs.uct.ac.za in browser
+2. Try submitting exercises — requests should go to `/api/...` on the same host
+3. Check the network tab in DevTools to see API calls
 
 ## Troubleshooting
 
@@ -173,6 +209,6 @@ sudo tail -f /var/log/nginx/error.log
 - Verify nginx reverse proxy headers are correct
 
 ### SSL certificate errors
-- Wait 24-48 hours for DNS propagation if just set up
-- Verify domain is pointing to server: `nslookup api.stringscon.netlify.app`
+- Verify the host resolves to this server: `nslookup string-1.cs.uct.ac.za`
+  (expect 137.158.61.235)
 - Renew certificate: `sudo certbot renew`

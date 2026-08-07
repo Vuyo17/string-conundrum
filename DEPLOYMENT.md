@@ -97,11 +97,11 @@ sudo systemctl enable nginx
 sudo systemctl start nginx
 ```
 
-Create `/etc/nginx/sites-available/api.stringscon`:
+Create `/etc/nginx/sites-available/string-conundrum`:
 ```nginx
 server {
     listen 80;
-    server_name api.stringscon.netlify.app;
+    server_name string-1.cs.uct.ac.za;
 
     location / {
         proxy_pass http://127.0.0.1:8000;
@@ -118,7 +118,7 @@ server {
 
 Enable the site:
 ```bash
-sudo ln -s /etc/nginx/sites-available/api.stringscon /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/string-conundrum /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl reload nginx
 ```
@@ -126,7 +126,7 @@ sudo systemctl reload nginx
 ### 7. Set Up HTTPS with Let's Encrypt (Certbot)
 ```bash
 sudo apt install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d api.stringscon.netlify.app
+sudo certbot --nginx -d string-1.cs.uct.ac.za
 sudo systemctl reload nginx
 ```
 
@@ -142,7 +142,7 @@ def create_app():
     CORS(app, resources={
         r"/*": {
             "origins": [
-                "https://stringscon.netlify.app",
+                "http://string-1.cs.uct.ac.za",
                 "http://localhost:3000",
                 "http://localhost:5173"
             ],
@@ -165,7 +165,7 @@ sudo tail -f /var/log/nginx/error.log
 sudo tail -f /var/log/nginx/access.log
 
 # Test API endpoint
-curl https://api.stringscon.netlify.app/
+curl http://string-1.cs.uct.ac.za/health
 ```
 
 ## Useful Commands

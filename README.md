@@ -11,8 +11,12 @@ It includes:
 
 ## Production Deployment
 
-✓ **Backend:** Running on UCT server at http://137.158.61.235 (Ubuntu 26.04 LTS with Nginx + Gunicorn)
-✓ **Frontend:** Deployed to Netlify at https://stringscon.netlify.app (React + Vite)
+Both halves run on the same UCT server, `string-1.cs.uct.ac.za` (137.158.61.235,
+Ubuntu with Nginx + Gunicorn): Nginx serves the built React frontend and proxies
+`/api` through to Flask, so the app is same-origin end to end.
+
+✓ **Frontend:** http://string-1.cs.uct.ac.za (React + Vite, built to `frontend/dist`)
+✓ **Backend:** Flask + Gunicorn behind Nginx on the same host
 
 ## Project Structure
 

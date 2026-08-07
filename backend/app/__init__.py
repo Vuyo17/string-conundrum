@@ -11,11 +11,18 @@ load_dotenv()
 def create_app() -> Flask:
     app = Flask(__name__)
     
-    # Configure CORS for production and development
+    # Configure CORS for production and development.
+    #
+    # In production Nginx serves the built frontend and proxies /api to Flask
+    # on the same origin, so CORS does not normally engage at all. These
+    # origins matter only when the frontend is built with an explicit
+    # VITE_API_BASE_URL pointing at another host — the hostname is listed
+    # alongside its IP so that case does not silently break.
     CORS(app, resources={
         r"/*": {
             "origins": [
-                "https://stringscon.netlify.app",
+                "http://string-1.cs.uct.ac.za",
+                "https://string-1.cs.uct.ac.za",
                 "http://localhost:5173",
                 "http://localhost:3000",
                 "127.0.0.1:5173",
