@@ -468,24 +468,14 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
         )}
 
         <footer className={m.questionFooter}>
-          <div className={m.examNav}>
-            <button
-              type="button"
-              className={m.ghostButton}
-              onClick={() => setCurrent((c) => Math.max(0, c - 1))}
-              disabled={current === 0}
-            >
-              <ChevronLeft size={15} /> {t('common.previous')}
-            </button>
-            <button
-              type="button"
-              className={m.ghostButton}
-              onClick={() => setCurrent((c) => Math.min(paper.length - 1, c + 1))}
-              disabled={current === paper.length - 1}
-            >
-              {t('common.next')} <ChevronRight size={15} />
-            </button>
-          </div>
+          <button
+            type="button"
+            className={m.ghostButton}
+            onClick={() => setCurrent((c) => Math.max(0, c - 1))}
+            disabled={current === 0}
+          >
+            <ChevronLeft size={15} /> {t('common.previous')}
+          </button>
           <button
             type="button"
             className={m.solidButton}
@@ -493,6 +483,14 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
             disabled={phase === 'submitting'}
           >
             {phase === 'submitting' ? t('exercise.marking') : t('exercise.submitExam')}
+          </button>
+          <button
+            type="button"
+            className={m.ghostButton}
+            onClick={() => setCurrent((c) => Math.min(paper.length - 1, c + 1))}
+            disabled={current === paper.length - 1}
+          >
+            {t('common.next')} <ChevronRight size={15} />
           </button>
         </footer>
       </div>

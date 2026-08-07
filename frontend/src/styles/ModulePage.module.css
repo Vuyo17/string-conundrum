@@ -1496,7 +1496,6 @@
   color: var(--primary);
 }
 
-.examNav { display: flex; gap: 8px; }
 
 .confirmBanner {
   display: flex;
