@@ -6,7 +6,7 @@ import styles from '../styles/App.module.css';
 import { getApiUrl } from '../config/api';
 import { SpeedControl } from '../components/SpeedControl';
 import { useLanguage } from '../context/LanguageContext';
-import { transpileIsiXhosaToPython, transpilePythonToIsiXhosa } from '../utils/isiXhosaTranspiler';
+import { transpileIsiXhosaToPython, transpilePythonToIsiXhosa, translateDisplayText } from '../utils/isiXhosaTranspiler';
 import { highlightPython as highlightPythonCode } from '../utils/pythonHighlight';
 
 // How long one step is held at 1× speed; the speed picker divides this.
@@ -44,11 +44,16 @@ else:
 const INDENT = '    ';
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
-function eventLabel(event) {
-  const map = {
-    assign: 'Assignment', for: 'For Loop', while: 'While Loop',
-    if: 'If Statement', print: 'Print', call: 'Call', stmt: 'Statement', error: 'Error',
-  };
+const EVENT_LABELS_EN = {
+  assign: 'Assignment', for: 'For Loop', while: 'While Loop',
+  if: 'If Statement', print: 'Print', call: 'Call', stmt: 'Statement', error: 'Error',
+};
+const EVENT_LABELS_XH = {
+  assign: 'Unikezelo', for: 'Kwi Loop', while: 'Ngelixa Loop',
+  if: 'Ukuba Ingqeqesho', print: 'Bhala', call: 'Ifonwayo', stmt: 'Ingqeqesho', error: 'Impazamo',
+};
+function eventLabel(event, lang) {
+  const map = lang === 'xh' ? EVENT_LABELS_XH : EVENT_LABELS_EN;
   return map[event] || event;
 }
 
@@ -299,7 +304,7 @@ function highlightPython(code) {
 
 // ─── component ────────────────────────────────────────────────────────────────
 export function CodeSpace() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [code, setCode] = useState(DEFAULT_CODE);
   const [stdout, setStdout] = useState('');
   const [stderr, setStderr] = useState('');
@@ -337,10 +342,10 @@ export function CodeSpace() {
   }, [debugging, stepIndex, steps]);
 
   const displayedOutput = stderr
-    ? stderr
+    ? translateDisplayText(stderr, lang)
     : debugging
-      ? incrementalStdout || 'Step through your code to see output build up here.'
-      : stdout || 'Run your code to see output here.';
+      ? (incrementalStdout || t('codeSpace.stepThroughHint'))
+      : (stdout || t('codeSpace.runToSeeOutput'));
 
   const highlightedCode = useMemo(() => highlightPython(code), [code]);
 
@@ -710,11 +715,8 @@ export function CodeSpace() {
 
           {!debugging ? (
             <div className={styles.dbgPlaceholder}>
-              <p>Press <strong>Run</strong> to step through your code.</p>
-              <p className={styles.dbgHint}>
-                Works with <code>for</code>, <code>while</code>, <code>if</code>,
-                indexing, slicing, and string methods.
-              </p>
+              <p>{t('codeSpace.debuggerPlaceholder')}</p>
+              <p className={styles.dbgHint}>{t('codeSpace.debuggerHint')}</p>
             </div>
           ) : (
             <>
@@ -724,8 +726,8 @@ export function CodeSpace() {
 
               {step && (
                 <p className={styles.dbgStepDesc}>
-                  <span className={styles.dbgEventTag}>{eventLabel(step.event)}</span>
-                  <span className={styles.dbgStepText}>{step.description}</span>
+                  <span className={styles.dbgEventTag}>{eventLabel(step.event, lang)}</span>
+                  <span className={styles.dbgStepText}>{translateDisplayText(step.description, lang)}</span>
                 </p>
               )}
 
