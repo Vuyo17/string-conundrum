@@ -1,4 +1,5 @@
 from ..db import get_cursor
+from .i18n import normalise_lang
 from .sandbox import run_io_challenge
 
 
@@ -6,7 +7,8 @@ def _load_challenges() -> list[dict]:
     with get_cursor() as cur:
         cur.execute(
             """
-            SELECT id, title, difficulty, description, hint, io, starter_code, solution, tests
+            SELECT id, title, difficulty, description, hint, io, starter_code, solution, tests,
+                   title_xh, description_xh, hint_xh, io_xh
             FROM challenges
             ORDER BY sort_order
             """
@@ -14,14 +16,40 @@ def _load_challenges() -> list[dict]:
         return [dict(row) for row in cur.fetchall()]
 
 
-def list_challenges() -> list[dict]:
+def _localise(challenge: dict, lang: str) -> dict:
+    """Swap in `<field>_<lang>` variants where the bank carries them.
+
+    Mirrors `feedback._localise`. Fields are localised individually, so a
+    challenge with a translated description but an untranslated hint still
+    renders rather than being skipped. `starter_code`, `solution` and `tests`
+    are never localised: they are Python that has to run, and the tests are
+    compared literally against program output.
+    """
+    if lang == "en":
+        return challenge
+    out = dict(challenge)
+    for field in ("title", "description", "hint", "io"):
+        translated = challenge.get(f"{field}_{lang}")
+        if translated:
+            out[field] = translated
+    return out
+
+
+def list_challenges(lang: "str | None" = None) -> list[dict]:
     """Return all challenges (used to render the Challenges screen).
 
     The reference solution is stripped: it is served separately by
-    ``get_solution`` so it never reaches the browser until asked for.
+    ``get_solution`` so it never reaches the browser until asked for. The
+    `_xh` columns are dropped too — the caller gets one localised `title`,
+    not both languages.
     """
+    lang = normalise_lang(lang)
     return [
-        {k: v for k, v in challenge.items() if k != "solution"}
+        {
+            k: v
+            for k, v in _localise(challenge, lang).items()
+            if k != "solution" and not k.endswith("_xh")
+        }
         for challenge in _load_challenges()
     ]
 

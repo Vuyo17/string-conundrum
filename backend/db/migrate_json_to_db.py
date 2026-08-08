@@ -93,10 +93,12 @@ def migrate_challenges(cur) -> int:
         cur.execute(
             """
             INSERT INTO challenges (
-                id, title, difficulty, description, hint, io, starter_code, solution, tests, sort_order
+                id, title, difficulty, description, hint, io, starter_code, solution, tests,
+                title_xh, description_xh, hint_xh, io_xh, sort_order
             ) VALUES (
                 %(id)s, %(title)s, %(difficulty)s, %(description)s, %(hint)s, %(io)s,
-                %(starter_code)s, %(solution)s, %(tests)s, %(sort_order)s
+                %(starter_code)s, %(solution)s, %(tests)s,
+                %(title_xh)s, %(description_xh)s, %(hint_xh)s, %(io_xh)s, %(sort_order)s
             )
             ON CONFLICT (id) DO UPDATE SET
                 title = EXCLUDED.title,
@@ -107,6 +109,13 @@ def migrate_challenges(cur) -> int:
                 starter_code = EXCLUDED.starter_code,
                 solution = EXCLUDED.solution,
                 tests = EXCLUDED.tests,
+                -- COALESCE so re-seeding from a JSON file that has not been
+                -- translated yet cannot wipe translations already in the table,
+                -- matching how the exercises upsert above behaves.
+                title_xh = COALESCE(EXCLUDED.title_xh, challenges.title_xh),
+                description_xh = COALESCE(EXCLUDED.description_xh, challenges.description_xh),
+                hint_xh = COALESCE(EXCLUDED.hint_xh, challenges.hint_xh),
+                io_xh = COALESCE(EXCLUDED.io_xh, challenges.io_xh),
                 sort_order = EXCLUDED.sort_order
             """,
             {
@@ -119,6 +128,10 @@ def migrate_challenges(cur) -> int:
                 "starter_code": ch.get("starter_code"),
                 "solution": ch.get("solution"),
                 "tests": json.dumps(ch["tests"]) if "tests" in ch else None,
+                "title_xh": ch.get("title_xh"),
+                "description_xh": ch.get("description_xh"),
+                "hint_xh": ch.get("hint_xh"),
+                "io_xh": json.dumps(ch["io_xh"]) if "io_xh" in ch else None,
                 "sort_order": i,
             },
         )

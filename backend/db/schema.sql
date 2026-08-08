@@ -44,7 +44,14 @@ CREATE TABLE IF NOT EXISTS challenges (
     starter_code TEXT,
     solution TEXT,
     tests JSONB,
-    sort_order INTEGER NOT NULL
+    sort_order INTEGER NOT NULL,
+    -- Translations, mirroring the exercises table. starter_code, solution and
+    -- tests have no _xh twin on purpose: they are Python that has to run, and
+    -- tests are compared literally against program output.
+    title_xh TEXT,
+    description_xh TEXT,
+    hint_xh TEXT,
+    io_xh JSONB
 );
 
 -- Recorded once per (user, question) the first time it's answered correctly.
@@ -92,6 +99,10 @@ CREATE INDEX IF NOT EXISTS idx_module_section_completions_user ON module_section
 ALTER TABLE exercises ADD COLUMN IF NOT EXISTS prompt_xh TEXT;
 ALTER TABLE exercises ADD COLUMN IF NOT EXISTS explanation_xh TEXT;
 ALTER TABLE exercises ADD COLUMN IF NOT EXISTS hint_xh TEXT;
+ALTER TABLE challenges ADD COLUMN IF NOT EXISTS title_xh TEXT;
+ALTER TABLE challenges ADD COLUMN IF NOT EXISTS description_xh TEXT;
+ALTER TABLE challenges ADD COLUMN IF NOT EXISTS hint_xh TEXT;
+ALTER TABLE challenges ADD COLUMN IF NOT EXISTS io_xh JSONB;
 -- Lets a student unlock every module/challenge from Settings, bypassing the
 -- sequential-completion gate entirely.
 ALTER TABLE users ADD COLUMN IF NOT EXISTS bypass_unlocks BOOLEAN NOT NULL DEFAULT false;

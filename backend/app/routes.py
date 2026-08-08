@@ -88,7 +88,7 @@ def list_all_challenges():
     """Return every coding challenge (used to render the Challenges screen)."""
     from .services.challenges import list_challenges
 
-    return {"ok": True, "challenges": list_challenges()}
+    return {"ok": True, "challenges": list_challenges(request.args.get("lang"))}
 
 
 @api_bp.get("/challenges/<challenge_id>/solution")
