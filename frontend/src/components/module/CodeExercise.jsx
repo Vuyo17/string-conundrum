@@ -5,6 +5,7 @@ import {
 import m from '../../styles/ModulePage.module.css';
 import { highlightPython } from '../../utils/pythonHighlight';
 import { useLanguage } from '../../context/LanguageContext';
+import { transpilePythonToIsiXhosa, transpileIsiXhosaToPython } from '../../utils/isiXhosaTranspiler';
 
 const INDENT = '    ';
 
@@ -20,7 +21,9 @@ const HIGHLIGHT_CLASSES = {
 // Runs against the existing backend: /api/execute for output and
 // /api/debug for the step-by-step trace used by "Visualize code".
 export function CodeExercise({ code, onCodeChange, disabled }) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const displayed = lang === 'xh' ? transpilePythonToIsiXhosa(code) : code;
+  const html = useMemo(() => highlightPython(displayed, HIGHLIGHT_CLASSES), [displayed]);
   const [stdout, setStdout] = useState('');
   const [stderr, setStderr] = useState('');
   const [running, setRunning] = useState(false);
@@ -29,7 +32,6 @@ export function CodeExercise({ code, onCodeChange, disabled }) {
   const [showTrace, setShowTrace] = useState(false);
   const highlightRef = useRef(null);
 
-  const html = useMemo(() => highlightPython(code, HIGHLIGHT_CLASSES), [code]);
   const step = steps[stepIndex] ?? null;
 
   function syncScroll(target) {

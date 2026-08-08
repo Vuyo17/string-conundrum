@@ -7,6 +7,7 @@ import styles from '../styles/App.module.css';
 import { getApiUrl } from '../config/api';
 import { apiFetch } from '../api';
 import { useLanguage } from '../context/LanguageContext';
+import { transpilePythonToIsiXhosa, transpileIsiXhosaToPython } from '../utils/isiXhosaTranspiler';
 
 // Difficulty codes come from the backend, so the filter keeps English values
 // and translates only the chip label.
@@ -114,7 +115,9 @@ export function Challenges() {
   );
   const code = challenge ? (codeById[challenge.id] ?? '') : '';
   const result = challenge ? resultById[challenge.id] ?? null : null;
-  const highlighted = useMemo(() => highlightPython(code), [code]);
+  // Display code in isiXhosa syntax when lang=xh; execution path transpiles back automatically
+  const displayCode = lang === 'xh' ? transpilePythonToIsiXhosa(code) : code;
+  const highlighted = useMemo(() => highlightPython(displayCode), [displayCode]);
 
   const counts = useMemo(() => {
     const by = { All: challenges.length, Easy: 0, Medium: 0, Hard: 0 };
@@ -353,7 +356,9 @@ export function Challenges() {
                     <pre
                       className={styles.solutionCodeLc}
                       dangerouslySetInnerHTML={{
-                        __html: highlightPython(solutionById[challenge.id].replace(/\n$/, '')),
+                        __html: highlightPython(lang === 'xh'
+                          ? transpilePythonToIsiXhosa(solutionById[challenge.id].replace(/\n$/, ''))
+                          : solutionById[challenge.id].replace(/\n$/, '')),
                       }}
                     />
                   </>

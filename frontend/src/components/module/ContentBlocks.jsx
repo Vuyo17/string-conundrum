@@ -4,6 +4,8 @@ import {
 } from 'lucide-react';
 import m from '../../styles/ModulePage.module.css';
 import { highlightPython } from '../../utils/pythonHighlight';
+import { useLanguage } from '../../context/LanguageContext';
+import { transpilePythonToIsiXhosa } from '../../utils/isiXhosaTranspiler';
 
 // ─── inline text: supports `code` spans and **bold** ─────────────────────────
 
@@ -47,7 +49,9 @@ const HIGHLIGHT_CLASSES = {
 };
 
 export function CodeBlock({ code, caption }) {
-  const html = useMemo(() => highlightPython(code, HIGHLIGHT_CLASSES), [code]);
+  const { lang } = useLanguage();
+  const displayed = lang === 'xh' ? transpilePythonToIsiXhosa(code) : code;
+  const html = useMemo(() => highlightPython(displayed, HIGHLIGHT_CLASSES), [displayed]);
   return (
     <figure className={m.codeFigure}>
       <pre className={m.codeBlock} dangerouslySetInnerHTML={{ __html: html }} />
