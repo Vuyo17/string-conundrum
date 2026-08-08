@@ -23,7 +23,16 @@ import { loopingModule } from './looping';
 import { methodsModule } from './methods';
 import { formattingModule } from './formatting';
 
+// isiXhosa overlays. `intro` is hand-written; the rest are machine-translated
+// by scripts/translate_content_nllb.py and pending a human read.
 import { introModuleXh } from './xh/intro';
+import { indexingModuleXh } from './xh/indexing';
+import { immutabilityModuleXh } from './xh/immutability';
+import { comparisonModuleXh } from './xh/comparison';
+import { loopingModuleXh } from './xh/looping';
+import { formattingModuleXh } from './xh/formatting';
+import { methodsModuleXh } from './xh/methods';
+import { slicingModuleXh } from './xh/slicing';
 
 export const MODULE_CONTENT = {
   [introModule.id]: introModule,
@@ -40,6 +49,13 @@ export const MODULE_CONTENT = {
 const TRANSLATIONS = {
   xh: {
     [introModule.id]: introModuleXh,
+    [indexingModule.id]: indexingModuleXh,
+    [immutabilityModule.id]: immutabilityModuleXh,
+    [comparisonModule.id]: comparisonModuleXh,
+    [loopingModule.id]: loopingModuleXh,
+    [formattingModule.id]: formattingModuleXh,
+    [methodsModule.id]: methodsModuleXh,
+    [slicingModule.id]: slicingModuleXh,
   },
 };
 

@@ -2,7 +2,9 @@ name: Deploy (Self-Hosted Runner)
 
 on:
   push:
-    branches: [main, production]
+    # `production` is the deploy branch. `main` was also listed but does not
+    # exist in this repository, so it never fired.
+    branches: [production]
     paths:
       - 'backend/**'
       - 'frontend/**'
@@ -44,6 +46,7 @@ jobs:
         shell: bash
         env:
           SUDO_PASSWORD: ${{ secrets.SUDO_PASSWORD }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           set -euo pipefail
 
@@ -65,6 +68,30 @@ jobs:
           fi
           "$APP_DIR/venv/bin/pip" install --upgrade pip
           "$APP_DIR/venv/bin/pip" install -r "$APP_DIR/backend/requirements.txt"
+
+          # Apply the schema and re-seed content BEFORE restarting the service.
+          #
+          # This step did not exist, so a deploy shipped code that could query
+          # columns the live database did not have yet, and content edited in
+          # exercises.json/challenges.json never reached students — the app
+          # reads both from Postgres, not from the JSON files.
+          #
+          # Both commands are idempotent: schema.sql is CREATE TABLE IF NOT
+          # EXISTS plus ALTER TABLE ADD COLUMN IF NOT EXISTS, and the seeder
+          # upserts by primary key, COALESCEing translations so it never wipes
+          # one that is already in the table.
+          if [ -z "${DATABASE_URL:-}" ] && [ -f "$APP_DIR/backend/.env" ]; then
+            # shellcheck disable=SC1091
+            set -a; . "$APP_DIR/backend/.env"; set +a
+          fi
+          if [ -z "${DATABASE_URL:-}" ]; then
+            echo "DATABASE_URL is not set. Add it as a secret on the production" >&2
+            echo "environment, or put it in $APP_DIR/backend/.env. Refusing to" >&2
+            echo "restart: the new code expects columns this database may lack." >&2
+            exit 1
+          fi
+          psql "$DATABASE_URL" -f "$APP_DIR/backend/db/schema.sql"
+          (cd "$APP_DIR/backend" && "$APP_DIR/venv/bin/python" db/migrate_json_to_db.py)
 
           # Sync built frontend assets to Nginx web root.
           run_sudo mkdir -p "$WEB_ROOT"
@@ -100,3 +127,10 @@ jobs:
           curl -fsS -X POST http://127.0.0.1/api/visualize \
             -H 'Content-Type: application/json' \
             -d '{"expression":"word[1:4]","context":{"word":"python"}}'
+
+          # The checks above never touch Postgres, so they stay green even when
+          # the schema is behind the code. These two do read it, and in both
+          # languages, which is what catches a missing _xh column.
+          curl -fsS 'http://127.0.0.1/api/challenges?lang=xh' >/dev/null
+          curl -fsS 'http://127.0.0.1/api/exercises/intro?lang=xh' >/dev/null
+          echo "database-backed endpoints OK in both languages"
