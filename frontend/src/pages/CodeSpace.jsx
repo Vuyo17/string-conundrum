@@ -44,12 +44,13 @@ else:
 const INDENT = '    ';
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
-function eventLabel(event) {
+function eventLabel(event, t) {
   const map = {
-    assign: 'Assignment', for: 'For Loop', while: 'While Loop',
-    if: 'If Statement', print: 'Print', call: 'Call', stmt: 'Statement', error: 'Error',
+    assign: 'evAssignment', for: 'evForLoop', while: 'evWhileLoop',
+    if: 'evIfStatement', print: 'evPrint', call: 'evCall', stmt: 'evStatement',
+    error: 'evError',
   };
-  return map[event] || event;
+  return map[event] ? t(`codeSpace.${map[event]}`) : event;
 }
 
 // ─── for-loop diagram ─────────────────────────────────────────────────────────
@@ -148,14 +149,14 @@ function WhileLoopDiagram({ ctx, steps }) {
   return (
     <div className={styles.flpDiagram}>
       <div className={styles.flpHeader}>
-        <span className={styles.flpBadge}>while&nbsp;loop</span>
+        <span className={styles.flpBadge}>{t('codeSpace.whileLoopBadge')}</span>
         <div className={styles.flpSignature}>
           <span className={styles.flpKw}>while</span>
           <span className={styles.flpCond}>{condition}</span>
           <span className={styles.flpColon}>:</span>
         </div>
         <span className={styles.flpCounter}>
-          check <b>{iteration}</b>
+          {t('codeSpace.check')} <b>{iteration}</b>
         </span>
       </div>
 
@@ -184,9 +185,9 @@ function WhileLoopDiagram({ ctx, steps }) {
                   : styles.flpTodo;
             return (
               <div key={p.iter} className={`${styles.flpPass} ${state}`}>
-                <span className={styles.flpPassNo}>check {p.iter}</span>
+                <span className={styles.flpPassNo}>{t('codeSpace.check')} {p.iter}</span>
                 <span className={p.res ? styles.flpTrue : styles.flpFalse}>
-                  {p.res ? 'true · run body' : 'false · stop'}
+                  {p.res ? t('codeSpace.checkTrue') : t('codeSpace.checkFalse')}
                 </span>
               </div>
             );
@@ -197,23 +198,23 @@ function WhileLoopDiagram({ ctx, steps }) {
       {/* current condition → result → action */}
       <div className={styles.flpFlow}>
         <div className={styles.flpFlowNode}>
-          <span className={styles.flpFlowLabel}>condition</span>
+          <span className={styles.flpFlowLabel}>{t('codeSpace.condition')}</span>
           <span className={styles.flpFlowValue}>
             <code>{condition}</code>
           </span>
         </div>
         <span className={styles.flpFlowArrow}>→</span>
         <div className={`${styles.flpFlowNode} ${result ? styles.flpTrueNode : styles.flpFalseNode}`}>
-          <span className={styles.flpFlowLabel}>evaluates to</span>
+          <span className={styles.flpFlowLabel}>{t('codeSpace.flowEvaluatesTo')}</span>
           <span className={styles.flpFlowValue}>{result ? 'True' : 'False'}</span>
         </div>
         <span className={styles.flpFlowArrow}>→</span>
         <div className={`${styles.flpFlowNode} ${styles.flpFlowBody}`}>
-          <span className={styles.flpFlowLabel}>so we</span>
-          <span className={styles.flpFlowValue}>{result ? 'run the body' : 'exit the loop'}</span>
+          <span className={styles.flpFlowLabel}>{t('codeSpace.flowSoWe')}</span>
+          <span className={styles.flpFlowValue}>{result ? t('codeSpace.flowRunBody') : t('codeSpace.flowExitLoop')}</span>
         </div>
         {result && (
-          <span className={styles.flpLoopBack} title="then check the condition again">↺</span>
+          <span className={styles.flpLoopBack} title={t('codeSpace.flowCheckAgain')}>↺</span>
         )}
       </div>
     </div>
@@ -222,12 +223,13 @@ function WhileLoopDiagram({ ctx, steps }) {
 
 // ─── if-statement diagram ─────────────────────────────────────────────────────
 function IfStatementDiagram({ ctx }) {
+  const { t } = useLanguage();
   const { condition, condition_eval: conditionEval, result, taken, has_else: hasElse } = ctx;
 
   return (
     <div className={styles.flpDiagram}>
       <div className={styles.flpHeader}>
-        <span className={styles.flpBadge}>if&nbsp;statement</span>
+        <span className={styles.flpBadge}>{t('codeSpace.ifStatementBadge')}</span>
         <div className={styles.flpSignature}>
           <span className={styles.flpKw}>if</span>
           <span className={styles.flpCond}>{condition}</span>
@@ -240,7 +242,7 @@ function IfStatementDiagram({ ctx }) {
 
       {/* the condition evaluated */}
       <div className={styles.ifCondBox}>
-        <span className={styles.flpFlowLabel}>condition</span>
+        <span className={styles.flpFlowLabel}>{t('codeSpace.condition')}</span>
         <span className={styles.ifCondValue}>
           <code>{condition}</code>
           <span className={styles.flpEvalArrow}>→</span>
@@ -251,7 +253,7 @@ function IfStatementDiagram({ ctx }) {
         </span>
       </div>
 
-      <div className={styles.ifSplit} aria-hidden="true">chooses one path</div>
+      <div className={styles.ifSplit} aria-hidden="true">{t('codeSpace.choosesOnePath')}</div>
 
       {/* the two possible branches */}
       <div className={styles.ifBranches}>
@@ -259,27 +261,21 @@ function IfStatementDiagram({ ctx }) {
           className={`${styles.ifBranch} ${taken === 'if' ? styles.ifBranchTaken : styles.ifBranchSkipped}`}
         >
           <div className={styles.ifBranchHead}>
-            <span className={styles.ifBranchTag}>condition True</span>
-            {taken === 'if' && <span className={styles.ifTakenPill}>✓ path taken</span>}
+            <span className={styles.ifBranchTag}>{t('codeSpace.conditionTrue')}</span>
+            {taken === 'if' && <span className={styles.ifTakenPill}>✓ {t('codeSpace.pathTaken')}</span>}
           </div>
-          <p className={styles.ifBranchDesc}>
-            run the <code>if</code> block
-          </p>
+          <p className={styles.ifBranchDesc}>{t('codeSpace.runIfBlock')}</p>
         </div>
 
         <div
           className={`${styles.ifBranch} ${taken === 'else' ? styles.ifBranchTaken : styles.ifBranchSkipped}`}
         >
           <div className={styles.ifBranchHead}>
-            <span className={styles.ifBranchTag}>{hasElse ? 'condition False' : 'condition False'}</span>
-            {taken === 'else' && <span className={styles.ifTakenPill}>✓ path taken</span>}
+            <span className={styles.ifBranchTag}>{t('codeSpace.conditionFalse')}</span>
+            {taken === 'else' && <span className={styles.ifTakenPill}>✓ {t('codeSpace.pathTaken')}</span>}
           </div>
           <p className={styles.ifBranchDesc}>
-            {hasElse ? (
-              <>run the <code>else</code> block</>
-            ) : (
-              <>skip the <code>if</code> block</>
-            )}
+            {hasElse ? t('codeSpace.runElseBlock') : t('codeSpace.skipIfBlock')}
           </p>
         </div>
       </div>
@@ -339,8 +335,8 @@ export function CodeSpace() {
   const displayedOutput = stderr
     ? stderr
     : debugging
-      ? incrementalStdout || 'Step through your code to see output build up here.'
-      : stdout || 'Run your code to see output here.';
+      ? incrementalStdout || t('codeSpace.outputStepPlaceholder')
+      : stdout || t('codeSpace.outputRunPlaceholder');
 
   const highlightedCode = useMemo(() => highlightPython(code), [code]);
 
@@ -710,11 +706,8 @@ export function CodeSpace() {
 
           {!debugging ? (
             <div className={styles.dbgPlaceholder}>
-              <p>Press <strong>Run</strong> to step through your code.</p>
-              <p className={styles.dbgHint}>
-                Works with <code>for</code>, <code>while</code>, <code>if</code>,
-                indexing, slicing, and string methods.
-              </p>
+              <p>{t('codeSpace.debugPressRun')}</p>
+              <p className={styles.dbgHint}>{t('codeSpace.debugWorksWith')}</p>
             </div>
           ) : (
             <>
@@ -724,7 +717,7 @@ export function CodeSpace() {
 
               {step && (
                 <p className={styles.dbgStepDesc}>
-                  <span className={styles.dbgEventTag}>{eventLabel(step.event)}</span>
+                  <span className={styles.dbgEventTag}>{eventLabel(step.event, t)}</span>
                   <span className={styles.dbgStepText}>{step.description}</span>
                 </p>
               )}

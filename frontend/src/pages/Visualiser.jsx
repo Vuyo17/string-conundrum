@@ -259,13 +259,13 @@ export function Visualiser() {
   const markerBounds = sliceMarkerBounds(slice, length);
 
   const fieldLabel = {
-    index: 'Enter an index',
-    slice: 'Enter a slice (start:stop:step)',
-    for_loop: 'Loop range (start:stop:step)',
-    while_loop: 'Condition (e.g. i < 5)',
-    if_stmt: 'Condition (e.g. len(text) > 5)',
-    method: 'Method name (e.g. upper)',
-  }[mode] ?? 'Expression';
+    index: t('visualiser.fieldIndex'),
+    slice: t('visualiser.fieldSlice'),
+    for_loop: t('visualiser.fieldForLoop'),
+    while_loop: t('visualiser.fieldWhileLoop'),
+    if_stmt: t('visualiser.fieldIfStatement'),
+    method: t('visualiser.fieldMethod'),
+  }[mode] ?? t('visualiser.fieldExpression');
 
   const currentInput = {
     index: indexInput, slice: sliceInput, for_loop: forInput,
@@ -314,11 +314,16 @@ export function Visualiser() {
           />
           <small>
             {{
-              index: `Integer from -${Math.max(length, 1)} to ${Math.max(length - 1, 0)}`,
-              slice: 'start:stop:step, e.g. 1:5 or 0:10:2',
-              for_loop: 'start:stop:step, e.g. 0:13:1',
-              while_loop: 'e.g. i < 5  (i starts at 0, increments by 1)',
-              if_stmt: 'e.g. len(text) > 5  or  text[0] == "H"',
+              index: t('visualiser.hintIndex', {
+                min: Math.max(length, 1),
+                max: Math.max(length - 1, 0),
+              }),
+              slice: t('visualiser.hintSlice'),
+              for_loop: t('visualiser.hintForLoop'),
+              while_loop: t('visualiser.hintWhileLoop'),
+              if_stmt: t('visualiser.hintIfStatement'),
+              // Method names only — no prose, and they stay English because the
+              // student types them verbatim.
               method: 'upper · lower · reverse · strip · title · len()',
             }[mode] ?? ''}
           </small>
@@ -333,7 +338,7 @@ export function Visualiser() {
               <option value="for_loop">{t('visualiser.modeForLoop')}</option>
               <option value="while_loop">{t('visualiser.modeWhileLoop')}</option>
               <option value="if_stmt">{t('visualiser.modeIfStatement')}</option>
-              <option value="method">String Method</option>
+              <option value="method">{t('visualiser.modeStringMethod')}</option>
             </select>
             <ChevronDown size={22} />
           </div>
@@ -344,16 +349,18 @@ export function Visualiser() {
           className={styles.visualiseButton}
           onClick={handleVisualise}
           disabled={length === 0}
-          title={length === 0 ? 'Enter a string first' : 'Run the visualisation'}
+          title={length === 0
+            ? t('visualiser.enterStringFirst')
+            : t('visualiser.runVisualisation')}
         >
-          {isStepped && isPlaying ? 'Playing…' : 'Visualise'}
+          {isStepped && isPlaying ? t('visualiser.playing') : t('visualiser.visualise')}
         </button>
       </section>
 
       {/* ── board ── */}
       <section className={styles.visualiserBoard}>
         <div className={styles.visualiserBoardTop}>
-          <div><strong>String:</strong>{' '}
+          <div><strong>{t('visualiser.stringLabel')}</strong>{' '}
             <span>{stringInput.includes('=') ? `"${text}"` : text}</span>
           </div>
           <div className={styles.operationBadge}>{operationText}</div>
@@ -407,7 +414,7 @@ export function Visualiser() {
 
         {/* character grid */}
         <div className={styles.visualRows}>
-          <div className={styles.rowLabel}>Index</div>
+          <div className={styles.rowLabel}>{t('visualiser.rowIndex')}</div>
           <div className={styles.visualGrid} style={{ '--cells': Math.max(length, 1) }}>
             {chars.map((_, index) => (
               <span key={`p-${index}`} className={styles.indexNumber}>{index}</span>
@@ -417,7 +424,7 @@ export function Visualiser() {
             ))}
           </div>
 
-          <div className={styles.rowLabel}>Char</div>
+          <div className={styles.rowLabel}>{t('visualiser.rowChar')}</div>
           <div className={styles.visualGrid} style={{ '--cells': Math.max(length, 1) }}>
             {chars.map((char, index) => {
               const active = highlighted.includes(index);
@@ -488,7 +495,9 @@ export function Visualiser() {
           <code>
             {mode === 'if_stmt'
               ? (currentStep?.conditionResult !== undefined
-                  ? (currentStep.conditionResult ? 'True → if-body runs' : 'False → else runs')
+                  ? (currentStep.conditionResult
+                      ? t('visualiser.ifBodyRuns')
+                      : t('visualiser.elseRuns'))
                   : '?')
               : mode === 'index' && !indexLookup.valid
                 ? (indexLookup.parsed === null

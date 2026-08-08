@@ -60,7 +60,7 @@ function formatValue(value) {
 
 // ─── component ────────────────────────────────────────────────────────────────
 export function Challenges() {
-  const { t } = useLanguage();
+  const { lang, t } = useLanguage();
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
@@ -80,17 +80,24 @@ export function Challenges() {
   const textareaRef = useRef(null);
   const highlightRef = useRef(null);
 
-  // ── load challenges once ─────────────────────────────────────────────────
+  // ── load challenges, and reload when the language changes ────────────────
+  // The backend localises title/description/hint/io, so switching language has
+  // to refetch. Code the student has typed lives in `codeById` keyed by id and
+  // is merged, not replaced, so a language switch never discards their work.
   useEffect(() => {
     let cancelled = false;
-    fetch(getApiUrl('/api/challenges'))
+    setLoading(true);
+    fetch(getApiUrl(`/api/challenges?lang=${encodeURIComponent(lang)}`))
       .then((res) => res.json())
       .then((data) => {
         if (cancelled) return;
         const list = data.challenges ?? [];
         setChallenges(list);
-        setActiveId(list[0]?.id ?? null);
-        setCodeById(Object.fromEntries(list.map((c) => [c.id, c.starter_code])));
+        setActiveId((current) => current ?? list[0]?.id ?? null);
+        setCodeById((prev) => ({
+          ...Object.fromEntries(list.map((c) => [c.id, c.starter_code])),
+          ...prev,
+        }));
       })
       .catch(() => {
         if (!cancelled) setLoadError('challenges.serverUnreachable');
@@ -99,7 +106,7 @@ export function Challenges() {
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, []);
+  }, [lang]);
 
   const challenge = useMemo(
     () => challenges.find((c) => c.id === activeId) ?? null,
