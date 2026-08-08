@@ -45,7 +45,9 @@ import argparse
 import ast
 import json
 import re
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 try:
@@ -94,6 +96,40 @@ INLINE_SPAN = re.compile(
     """,
     re.VERBOSE,
 )
+
+# Terms that must reach the student in English, masked so NLLB never sees them.
+#
+# The first group is this project's documented convention, quoted from
+# translate_content.py: the lecturer, textbook and exam all use these English
+# terms, so inventing isiXhosa equivalents would disadvantage students at
+# assessment time. NLLB has no system prompt and will not honour that on its
+# own — left unmasked it rendered "string variable" as "umlinganiswa womtya"
+# ("cord character") in two of five sample prompts while keeping "i-string
+# variable" in the other three, i.e. inconsistently within one exercise set.
+#
+# The second group is proper nouns and error names, which a translation model
+# will happily "correct" into something else — it turned Firebase into
+# "Fireebase". Nothing else in the pipeline catches that: a bare capitalised
+# word in prose is not a code span, so verification cannot see the damage.
+# Matched case-insensitively, because these appear capitalised in headings as
+# well as mid-sentence — "String Comparison" is the same term as "strings", and
+# missing the capitalised form rendered a module title as "Ukuthelekisa
+# Iintambo", i.e. comparison of physical ropes. The matched text is masked and
+# restored verbatim, so the original capitalisation survives either way.
+GLOSSARY_CI = re.compile(
+    r"""\b(?:
+        escape\ sequences? | f-strings? | strings? | indexe?s? | slices?
+      | loops? | variables? | methods? | lists? | Unicode
+      | Python | Firebase | ASCII | Cape\ Town | Joburg | Hlomla | isiXhosa
+      | Xhosa | Ada | [A-Za-z]+Error
+    )\b""",
+    re.VERBOSE | re.IGNORECASE,
+)
+
+# Case-SENSITIVE on purpose: these are Python literals, and matching them
+# case-insensitively would freeze ordinary English words — "None of the
+# following" and "true for every string" would be left untranslated.
+GLOSSARY_CS = re.compile(r"\b(?:True|False|None)\b")
 
 # Fragments that only make sense as part of a block, so they never parse alone.
 DANGLING_BLOCK = re.compile(r"^\s*(?:else|elif\b.*|except\b.*|finally)\s*:\s*$")
@@ -176,7 +212,12 @@ def is_code_line(line: str) -> bool:
 
 
 def mask_spans(text: str) -> tuple[str, list[str]]:
-    """Replace inline code fragments with placeholders. Returns (masked, spans)."""
+    """Replace code fragments and glossary terms with placeholders.
+
+    Returns (masked, spans). Code is masked first so a term inside a code
+    fragment — the `string` in `word = "a string"` — is protected by the
+    surrounding span rather than masked twice.
+    """
     if PLACEHOLDER_RE.search(text):
         # Real content already looks like a placeholder, so restoring would be
         # ambiguous. Refuse rather than guess.
@@ -188,7 +229,9 @@ def mask_spans(text: str) -> tuple[str, list[str]]:
         spans.append(match.group(0))
         return PLACEHOLDER.format(len(spans) - 1)
 
-    return INLINE_SPAN.sub(take, text), spans
+    masked = INLINE_SPAN.sub(take, text)
+    masked = GLOSSARY_CI.sub(take, masked)
+    return GLOSSARY_CS.sub(take, masked), spans
 
 
 def unmask_spans(text: str, spans: list[str]) -> str:
@@ -202,13 +245,17 @@ def unmask_spans(text: str, spans: list[str]) -> str:
 
 
 def protected_spans(text: str) -> list[str]:
-    """Every fragment of `text` that must survive translation byte-identical."""
+    """Every fragment of `text` that must survive translation byte-identical.
+
+    Derived from `mask_spans` itself so verification can never check a narrower
+    set than the masker protects.
+    """
     spans = []
     for line in (text or "").split("\n"):
         if is_code_line(line):
             spans.append(line)
         else:
-            spans.extend(INLINE_SPAN.findall(line))
+            spans.extend(mask_spans(line)[1])
     return spans
 
 
@@ -320,33 +367,157 @@ def do_exercises(translator, limit: int | None, dry_run: bool) -> None:
         print(f"\nwrote {EXERCISES}")
 
 
-def do_modules(translator, limit: int | None, dry_run: bool) -> None:
-    """Print translated prose for the lesson files.
+MODULE_DIR = ROOT / "frontend" / "src" / "data" / "moduleContent"
 
-    Module content is JS, not data, so this prints translations for a human to
-    paste into `frontend/src/data/moduleContent/xh/<id>.js` rather than
-    rewriting source automatically. `xh/intro.js` is the worked reference for
-    the shape and tone.
+# Fields holding prose. Everything absent here is left in English by omission,
+# which `getModuleContent`'s deep-merge handles for free.
+TRANSLATABLE = {"text", "title", "intro", "caption", "description", "prompt"}
+TRANSLATABLE_LISTS = {"outcomes", "items", "head"}
+
+# Never translated, and listed explicitly so the reason survives: `code`, `value`
+# and `string` are Python the student retypes; `output` is what the interpreter
+# actually prints; `id`, `kind`, `tone`, `state` and `apiModuleId` are wiring.
+# `rows` is skipped structurally — it holds code expressions beside their
+# explanations, and merging a partial row by position would misalign the table.
+
+# Fixed vocabulary, translated by hand: NLLB renders these inconsistently and
+# there are only a few, so a lookup beats a model call.
+LEVELS = {
+    "Beginner": "Osaqalayo",
+    "Intermediate": "Ophakathi",
+    "Advanced": "Ophezulu",
+}
+
+
+def dump_modules_json(dest: Path) -> dict[str, Path]:
+    """Evaluate the module files with node and dump each object as JSON.
+
+    The content is JS, not data, so it cannot be parsed reliably with a regex —
+    the previous approach could only scrape flat `key: 'value'` pairs and had no
+    idea of the surrounding structure. Importing it under node gives the real
+    object, which is what an overlay has to mirror position for position.
     """
-    src_dir = ROOT / "frontend" / "src" / "data" / "moduleContent"
-    field = re.compile(r"(text|title|intro|caption):\s*'((?:[^'\\]|\\.)*)'")
+    dest.mkdir(parents=True, exist_ok=True)
+    script = dest / "_dump.mjs"
+    script.write_text(
+        """
+import { readdir, writeFile } from 'node:fs/promises';
+import { pathToFileURL } from 'node:url';
+import path from 'node:path';
+const [src, out] = process.argv.slice(2);
+for (const file of (await readdir(src)).filter((f) => f.endsWith('.js') && f !== 'index.js')) {
+  const mod = await import(pathToFileURL(path.join(src, file)).href);
+  const key = Object.keys(mod).find((k) => k.endsWith('Module'));
+  if (!key) continue;
+  await writeFile(path.join(out, file.replace(/\\.js$/, '.json')),
+    JSON.stringify(mod[key], null, 2), 'utf-8');
+}
+""",
+        encoding="utf-8",
+    )
+    subprocess.run(
+        ["node", str(script), str(MODULE_DIR), str(dest)],
+        check=True,
+        capture_output=True,
+    )
+    return {p.stem: p for p in sorted(dest.glob("*.json")) if p.stem != "_dump"}
 
-    for path in sorted(src_dir.glob("*.js")):
-        if path.name == "index.js":
-            continue
-        if (src_dir / "xh" / path.name).exists():
-            print(f"-- {path.name}: already translated, skipping")
-            continue
 
-        print(f"\n===== {path.name} =====")
-        matches = field.findall(path.read_text(encoding="utf-8"))[:limit]
-        for key, value in matches:
-            if dry_run:
-                print(f"{key}: {value[:70]}")
+def translate_tree(translator, node, label: str, stats: dict[str, int]):
+    """Build a partial overlay mirroring `node`, translating only prose fields.
+
+    Returns None when a subtree yields nothing, so the caller can drop it and
+    let the English original show through.
+    """
+    if isinstance(node, dict):
+        out = {}
+        for key, value in node.items():
+            if isinstance(value, str):
+                if key == "level":
+                    if value in LEVELS:
+                        out[key] = LEVELS[value]
+                    continue
+                if key not in TRANSLATABLE:
+                    continue
+                done = translate_checked(translator, value, f"{label}.{key}")
+                stats["total"] += 1
+                if done:
+                    out[key] = done
+                else:
+                    stats["skipped"] += 1
+            elif isinstance(value, list) and all(isinstance(x, str) for x in value):
+                if key not in TRANSLATABLE_LISTS:
+                    continue
+                items = []
+                for i, item in enumerate(value):
+                    done = translate_checked(translator, item, f"{label}.{key}[{i}]")
+                    stats["total"] += 1
+                    if not done:
+                        stats["skipped"] += 1
+                    items.append(done if done else item)
+                if items:
+                    out[key] = items
+            else:
+                child = translate_tree(translator, value, f"{label}.{key}", stats)
+                if child is not None:
+                    out[key] = child
+        return out or None
+
+    if isinstance(node, list):
+        # Arrays deep-merge by position, so every slot must be held — `null`
+        # tells the merge to keep the English entry untouched.
+        items = [translate_tree(translator, item, label, stats) for item in node]
+        return items if any(i is not None for i in items) else None
+
+    return None
+
+
+def do_modules(translator, limit: int | None, dry_run: bool) -> None:
+    """Write `moduleContent/xh/<id>.js` overlays for every untranslated module.
+
+    Overlays are partial by design: `getModuleContent` deep-merges them over the
+    English base, so anything omitted keeps its original value. `xh/intro.js` is
+    the hand-written reference for the shape and tone.
+    """
+    out_dir = MODULE_DIR / "xh"
+    if dry_run:
+        for path in sorted(MODULE_DIR.glob("*.js")):
+            if path.name == "index.js":
                 continue
-            out = translate_checked(translator, value, f"{path.name}:{key}")
-            if out:
-                print(f"{key}: {out}")
+            state = "exists" if (out_dir / path.name).exists() else "would write"
+            print(f"{state:12} {out_dir.name}/{path.name}")
+        return
+
+    dumped = dump_modules_json(Path(tempfile.mkdtemp(prefix="modulecontent-")))
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    for stem, json_path in dumped.items():
+        target = out_dir / f"{stem}.js"
+        if target.exists():
+            print(f"-- {stem}: already translated, skipping")
+            continue
+
+        print(f"\n===== {stem} =====")
+        base = json.loads(json_path.read_text(encoding="utf-8"))
+        stats = {"total": 0, "skipped": 0}
+        overlay = translate_tree(translator, base, stem, stats) or {}
+
+        name = f"{stem}Module Xh".replace(" ", "")
+        body = json.dumps(overlay, ensure_ascii=False, indent=2)
+        target.write_text(
+            f"// isiXhosa translation of the {base.get('title', stem)!r} module.\n"
+            "//\n"
+            "// Machine-translated with NLLB-200 by scripts/translate_content_nllb.py,\n"
+            "// then merged over the English base by `getModuleContent`. Partial by\n"
+            "// design: `code`, `output`, `value` and table rows are omitted so they keep\n"
+            "// their English/original value, and `null` holds an array slot open.\n"
+            "//\n"
+            "// Needs a human read before students see it.\n"
+            f"\nexport const {name} = {body};\n",
+            encoding="utf-8",
+        )
+        kept = stats["total"] - stats["skipped"]
+        print(f"wrote {target}  ({kept}/{stats['total']} fields translated)")
 
 
 def main() -> None:
