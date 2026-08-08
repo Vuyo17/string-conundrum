@@ -1052,7 +1052,7 @@
     ],
     "answer": "Index 0 is both the first and only valid index",
     "xp": 10,
-    "prompt_xh": "text = \"a\"\nprint(text[0])\nYintoni ekhethekileyo ngokuchonga i-string enonobumba omnye ngale ndlela?"
+    "prompt_xh": "text = \"a\"\nprint(text[0])\nYintoni ekhethekileyo malunga indexing a-one-character string ezifana nale?"
   },
   {
     "module_id": "slicing",
@@ -1386,7 +1386,7 @@
       "word[-5:]"
     ],
     "xp": 15,
-    "prompt_xh": "word = \"hello world\"\nKhetha zonke izivakalisi zokusika ezingezantsi ezivelisa i-\"world\"."
+    "prompt_xh": "word = \"hello world\"\nKhetha zonke ii-slicing ezingezantsi ezivelisa i-\"world\"."
   },
   {
     "module_id": "slicing",
@@ -1404,7 +1404,7 @@
       "word[3:6]"
     ],
     "xp": 15,
-    "prompt_xh": "word = \"banana\"\nKhetha zonke izivakalisi zokusika ezingezantsi ezivelisa i-\"ana\"."
+    "prompt_xh": "word = \"banana\"\nKhetha zonke ii-slicing ezingezantsi ezivelisa i-\"ana\"."
   },
   {
     "module_id": "slicing",
@@ -1423,7 +1423,7 @@
       "word[3:]"
     ],
     "xp": 15,
-    "prompt_xh": "word = \"umuntu\"\nKhetha zonke izivakalisi zokusika ezingezantsi ezivelisa i-\"ntu\"."
+    "prompt_xh": "word = \"umuntu\"\nKhetha zonke ii-slicing ezingezantsi ezivelisa i-\"ntu\"."
   },
   {
     "module_id": "slicing",
@@ -1436,7 +1436,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "source = \"was it a car or a cat i saw\"\nBhala i-EXPRESSION ONE Python (hayi inkqubo epheleleyo) eprinta i-\"a car or a cat\" isebenzisa ukusika kumthombo. Kunokubakho iindlela ezingaphezu kweyodwa ezisemthethweni (izikhombisi ezifanelekileyo, izikhombisi ezibi, okanye inyathelo elibi)"
+    "prompt_xh": "source = \"was it a car or a cat i saw\"\nBhala i-EXPRESSION ONE Python (hayi inkqubo epheleleyo) eprinta i-\"a car or a cat\" usebenzisa i-slicing kumthombo."
   },
   {
     "module_id": "slicing",
@@ -1449,7 +1449,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "source = \"the level is fine\"\nBhala i-EXPRESSION ONE Python (hayi inkqubo epheleleyo) eprinta i-\"level\" isebenzisa ukusika kumthombo. Kunokubakho iindlela ezingaphezu kweyodwa ezisemthethweni (izikhombisi ezifanelekileyo, izikhombisi ezibi, okanye inyathelo elibi)"
+    "prompt_xh": "source = \"the level is fine\"\nBhala i-EXPRESSION ONE Python (hayi inkqubo epheleleyo) eprinta i-\"level\" usebenzisa i-slicing kumthombo."
   },
   {
     "module_id": "slicing",
@@ -1462,7 +1462,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "source = \"a radar station beeped\"\nBhala i-EXPRESSION ONE Python (hayi inkqubo epheleleyo) eprinta i-\"radar\" isebenzisa ukusika kumthombo. Kunokubakho iindlela ezingaphezu kweyodwa ezisemthethweni (izikhombisi ezifanelekileyo, izikhombisi ezibi, okanye inyathelo elibi)"
+    "prompt_xh": "source = \"a radar station beeped\"\nBhala i-EXPRESSION ONE Python (hayi inkqubo epheleleyo) eprinta i-\"radar\" usebenzisa i-slicing kumthombo."
   },
   {
     "module_id": "slicing",
@@ -1475,7 +1475,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo egcina i-\"report_final.pdf\" kwi-variable ebizwa ngokuba ngumbhalo kwaye uprinte ulwandiso lwefayile (iimpawu ezi-3 zokugqibela), usebenzisa ukusika kuphela."
+    "prompt_xh": "Bhala inkqubo egcina i-\"report_final.pdf\" kwi-variable ebizwa ngokuba ngumbhalo kwaye uprinte ulwandiso lwefayile (iimpawu ezi-3 zokugqibela), usebenzisa i-slicing kuphela."
   },
   {
     "module_id": "slicing",
@@ -1488,7 +1488,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo egcina i-\"user@example.com\" kwi-variable ebizwa ngokuba yi-text kwaye uprinte yonke into emva kwesimboli @ (ihlala i-index 4 kulo mthombo), usebenzisa ukusika kuphela."
+    "prompt_xh": "Bhala inkqubo egcina i-\"user@example.com\" kwi-variable ebizwa ngokuba yi-text kwaye uprinte yonke into emva kwesimboli @ (ihlala i-index 4 kulo mthombo), usebenzisa i-slicing kuphela."
   },
   {
     "module_id": "slicing",
@@ -1501,7 +1501,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo egcina i-\"2026-07-06\" kwi-variable ebizwa ngokuba ngumbhalo uze uprinte unyaka (iimpawu ezi-4 zokuqala), usebenzisa ukusika kuphela."
+    "prompt_xh": "Bhala inkqubo egcina i-\"2026-07-06\" kwi-variable ebizwa ngokuba ngumbhalo kwaye uprinte unyaka (iimpawu ezi-4 zokuqala), usebenzisa i-slicing kuphela."
   },
   {
     "module_id": "slicing",
@@ -2794,7 +2794,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo eguqula igama elithi \"cat\" usebenzisa i-loop (hayi ukusika). Gcina ukungena njenge-w = \"cat\" uze uprinte isiphumo esiguqukayo."
+    "prompt_xh": "Bhala inkqubo eguqula igama elithi \"cat\" usebenzisa i-loop (hayi i-slicing). Gcina igalelo njenge-w = \"cat\" uze uprinte isiphumo esiguqukayo."
   },
   {
     "module_id": "looping",
@@ -2807,7 +2807,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo eguqula igama elithi \"python\" usebenzisa i-loop (hayi ukusika). Gcina ukungena njenge-w = \"python\" uze uprinte isiphumo esiguqukayo."
+    "prompt_xh": "Bhala inkqubo eguqula igama elithi \"python\" usebenzisa i-loop (hayi i-slicing). Gcina igalelo njenge-w = \"python\" uze uprinte isiphumo esiguqukayo."
   },
   {
     "module_id": "looping",
@@ -2820,7 +2820,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo eguqula igama elithi \"umuntu\" usebenzisa i-loop (hayi ukusika). Gcina ukungena njenge-w = \"umuntu\" uze uprinte isiphumo esiguqukayo."
+    "prompt_xh": "Bhala inkqubo eguqula igama elithi \"umuntu\" usebenzisa i-loop (hayi i-slicing). Gcina igalelo njenge-w = \"umuntu\" uze uprinte isiphumo esiguqukayo."
   },
   {
     "module_id": "looping",
@@ -3894,7 +3894,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda igama uze uliprinte ngasemva, usebenzisa ukusika kuphela (akukho loops)."
+    "prompt_xh": "Bhala inkqubo efunda igama uze uliprinte ngasemva, usebenzisa i-slicing kuphela (hayi i-loops)."
   },
   {
     "module_id": "challenge",
@@ -3908,7 +3908,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda igama uze uliprinte ngasemva, usebenzisa ukusika kuphela (akukho loops)."
+    "prompt_xh": "Bhala inkqubo efunda igama uze uliprinte ngasemva, usebenzisa i-slicing kuphela (hayi i-loops)."
   },
   {
     "module_id": "challenge",
@@ -3922,7 +3922,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda igama uze uliprinte ngasemva, usebenzisa ukusika kuphela (akukho loops)."
+    "prompt_xh": "Bhala inkqubo efunda igama uze uliprinte ngasemva, usebenzisa i-slicing kuphela (hayi i-loops)."
   },
   {
     "module_id": "challenge",
