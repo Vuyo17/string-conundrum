@@ -328,14 +328,23 @@ function PracticeRunner({ practice, exercises, onSectionComplete }) {
         <span className={m.completionIcon}><Award size={30} /></span>
         <h3>{t('exercise.practiceComplete')}</h3>
         <p>
-          You answered <strong>{correctCount} of {exercises.length}</strong> correctly ({percent}%)
-          and earned <strong>{stars} {stars === 1 ? 'star' : 'stars'}</strong> <Star size={14} className={m.inlineStar} />.
+          {/* One key per whole sentence rather than bolted-together fragments:
+              isiXhosa word order differs from English, so a translator needs
+              the complete sentence to reorder. That costs the inline bold on
+              the numbers, which is not worth a mistranslatable string. */}
+          {t(stars === 1 ? 'exercise.practiceScoreOne' : 'exercise.practiceScore', {
+            correct: correctCount,
+            total: exercises.length,
+            percent,
+            stars,
+          })}{' '}
+          <Star size={14} className={m.inlineStar} />{' '}
           {percent >= PASS_THRESHOLD
-            ? ' That clears the 70% bar — Practice is marked complete. On to the Exam.'
-            : ' Aim for 70% to clear Practice. Revisit the lesson above and try again.'}
+            ? t('exercise.practicePassed')
+            : t('exercise.practiceRetry')}
         </p>
         <button type="button" className={m.solidButton} onClick={restart}>
-          <RefreshCcw size={15} /> Practice again
+          <RefreshCcw size={15} /> {t('exercise.practiceAgain')}
         </button>
       </div>
     );
