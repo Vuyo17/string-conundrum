@@ -61,6 +61,7 @@ TGT_LANG = "xho_Latn"
 
 ROOT = Path(__file__).resolve().parent.parent
 EXERCISES = ROOT / "backend" / "app" / "data" / "exercises.json"
+CHALLENGES = ROOT / "backend" / "app" / "data" / "challenges.json"
 
 
 # ---------------------------------------------------------------------------
@@ -118,8 +119,12 @@ INLINE_SPAN = re.compile(
 # restored verbatim, so the original capitalisation survives either way.
 GLOSSARY_CI = re.compile(
     r"""\b(?:
-        escape\ sequences? | f-strings? | strings? | indexe?s? | slices?
-      | loops? | variables? | methods? | lists? | Unicode
+        escape\ sequences? | f-strings? | strings?
+      # gerunds too: these are module titles ("String Indexing"), and asking
+      # the model to translate one bare word with no context is what triggered
+      # the repetition loop the `degenerate` check now catches.
+      | index(?:es|ing)? | slic(?:es?|ing) | loop(?:s|ing)? | iterat\w+
+      | variables? | methods? | lists? | Unicode | concatenat\w+
       | Python | Firebase | ASCII | Cape\ Town | Joburg | Hlomla | isiXhosa
       | Xhosa | Ada | [A-Za-z]+Error
     )\b""",
@@ -306,8 +311,28 @@ class Translator:
         )
 
 
+def degenerate(source: str, out: str) -> str | None:
+    """Describe how `out` is malformed, or None if it looks sane.
+
+    Span verification only proves the protected fragments came back; it says
+    nothing about the prose around them. Asked to translate the single word
+    "Indexing" — no sentence context to anchor on — NLLB emitted
+    "Ukwahlulahlulahlulahlula..." for 200 characters. That passes every other
+    check in this file, and would have shipped as a lesson heading.
+    """
+    # A short chunk repeated back-to-back is the classic decoder loop.
+    for size in range(3, 13):
+        match = re.search(rf"(.{{{size}}})\1{{3,}}", out)
+        if match:
+            return f"repetition loop {match.group(1)!r}"
+    # isiXhosa runs longer than English, but not several times longer.
+    if len(out) > max(60, len(source) * 2.5):
+        return f"length blowout {len(source)}→{len(out)} chars"
+    return None
+
+
 def translate_checked(translator: Translator, text: str, label: str) -> str | None:
-    """Translate, then reject the result if any protected fragment changed."""
+    """Translate, then reject the result if it is damaged in any way."""
     try:
         out = translator.translate(text)
     except ValueError as exc:
@@ -317,6 +342,11 @@ def translate_checked(translator: Translator, text: str, label: str) -> str | No
     broken = verify_spans(text, out)
     if broken:
         print(f"  ! {label}: code altered {broken} — skipped", file=sys.stderr)
+        return None
+
+    damage = degenerate(text, out)
+    if damage:
+        print(f"  ! {label}: {damage} — skipped", file=sys.stderr)
         return None
     return out
 
@@ -365,6 +395,51 @@ def do_exercises(translator, limit: int | None, dry_run: bool) -> None:
             json.dumps(bank, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )
         print(f"\nwrote {EXERCISES}")
+
+
+def do_challenges(translator, limit: int | None, dry_run: bool) -> None:
+    """Translate the coding-challenge bank in place.
+
+    `starter_code`, `solution` and `tests` are never translated: the first two
+    are Python the student runs, and test inputs/expected values are compared
+    literally against program output. Only the prose a reader sees is touched.
+    """
+    bank = json.loads(CHALLENGES.read_text(encoding="utf-8"))
+    todo = [c for c in bank if "title_xh" not in c][:limit]
+    print(f"{len(todo)} of {len(bank)} challenges need translating")
+
+    for i, ch in enumerate(todo, 1):
+        label = ch.get("id", f"#{i}")
+        print(f"\n[{i}/{len(todo)}] {label}")
+        if dry_run:
+            for field in ("title", "description", "hint"):
+                if ch.get(field):
+                    print(f"    {field}: {mask_spans(ch[field])[0]}")
+            continue
+
+        for field in ("title", "description", "hint"):
+            if not ch.get(field):
+                continue
+            done = translate_checked(translator, ch[field], f"{label}.{field}")
+            if done:
+                ch[f"{field}_xh"] = done
+                print(f"    {field}: {done}")
+
+        # `io` describes the input/output contract in prose, so it travels too.
+        io = ch.get("io") or {}
+        io_xh = {}
+        for key, value in io.items():
+            done = translate_checked(translator, value, f"{label}.io.{key}")
+            if done:
+                io_xh[key] = done
+        if io_xh:
+            ch["io_xh"] = io_xh
+
+    if not dry_run:
+        CHALLENGES.write_text(
+            json.dumps(bank, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
+        print(f"\nwrote {CHALLENGES}")
 
 
 MODULE_DIR = ROOT / "frontend" / "src" / "data" / "moduleContent"
@@ -522,7 +597,7 @@ def do_modules(translator, limit: int | None, dry_run: bool) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("target", choices=["exercises", "modules"])
+    parser.add_argument("target", choices=["exercises", "modules", "challenges"])
     parser.add_argument("--limit", type=int, help="only process the first N items")
     parser.add_argument(
         "--dry-run", action="store_true", help="show the code/prose split, load nothing"
@@ -530,7 +605,11 @@ def main() -> None:
     args = parser.parse_args()
 
     translator = None if args.dry_run else Translator()
-    runner = do_exercises if args.target == "exercises" else do_modules
+    runner = {
+        "exercises": do_exercises,
+        "modules": do_modules,
+        "challenges": do_challenges,
+    }[args.target]
     runner(translator, args.limit, args.dry_run)
 
 
