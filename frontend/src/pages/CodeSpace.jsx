@@ -6,6 +6,8 @@ import styles from '../styles/App.module.css';
 import { getApiUrl } from '../config/api';
 import { SpeedControl } from '../components/SpeedControl';
 import { useLanguage } from '../context/LanguageContext';
+import { transpileIsiXhosaToPython, transpilePythonToIsiXhosa } from '../utils/isiXhosaTranspiler';
+import { highlightPython as highlightPythonCode } from '../utils/pythonHighlight';
 
 // How long one step is held at 1× speed; the speed picker divides this.
 const STEP_INTERVAL_MS = 700;
@@ -285,44 +287,14 @@ function IfStatementDiagram({ ctx }) {
   );
 }
 
-function escapeHtml(value) {
-  return value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;');
-}
-
 function highlightPython(code) {
-  const tokenRegex = /(#[^\n]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b\d+(?:\.\d+)?\b|\b(?:def|class|if|elif|else|for|while|in|return|break|continue|pass|try|except|finally|with|as|import|from|True|False|None|and|or|not|lambda|yield)\b|\b(?:print|len|range|enumerate|str|int|float|list|dict|set|tuple)\b)/g;
-
-  return code.split('\n').map((line) => {
-    let out = '';
-    let cursor = 0;
-
-    for (const match of line.matchAll(tokenRegex)) {
-      const token = match[0];
-      const index = match.index ?? 0;
-
-      out += escapeHtml(line.slice(cursor, index));
-
-      if (token.startsWith('#')) {
-        out += `<span class="${styles.pyComment}">${escapeHtml(token)}</span>`;
-      } else if (token.startsWith('"') || token.startsWith("'")) {
-        out += `<span class="${styles.pyString}">${escapeHtml(token)}</span>`;
-      } else if (/^\d/.test(token)) {
-        out += `<span class="${styles.pyNumber}">${escapeHtml(token)}</span>`;
-      } else if (/^(print|len|range|enumerate|str|int|float|list|dict|set|tuple)$/.test(token)) {
-        out += `<span class="${styles.pyBuiltin}">${escapeHtml(token)}</span>`;
-      } else {
-        out += `<span class="${styles.pyKeyword}">${escapeHtml(token)}</span>`;
-      }
-
-      cursor = index + token.length;
-    }
-
-    out += escapeHtml(line.slice(cursor));
-    return out;
-  }).join('\n');
+  return highlightPythonCode(code, {
+    comment: styles.pyComment,
+    string: styles.pyString,
+    number: styles.pyNumber,
+    builtin: styles.pyBuiltin,
+    keyword: styles.pyKeyword,
+  });
 }
 
 // ─── component ────────────────────────────────────────────────────────────────
@@ -336,6 +308,8 @@ export function CodeSpace() {
   const [steps, setSteps] = useState([]);
   const [stepIndex, setStepIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [transpileNotice, setTranspileNotice] = useState('');
+  const [transpileMode, setTranspileMode] = useState('to-python');
   const [speed, setSpeed] = useState(1);
   const [editorLine, setEditorLine] = useState(1);
   const playTimer = useRef(null);
@@ -513,6 +487,25 @@ export function CodeSpace() {
     }
   }
 
+  function handleTranspile() {
+    const nextMode = transpileMode === 'to-python' ? 'to-xhosa' : 'to-python';
+    const transpiledCode = nextMode === 'to-python'
+      ? transpileIsiXhosaToPython(code)
+      : transpilePythonToIsiXhosa(code);
+
+    setTranspileMode(nextMode);
+    setCode(transpiledCode);
+    setTranspileNotice(nextMode === 'to-python'
+      ? t('codeSpace.transpileToPythonSuccess')
+      : t('codeSpace.transpileToXhosaSuccess'));
+    stopPlay();
+    setStepIndex(0);
+    setStdout('');
+    setStderr('');
+    setSteps([]);
+    setDebugging(false);
+  }
+
   // ── run code (execute + trace) ───────────────────────────────────────────────
   const handleRun = useCallback(async () => {
     stopPlay();
@@ -522,17 +515,19 @@ export function CodeSpace() {
     setStepIndex(0);
     setDebugging(false);
 
+    const pythonCode = transpileIsiXhosaToPython(code);
+
     try {
       const [execRes, debugRes] = await Promise.all([
         fetch(getApiUrl('/api/execute'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code }),
+          body: JSON.stringify({ code: pythonCode }),
         }),
         fetch(getApiUrl('/api/debug'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code }),
+          body: JSON.stringify({ code: pythonCode }),
         }),
       ]);
 
@@ -553,6 +548,8 @@ export function CodeSpace() {
   function handleClear() {
     stopPlay();
     setCode(DEFAULT_CODE);
+    setTranspileMode('to-python');
+    setTranspileNotice('');
     setStdout('');
     setStderr('');
     setSteps([]);
@@ -581,11 +578,20 @@ export function CodeSpace() {
             onChange={setSpeed}
             disabled={!debugging || steps.length === 0}
           />
+          <button className={styles.codeClearButton} onClick={handleTranspile}>
+            {transpileMode === 'to-python'
+              ? t('codeSpace.transpileToPython')
+              : t('codeSpace.transpileToXhosa')}
+          </button>
           <button className={styles.codeClearButton} onClick={handleClear}>
             <Trash2 size={22} /> {t('common.clear')}
           </button>
         </div>
       </header>
+
+      {transpileNotice && (
+        <div className={styles.codeTranspileNotice}>{transpileNotice}</div>
+      )}
 
       <main className={styles.codeSpaceGrid}>
         {/* ── left: editor + output ── */}

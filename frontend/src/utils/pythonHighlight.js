@@ -3,9 +3,9 @@
 //   highlightPython(code, { comment, string, number, builtin, keyword })
 // Returns an HTML string (all non-token text is escaped).
 
-const TOKEN_REGEX = /(#[^\n]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b\d+(?:\.\d+)?\b|\b(?:def|class|if|elif|else|for|while|in|return|break|continue|pass|try|except|finally|with|as|import|from|True|False|None|and|or|not|lambda|yield)\b|\b(?:print|len|range|enumerate|input|str|int|float|list|dict|set|tuple)\b)/g;
+const TOKEN_REGEX = /(#[^\n]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b\d+(?:\.\d+)?\b|\b(?:def|class|if|elif|else|for|while|in|return|break|continue|pass|try|except|finally|with|as|import|from|True|False|None|and|or|not|lambda|yield|ukuba|ngaphandle|ngelixa|kwi|ku|bhala|ubude)\b|\b(?:print|len|range|enumerate|input|str|int|float|list|dict|set|tuple)\b)/g;
 
-const BUILTIN_REGEX = /^(print|len|range|enumerate|input|str|int|float|list|dict|set|tuple)$/;
+const BUILTIN_REGEX = /^(print|len|range|enumerate|input|str|int|float|list|dict|set|tuple|bhala|ubude)$/;
 
 export function escapeHtml(value) {
   return value

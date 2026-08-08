@@ -859,6 +859,17 @@ p {
   gap: 12px;
 }
 
+.codeTranspileNotice {
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--primary-soft);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--primary-soft) 70%, transparent);
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .codeTitleGroup {
   display: flex;
   align-items: flex-start;
