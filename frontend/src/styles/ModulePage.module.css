@@ -508,7 +508,7 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--muted);
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .blockTable td {
@@ -1126,7 +1126,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 10.5px;
   font-weight: 800;
   letter-spacing: 0.07em;
@@ -1487,7 +1487,7 @@
 .examScoreStat { display: grid; justify-items: center; gap: 2px; }
 
 .examScoreStat strong {
-  font-family: "Fraunces", Georgia, serif;
+  font-family: "Inter", system-ui, sans-serif;
   font-size: 26px;
   color: var(--ink);
   display: inline-flex;
@@ -1537,7 +1537,7 @@
   align-items: center;
   gap: 8px;
   margin: 0 0 12px;
-  font-family: "Fraunces", Georgia, serif;
+  font-family: "Inter", system-ui, sans-serif;
   font-size: 17px;
 }
 
@@ -1561,7 +1561,7 @@
 
 .reviewStack { display: grid; gap: 14px; }
 
-.reviewHeading { font-family: "Fraunces", Georgia, serif; font-size: 18px; margin: 6px 0 0; }
+.reviewHeading { font-family: "Inter", system-ui, sans-serif; font-size: 18px; margin: 6px 0 0; }
 
 .reviewCard {
   background: var(--surface);
