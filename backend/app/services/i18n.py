@@ -48,10 +48,10 @@ TEMPLATES = {
 MISCONCEPTION_FEEDBACK_XH = {
     "immutability_in_place": "Iistring azitshintsheki (immutable). Imisebenzi yestring ibuyisela iistring ezintsha endaweni yokutshintsha ezikhoyo.",
     "indexing_from_one": "Ukubala kwe-index kwiPython kuqala ku-0, hayi ku-1. Uphawu lokuqala lukwi-index 0.",
-    "negative_index_confusion": "Ii-index ezimbi zibala zisuka ekugqibeleni, ziqala ku--1 kuphawu lokugqibela.",
+    "negative_index_confusion": "Ii-index ezi-negative zibala zisuka ekugqibeleni; uphawu lokugqibela lukwi-index -1.",
     "off_by_one_length": "Ii-index ezisebenzayo zestring zisuka ku-0 ziye ku-len(string) - 1. I-len(string) ngokwayo ingaphaya kwesiphelo ngesinye.",
     "slice_stop_inclusive": "I-stop index kwi-slice ayibandakanywa. I-word[0:5] iyayeka phambi kwe-index 5, ayipheleli kuyo.",
-    "negative_step_unfamiliar": "I-step embi ihamba istring ibuyela umva, ngoko i-word[::-1] iyayiguqula endaweni yokuvelisa impazamo.",
+    "negative_step_unfamiliar": "I-step e-negative ihamba istring ibuyela umva, ngoko i-word[::-1] iyayiguqula endaweni yokuvelisa impazamo.",
     "method_mutates_target": "Ii-method zestring ezifana no-upper() no-lower() zibuyisela istring esitsha. I-variable yokuqala ayitshintshi ngaphandle kokuba uyayibuyisela.",
     "comparison_ignores_case": "Ukuthelekisa iistring kwiPython kuqwalasela oonobumba abakhulu nabancinci, ngoko u-'Cat' no-'cat' abafani.",
     "strings_not_orderable_myth": "Iistring zinokuthelekiswa ngo-< no-> kusetyenziswa ulandelelwano lwesichazi-magama (lexicographic).",
@@ -71,7 +71,7 @@ MISCONCEPTION_FEEDBACK_XH = {
 
 MODULE_EXPLANATIONS_XH = {
     "intro": "Istring lulandelelwano lweempawu ezibhalwe ngaphakathi kwiingcaphuno. Iingcaphuno zibonisa apho umbhalo uqala aphele khona; aziyonxalenye yexabiso ngokwalo.",
-    "indexing": "Ukubala kwe-index kufunda uphawu olunye ngendawo yalo. IPython ibala isuka ku-0, ngoko uphawu lokuqala lukwi-index 0 kwaye olokugqibela lukwi-len(text) - 1. Ii-index ezimbi zibala zibuyela umva ukusuka ku--1 ekugqibeleni.",
+    "indexing": "Ukubala kwe-index kufunda uphawu olunye ngendawo yalo. IPython ibala isuka ku-0, ngoko uphawu lokuqala lukwi-index 0 kwaye olokugqibela lukwi-len(text) - 1. Ii-index ezi-negative zibala zibuyela umva; uphawu lokugqibela lukwi-index -1.",
     "slicing": "I-slice text[start:stop:step] ikhuphela icandelo lestring. Iqala ku-start, iyeka phambi kwe-stop, kwaye ibuyisela istring esitsha, ishiya esokuqala singatshintshanga.",
     "immutability": "Iistring azitshintsheki: xa sele sikhona, iimpawu zaso azinakutshintshwa. Nantoni na ebonakala ngathi lutshintsho eneneni yakha istring esitsha, ngoko isiphumo kufuneka sibuyiselwe ukuze sigcinwe.",
     "comparison": "Ukuthelekisa iistring ngo-== kuqhagamshela iimpawu ngokuchanekileyo, kubandakanya oonobumba abakhulu nabancinci. Imisebenzi ye-< ne-> ithelekisa ngolandelelwano lwesichazi-magama, uphawu ngophawu.",
