@@ -1,37 +1,43 @@
 /* ─── DESIGN TOKENS ─────────────────────────────────────────────────────── */
 :root {
-  --bg: hsl(40, 33%, 98%);
-  --surface: hsl(0, 0%, 100%);
-  --surface-2: hsl(40, 24%, 96%);
-  --border: hsl(40, 14%, 90%);
-  --fg: hsl(184, 32%, 13%);
-  --muted: hsl(185, 9%, 44%);
+  /* Kaggle-style palette: neutral greys, white cards, one cyan accent.
+     Type is Inter throughout — no serif display face. */
+  --bg: hsl(0, 0%, 98%);            /* page      #fafafa */
+  --surface: hsl(0, 0%, 100%);      /* cards     #ffffff */
+  --surface-2: hsl(0, 0%, 96%);     /* inputs    #f5f5f5 */
+  --border: hsl(213, 9%, 89%);      /* dividers  #dfe1e5 */
+  --fg: hsl(240, 2%, 13%);          /* body ink  #202021 */
+  --muted: hsl(216, 5%, 45%);       /* secondary #5f6368 */
 
-  --primary: hsl(174, 71%, 30%);
+  /* Kaggle cyan is #20BEFF; that exact tint fails contrast under white
+     text, so fills use a deepened step of the same hue and the bright
+     brand tone is kept for dark mode, where it sits on ink. */
+  --primary: hsl(197, 100%, 40%);
   --primary-fg: hsl(0, 0%, 100%);
-  --primary-soft: hsl(173, 55%, 93%);
-  --primary-dark: hsl(174, 71%, 22%);
+  --primary-soft: hsl(197, 100%, 95%);
+  --primary-dark: hsl(197, 100%, 32%);
 
-  --accent: hsl(33, 90%, 52%);
-  --accent-soft: hsl(37, 92%, 93%);
+  --accent: hsl(36, 100%, 48%);
+  --accent-soft: hsl(36, 100%, 94%);
 
-  --success: hsl(152, 56%, 38%);
-  --success-soft: hsl(152, 55%, 93%);
+  --success: hsl(145, 63%, 35%);
+  --success-soft: hsl(145, 55%, 94%);
   --warning: hsl(38, 92%, 50%);
-  --danger: hsl(0, 72%, 53%);
-  --danger-soft: hsl(0, 72%, 96%);
+  --danger: hsl(4, 72%, 51%);
+  --danger-soft: hsl(4, 72%, 96%);
 
+  /* flat, tight shadows — Kaggle barely lifts anything off the page */
   --shadow-soft:
-    0 1px 3px hsl(185 40% 14% / 0.06), 0 4px 16px hsl(185 40% 14% / 0.04);
+    0 1px 2px hsl(0 0% 0% / 0.08), 0 1px 3px hsl(0 0% 0% / 0.06);
   --shadow-lift:
-    0 4px 24px hsl(185 40% 14% / 0.1), 0 1px 3px hsl(185 40% 14% / 0.07);
+    0 2px 6px hsl(0 0% 0% / 0.12), 0 1px 2px hsl(0 0% 0% / 0.08);
   --radius: 20px;
   --radius-sm: 12px;
 
   /* translucent chrome (topbar / sidebar / search) */
-  --chrome-bg: hsl(40 33% 98% / 0.82);
-  --chrome-bg-2: hsl(0 0% 100% / 0.78);
-  --search-bg: hsl(40 24% 96% / 0.7);
+  --chrome-bg: hsl(0 0% 100% / 0.92);
+  --chrome-bg-2: hsl(0 0% 100% / 0.88);
+  --search-bg: hsl(0 0% 96% / 0.9);
 
   /* ModulePage callout + review accents (overridden in dark) */
   --warn-border: #e7c26a;
@@ -51,10 +57,12 @@
 body {
   margin: 0;
   font-family:
-    "Plus Jakarta Sans",
+    "Inter",
     ui-sans-serif,
     system-ui,
     -apple-system,
+    "Segoe UI",
+    Roboto,
     sans-serif;
   background-color: var(--bg);
   color: var(--fg);
@@ -66,7 +74,7 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: "Fraunces", Georgia, serif;
+  font-family: "Inter", system-ui, sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -125,7 +133,7 @@ input {
 }
 
 .brandButton strong {
-  font-family: "Fraunces", Georgia, serif;
+  font-family: "Inter", system-ui, sans-serif;
   font-size: 18px;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -657,7 +665,7 @@ p {
   font-size: 14px;
   font-weight: 700;
   margin: 0;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Inter", sans-serif;
 }
 .moduleCard p {
   font-size: 13px;
@@ -711,7 +719,7 @@ p {
   overflow: auto;
   font-size: 13.5px;
   line-height: 1.9;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   width: 100%;
   box-sizing: border-box;
   resize: vertical;
@@ -726,7 +734,7 @@ p {
   border-radius: 13px;
   padding: 14px;
   min-height: 100px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
   line-height: 1.8;
   color: var(--fg);
@@ -777,7 +785,7 @@ p {
   background: var(--surface-2);
 }
 .leaderRow span:first-child {
-  font-family: "Fraunces", Georgia, serif;
+  font-family: "Inter", system-ui, sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: var(--muted);
@@ -895,7 +903,7 @@ p {
 
 .codeHero h1 {
   margin: 0;
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
   font-size: 24px;
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -985,7 +993,7 @@ p {
 
 .codePanelHeader h2 {
   margin: 0;
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
   font-size: 16px;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -1029,7 +1037,7 @@ p {
   align-content: start;
   gap: 0;
   color: var(--muted);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
   line-height: 26px;
   text-align: center;
@@ -1059,7 +1067,7 @@ p {
   inset: 0;
   margin: 0;
   padding: 10px 12px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
   line-height: 26px;
   white-space: pre;
@@ -1078,7 +1086,7 @@ p {
   outline: 0;
   resize: none;
   padding: 10px 12px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
   line-height: 26px;
   color: transparent;
@@ -1123,7 +1131,7 @@ p {
   padding: 10px 12px;
   background: var(--surface);
   color: var(--fg);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
   line-height: 1.45;
   white-space: pre-wrap;
@@ -1295,7 +1303,7 @@ p {
 
 .visualiserHeader h1 {
   margin: 0;
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
   font-size: 30px;
   line-height: 1.1;
   letter-spacing: -0.03em;
@@ -1504,7 +1512,7 @@ p {
   display: grid;
   place-items: center;
   font-size: 17px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-weight: 900;
   background: var(--surface);
 }
@@ -1596,7 +1604,7 @@ p {
 
 .visualiserOutput code {
   color: var(--primary);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
   font-weight: 900;
 }
@@ -1771,7 +1779,7 @@ p {
   color: var(--primary);
   border-radius: 4px;
   padding: 1px 5px;
-  font-family: ui-monospace, Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
   margin: 0 2px;
 }
@@ -1837,12 +1845,12 @@ p {
   vertical-align: middle;
 }
 .dbgVarName {
-  font-family: ui-monospace, Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-weight: 700;
   color: var(--primary);
 }
 .dbgVarValue {
-  font-family: ui-monospace, Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   color: var(--fg);
 }
 
@@ -1864,7 +1872,7 @@ p {
 
 .dbgTopLeft h2 {
   margin: 0;
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
   font-size: 16px;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -1884,7 +1892,7 @@ p {
   border-radius: 999px;
   background: var(--primary-soft);
   color: var(--primary);
-  font-family: ui-monospace, Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -1898,7 +1906,7 @@ p {
   border-radius: 999px;
   border: 1px solid var(--border);
   color: var(--muted);
-  font-family: ui-monospace, Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 12px;
   font-weight: 700;
 }
@@ -1922,7 +1930,7 @@ p {
   align-items: baseline;
   gap: 10px;
   flex-wrap: wrap;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
   line-height: 1.5;
 }
@@ -1933,7 +1941,7 @@ p {
   border-radius: 999px;
   background: var(--primary-soft);
   color: var(--primary);
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.02em;
@@ -1991,7 +1999,7 @@ p {
   border-radius: 10px;
   border: 1px solid var(--border);
   background: var(--surface-2);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
 }
 
@@ -2066,11 +2074,11 @@ p {
   font-size: 10px;
   font-weight: 700;
   color: var(--muted);
-  font-family: ui-monospace, Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
 }
 
 .flpCellVal {
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 20px;
   font-weight: 600;
   color: var(--fg);
@@ -2172,7 +2180,7 @@ p {
 }
 
 .flpFlowValue {
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 17px;
   font-weight: 700;
   color: var(--fg);
@@ -2236,7 +2244,7 @@ p {
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--surface-2);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
 }
 
 .flpEvalRaw {
@@ -2270,7 +2278,7 @@ p {
   height: 24px;
   padding: 0 12px;
   border-radius: 999px;
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.03em;
@@ -2371,7 +2379,7 @@ p {
 
 .ifCondValue {
   flex: 1 1 auto;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 16px;
 }
 
@@ -2497,7 +2505,7 @@ p {
   padding: 1px 6px;
   border-radius: 5px;
   background: var(--surface-2);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
 }
 
@@ -2558,7 +2566,7 @@ p {
 }
 .visStepDesc {
   font-size: 11px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   color: #10172e;
   line-height: 1.35;
   overflow-x: auto;
@@ -2578,7 +2586,7 @@ p {
   padding: 3px 8px;
   background: var(--primary-soft);
   border-radius: 999px;
-  font-family: ui-monospace, Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 10px;
   color: var(--primary-dark);
 }
@@ -2724,7 +2732,7 @@ p {
   padding: 1px 6px;
   border-radius: 5px;
   background: var(--surface-2);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
   color: var(--primary-dark);
 }
@@ -2778,7 +2786,7 @@ p {
 }
 
 .challengeFnTag {
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
   font-weight: 700;
   color: var(--primary-dark);
@@ -2814,7 +2822,7 @@ p {
   inset: 0;
   margin: 0;
   padding: 14px 16px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
   line-height: 24px;
   white-space: pre;
@@ -2832,7 +2840,7 @@ p {
   outline: 0;
   resize: none;
   padding: 14px 16px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
   line-height: 24px;
   color: transparent;
@@ -2937,7 +2945,7 @@ p {
   background: var(--danger-soft);
   border: 1px solid hsl(0 72% 53% / 0.2);
   color: var(--danger);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 12.5px;
   white-space: pre-wrap;
   word-break: break-word;
@@ -2996,7 +3004,7 @@ p {
 }
 
 .testCall {
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
   font-weight: 700;
   color: var(--fg);
@@ -3014,7 +3022,7 @@ p {
   display: flex;
   align-items: baseline;
   gap: 10px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
 }
 
@@ -3022,7 +3030,7 @@ p {
   flex-shrink: 0;
   width: 64px;
   color: var(--muted);
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -3507,7 +3515,7 @@ p {
 }
 
 .challengeFnTagLc {
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 12px;
   color: #475569;
   font-weight: 700;
@@ -3535,7 +3543,7 @@ p {
   inset: 0;
   margin: 0;
   padding: 12px 14px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
   line-height: 24px;
   white-space: pre;
@@ -3553,7 +3561,7 @@ p {
   width: 100%;
   height: 100%;
   padding: 12px 14px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
   line-height: 24px;
   white-space: pre;
@@ -3639,7 +3647,7 @@ p {
   border: 1px solid #fecaca;
   background: #fff1f2;
   color: #b91c1c;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 12px;
   white-space: pre-wrap;
 }
@@ -3677,7 +3685,7 @@ p {
 }
 
 .testCallLc {
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 12.5px;
   color: #334155;
   font-weight: 700;
@@ -3694,7 +3702,7 @@ p {
   display: flex;
   gap: 8px;
   align-items: baseline;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 12.5px;
 }
 
@@ -3793,26 +3801,28 @@ p {
 /* VS Code Dark+ surfaces (neutral grays, whisper of green) with our teal
    as the single accent. Flat and high-contrast — no glow, no neon. */
 :root[data-theme="dark"] {
-  --bg: hsl(160, 5%, 11%);          /* editor bg   ~#1b1d1c */
-  --surface: hsl(162, 5%, 14%);     /* panels/cards ~#222524 */
-  --surface-2: hsl(162, 5%, 18%);   /* inputs      ~#2c2f2e */
-  --border: hsl(160, 5%, 26%);      /* dividers    ~#3f4341 */
-  --fg: hsl(150, 10%, 91%);         /* high-contrast body text */
-  --muted: hsl(155, 6%, 62%);       /* secondary text ~#939996 */
+  /* Kaggle dark: flat neutral greys, no hue cast, brand cyan as the
+     single accent — bright here because it sits on ink, not white. */
+  --bg: hsl(0, 0%, 12%);            /* page      #1f1f1f */
+  --surface: hsl(0, 0%, 16%);       /* cards     #292929 */
+  --surface-2: hsl(0, 0%, 20%);     /* inputs    #333333 */
+  --border: hsl(216, 5%, 31%);      /* dividers  #3c4043 */
+  --fg: hsl(220, 14%, 91%);         /* body ink  #e8eaed */
+  --muted: hsl(214, 8%, 66%);       /* secondary #9aa0a6 */
 
-  --primary: hsl(170, 55%, 46%);    /* teal accent (buttons, active) */
-  --primary-fg: hsl(160, 30%, 9%);  /* dark ink on teal */
-  --primary-soft: hsl(170, 30%, 16%); /* muted teal fill (nav/badges) */
-  --primary-dark: hsl(170, 58%, 53%); /* hover: slightly brighter */
+  --primary: hsl(197, 100%, 56%);   /* #20BEFF — exact Kaggle cyan */
+  --primary-fg: hsl(0, 0%, 8%);     /* dark ink on cyan */
+  --primary-soft: hsl(197, 45%, 18%);
+  --primary-dark: hsl(197, 100%, 66%); /* hover: brighter */
 
-  --accent: hsl(35, 72%, 58%);      /* amber, dialled back */
-  --accent-soft: hsl(35, 38%, 15%);
+  --accent: hsl(36, 90%, 60%);
+  --accent-soft: hsl(36, 40%, 15%);
 
-  --success: hsl(150, 50%, 50%);
-  --success-soft: hsl(150, 35%, 13%);
+  --success: hsl(145, 50%, 52%);
+  --success-soft: hsl(145, 35%, 14%);
   --warning: hsl(38, 80%, 56%);
-  --danger: hsl(0, 65%, 63%);
-  --danger-soft: hsl(0, 35%, 15%);
+  --danger: hsl(4, 70%, 63%);
+  --danger-soft: hsl(4, 35%, 16%);
 
   /* plain depth shadows, no colored glow */
   --shadow-soft:
@@ -3820,9 +3830,9 @@ p {
   --shadow-lift:
     0 4px 16px hsl(0 0% 0% / 0.5), 0 1px 3px hsl(0 0% 0% / 0.4);
 
-  --chrome-bg: hsl(162 5% 12% / 0.86);
-  --chrome-bg-2: hsl(162 5% 13% / 0.84);
-  --search-bg: hsl(162 5% 18% / 0.82);
+  --chrome-bg: hsl(0 0% 12% / 0.92);
+  --chrome-bg-2: hsl(0 0% 16% / 0.9);
+  --search-bg: hsl(0 0% 20% / 0.9);
 
   --warn-border: hsl(38 45% 30%);
   --warn-bg: hsl(38 30% 12%);
