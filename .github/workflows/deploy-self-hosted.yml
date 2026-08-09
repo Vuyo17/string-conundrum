@@ -59,8 +59,13 @@ jobs:
           }
 
           # Sync backend code to the path used by the systemd service.
+          #
+          # .env is excluded from the delete sweep: it is gitignored, so it is
+          # never in the source tree, and a plain --delete wiped it here before
+          # the fallback below could read it — making that fallback, and the
+          # error message advertising it, impossible to satisfy.
           mkdir -p "$APP_DIR/backend"
-          rsync -az --delete backend/ "$APP_DIR/backend/"
+          rsync -az --delete --exclude='.env' backend/ "$APP_DIR/backend/"
 
           # Ensure backend virtualenv exists and dependencies are current.
           if [ ! -d "$APP_DIR/venv" ]; then
