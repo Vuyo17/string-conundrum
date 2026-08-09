@@ -401,6 +401,20 @@ export function CodeSpace() {
     outputRef.current.scrollTop = outputRef.current.scrollHeight;
   }, [displayedOutput]);
 
+  // auto-transpile editor when the app language changes
+  useEffect(() => {
+    if (lang === 'xh' && transpileMode === 'to-python') {
+      setCode((c) => transpilePythonToIsiXhosa(c));
+      setTranspileMode('to-xhosa');
+      setTranspileNotice(t('codeSpace.transpileToXhosaSuccess'));
+    } else if (lang === 'en' && transpileMode === 'to-xhosa') {
+      setCode((c) => transpileIsiXhosaToPython(c));
+      setTranspileMode('to-python');
+      setTranspileNotice(t('codeSpace.transpileToPythonSuccess'));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang]);
+
   function setCodeWithSelection(nextCode, start, end = start) {
     pendingSelectionRef.current = { start, end };
     setCode(nextCode);
