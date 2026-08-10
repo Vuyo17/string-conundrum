@@ -119,7 +119,7 @@ export const indexingModuleXh = {
             "Strings yimigca yeebhokisi ezinamanani; `string[index]` ifunda ibhokisi enye.",
             "Ukubala kuqala ku-0, kwaye i-index ilinganisa umgama ukusuka ekuqaleni.",
             "Iimpawu ezingalunganga zibalwa ukususela ekupheleni: `-1` usoloko uphawu lokugqibela.",
-            "Valid indices run from `-len(s)` up to `len(s) - 1`. Anything else raises an IndexError.",
+            "Ii-indices ezisemthethweni zibala ukusuka ku-`-len(s)` ukuya ku-`len(s) - 1`. Nantoni na enye iphakamisa i-IndexError.",
             "Umlinganiswa wokugqibela ngu`s[len(s) - 1]`, okanye nje u`s[-1]`."
           ]
         }

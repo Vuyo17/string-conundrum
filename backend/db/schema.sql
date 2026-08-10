@@ -30,6 +30,13 @@ CREATE TABLE IF NOT EXISTS exercises (
     prompt_xh TEXT,
     explanation_xh TEXT,
     hint_xh TEXT,
+    -- options_xh/answer_xh/answers_xh are DISPLAY TEXT ONLY. Grading always
+    -- compares against the English `answer`/`answers`/`misconception_map`
+    -- keys, never the translated text, so a submitted choice always matches
+    -- regardless of which language rendered it. See feedback.py.
+    options_xh JSONB,
+    answer_xh TEXT,
+    answers_xh JSONB,
     sort_order INTEGER NOT NULL,
     PRIMARY KEY (module_id, question_id)
 );
@@ -99,6 +106,9 @@ CREATE INDEX IF NOT EXISTS idx_module_section_completions_user ON module_section
 ALTER TABLE exercises ADD COLUMN IF NOT EXISTS prompt_xh TEXT;
 ALTER TABLE exercises ADD COLUMN IF NOT EXISTS explanation_xh TEXT;
 ALTER TABLE exercises ADD COLUMN IF NOT EXISTS hint_xh TEXT;
+ALTER TABLE exercises ADD COLUMN IF NOT EXISTS options_xh JSONB;
+ALTER TABLE exercises ADD COLUMN IF NOT EXISTS answer_xh TEXT;
+ALTER TABLE exercises ADD COLUMN IF NOT EXISTS answers_xh JSONB;
 ALTER TABLE challenges ADD COLUMN IF NOT EXISTS title_xh TEXT;
 ALTER TABLE challenges ADD COLUMN IF NOT EXISTS description_xh TEXT;
 ALTER TABLE challenges ADD COLUMN IF NOT EXISTS hint_xh TEXT;

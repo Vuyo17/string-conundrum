@@ -574,6 +574,7 @@
       }
     ],
     "title_xh": "Umlinganiswa Wokuqala Oyingqayizivele",
+    "description_xh": "Funda umgca omnye wesicatshulwa uze uprinte umlinganiswa wokuqala ovela kanye kuphela. Ukuba wonke umlinganiswa uyaphindaphindwa, printa None.",
     "hint_xh": "I-text.count(char) ikuxelela ukuba umlinganiswa uvela kaninzi kangakanani kumgca wonke.",
     "io_xh": {
       "input": "Umgca omnye wesicatshulwa.",
@@ -658,6 +659,7 @@
     ],
     "title_xh": "I-Palindromic Substring ende",
     "description_xh": "Funda umgca omnye wesicatshulwa uze uprinte umgca omde weempawu ongaphakathi kuwo ofundeka ngokufanayo ngaphambili nangasemva.",
+    "hint_xh": "I-slice nganye ye-`text[start:end]` ngumcimbi onokukhethwa. I-slice yi-palindrome xa ilingana nokujikeleziswa kwayo, `piece == piece[::-1]`. Gcina eyona inde ubonileyo ukuya kuthi ga ngoku.",
     "io_xh": {
       "input": "Umgca omnye wesicatshulwa.",
       "output": "Elona candelo lide le-palindromic."

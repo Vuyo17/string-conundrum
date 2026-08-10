@@ -105,7 +105,7 @@ def _load_exercises() -> list[dict]:
             """
             SELECT module_id, question_id, type, prompt, options, answer, answers,
                    misconception_map, starter_code, test_cases, explanation, stars, xp,
-                   prompt_xh, explanation_xh, hint_xh
+                   prompt_xh, explanation_xh, hint_xh, options_xh, answer_xh, answers_xh
             FROM exercises
             ORDER BY sort_order
             """
@@ -120,18 +120,27 @@ def _find_exercise(module_id: str, question_id: str) -> dict | None:
     return None
 
 
+def _display_answer(exercise: dict, lang: str) -> str:
+    """The correct answer text to show the student, in their language.
+
+    Never used for grading — comparisons always go through the raw English
+    `answer`/`answers` so a submission matches regardless of display language.
+    """
+    return exercise.get(f"answer_{lang}") or exercise["answer"]
+
+
 def _grade_mcq(exercise: dict, answer: str, lang: str) -> dict:
     is_correct = answer.strip() == exercise["answer"]
     if is_correct:
         return {
             "correct": True,
             "misconception_id": None,
-            "feedback": _tpl(lang, "correct", answer=exercise["answer"]),
+            "feedback": _tpl(lang, "correct", answer=_display_answer(exercise, lang)),
             "explanation": _explanation_for(exercise, lang=lang),
         }
 
     misconception_id = exercise.get("misconception_map", {}).get(answer.strip())
-    correction = _tpl(lang, "not_quite", answer=exercise["answer"])
+    correction = _tpl(lang, "not_quite", answer=_display_answer(exercise, lang))
     specific = _misconceptions(lang).get(misconception_id)
     feedback = f"{correction} — {specific}" if specific else correction
     return {
@@ -151,12 +160,12 @@ def _grade_fill_blank(exercise: dict, answer: str, lang: str) -> dict:
         return {
             "correct": True,
             "misconception_id": None,
-            "feedback": _tpl(lang, "correct", answer=exercise["answer"]),
+            "feedback": _tpl(lang, "correct", answer=_display_answer(exercise, lang)),
             "explanation": _explanation_for(exercise, lang=lang),
         }
 
     misconception_id = exercise.get("misconception_map", {}).get(answer.strip())
-    correction = _tpl(lang, "not_quite", answer=exercise["answer"])
+    correction = _tpl(lang, "not_quite", answer=_display_answer(exercise, lang))
     specific = _misconceptions(lang).get(misconception_id)
     feedback = f"{correction} — {specific}" if specific else correction
     return {
@@ -165,6 +174,18 @@ def _grade_fill_blank(exercise: dict, answer: str, lang: str) -> dict:
         "feedback": feedback,
         "explanation": _explanation_for(exercise, misconception_id, lang),
     }
+
+
+def _display_correct_set_text(exercise: dict, correct_set: set, lang: str) -> str:
+    """Comma-joined display text for a select_all answer set, in the
+    student's language. Grading always compares the raw English `answers`;
+    this only affects what's shown in the "not quite" message."""
+    options = exercise.get("options") or []
+    options_xh = exercise.get("options_xh") or []
+    if options_xh and len(options_xh) == len(options):
+        lookup = dict(zip(options, options_xh))
+        return ", ".join(lookup.get(a, a) for a in sorted(correct_set))
+    return ", ".join(sorted(correct_set))
 
 
 def _grade_select_all(exercise: dict, answers: list[str], lang: str) -> dict:
@@ -186,7 +207,10 @@ def _grade_select_all(exercise: dict, answers: list[str], lang: str) -> dict:
             misconception_id = mid
             break
 
-    correction = _tpl(lang, "not_quite_selection", answer=", ".join(sorted(correct_set)))
+    correction = _tpl(
+        lang, "not_quite_selection",
+        answer=_display_correct_set_text(exercise, correct_set, lang),
+    )
     specific = _misconceptions(lang).get(misconception_id)
     feedback = f"{correction} — {specific}" if specific else correction
     return {
@@ -300,11 +324,19 @@ def _localise(exercise: dict, lang: str) -> dict:
     Fields are localised individually, so a question with a translated prompt
     but untranslated options still renders — the prompt in isiXhosa, the
     options in English — rather than being skipped entirely.
+
+    `options`/`answer`/`answers` are deliberately NOT swapped here, unlike
+    `prompt`/`explanation`/`hint`. The frontend submits whatever's in
+    `options` back as the answer, and grading (`_grade_mcq` etc.) compares
+    that verbatim against `answer`/`answers` — so those three have to stay
+    the English canonical values the frontend already renders alongside
+    `options_xh` for display. Swapping them here would make a translated
+    choice never match its own answer key. See `_display_answer`.
     """
     if lang == "en":
         return exercise
     out = dict(exercise)
-    for field in ("prompt", "options", "answer", "answers", "explanation", "hint"):
+    for field in ("prompt", "explanation", "hint"):
         translated = exercise.get(f"{field}_{lang}")
         if translated:
             out[field] = translated

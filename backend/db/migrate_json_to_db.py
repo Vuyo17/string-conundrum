@@ -38,12 +38,14 @@ def migrate_exercises(cur) -> int:
             INSERT INTO exercises (
                 module_id, question_id, type, prompt, options, answer, answers,
                 misconception_map, starter_code, test_cases, explanation, stars, xp,
-                prompt_xh, explanation_xh, hint_xh, sort_order
+                prompt_xh, explanation_xh, hint_xh, options_xh, answer_xh, answers_xh,
+                sort_order
             ) VALUES (
                 %(module_id)s, %(question_id)s, %(type)s, %(prompt)s, %(options)s, %(answer)s,
                 %(answers)s, %(misconception_map)s, %(starter_code)s, %(test_cases)s,
                 %(explanation)s, %(stars)s, %(xp)s,
-                %(prompt_xh)s, %(explanation_xh)s, %(hint_xh)s, %(sort_order)s
+                %(prompt_xh)s, %(explanation_xh)s, %(hint_xh)s,
+                %(options_xh)s, %(answer_xh)s, %(answers_xh)s, %(sort_order)s
             )
             ON CONFLICT (module_id, question_id) DO UPDATE SET
                 type = EXCLUDED.type,
@@ -62,6 +64,9 @@ def migrate_exercises(cur) -> int:
                 prompt_xh = COALESCE(EXCLUDED.prompt_xh, exercises.prompt_xh),
                 explanation_xh = COALESCE(EXCLUDED.explanation_xh, exercises.explanation_xh),
                 hint_xh = COALESCE(EXCLUDED.hint_xh, exercises.hint_xh),
+                options_xh = COALESCE(EXCLUDED.options_xh, exercises.options_xh),
+                answer_xh = COALESCE(EXCLUDED.answer_xh, exercises.answer_xh),
+                answers_xh = COALESCE(EXCLUDED.answers_xh, exercises.answers_xh),
                 sort_order = EXCLUDED.sort_order
             """,
             {
@@ -77,6 +82,9 @@ def migrate_exercises(cur) -> int:
                 "prompt_xh": ex.get("prompt_xh"),
                 "explanation_xh": ex.get("explanation_xh"),
                 "hint_xh": ex.get("hint_xh"),
+                "options_xh": json.dumps(ex["options_xh"]) if "options_xh" in ex else None,
+                "answer_xh": ex.get("answer_xh"),
+                "answers_xh": json.dumps(ex["answers_xh"]) if "answers_xh" in ex else None,
                 "test_cases": json.dumps(ex["test_cases"]) if "test_cases" in ex else None,
                 "explanation": ex.get("explanation"),
                 "stars": ex.get("stars"),

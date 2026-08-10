@@ -8,7 +8,7 @@
 // Needs a human read before students see it.
 
 export const slicingModuleXh = {
-  "title": "String Ukusika",
+  "title": "String Slicing",
   "level": "Osaqalayo",
   "outcomes": [
     "Ukukhupha nayiphi na intambo engezantsi nge-s[start:stop:step]",
@@ -21,7 +21,7 @@ export const slicingModuleXh = {
       "title": "Ukusika isiqwenga kwi-string",
       "blocks": [
         {
-          "text": "I-indexing ifundeka uphawu olunye; ** slicing** ifundeka umqolo opheleleyo wazo. Cinga nge-string njengesiqwenga sesonka esinesiqwenga NGAPHAMBI kwe-slice nganye: `start` ithi apho ingena khona imela, `stop` ithi apho iphuma khona, kwaye i-stop slice ngokwayo ihlala ebhodini."
+          "text": "I-Indexing ifundeka uphawu olunye; **slicing** ifundeka umqolo opheleleyo wazo. Cinga nge-string njengesiqwenga sesonka esinesiqwenga NGAPHAMBI kwe-slice nganye: `start` ithi apho ingena khona imela, `stop` ithi apho iphuma khona, kwaye i-stop slice ngokwayo ihlala ebhodini."
         },
         {
           "caption": "I-\"Hello World\"[2:5] iqokelela ii-indices 2, 3, 4, kwaye iyama NGAPHAMBI kwe-index 5."
@@ -40,11 +40,11 @@ export const slicingModuleXh = {
       "title": "Iimpawu ezizenzekelayo: zithetha ntoni izithuba ezingenanto",
       "blocks": [
         {
-          "text": "Nayiphi na kwezi nxalenye zintathu inokushiywa ngaphandle, kwaye iimviwo zivavanya oku kanye. Ngenyathelo ** elungileyo **: isiqalo esingasekhoyo sichaza u-0, isiqalo esingasekhoyo sichaza isiphelo, kwaye isinyathelo esingasekhoyo sichaza u-1."
+          "text": "Nayiphi na kwezi nxalenye zintathu inokushiywa ngaphandle, kwaye iimviwo zivavanya oku kanye. Ngenyathelo **elungileyo**: isiqalo esingasekhoyo sichaza u-0, ukuyeka okungasekhoyo kuchaza isiphelo, kwaye isinyathelo esingasekhoyo sichaza u-1."
         },
         null,
         {
-          "text": "Nge ** negative inyathelo**, i-default flip: a missing start ithetha i-LAST character, kwaye a missing stop ithetha \"just past the first character\". Kungenxa yoko le nto i-`s[::-1]` iguqula i-string."
+          "text": "Ngenyathelo **elibi**, okuzenzekelayo kuyaguquka: isiqalo esingasekhoyo sithetha umlinganiswa wokugqibela, kwaye ukuyeka okungasekhoyo kuthetha \"kanye emva komlinganiswa wokuqala\". Kungoko u-`s[::-1]` eguqula i-string."
         },
         {
           "caption": "Omabini la maphethini aye abuzwa, phantse igama negama, kwiimviwo ezidlulileyo."
@@ -69,7 +69,7 @@ export const slicingModuleXh = {
         },
         {
           "title": "Impazamo eqhelekileyo: ukulindela iIndexError",
-          "text": "Ukusika akunakuze kuphakamise i-IndexError. Imida engaphandle komda ivalwe kwaye ukuhamba okungenakwenzeka kubuyisela i-string engenanto."
+          "text": "I-Slicing akunakuze kuphakamise i-IndexError. Imida engaphandle komda ivalwe kwaye ukuhamba okungenakwenzeka kubuyisela i-string engenanto. Kuphela i-indexing yomlinganiswa omnye eqinileyo."
         },
         {
           "title": "Indlela oku kuhlolwa ngayo",
@@ -85,7 +85,7 @@ export const slicingModuleXh = {
             "`s[start:stop:step]`: ukuqala kubandakanyiwe, ukuyeka akuvumelekanga.",
             "Iimpawu ezisisiseko zenyathelo elilungileyo: ukuqala 0, ukuphela kokumisa, inyathelo 1. I-`s[:]` ikopa yonke i-string.",
             "I-negative-step defaults: qala kumlinganiswa wokugqibela, ume nje emva komlinganiswa wokuqala. `s[::-1]` iyajika.",
-            "Ukusika akunakuze kuphakamise i-IndexError, kwaye akunakwenzeka ukuba i-slices inike i-string engenanto.",
+            "I-Slicing akunakuze kuphakamise i-IndexError, kwaye akunakwenzeka ukuba i-slices inike i-string engenanto.",
             "Ukulahla oonobumba bokuqala nabokugqibela: `s[1:-1]`. Ukuvavanya i-palindrome: `s == s[::-1]`."
           ]
         }
@@ -95,7 +95,7 @@ export const slicingModuleXh = {
   "examples": [
     {
       "title": "Ukuqikelela ukubuyela umva kweslice",
-      "intro": "Eyona ndlela ixhaphakileyo yokuvavanya: ukuhlanganiswa, emva koko inyathelo elibi slice. Yenza ngezigaba ezibini.",
+      "intro": "Eyona ndlela ixhaphakileyo yokuvavanya: i-concatenation, emva koko i-slice yenyathelo elibi. Yenza ngezigaba ezibini.",
       "steps": [
         {
           "text": "Qala usombulule ibinzana elithi: 'Ma'*2 yi 'MaMa', ngoko ke s yi 'GoMaMa', eyiimpawu ezintandathu, izikhombisi 0 ukuya ku-5 (okanye -6 ukuya ku -1)."

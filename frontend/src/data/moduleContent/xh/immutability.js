@@ -13,7 +13,7 @@ export const immutabilityModuleXh = {
   "outcomes": [
     "Cacisa ukuba kutheni i-s[0] = \"x\" iphakamisa i-TypeError",
     "Qikelela into eyenzekayo xa isiphumo semethod silahlwa",
-    "Yakha kwakhona i-\"changed\" string usebenzisa ukusika kunye ne-concatenation",
+    "Yakha kwakhona i-\"changed\" string usebenzisa i-slicing kunye ne-concatenation",
     "Landela string variables ngokusebenzisa umsebenzi ubiza ngokuchanekileyo"
   ],
   "learnSections": [
@@ -21,7 +21,7 @@ export const immutabilityModuleXh = {
       "title": "I-Strings iqingqiwe ngamatye",
       "blocks": [
         {
-          "text": "Ukuchwetheza kukuvumela ukuba ufunde nawuphi na umlinganiswa, kodwa ungalokothi ubhale omnye. I-string ** ayitshintshi **: xa yenziwe, iimpawu zayo zihlala zihleli ngonaphakade, njengonobumba obuqingqiweyo kwitrone. Unokukrola ilitye elitsha, kodwa awukwazi ukuhlela elidala."
+          "text": "I-Indexing kukuvumela ukuba ufunde nawuphi na umlinganiswa, kodwa ungalokothi ubhale omnye. I-string **ayitshintshi**: xa yenziwe, iimpawu zayo zihlala zihleli ngonaphakade, njengonobumba obuqingqiweyo kwitrone. Unokukrola ilitye elitsha, kodwa awukwazi ukuhlela elidala."
         },
         null,
         {
@@ -48,7 +48,7 @@ export const immutabilityModuleXh = {
       "title": "Ukwakha ngokutsha endaweni yokuhlela",
       "blocks": [
         {
-          "text": "Kwi-\"change\" enye inqaku, yakha i-string entsha kwiingcezu ze-slice endala: slice ejikeleze inqaku uze uqhagamshele indawo endaweni yokutshintsha, emva koko ubophe i-variable kwakhona."
+          "text": "Kwi-\"change\" enye inqaku, yakha i-string entsha kwiingcezu ze-slice endala: slice ejikeleze inqaku uze wenze i-concatenation yendawo endaweni yokutshintsha, emva koko ubophe i-variable kwakhona."
         },
         {
           "caption": "I-variable ngoku ibonisa i-string ENTSHA; endala iyalahlwa."
@@ -98,7 +98,7 @@ export const immutabilityModuleXh = {
           "text": "Injongo: ukuguqula i-\"mat\" ibe yi-\"cat\". Ukunikezelwa ngokuthe ngqo kwi-s[0] kuya kuphakamisa i-TypeError."
         },
         {
-          "text": "`s[1:]` slices yonke into emva komlinganiswa wokuqala: \"at\"."
+          "text": "`s[1:]` slices yonke into emva komlinganiswa wokuqala: \"at\". I-Slicing iyafunda, ngoko ivumelekile."
         },
         {
           "text": "I-\"c\" + \"at\" yakha i-string \"cat\" entsha, kwaye amanqaku okumiselwa aya kuyo. I-\"mat\" endala ishiywe nje."
@@ -108,7 +108,7 @@ export const immutabilityModuleXh = {
   ],
   "visualizer": {
     "title": "I-Explorer Yokufunda Kuphela",
-    "description": "Ukuchwetheza kunokufikelela nakuphi na umlinganiswa, kodwa kuphela ukuze uyifunde. Hlola iibhokisi, uze ukhumbule: akukho nkcazelo apha inokuze iyitshintshe.",
+    "description": "I-Indexing kunokufikelela nakuphi na umlinganiswa, kodwa kuphela ukuze uyifunde. Hlola iibhokisi, uze ukhumbule: akukho nkcazelo apha inokuze iyitshintshe.",
     "defaults": {
       "text": "engaguqukiyo"
     }

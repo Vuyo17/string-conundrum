@@ -95,22 +95,43 @@ function isAnswered(exercise, answer) {
   return false;
 }
 
+// Text shown for each option, in the student's language. The VALUE used for
+// selection state and submission is always `exercise.options[i]` (English) —
+// grading compares against that verbatim, so only the label may translate.
+function displayOptionsOf(exercise) {
+  const { options, options_xh } = exercise;
+  return options_xh?.length === options.length ? options_xh : options;
+}
+
+// Maps an English option value (as stored in `answer.selected`) back to its
+// translated label for display, falling back to the value itself.
+function displayFor(exercise, value) {
+  const i = (exercise.options ?? []).indexOf(value);
+  if (i === -1) return value;
+  return displayOptionsOf(exercise)[i];
+}
+
 function describeStudentAnswer(exercise, answer) {
   if (!isAnswered(exercise, answer)) return '(not answered)';
-  if (exercise.type === 'mcq') return answer.selected;
-  if (exercise.type === 'select_all') return (answer.selected ?? []).join(', ');
+  if (exercise.type === 'mcq') return displayFor(exercise, answer.selected);
+  if (exercise.type === 'select_all') {
+    return (answer.selected ?? []).map((v) => displayFor(exercise, v)).join(', ');
+  }
   if (exercise.type === 'fill_blank') return answer.value;
   if (exercise.type === 'write_code') return null; // code shown in a block instead
   return '';
 }
 
 function describeCorrectAnswer(exercise) {
-  if (exercise.type === 'select_all') return (exercise.answers ?? []).join(', ');
+  if (exercise.type === 'select_all') {
+    return (exercise.answers ?? []).map((v) => displayFor(exercise, v)).join(', ');
+  }
   if (exercise.type === 'write_code') {
     return (exercise.test_cases ?? [])
       .map((tc) => `${tc.input ? `input ${tc.input.trim()} → ` : ''}${tc.expected_output}`)
       .join('   ');
   }
+  if (exercise.type === 'mcq') return exercise.answer_xh || exercise.answer || '';
   return exercise.answer ?? '';
 }
 
@@ -413,7 +434,7 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
                 onClick={() => setCurrentAnswer({ selected: choice })}
               >
                 <span className={m.choiceKey}>{String.fromCharCode(65 + i)}</span>
-                <span className={m.choiceText}>{choice}</span>
+                <span className={m.choiceText}>{displayOptionsOf(exercise)[i]}</span>
               </button>
             ))}
           </div>
@@ -421,7 +442,7 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
 
         {exercise.type === 'select_all' && (
           <div className={m.choiceList}>
-            {exercise.options.map((choice) => {
+            {exercise.options.map((choice, i) => {
               const on = (answer.selected ?? []).includes(choice);
               return (
                 <button
@@ -435,7 +456,7 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
                   <span className={`${m.choiceBox} ${on ? m.choiceBoxOn : ''}`}>
                     {on && <CheckCircle2 size={14} />}
                   </span>
-                  <span className={m.choiceText}>{choice}</span>
+                  <span className={m.choiceText}>{displayOptionsOf(exercise)[i]}</span>
                 </button>
               );
             })}

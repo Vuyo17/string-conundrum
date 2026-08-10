@@ -56,6 +56,14 @@ function splitPrompt(prompt) {
   return { title: first, code: rest.join('\n') };
 }
 
+// Text shown for each option, in the student's language. The VALUE used for
+// selection state and submission is always `exercise.options[i]` (English) —
+// grading compares against that verbatim, so only the label may translate.
+function displayOptionsOf(exercise) {
+  const { options, options_xh } = exercise;
+  return options_xh?.length === options.length ? options_xh : options;
+}
+
 // ─── drag & drop warm-up (client-side, ungraded) ──────────────────────────────
 
 function DragDropWarmup({ config }) {
@@ -396,7 +404,7 @@ function PracticeRunner({ practice, exercises, onSectionComplete }) {
                 disabled={Boolean(result)}
               >
                 <span className={m.choiceKey}>{String.fromCharCode(65 + i)}</span>
-                <span className={m.choiceText}>{choice}</span>
+                <span className={m.choiceText}>{displayOptionsOf(exercise)[i]}</span>
               </button>
             ))}
           </div>
@@ -404,7 +412,7 @@ function PracticeRunner({ practice, exercises, onSectionComplete }) {
 
         {exercise.type === 'select_all' && (
           <div className={m.choiceList}>
-            {exercise.options.map((choice) => {
+            {exercise.options.map((choice, i) => {
               const on = (answer?.selected ?? []).includes(choice);
               return (
                 <button
@@ -419,7 +427,7 @@ function PracticeRunner({ practice, exercises, onSectionComplete }) {
                   <span className={`${m.choiceBox} ${on ? m.choiceBoxOn : ''}`}>
                     {on && <CheckCircle2 size={14} />}
                   </span>
-                  <span className={m.choiceText}>{choice}</span>
+                  <span className={m.choiceText}>{displayOptionsOf(exercise)[i]}</span>
                 </button>
               );
             })}

@@ -8,11 +8,11 @@
 // Needs a human read before students see it.
 
 export const loopingModuleXh = {
-  "title": "Ukujikeleza NgeXStrings",
+  "title": "Looping Through Strings",
   "level": "Ophakathi",
   "outcomes": [
     "Iterate phezu oonobumba ngqo kunye for ch in s",
-    "Iterate over positions with for i kwi range(len(s))",
+    "Iterate phezu izikhundla ngqo kunye for i in range(len(s))",
     "Khetha isimbo esifanelekileyo kwingxaki ethile",
     "Bhala iipateni zokuqala zemigangatho yokuhlolwa: ukubala, ukuhluza, ukwakha"
   ],
@@ -121,7 +121,7 @@ export const loopingModuleXh = {
     "title": "I-Loop Walker",
     "description": "I-loop yinto nje elawulwayo yokuhamba ngokusebenzisa ii-indices. Khetha i-string kunye ne-index ukubona indlela yokuhamba a ye-loop eyenza ukuba ifikelele kuyo.",
     "defaults": {
-      "text": "ukuhlaziywa"
+      "text": "i-iteration"
     }
   }
 };

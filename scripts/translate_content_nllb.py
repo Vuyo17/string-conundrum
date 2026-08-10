@@ -9,6 +9,7 @@ never calls a translation model at runtime.
 Usage:
     pip install torch transformers sentencepiece
     python scripts/translate_content_nllb.py exercises      # backend exercise bank
+    python scripts/translate_content_nllb.py options        # mcq/select_all option text
     python scripts/translate_content_nllb.py modules        # lesson content stubs
     python scripts/translate_content_nllb.py exercises --limit 20 --dry-run
 
@@ -151,6 +152,66 @@ CODE_SIGNAL = re.compile(
              |assert|global|nonlocal|yield)\b""",
     re.VERBOSE,
 )
+
+# A bare (unquoted) multi-word assignment RHS, e.g. `name = Cape Town` — one
+# of the "this needs quotes" distractor options. INLINE_SPAN's assignment
+# alternative stops at the first space (`[^\s.,;]+`), so on a line like this
+# it masks only `name = Cape`, leaving `Town` exposed as ordinary prose — and
+# `Cape Town` is a protected glossary phrase, so the second word gets sent to
+# NLLB out of context instead of being protected as a unit. Rather than widen
+# the shared assignment regex (risking every already-verified prompt/module
+# translation), exercises this narrow are left untranslated: the option is
+# still invalid-Python-that-needs-quotes either way, so showing it in English
+# teaches the same lesson.
+BARE_MULTIWORD_ASSIGNMENT = re.compile(r"^\w+\s*=\s*[\(<]?[A-Za-z]+\s+[A-Za-z]+[\)>]?$")
+
+# Words that mark an option as a DESCRIPTION of behaviour ("It prints "cat",
+# slice bounds are clamped...") rather than a bare LITERAL VALUE ("cat",
+# "l", "World"). This distinction is the whole ballgame for exercises that
+# ask "what does this print": a description is safe prose to translate, but
+# a literal value is the exact string/character Python would produce, and
+# translating it — turning the character 'l' into "Ndinguye" ("I am..."),
+# or the slice result "World" into "Ihlabathi" (the Xhosa word for the
+# planet) — breaks the exercise outright, the same way translating a
+# challenge's expected `output` would. NLLB has no way to tell these apart
+# on its own: handed a bare "l" with zero sentence context it hallucinates
+# rather than declining, and neither verify_spans nor degenerate() catches
+# it, because there's no protected span to check and the output isn't
+# malformed — it's just confidently wrong. So this filter runs BEFORE the
+# model ever sees the option, on the English source alone.
+SENTENCE_SIGNAL = re.compile(
+    r"""\b(?:is|are|the|it|because|raises?|returns?|prints?|error|none|
+        true|false|would|does|clamped|inclusive|exclusive|instead|rather|
+        matter|happens?|produces?|creates?|changes?
+    )\b""",
+    re.VERBOSE | re.IGNORECASE,
+)
+
+
+def looks_like_literal_value(option: str) -> bool:
+    """True if `option` reads as a bare value rather than a description.
+
+    Deliberately conservative in the unsafe direction: a short, plain
+    fragment with none of the connective/explanatory words above is treated
+    as a literal value and left untranslated, even where it might actually
+    be safe prose (a lone "Nothing" meaning "prints nothing", say). Missing
+    a translation is a cosmetic loss; mistranslating a literal answer is a
+    broken exercise.
+    """
+    text = option.strip()
+    if not text:
+        return False
+    if SENTENCE_SIGNAL.search(text):
+        return False
+    return len(text.split()) < 4
+
+# An unbacktricked augmented-assignment or comparison operator touching an
+# identifier, e.g. `i += 1 is missing from inside the loop body` — INLINE_SPAN
+# only recognises a bare `=`, not `+=`/`<=`/`==`/etc., so these slip through
+# as ordinary prose with the operator and its operand fully exposed. Same
+# rationale as BARE_MULTIWORD_ASSIGNMENT: narrow, known instances, left
+# untranslated rather than risking the shared regex everywhere else.
+BARE_OPERATOR_CODE = re.compile(r"\b[a-zA-Z_]\w*\s*(?:[+\-*/%]=|<=|>=|==|!=)\s*\S")
 
 # Prose label prefixing a code line in some prompts: `Line 2: word.upper()`.
 # The label stays English — splitting the line to translate two words is not
@@ -382,13 +443,80 @@ def do_exercises(translator, limit: int | None, dry_run: bool) -> None:
             for line in prompt_xh.split("\n"):
                 print(f"    {line}")
 
-        # Options are answer values the grader compares against, so they are
-        # deliberately NOT translated — a translated option would never match
-        # the stored answer. Only the hint travels with the prompt.
+        # Options are handled by `do_options` (target "options"), not here:
+        # grading compares raw English values, so translating them safely
+        # needs the answer/answers derivation that function does alongside it.
         if ex.get("hint"):
             hint_xh = translate_checked(translator, ex["hint"], f"{label}.hint")
             if hint_xh:
                 ex["hint_xh"] = hint_xh
+
+    if not dry_run:
+        EXERCISES.write_text(
+            json.dumps(bank, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
+        print(f"\nwrote {EXERCISES}")
+
+
+def do_options(translator, limit: int | None, dry_run: bool) -> None:
+    """Translate `options` for mcq/select_all exercises, for DISPLAY ONLY.
+
+    Grading always compares the raw English `answer`/`answers` against what
+    the frontend submits, which is always `options[i]` (English) regardless
+    of what's shown on screen — see feedback.py's `_localise` and
+    `_display_answer`. So this never touches `answer`/`answers` directly;
+    it derives `answer_xh`/`answers_xh` by finding each correct value's
+    position in `options` and reading the same position out of `options_xh`,
+    guaranteeing the displayed "correct answer" text is drawn from the exact
+    same translation as the option the student saw, not a second independent
+    translation of the same English string that might come out differently.
+
+    An exercise's `options_xh` is only written when every option in it
+    translated cleanly — a partial array is worse than none, since the
+    frontend falls back to all-English the moment lengths don't match.
+    """
+    bank = json.loads(EXERCISES.read_text(encoding="utf-8"))
+    todo = [
+        e for e in bank
+        if e.get("type") in ("mcq", "select_all") and "options_xh" not in e
+    ][:limit]
+    print(f"{len(todo)} of {len(bank)} option-bearing exercises need translating")
+
+    for i, ex in enumerate(todo, 1):
+        label = ex.get("question_id", f"#{i}")
+        print(f"\n[{i}/{len(todo)}] {label}")
+
+        if dry_run:
+            for opt in ex["options"]:
+                if is_code_line(opt):
+                    print(f"    CODE   {opt}")
+                else:
+                    masked, _ = mask_spans(opt)
+                    print(f"    PROSE  {masked}")
+            continue
+
+        translated = [
+            opt if (
+                BARE_MULTIWORD_ASSIGNMENT.match(opt.strip())
+                or BARE_OPERATOR_CODE.search(opt)
+                or looks_like_literal_value(opt)
+            )
+            else translate_checked(translator, opt, f"{label}.options[{j}]")
+            for j, opt in enumerate(ex["options"])
+        ]
+        if any(t is None for t in translated):
+            print(f"  ! {label}: not every option translated cleanly — skipped")
+            continue
+
+        ex["options_xh"] = translated
+        for opt in translated:
+            print(f"    {opt}")
+
+        lookup = dict(zip(ex["options"], translated))
+        if ex.get("type") == "mcq" and ex.get("answer") in lookup:
+            ex["answer_xh"] = lookup[ex["answer"]]
+        elif ex.get("type") == "select_all" and ex.get("answers"):
+            ex["answers_xh"] = [lookup[a] for a in ex["answers"] if a in lookup]
 
     if not dry_run:
         EXERCISES.write_text(
@@ -597,7 +725,7 @@ def do_modules(translator, limit: int | None, dry_run: bool) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("target", choices=["exercises", "modules", "challenges"])
+    parser.add_argument("target", choices=["exercises", "options", "modules", "challenges"])
     parser.add_argument("--limit", type=int, help="only process the first N items")
     parser.add_argument(
         "--dry-run", action="store_true", help="show the code/prose split, load nothing"
@@ -607,6 +735,7 @@ def main() -> None:
     translator = None if args.dry_run else Translator()
     runner = {
         "exercises": do_exercises,
+        "options": do_options,
         "modules": do_modules,
         "challenges": do_challenges,
     }[args.target]
