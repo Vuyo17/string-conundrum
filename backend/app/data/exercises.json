@@ -15,7 +15,14 @@
       "name = Hlomla": "strings_need_quotes"
     },
     "xp": 10,
-    "prompt_xh": "Yeyiphi kwezi zilandelayo eyenza ngokuchanekileyo i-string variable eqhuba i-Hlomla?"
+    "prompt_xh": "Yeyiphi kwezi zilandelayo eyenza ngokuchanekileyo i-string variable eqhuba i-Hlomla?",
+    "options_xh": [
+      "name = Hlomla",
+      "name = 'Hlomla'",
+      "name = (Hlomla)",
+      "name = <Hlomla>"
+    ],
+    "answer_xh": "name = 'Hlomla'"
   },
   {
     "module_id": "intro",
@@ -33,7 +40,14 @@
       "name = Cape Town": "strings_need_quotes"
     },
     "xp": 10,
-    "prompt_xh": "Yeyiphi kwezi zilandelayo eyenza ngokuchanekileyo i-string variable eqhuba i-Cape Town?"
+    "prompt_xh": "Yeyiphi kwezi zilandelayo eyenza ngokuchanekileyo i-string variable eqhuba i-Cape Town?",
+    "options_xh": [
+      "name = Cape Town",
+      "name = 'Cape Town'",
+      "name = (Cape Town)",
+      "name = <Cape Town>"
+    ],
+    "answer_xh": "name = 'Cape Town'"
   },
   {
     "module_id": "intro",
@@ -51,7 +65,14 @@
       "name = Xhosa": "strings_need_quotes"
     },
     "xp": 10,
-    "prompt_xh": "Yeyiphi kwezi zilandelayo eyenza ngokuchanekileyo i-string variable eqhuba i-Xhosa?"
+    "prompt_xh": "Yeyiphi kwezi zilandelayo eyenza ngokuchanekileyo i-string variable eqhuba i-Xhosa?",
+    "options_xh": [
+      "name = Xhosa",
+      "name = 'Xhosa'",
+      "name = (Xhosa)",
+      "name = <Xhosa>"
+    ],
+    "answer_xh": "name = 'Xhosa'"
   },
   {
     "module_id": "intro",
@@ -69,7 +90,14 @@
       "name = Python": "strings_need_quotes"
     },
     "xp": 10,
-    "prompt_xh": "Yeyiphi kwezi zilandelayo eyenza ngokuchanekileyo i-string variable eqhuba i-Python?"
+    "prompt_xh": "Yeyiphi kwezi zilandelayo eyenza ngokuchanekileyo i-string variable eqhuba i-Python?",
+    "options_xh": [
+      "name = Python",
+      "name = 'Python'",
+      "name = (Python)",
+      "name = <Python>"
+    ],
+    "answer_xh": "name = 'Python'"
   },
   {
     "module_id": "intro",
@@ -87,7 +115,14 @@
       "name = Firebase": "strings_need_quotes"
     },
     "xp": 10,
-    "prompt_xh": "Yeyiphi kwezi zilandelayo eyenza ngokuchanekileyo i-string variable eqhuba i-Firebase?"
+    "prompt_xh": "Yeyiphi kwezi zilandelayo eyenza ngokuchanekileyo i-string variable eqhuba i-Firebase?",
+    "options_xh": [
+      "name = Firebase",
+      "name = 'Firebase'",
+      "name = (Firebase)",
+      "name = <Firebase>"
+    ],
+    "answer_xh": "name = 'Firebase'"
   },
   {
     "module_id": "intro",
@@ -109,7 +144,18 @@
       "word = [p,y,t]": "string_vs_list_confusion"
     },
     "xp": 10,
-    "prompt_xh": "Khetha zonke iindlela ezilandelayo ezisemthethweni zokudala i-string \"python\" kwi-Python."
+    "prompt_xh": "Khetha zonke iindlela ezilandelayo ezisemthethweni zokudala i-string \"python\" kwi-Python.",
+    "options_xh": [
+      "word = 'python'",
+      "word = \"python\"",
+      "word = '''python'''",
+      "word = [p,y,t]"
+    ],
+    "answers_xh": [
+      "word = 'python'",
+      "word = \"python\"",
+      "word = '''python'''"
+    ]
   },
   {
     "module_id": "intro",
@@ -131,7 +177,18 @@
       "word = [l,e,a]": "string_vs_list_confusion"
     },
     "xp": 10,
-    "prompt_xh": "Khetha zonke iindlela ezilandelayo ezisemthethweni zokudala i-string \"learning\" kwi-Python."
+    "prompt_xh": "Khetha zonke iindlela ezilandelayo ezisemthethweni zokudala i-string \"learning\" kwi-Python.",
+    "options_xh": [
+      "word = 'learning'",
+      "word = \"learning\"",
+      "word = '''learning'''",
+      "word = [l,e,a]"
+    ],
+    "answers_xh": [
+      "word = 'learning'",
+      "word = \"learning\"",
+      "word = '''learning'''"
+    ]
   },
   {
     "module_id": "intro",
@@ -153,7 +210,18 @@
       "word = [c,a,p]": "string_vs_list_confusion"
     },
     "xp": 10,
-    "prompt_xh": "Khetha zonke iindlela ezilandelayo ezisemthethweni zokudala i-string \"capstone\" kwi-Python."
+    "prompt_xh": "Khetha zonke iindlela ezilandelayo ezisemthethweni zokudala i-string \"capstone\" kwi-Python.",
+    "options_xh": [
+      "word = 'capstone'",
+      "word = \"capstone\"",
+      "word = '''capstone'''",
+      "word = [c,a,p]"
+    ],
+    "answers_xh": [
+      "word = 'capstone'",
+      "word = \"capstone\"",
+      "word = '''capstone'''"
+    ]
   },
   {
     "module_id": "intro",
@@ -172,7 +240,14 @@
       "An error": "concatenation_requires_same_type_fear"
     },
     "xp": 10,
-    "prompt_xh": "Yintoni eprintiweyo kule khowudi ilandelayo?\nword = \"cat\" + \"fish\"\nprint(word)"
+    "prompt_xh": "Yintoni eprintiweyo kule khowudi ilandelayo?\nword = \"cat\" + \"fish\"\nprint(word)",
+    "options_xh": [
+      "catfish",
+      "cat fish",
+      "cat + fish",
+      "Impazamo"
+    ],
+    "answer_xh": "catfish"
   },
   {
     "module_id": "intro",
@@ -191,7 +266,14 @@
       "An error": "concatenation_requires_same_type_fear"
     },
     "xp": 10,
-    "prompt_xh": "Yintoni eprintiweyo kule khowudi ilandelayo?\nword = \"Cape\" + \"Town\"\nprint(word)"
+    "prompt_xh": "Yintoni eprintiweyo kule khowudi ilandelayo?\nword = \"Cape\" + \"Town\"\nprint(word)",
+    "options_xh": [
+      "CapeTown",
+      "Cape Town",
+      "Cape + Town",
+      "Impazamo"
+    ],
+    "answer_xh": "CapeTown"
   },
   {
     "module_id": "intro",
@@ -210,7 +292,14 @@
       "An error": "concatenation_requires_same_type_fear"
     },
     "xp": 10,
-    "prompt_xh": "Yintoni eprintiweyo kule khowudi ilandelayo?\nword = \"un\" + \"happy\"\nprint(word)"
+    "prompt_xh": "Yintoni eprintiweyo kule khowudi ilandelayo?\nword = \"un\" + \"happy\"\nprint(word)",
+    "options_xh": [
+      "unhappy",
+      "un happy",
+      "un + happy",
+      "Impazamo"
+    ],
+    "answer_xh": "unhappy"
   },
   {
     "module_id": "intro",
@@ -229,7 +318,14 @@
       "An error": "concatenation_requires_same_type_fear"
     },
     "xp": 10,
-    "prompt_xh": "Yintoni eprintiweyo kule khowudi ilandelayo?\nword = \"post\" + \"graduate\"\nprint(word)"
+    "prompt_xh": "Yintoni eprintiweyo kule khowudi ilandelayo?\nword = \"post\" + \"graduate\"\nprint(word)",
+    "options_xh": [
+      "postgraduate",
+      "post graduate",
+      "post + graduate",
+      "Impazamo"
+    ],
+    "answer_xh": "postgraduate"
   },
   {
     "module_id": "intro",
@@ -248,7 +344,14 @@
       "An error": "concatenation_requires_same_type_fear"
     },
     "xp": 10,
-    "prompt_xh": "Yintoni eprintiweyo kule khowudi ilandelayo?\nword = \"play\" + \"ground\"\nprint(word)"
+    "prompt_xh": "Yintoni eprintiweyo kule khowudi ilandelayo?\nword = \"play\" + \"ground\"\nprint(word)",
+    "options_xh": [
+      "playground",
+      "play ground",
+      "play + ground",
+      "Impazamo"
+    ],
+    "answer_xh": "playground"
   },
   {
     "module_id": "intro",
@@ -267,7 +370,14 @@
       "ab3": "repetition_confused_with_multiplication"
     },
     "xp": 10,
-    "prompt_xh": "print(\"ab\" * 3)"
+    "prompt_xh": "print(\"ab\" * 3)",
+    "options_xh": [
+      "ababab",
+      "ab ab ab",
+      "ab3",
+      "Impazamo"
+    ],
+    "answer_xh": "ababab"
   },
   {
     "module_id": "intro",
@@ -286,7 +396,14 @@
       "ha2": "repetition_confused_with_multiplication"
     },
     "xp": 10,
-    "prompt_xh": "print(\"ha\" * 2)"
+    "prompt_xh": "print(\"ha\" * 2)",
+    "options_xh": [
+      "haha",
+      "ha ha",
+      "ha2",
+      "Impazamo"
+    ],
+    "answer_xh": "haha"
   },
   {
     "module_id": "intro",
@@ -324,7 +441,14 @@
       "na2": "repetition_confused_with_multiplication"
     },
     "xp": 10,
-    "prompt_xh": "print(\"na\" * 2)"
+    "prompt_xh": "print(\"na\" * 2)",
+    "options_xh": [
+      "nana",
+      "na na",
+      "na2",
+      "Impazamo"
+    ],
+    "answer_xh": "nana"
   },
   {
     "module_id": "intro",
@@ -343,7 +467,14 @@
       "go3": "repetition_confused_with_multiplication"
     },
     "xp": 10,
-    "prompt_xh": "print(\"go\" * 3)"
+    "prompt_xh": "print(\"go\" * 3)",
+    "options_xh": [
+      "gogogo",
+      "go go go",
+      "go3",
+      "Impazamo"
+    ],
+    "answer_xh": "gogogo"
   },
   {
     "module_id": "intro",
@@ -421,7 +552,14 @@
       "price becomes the string 'hello'": "strings_need_quotes"
     },
     "xp": 15,
-    "prompt_xh": "Kwenzeka ntoni xa i-Python isebenzisa umgca: price = hello (ngaphandle kweengcaphuno ezikufutshane nemibuliso)?"
+    "prompt_xh": "Kwenzeka ntoni xa i-Python isebenzisa umgca: price = hello (ngaphandle kweengcaphuno ezikufutshane nemibuliso)?",
+    "options_xh": [
+      "NameError, kuba Python ikhangela variable ebizwa ngokuba hello",
+      "ixabiso liba yi string 'hello'",
+      "SyntaxError ngoko nangoko, ngaphambi kokuba nantoni na iqhube",
+      "hello ithathwa njengenombolo"
+    ],
+    "answer_xh": "NameError, kuba Python ikhangela variable ebizwa ngokuba hello"
   },
   {
     "module_id": "intro",
@@ -439,7 +577,14 @@
       "flag becomes the string 'hello'": "strings_need_quotes"
     },
     "xp": 15,
-    "prompt_xh": "Kwenzeka ntoni xa i-Python isebenzisa umgca: flag = hello (ngaphandle kweengcaphuno ezikufutshane nemibuliso)?"
+    "prompt_xh": "Kwenzeka ntoni xa i-Python isebenzisa umgca: flag = hello (ngaphandle kweengcaphuno ezikufutshane nemibuliso)?",
+    "options_xh": [
+      "NameError, kuba Python ikhangela variable ebizwa ngokuba hello",
+      "iflegi iba yi string 'hello'",
+      "SyntaxError ngoko nangoko, ngaphambi kokuba nantoni na iqhube",
+      "hello ithathwa njengenombolo"
+    ],
+    "answer_xh": "NameError, kuba Python ikhangela variable ebizwa ngokuba hello"
   },
   {
     "module_id": "intro",
@@ -457,7 +602,14 @@
       "level becomes the string 'hello'": "strings_need_quotes"
     },
     "xp": 15,
-    "prompt_xh": "Kwenzeka ntoni xa i-Python isebenzisa umgca: level = hello (ngaphandle kweengcaphuno ezikufutshane nemibuliso)?"
+    "prompt_xh": "Kwenzeka ntoni xa i-Python isebenzisa umgca: level = hello (ngaphandle kweengcaphuno ezikufutshane nemibuliso)?",
+    "options_xh": [
+      "NameError, kuba Python ikhangela variable ebizwa ngokuba hello",
+      "inqanaba liba yi string 'hello'",
+      "SyntaxError ngoko nangoko, ngaphambi kokuba nantoni na iqhube",
+      "hello ithathwa njengenombolo"
+    ],
+    "answer_xh": "NameError, kuba Python ikhangela variable ebizwa ngokuba hello"
   },
   {
     "module_id": "intro",
@@ -478,7 +630,17 @@
       "['d', 'o', 'g']": "string_vs_list_confusion"
     },
     "xp": 15,
-    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezenza i-string \"dog\"."
+    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezenza i-string \"dog\".",
+    "options_xh": [
+      "\"dog\"",
+      "['d', 'o', 'g']",
+      "'dog'",
+      "['d', 'o', 'g']"
+    ],
+    "answers_xh": [
+      "\"dog\"",
+      "'dog'"
+    ]
   },
   {
     "module_id": "intro",
@@ -499,7 +661,17 @@
       "['c', 'a', 't']": "string_vs_list_confusion"
     },
     "xp": 15,
-    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezenza i-string \"cat\"."
+    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezenza i-string \"cat\".",
+    "options_xh": [
+      "\"cat\"",
+      "['c', 'a', 't']",
+      "'cat'",
+      "['c', 'a', 't']"
+    ],
+    "answers_xh": [
+      "\"cat\"",
+      "'cat'"
+    ]
   },
   {
     "module_id": "intro",
@@ -520,7 +692,17 @@
       "['s', 'u', 'n']": "string_vs_list_confusion"
     },
     "xp": 15,
-    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezenza i-string \"sun\"."
+    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezenza i-string \"sun\".",
+    "options_xh": [
+      "\"sun\"",
+      "['s', 'u', 'n']",
+      "'sun'",
+      "['s', 'u', 'n']"
+    ],
+    "answers_xh": [
+      "\"sun\"",
+      "'sun'"
+    ]
   },
   {
     "module_id": "intro",
@@ -538,7 +720,14 @@
       "\"Count: 5\" is printed": "concatenation_requires_same_type_fear"
     },
     "xp": 15,
-    "prompt_xh": "count = 5\nprint(\"Count: \" + count)\nKwenzeka ntoni?"
+    "prompt_xh": "count = 5\nprint(\"Count: \" + count)\nKwenzeka ntoni?",
+    "options_xh": [
+      "TypeError, kuba awukwazi concatenate a str kunye int ngqo",
+      "I-\"Count: 5\" iprintiwe",
+      "I-\"Count: \" ipapashwa, emva koko i-5 kumgca omtsha",
+      "inani liguqulwa ngokuzenzekelayo libe yi-string"
+    ],
+    "answer_xh": "TypeError, kuba awukwazi concatenate a str kunye int ngqo"
   },
   {
     "module_id": "indexing",
@@ -556,7 +745,14 @@
       "y": "indexing_from_one"
     },
     "xp": 10,
-    "prompt_xh": "text = \"python\"\nprint(text[0])"
+    "prompt_xh": "text = \"python\"\nprint(text[0])",
+    "options_xh": [
+      "p",
+      "y",
+      "Iphutha Index",
+      "None"
+    ],
+    "answer_xh": "p"
   },
   {
     "module_id": "indexing",
@@ -574,7 +770,14 @@
       "a": "indexing_from_one"
     },
     "xp": 10,
-    "prompt_xh": "text = \"banana\"\nprint(text[0])"
+    "prompt_xh": "text = \"banana\"\nprint(text[0])",
+    "options_xh": [
+      "b",
+      "a",
+      "Iphutha Index",
+      "None"
+    ],
+    "answer_xh": "b"
   },
   {
     "module_id": "indexing",
@@ -592,7 +795,14 @@
       "a": "indexing_from_one"
     },
     "xp": 10,
-    "prompt_xh": "text = \"capetown\"\nprint(text[0])"
+    "prompt_xh": "text = \"capetown\"\nprint(text[0])",
+    "options_xh": [
+      "c",
+      "a",
+      "Iphutha Index",
+      "None"
+    ],
+    "answer_xh": "c"
   },
   {
     "module_id": "indexing",
@@ -610,7 +820,14 @@
       "h": "indexing_from_one"
     },
     "xp": 10,
-    "prompt_xh": "text = \"xhosa\"\nprint(text[0])"
+    "prompt_xh": "text = \"xhosa\"\nprint(text[0])",
+    "options_xh": [
+      "x",
+      "h",
+      "Iphutha Index",
+      "None"
+    ],
+    "answer_xh": "x"
   },
   {
     "module_id": "indexing",
@@ -628,7 +845,14 @@
       "e": "indexing_from_one"
     },
     "xp": 10,
-    "prompt_xh": "text = \"learning\"\nprint(text[0])"
+    "prompt_xh": "text = \"learning\"\nprint(text[0])",
+    "options_xh": [
+      "l",
+      "e",
+      "Iphutha Index",
+      "None"
+    ],
+    "answer_xh": "l"
   },
   {
     "module_id": "indexing",
@@ -646,7 +870,14 @@
       "m": "indexing_from_one"
     },
     "xp": 10,
-    "prompt_xh": "text = \"umuntu\"\nprint(text[0])"
+    "prompt_xh": "text = \"umuntu\"\nprint(text[0])",
+    "options_xh": [
+      "u",
+      "m",
+      "Iphutha Index",
+      "None"
+    ],
+    "answer_xh": "u"
   },
   {
     "module_id": "indexing",
@@ -664,7 +895,14 @@
       "Index error": "negative_index_confusion"
     },
     "xp": 10,
-    "prompt_xh": "text = \"python\"\nprint(text[-1])"
+    "prompt_xh": "text = \"python\"\nprint(text[-1])",
+    "options_xh": [
+      "p",
+      "n",
+      "Iphutha Index",
+      "empty string"
+    ],
+    "answer_xh": "n"
   },
   {
     "module_id": "indexing",
@@ -682,7 +920,14 @@
       "Index error": "negative_index_confusion"
     },
     "xp": 10,
-    "prompt_xh": "text = \"banana\"\nprint(text[-1])"
+    "prompt_xh": "text = \"banana\"\nprint(text[-1])",
+    "options_xh": [
+      "b",
+      "a",
+      "Iphutha Index",
+      "empty string"
+    ],
+    "answer_xh": "a"
   },
   {
     "module_id": "indexing",
@@ -700,7 +945,14 @@
       "Index error": "negative_index_confusion"
     },
     "xp": 10,
-    "prompt_xh": "text = \"capetown\"\nprint(text[-1])"
+    "prompt_xh": "text = \"capetown\"\nprint(text[-1])",
+    "options_xh": [
+      "c",
+      "n",
+      "Iphutha Index",
+      "empty string"
+    ],
+    "answer_xh": "n"
   },
   {
     "module_id": "indexing",
@@ -718,7 +970,14 @@
       "Index error": "negative_index_confusion"
     },
     "xp": 10,
-    "prompt_xh": "text = \"xhosa\"\nprint(text[-1])"
+    "prompt_xh": "text = \"xhosa\"\nprint(text[-1])",
+    "options_xh": [
+      "x",
+      "a",
+      "Iphutha Index",
+      "empty string"
+    ],
+    "answer_xh": "a"
   },
   {
     "module_id": "indexing",
@@ -736,7 +995,14 @@
       "Index error": "negative_index_confusion"
     },
     "xp": 10,
-    "prompt_xh": "text = \"learning\"\nprint(text[-1])"
+    "prompt_xh": "text = \"learning\"\nprint(text[-1])",
+    "options_xh": [
+      "l",
+      "g",
+      "Iphutha Index",
+      "empty string"
+    ],
+    "answer_xh": "g"
   },
   {
     "module_id": "indexing",
@@ -754,7 +1020,14 @@
       "Index error": "negative_index_confusion"
     },
     "xp": 10,
-    "prompt_xh": "text = \"umuntu\"\nprint(text[-1])"
+    "prompt_xh": "text = \"umuntu\"\nprint(text[-1])",
+    "options_xh": [
+      "u",
+      "u",
+      "Iphutha Index",
+      "empty string"
+    ],
+    "answer_xh": "u"
   },
   {
     "module_id": "indexing",
@@ -824,7 +1097,17 @@
       "mL[-11]": "negative_index_confusion"
     },
     "xp": 15,
-    "prompt_xh": "mL = \"programming\" (ubude 11). Khetha zonke ii-indices ezingezantsi eziza kubangela i-IndexError."
+    "prompt_xh": "mL = \"programming\" (ubude 11). Khetha zonke ii-indices ezingezantsi eziza kubangela i-IndexError.",
+    "options_xh": [
+      "mL[10]",
+      "mL[11]",
+      "mL[-11]",
+      "mL[-12]"
+    ],
+    "answers_xh": [
+      "mL[11]",
+      "mL[-12]"
+    ]
   },
   {
     "module_id": "indexing",
@@ -846,7 +1129,17 @@
       "mL[-6]": "negative_index_confusion"
     },
     "xp": 15,
-    "prompt_xh": "mL = \"kitten\" (ubude 6). Khetha zonke ii-indices ezingezantsi eziza kubangela i-IndexError."
+    "prompt_xh": "mL = \"kitten\" (ubude 6). Khetha zonke ii-indices ezingezantsi eziza kubangela i-IndexError.",
+    "options_xh": [
+      "mL[5]",
+      "mL[6]",
+      "mL[-6]",
+      "mL[-7]"
+    ],
+    "answers_xh": [
+      "mL[6]",
+      "mL[-7]"
+    ]
   },
   {
     "module_id": "indexing",
@@ -868,7 +1161,17 @@
       "mL[-6]": "negative_index_confusion"
     },
     "xp": 15,
-    "prompt_xh": "mL = \"orange\" (ubude 6). Khetha zonke ii-indices ezingezantsi eziza kubangela i-IndexError."
+    "prompt_xh": "mL = \"orange\" (ubude 6). Khetha zonke ii-indices ezingezantsi eziza kubangela i-IndexError.",
+    "options_xh": [
+      "mL[5]",
+      "mL[6]",
+      "mL[-6]",
+      "mL[-7]"
+    ],
+    "answers_xh": [
+      "mL[6]",
+      "mL[-7]"
+    ]
   },
   {
     "module_id": "indexing",
@@ -890,7 +1193,17 @@
       "mL[-6]": "negative_index_confusion"
     },
     "xp": 15,
-    "prompt_xh": "mL = \"monday\" (ubude 6). Khetha zonke ii-indices ezingezantsi eziza kubangela i-IndexError."
+    "prompt_xh": "mL = \"monday\" (ubude 6). Khetha zonke ii-indices ezingezantsi eziza kubangela i-IndexError.",
+    "options_xh": [
+      "mL[5]",
+      "mL[6]",
+      "mL[-6]",
+      "mL[-7]"
+    ],
+    "answers_xh": [
+      "mL[6]",
+      "mL[-7]"
+    ]
   },
   {
     "module_id": "indexing",
@@ -908,7 +1221,14 @@
       "the code is actually correct": "off_by_one_length"
     },
     "xp": 15,
-    "prompt_xh": "Le khowudi yenzelwe ukuprinta oonobumba bokugqibela besicatshulwa. Kutheni isilela?\ntext = \"python\"\nprint(text[len(text)])"
+    "prompt_xh": "Le khowudi yenzelwe ukuprinta oonobumba bokugqibela besicatshulwa. Kutheni isilela?\ntext = \"python\"\nprint(text[len(text)])",
+    "options_xh": [
+      "I-len(text) yenye emva kwe-index yokugqibela esebenzayo",
+      "I-print() ayinakwamkela ibinzana",
+      "I-strings ayixhasi i-len()",
+      "ikhowudi ichanekile"
+    ],
+    "answer_xh": "I-len(text) yenye emva kwe-index yokugqibela esebenzayo"
   },
   {
     "module_id": "indexing",
@@ -926,7 +1246,14 @@
       "the code is actually correct": "off_by_one_length"
     },
     "xp": 15,
-    "prompt_xh": "Le khowudi yenzelwe ukuprinta oonobumba bokugqibela besicatshulwa. Kutheni isilela?\ntext = \"hello\"\nprint(text[len(text)])"
+    "prompt_xh": "Le khowudi yenzelwe ukuprinta oonobumba bokugqibela besicatshulwa. Kutheni isilela?\ntext = \"hello\"\nprint(text[len(text)])",
+    "options_xh": [
+      "I-len(text) yenye emva kwe-index yokugqibela esebenzayo",
+      "I-print() ayinakwamkela ibinzana",
+      "I-strings ayixhasi i-len()",
+      "ikhowudi ichanekile"
+    ],
+    "answer_xh": "I-len(text) yenye emva kwe-index yokugqibela esebenzayo"
   },
   {
     "module_id": "indexing",
@@ -944,7 +1271,14 @@
       "the code is actually correct": "off_by_one_length"
     },
     "xp": 15,
-    "prompt_xh": "Le khowudi yenzelwe ukuprinta oonobumba bokugqibela besicatshulwa. Kutheni isilela?\ntext = \"capstone\"\nprint(text[len(text)])"
+    "prompt_xh": "Le khowudi yenzelwe ukuprinta oonobumba bokugqibela besicatshulwa. Kutheni isilela?\ntext = \"capstone\"\nprint(text[len(text)])",
+    "options_xh": [
+      "I-len(text) yenye emva kwe-index yokugqibela esebenzayo",
+      "I-print() ayinakwamkela ibinzana",
+      "I-strings ayixhasi i-len()",
+      "ikhowudi ichanekile"
+    ],
+    "answer_xh": "I-len(text) yenye emva kwe-index yokugqibela esebenzayo"
   },
   {
     "module_id": "indexing",
@@ -962,7 +1296,14 @@
       "it does not raise an error": "negative_index_confusion"
     },
     "xp": 15,
-    "prompt_xh": "text = \"python\"\nprint(text[-7])\nKutheni oku kuphakamisa iIndexError?"
+    "prompt_xh": "text = \"python\"\nprint(text[-7])\nKutheni oku kuphakamisa iIndexError?",
+    "options_xh": [
+      "-7 ibuyela umva kunobude bestring obuvumelayo",
+      "ii-indices ezingalunganga azinakusetyenziswa kunye ne-variables, kuphela ii-literals",
+      "I-string kufuneka ibuyiselwe umva kuqala",
+      "ayibangeli mpazamo"
+    ],
+    "answer_xh": "-7 ibuyela umva kunobude bestring obuvumelayo"
   },
   {
     "module_id": "indexing",
@@ -980,7 +1321,14 @@
       "it does not raise an error": "negative_index_confusion"
     },
     "xp": 15,
-    "prompt_xh": "text = \"banana\"\nprint(text[-7])\nKutheni oku kuphakamisa iIndexError?"
+    "prompt_xh": "text = \"banana\"\nprint(text[-7])\nKutheni oku kuphakamisa iIndexError?",
+    "options_xh": [
+      "-7 ibuyela umva kunobude bestring obuvumelayo",
+      "ii-indices ezingalunganga azinakusetyenziswa kunye ne-variables, kuphela ii-literals",
+      "I-string kufuneka ibuyiselwe umva kuqala",
+      "ayibangeli mpazamo"
+    ],
+    "answer_xh": "-7 ibuyela umva kunobude bestring obuvumelayo"
   },
   {
     "module_id": "indexing",
@@ -998,7 +1346,14 @@
       "it does not raise an error": "negative_index_confusion"
     },
     "xp": 15,
-    "prompt_xh": "text = \"umuntu\"\nprint(text[-7])\nKutheni oku kuphakamisa iIndexError?"
+    "prompt_xh": "text = \"umuntu\"\nprint(text[-7])\nKutheni oku kuphakamisa iIndexError?",
+    "options_xh": [
+      "-7 ibuyela umva kunobude bestring obuvumelayo",
+      "ii-indices ezingalunganga azinakusetyenziswa kunye ne-variables, kuphela ii-literals",
+      "I-string kufuneka ibuyiselwe umva kuqala",
+      "ayibangeli mpazamo"
+    ],
+    "answer_xh": "-7 ibuyela umva kunobude bestring obuvumelayo"
   },
   {
     "module_id": "indexing",
@@ -1052,7 +1407,14 @@
     ],
     "answer": "Index 0 is both the first and only valid index",
     "xp": 10,
-    "prompt_xh": "text = \"a\"\nprint(text[0])\nYintoni ekhethekileyo malunga indexing a-one-character string ezifana nale?"
+    "prompt_xh": "text = \"a\"\nprint(text[0])\nYintoni ekhethekileyo malunga indexing a-one-character string ezifana nale?",
+    "options_xh": [
+      "I-Index 0 yindawo yokuqala kunye neyokuphela kwe-index esebenzayo",
+      "Ihlala ibangela impazamo kuba akukho nto kwi-index",
+      "Kufuneka usebenzise i-text[-1] endaweni ye-text[0]",
+      "Iimpawu ezizodwa azinakugcinwa njenge-strings"
+    ],
+    "answer_xh": "I-Index 0 yindawo yokuqala kunye neyokuphela kwe-index esebenzayo"
   },
   {
     "module_id": "slicing",
@@ -1070,7 +1432,14 @@
       "World!": "slice_stop_inclusive"
     },
     "xp": 10,
-    "prompt_xh": "word = \"Hello, World!\"\nprint(word[7:12])"
+    "prompt_xh": "word = \"Hello, World!\"\nprint(word[7:12])",
+    "options_xh": [
+      "World",
+      "World!",
+      "Worl",
+      "Impazamo"
+    ],
+    "answer_xh": "World"
   },
   {
     "module_id": "slicing",
@@ -1088,7 +1457,14 @@
       "Cape ": "slice_stop_inclusive"
     },
     "xp": 10,
-    "prompt_xh": "word = \"Cape Town\"\nprint(word[0:4])"
+    "prompt_xh": "word = \"Cape Town\"\nprint(word[0:4])",
+    "options_xh": [
+      "Cape",
+      "Cape ",
+      "Cap",
+      "Impazamo"
+    ],
+    "answer_xh": "Cape"
   },
   {
     "module_id": "slicing",
@@ -1106,7 +1482,14 @@
       "umuntu ": "slice_stop_inclusive"
     },
     "xp": 10,
-    "prompt_xh": "word = \"umuntu ngumuntu\"\nprint(word[0:6])"
+    "prompt_xh": "word = \"umuntu ngumuntu\"\nprint(word[0:6])",
+    "options_xh": [
+      "umuntu",
+      "umuntu ",
+      "umunt",
+      "Impazamo"
+    ],
+    "answer_xh": "umuntu"
   },
   {
     "module_id": "slicing",
@@ -1124,7 +1507,14 @@
       "gramm": "slice_stop_inclusive"
     },
     "xp": 10,
-    "prompt_xh": "word = \"programming\"\nprint(word[3:7])"
+    "prompt_xh": "word = \"programming\"\nprint(word[3:7])",
+    "options_xh": [
+      "gram",
+      "gramm",
+      "gra",
+      "Impazamo"
+    ],
+    "answer_xh": "gram"
   },
   {
     "module_id": "slicing",
@@ -1142,7 +1532,14 @@
       "Xhosa": "slice_stop_inclusive"
     },
     "xp": 10,
-    "prompt_xh": "word = \"isiXhosa\"\nprint(word[3:8])"
+    "prompt_xh": "word = \"isiXhosa\"\nprint(word[3:8])",
+    "options_xh": [
+      "Xhosa",
+      "Xhosa",
+      "Xhos",
+      "Impazamo"
+    ],
+    "answer_xh": "Xhosa"
   },
   {
     "module_id": "slicing",
@@ -1160,7 +1557,14 @@
       "base": "slice_stop_inclusive"
     },
     "xp": 10,
-    "prompt_xh": "word = \"firebase\"\nprint(word[4:8])"
+    "prompt_xh": "word = \"firebase\"\nprint(word[4:8])",
+    "options_xh": [
+      "base",
+      "base",
+      "bas",
+      "Impazamo"
+    ],
+    "answer_xh": "base"
   },
   {
     "module_id": "slicing",
@@ -1226,7 +1630,14 @@
       "An error": "negative_step_unfamiliar"
     },
     "xp": 15,
-    "prompt_xh": "word = \"stressed\"\nprint(word[::-1])"
+    "prompt_xh": "word = \"stressed\"\nprint(word[::-1])",
+    "options_xh": [
+      "desserts",
+      "stressed",
+      "Impazamo",
+      "empty string"
+    ],
+    "answer_xh": "desserts"
   },
   {
     "module_id": "slicing",
@@ -1244,7 +1655,14 @@
       "An error": "negative_step_unfamiliar"
     },
     "xp": 15,
-    "prompt_xh": "word = \"python\"\nprint(word[::-1])"
+    "prompt_xh": "word = \"python\"\nprint(word[::-1])",
+    "options_xh": [
+      "nohtyp",
+      "python",
+      "Impazamo",
+      "empty string"
+    ],
+    "answer_xh": "nohtyp"
   },
   {
     "module_id": "slicing",
@@ -1262,7 +1680,14 @@
       "An error": "negative_step_unfamiliar"
     },
     "xp": 15,
-    "prompt_xh": "word = \"capstone\"\nprint(word[::-1])"
+    "prompt_xh": "word = \"capstone\"\nprint(word[::-1])",
+    "options_xh": [
+      "enotspac",
+      "capstone",
+      "Impazamo",
+      "empty string"
+    ],
+    "answer_xh": "enotspac"
   },
   {
     "module_id": "slicing",
@@ -1277,7 +1702,14 @@
     ],
     "answer": "prog",
     "xp": 15,
-    "prompt_xh": "word = \"programming\"\nprint(word[:4])"
+    "prompt_xh": "word = \"programming\"\nprint(word[:4])",
+    "options_xh": [
+      "prog",
+      "prog",
+      "ramming",
+      "Impazamo"
+    ],
+    "answer_xh": "prog"
   },
   {
     "module_id": "slicing",
@@ -1292,7 +1724,14 @@
     ],
     "answer": "ramming",
     "xp": 15,
-    "prompt_xh": "word = \"programming\"\nprint(word[4:])"
+    "prompt_xh": "word = \"programming\"\nprint(word[4:])",
+    "options_xh": [
+      "ramming",
+      "prog",
+      "ramming",
+      "Impazamo"
+    ],
+    "answer_xh": "ramming"
   },
   {
     "module_id": "slicing",
@@ -1307,7 +1746,14 @@
     ],
     "answer": "programming",
     "xp": 15,
-    "prompt_xh": "word = \"programming\"\nprint(word[:])"
+    "prompt_xh": "word = \"programming\"\nprint(word[:])",
+    "options_xh": [
+      "programming",
+      "prog",
+      "ramming",
+      "Impazamo"
+    ],
+    "answer_xh": "programming"
   },
   {
     "module_id": "slicing",
@@ -1322,7 +1768,14 @@
     ],
     "answer": "ntu",
     "xp": 15,
-    "prompt_xh": "word = \"umuntu\"\nprint(word[3:])"
+    "prompt_xh": "word = \"umuntu\"\nprint(word[3:])",
+    "options_xh": [
+      "ntu",
+      "umun",
+      "tu",
+      "Impazamo"
+    ],
+    "answer_xh": "ntu"
   },
   {
     "module_id": "slicing",
@@ -1337,7 +1790,14 @@
     ],
     "answer": "It prints \"cat\", slice bounds are clamped rather than erroring",
     "xp": 15,
-    "prompt_xh": "word = \"cat\" (ubude beempawu ezi-3 kuphela)\nprint(word[0:10])\nKwenzeka ntoni?"
+    "prompt_xh": "word = \"cat\" (ubude beempawu ezi-3 kuphela)\nprint(word[0:10])\nKwenzeka ntoni?",
+    "options_xh": [
+      "Iprinta i-\"cat\", imida ye-slice iqhotyoshelwe kunokuba iphosakele",
+      "IndexError, kuba imida idlula ubude string",
+      "Iprinta i-string engenanto kungakhathaliseki ukuba yintoni",
+      "Izalisa oonobumba abangekhoyo ngamathuba"
+    ],
+    "answer_xh": "Iprinta i-\"cat\", imida ye-slice iqhotyoshelwe kunokuba iphosakele"
   },
   {
     "module_id": "slicing",
@@ -1352,7 +1812,14 @@
     ],
     "answer": "It prints \"og\", slice bounds are clamped rather than erroring",
     "xp": 15,
-    "prompt_xh": "word = \"dog\" (ubude beempawu ezi-3 kuphela)\nprint(word[1:99])\nKwenzeka ntoni?"
+    "prompt_xh": "word = \"dog\" (ubude beempawu ezi-3 kuphela)\nprint(word[1:99])\nKwenzeka ntoni?",
+    "options_xh": [
+      "Iprinta i-\"og\", imida ye-slice iqhotyoshelwe kunokuba iphosakele",
+      "IndexError, kuba imida idlula ubude string",
+      "Iprinta i-string engenanto kungakhathaliseki ukuba yintoni",
+      "Izalisa oonobumba abangekhoyo ngamathuba"
+    ],
+    "answer_xh": "Iprinta i-\"og\", imida ye-slice iqhotyoshelwe kunokuba iphosakele"
   },
   {
     "module_id": "slicing",
@@ -1367,7 +1834,14 @@
     ],
     "answer": "It prints \"ow\", slice bounds are clamped rather than erroring",
     "xp": 15,
-    "prompt_xh": "word = \"owl\" (ubude beempawu ezi-3 kuphela)\nprint(word[-50:2])\nKwenzeka ntoni?"
+    "prompt_xh": "word = \"owl\" (ubude beempawu ezi-3 kuphela)\nprint(word[-50:2])\nKwenzeka ntoni?",
+    "options_xh": [
+      "Iprinta i-\"ow\", imida ye-slice iqhotyoshelwe kunokuba iphosakele",
+      "IndexError, kuba imida idlula ubude string",
+      "Iprinta i-string engenanto kungakhathaliseki ukuba yintoni",
+      "Izalisa oonobumba abangekhoyo ngamathuba"
+    ],
+    "answer_xh": "Iprinta i-\"ow\", imida ye-slice iqhotyoshelwe kunokuba iphosakele"
   },
   {
     "module_id": "slicing",
@@ -1386,7 +1860,18 @@
       "word[-5:]"
     ],
     "xp": 15,
-    "prompt_xh": "word = \"hello world\"\nKhetha zonke ii-slicing ezingezantsi ezivelisa i-\"world\"."
+    "prompt_xh": "word = \"hello world\"\nKhetha zonke ii-slicing ezingezantsi ezivelisa i-\"world\".",
+    "options_xh": [
+      "word[6:11]",
+      "word[6:]",
+      "word[-5:]",
+      "word[0:5]"
+    ],
+    "answers_xh": [
+      "word[6:11]",
+      "word[6:]",
+      "word[-5:]"
+    ]
   },
   {
     "module_id": "slicing",
@@ -1404,7 +1889,17 @@
       "word[3:6]"
     ],
     "xp": 15,
-    "prompt_xh": "word = \"banana\"\nKhetha zonke ii-slicing ezingezantsi ezivelisa i-\"ana\"."
+    "prompt_xh": "word = \"banana\"\nKhetha zonke ii-slicing ezingezantsi ezivelisa i-\"ana\".",
+    "options_xh": [
+      "word[1:4]",
+      "word[3:6]",
+      "word[1:6]",
+      "word[0:3]"
+    ],
+    "answers_xh": [
+      "word[1:4]",
+      "word[3:6]"
+    ]
   },
   {
     "module_id": "slicing",
@@ -1423,7 +1918,18 @@
       "word[3:]"
     ],
     "xp": 15,
-    "prompt_xh": "word = \"umuntu\"\nKhetha zonke ii-slicing ezingezantsi ezivelisa i-\"ntu\"."
+    "prompt_xh": "word = \"umuntu\"\nKhetha zonke ii-slicing ezingezantsi ezivelisa i-\"ntu\".",
+    "options_xh": [
+      "word[3:6]",
+      "word[-3:]",
+      "word[0:3]",
+      "word[3:]"
+    ],
+    "answers_xh": [
+      "word[3:6]",
+      "word[-3:]",
+      "word[3:]"
+    ]
   },
   {
     "module_id": "slicing",
@@ -1519,7 +2025,14 @@
       "An error": "negative_step_unfamiliar"
     },
     "xp": 15,
-    "prompt_xh": "word = \"programming\"\nprint(word[::2])"
+    "prompt_xh": "word = \"programming\"\nprint(word[::2])",
+    "options_xh": [
+      "pormig",
+      "programming",
+      "rgamn",
+      "Impazamo"
+    ],
+    "answer_xh": "pormig"
   },
   {
     "module_id": "immutability",
@@ -1537,7 +2050,14 @@
       "It changes name to 'Ada'": "immutability_in_place"
     },
     "xp": 15,
-    "prompt_xh": "Kwenzeka ntoni xa kusebenza ikhowudi elandelayo?\nname = \"ada\"\nname[0] = \"A\""
+    "prompt_xh": "Kwenzeka ntoni xa kusebenza ikhowudi elandelayo?\nname = \"ada\"\nname[0] = \"A\"",
+    "options_xh": [
+      "Iphakamisa i-TypeError kuba i-strings ayitshintshi",
+      "Utshintsha igama libe yi-'Ada'",
+      "Akenzi nto ngokuthe cwaka",
+      "Idala i-variable entsha ebizwa ngokuba yi-name[0]"
+    ],
+    "answer_xh": "Iphakamisa i-TypeError kuba i-strings ayitshintshi"
   },
   {
     "module_id": "immutability",
@@ -1555,7 +2075,14 @@
       "It changes word to 'Cat'": "immutability_in_place"
     },
     "xp": 15,
-    "prompt_xh": "Kwenzeka ntoni xa kusebenza ikhowudi elandelayo?\nword = \"cat\"\nword[0] = \"C\""
+    "prompt_xh": "Kwenzeka ntoni xa kusebenza ikhowudi elandelayo?\nword = \"cat\"\nword[0] = \"C\"",
+    "options_xh": [
+      "Iphakamisa i-TypeError kuba i-strings ayitshintshi",
+      "Utshintsha igama libe yi-'Cat'",
+      "Akenzi nto ngokuthe cwaka",
+      "Idala i-variable entsha ebizwa ngokuba yi-word[0]"
+    ],
+    "answer_xh": "Iphakamisa i-TypeError kuba i-strings ayitshintshi"
   },
   {
     "module_id": "immutability",
@@ -1573,7 +2100,14 @@
       "It changes city to 'Kape'": "immutability_in_place"
     },
     "xp": 15,
-    "prompt_xh": "Kwenzeka ntoni xa kusebenza ikhowudi elandelayo?\ncity = \"cape\"\ncity[0] = \"K\""
+    "prompt_xh": "Kwenzeka ntoni xa kusebenza ikhowudi elandelayo?\ncity = \"cape\"\ncity[0] = \"K\"",
+    "options_xh": [
+      "Iphakamisa i-TypeError kuba i-strings ayitshintshi",
+      "Utshintsha isixeko sibe yi'Kape'",
+      "Akenzi nto ngokuthe cwaka",
+      "Idala i-variable entsha ebizwa ngokuba yi-city[0]"
+    ],
+    "answer_xh": "Iphakamisa i-TypeError kuba i-strings ayitshintshi"
   },
   {
     "module_id": "immutability",
@@ -1591,7 +2125,14 @@
       "It changes code to 'Xbc'": "immutability_in_place"
     },
     "xp": 15,
-    "prompt_xh": "Kwenzeka ntoni xa kusebenza ikhowudi elandelayo?\ncode = \"abc\"\ncode[0] = \"X\""
+    "prompt_xh": "Kwenzeka ntoni xa kusebenza ikhowudi elandelayo?\ncode = \"abc\"\ncode[0] = \"X\"",
+    "options_xh": [
+      "Iphakamisa i-TypeError kuba i-strings ayitshintshi",
+      "Utshintsha ikhowudi ibe yi-'Xbc'",
+      "Akenzi nto ngokuthe cwaka",
+      "Idala i-variable entsha ebizwa ngokuba yi-code[0]"
+    ],
+    "answer_xh": "Iphakamisa i-TypeError kuba i-strings ayitshintshi"
   },
   {
     "module_id": "immutability",
@@ -1609,7 +2150,14 @@
       "It changes flag to 'Ged'": "immutability_in_place"
     },
     "xp": 15,
-    "prompt_xh": "Kwenzeka ntoni xa kusebenza ikhowudi elandelayo?\nflag = \"red\"\nflag[0] = \"G\""
+    "prompt_xh": "Kwenzeka ntoni xa kusebenza ikhowudi elandelayo?\nflag = \"red\"\nflag[0] = \"G\"",
+    "options_xh": [
+      "Iphakamisa i-TypeError kuba i-strings ayitshintshi",
+      "Utshintsha iflegi ibe yi-'Ged'",
+      "Akenzi nto ngokuthe cwaka",
+      "Idala i-variable entsha ebizwa ngokuba yi-flag[0]"
+    ],
+    "answer_xh": "Iphakamisa i-TypeError kuba i-strings ayitshintshi"
   },
   {
     "module_id": "immutability",
@@ -1627,7 +2175,14 @@
       "It changes word to 'Owl'": "immutability_in_place"
     },
     "xp": 15,
-    "prompt_xh": "Kwenzeka ntoni xa kusebenza ikhowudi elandelayo?\nword = \"owl\"\nword[0] = \"O\""
+    "prompt_xh": "Kwenzeka ntoni xa kusebenza ikhowudi elandelayo?\nword = \"owl\"\nword[0] = \"O\"",
+    "options_xh": [
+      "Iphakamisa i-TypeError kuba i-strings ayitshintshi",
+      "Utshintsha igama libe yi-'Owl'",
+      "Akenzi nto ngokuthe cwaka",
+      "Idala i-variable entsha ebizwa ngokuba yi-word[0]"
+    ],
+    "answer_xh": "Iphakamisa i-TypeError kuba i-strings ayitshintshi"
   },
   {
     "module_id": "immutability",
@@ -1645,7 +2200,14 @@
       "upper() only works on the whole string, not variables": "method_mutates_target"
     },
     "xp": 15,
-    "prompt_xh": "Le khowudi yenzelwe ukuguqula igama, kodwa iphukile.\nname = \"ada\"\nname.upper()\nprint(name)"
+    "prompt_xh": "Le khowudi yenzelwe ukuguqula igama, kodwa iphukile.\nname = \"ada\"\nname.upper()\nprint(name)",
+    "options_xh": [
+      "I-upper() ibuyisela i-string entsha engakhange igcinwe, ngoko igama aliguquki",
+      "I-upper() isebenza kuphela kwi-string epheleleyo, hayi i-variables",
+      "igama alikwazi ukufundwa emva kokuba libhaliwe",
+      "I-print(name) idinga ingxoxo eyongezelelweyo"
+    ],
+    "answer_xh": "I-upper() ibuyisela i-string entsha engakhange igcinwe, ngoko igama aliguquki"
   },
   {
     "module_id": "immutability",
@@ -1663,7 +2225,14 @@
       "lower() only works on the whole string, not variables": "method_mutates_target"
     },
     "xp": 15,
-    "prompt_xh": "Le khowudi yenzelwe ukuguqula isixeko, kodwa iphukile.\ncity = \"CAPE\"\ncity.lower()\nprint(city)"
+    "prompt_xh": "Le khowudi yenzelwe ukuguqula isixeko, kodwa iphukile.\ncity = \"CAPE\"\ncity.lower()\nprint(city)",
+    "options_xh": [
+      "I-lower() ibuyisela i-string entsha engakhange igcinwe, ngoko isixeko asitshintshi",
+      "I-lower() isebenza kuphela kwi-string epheleleyo, hayi i-variables",
+      "isixeko asinakufundwa emva kokuba sibhaliwe",
+      "I-print(city) idinga ingxoxo eyongezelelweyo"
+    ],
+    "answer_xh": "I-lower() ibuyisela i-string entsha engakhange igcinwe, ngoko isixeko asitshintshi"
   },
   {
     "module_id": "immutability",
@@ -1681,7 +2250,14 @@
       "strip() only works on the whole string, not variables": "method_mutates_target"
     },
     "xp": 15,
-    "prompt_xh": "Le khowudi yenzelwe ukuguqula igama, kodwa iphukile.\nword = \" hi \"\nword.strip()\nprint(word)"
+    "prompt_xh": "Le khowudi yenzelwe ukuguqula igama, kodwa iphukile.\nword = \" hi \"\nword.strip()\nprint(word)",
+    "options_xh": [
+      "I-strip() ibuyisela i-string entsha engakhange igcinwe, ngoko igama aliguquki",
+      "I-strip() isebenza kuphela kwi-string epheleleyo, hayi i-variables",
+      "igama alikwazi ukufundwa emva kokuba libhaliwe",
+      "I-print(word) idinga ingxoxo eyongezelelweyo"
+    ],
+    "answer_xh": "I-strip() ibuyisela i-string entsha engakhange igcinwe, ngoko igama aliguquki"
   },
   {
     "module_id": "immutability",
@@ -1699,7 +2275,14 @@
       "upper() only works on the whole string, not variables": "method_mutates_target"
     },
     "xp": 15,
-    "prompt_xh": "Le khowudi yenzelwe ukuguqula itag, kodwa iphukile.\ntag = \"abc\"\ntag.upper()\nprint(tag)"
+    "prompt_xh": "Le khowudi yenzelwe ukuguqula itag, kodwa iphukile.\ntag = \"abc\"\ntag.upper()\nprint(tag)",
+    "options_xh": [
+      "I-upper() ibuyisela i-string entsha engakhange igcinwe, ngoko ithegi ayitshintshi",
+      "I-upper() isebenza kuphela kwi-string epheleleyo, hayi i-variables",
+      "ithegi ayikwazi ukufundwa emva kokuba ibhaliwe",
+      "I-print(tag) idinga ingxoxo eyongezelelweyo"
+    ],
+    "answer_xh": "I-upper() ibuyisela i-string entsha engakhange igcinwe, ngoko ithegi ayitshintshi"
   },
   {
     "module_id": "immutability",
@@ -1762,7 +2345,14 @@
     ],
     "answer": "Lists are mutable, so individual items can be reassigned; strings are not",
     "xp": 15,
-    "prompt_xh": "letters = ['c','a','t']\nletters[0] = 'b'\nprint(letters)\nKutheni le nto isebenza, ngoxa ikhowudi efanayo kwistring ingaphumeleli?"
+    "prompt_xh": "letters = ['c','a','t']\nletters[0] = 'b'\nprint(letters)\nKutheni le nto isebenza, ngoxa ikhowudi efanayo kwistring ingaphumeleli?",
+    "options_xh": [
+      "I-Lists iyatshintsha, ngoko ke izinto ezizodwa zinokwabelwana ngokutsha; i-strings ayitshintshi",
+      "Lists sebenzisa syntax ekhethekileyo ukuba strings kwakhona inkxaso",
+      "Iileta azitshintshwanga ngokwenene, ziboniswe ngokwahlukileyo",
+      "Le khowudi ngokwenene iphakamisa impazamo kakhulu"
+    ],
+    "answer_xh": "I-Lists iyatshintsha, ngoko ke izinto ezizodwa zinokwabelwana ngokutsha; i-strings ayitshintshi"
   },
   {
     "module_id": "immutability",
@@ -1777,7 +2367,14 @@
     ],
     "answer": "Lists are mutable, so individual items can be reassigned; strings are not",
     "xp": 15,
-    "prompt_xh": "nums = [1,2,3]\nnums[1] = 9\nprint(nums)\nKutheni le nto isebenza, ngoxa ikhowudi efanayo kwistring ingaphumeleli?"
+    "prompt_xh": "nums = [1,2,3]\nnums[1] = 9\nprint(nums)\nKutheni le nto isebenza, ngoxa ikhowudi efanayo kwistring ingaphumeleli?",
+    "options_xh": [
+      "I-Lists iyatshintsha, ngoko ke izinto ezizodwa zinokwabelwana ngokutsha; i-strings ayitshintshi",
+      "Lists sebenzisa syntax ekhethekileyo ukuba strings kwakhona inkxaso",
+      "nums ayitshintshi ngokwenene, nje ukubonisa ngokwahlukileyo",
+      "Le khowudi ngokwenene iphakamisa impazamo kakhulu"
+    ],
+    "answer_xh": "I-Lists iyatshintsha, ngoko ke izinto ezizodwa zinokwabelwana ngokutsha; i-strings ayitshintshi"
   },
   {
     "module_id": "immutability",
@@ -1792,7 +2389,14 @@
     ],
     "answer": "Lists are mutable, so individual items can be reassigned; strings are not",
     "xp": 15,
-    "prompt_xh": "chars = ['d','o','g']\nchars[2] = 'x'\nprint(chars)\nKutheni le nto isebenza, ngoxa ikhowudi efanayo kwistring ingaphumeleli?"
+    "prompt_xh": "chars = ['d','o','g']\nchars[2] = 'x'\nprint(chars)\nKutheni le nto isebenza, ngoxa ikhowudi efanayo kwistring ingaphumeleli?",
+    "options_xh": [
+      "I-Lists iyatshintsha, ngoko ke izinto ezizodwa zinokwabelwana ngokutsha; i-strings ayitshintshi",
+      "Lists sebenzisa syntax ekhethekileyo ukuba strings kwakhona inkxaso",
+      "i-chars ayitshintshi ngokwenene, iboniswa ngokwahlukileyo",
+      "Le khowudi ngokwenene iphakamisa impazamo kakhulu"
+    ],
+    "answer_xh": "I-Lists iyatshintsha, ngoko ke izinto ezizodwa zinokwabelwana ngokutsha; i-strings ayitshintshi"
   },
   {
     "module_id": "immutability",
@@ -1807,7 +2411,14 @@
     ],
     "answer": "Lists are mutable, so individual items can be reassigned; strings are not",
     "xp": 15,
-    "prompt_xh": "items = ['a','b']\nitems[0] = 'z'\nprint(items)\nKutheni le nto isebenza, ngoxa ikhowudi efanayo kwistring ingaphumeleli?"
+    "prompt_xh": "items = ['a','b']\nitems[0] = 'z'\nprint(items)\nKutheni le nto isebenza, ngoxa ikhowudi efanayo kwistring ingaphumeleli?",
+    "options_xh": [
+      "I-Lists iyatshintsha, ngoko ke izinto ezizodwa zinokwabelwana ngokutsha; i-strings ayitshintshi",
+      "Lists sebenzisa syntax ekhethekileyo ukuba strings kwakhona inkxaso",
+      "izinto ayitshintshi ngokwenene, nje ukubonisa ngokwahlukileyo",
+      "Le khowudi ngokwenene iphakamisa impazamo kakhulu"
+    ],
+    "answer_xh": "I-Lists iyatshintsha, ngoko ke izinto ezizodwa zinokwabelwana ngokutsha; i-strings ayitshintshi"
   },
   {
     "module_id": "immutability",
@@ -1822,7 +2433,14 @@
     ],
     "answer": "Each iteration creates a brand new string and reassigns it to result",
     "xp": 15,
-    "prompt_xh": "result = \"\"\nfor ch in \"cat\":\n    result = result + ch.upper()\nprint(result)\nYintoni eboniswa yile loop ngokuphathelele ukungaguquki?"
+    "prompt_xh": "result = \"\"\nfor ch in \"cat\":\n    result = result + ch.upper()\nprint(result)\nYintoni eboniswa yile loop ngokuphathelele ukungaguquki?",
+    "options_xh": [
+      "I-iteration nganye yenza i-string entsha kwaye iyisabela ngokutsha ukuze",
+      "Isiphumo siyatshintshwa ngalo lonke ixesha",
+      "I-ch.upper() itshintsha i-string yoqobo ngokusisigxina",
+      "I-loop isebenza kanye kuphela"
+    ],
+    "answer_xh": "I-iteration nganye yenza i-string entsha kwaye iyisabela ngokutsha ukuze"
   },
   {
     "module_id": "immutability",
@@ -1837,7 +2455,14 @@
     ],
     "answer": "Each iteration creates a brand new string and reassigns it to output",
     "xp": 15,
-    "prompt_xh": "output = \"\"\nfor ch in \"dog\":\n    output = output + ch.upper()\nprint(output)\nYintoni eboniswa yile loop ngokuphathelele ukungaguquki?"
+    "prompt_xh": "output = \"\"\nfor ch in \"dog\":\n    output = output + ch.upper()\nprint(output)\nYintoni eboniswa yile loop ngokuphathelele ukungaguquki?",
+    "options_xh": [
+      "I-iteration nganye yenza i-string entsha kwaye iyisabela kwakhona kwimveliso",
+      "imveliso iyahlengahlengiswa kwindawo yayo rhoqo",
+      "I-ch.upper() itshintsha i-string yoqobo ngokusisigxina",
+      "I-loop isebenza kanye kuphela"
+    ],
+    "answer_xh": "I-iteration nganye yenza i-string entsha kwaye iyisabela kwakhona kwimveliso"
   },
   {
     "module_id": "immutability",
@@ -1852,7 +2477,14 @@
     ],
     "answer": "Each iteration creates a brand new string and reassigns it to text",
     "xp": 15,
-    "prompt_xh": "text = \"\"\nfor ch in \"owl\":\n    text = text + ch.upper()\nprint(text)\nYintoni eboniswa yile loop ngokuphathelele ukungaguquki?"
+    "prompt_xh": "text = \"\"\nfor ch in \"owl\":\n    text = text + ch.upper()\nprint(text)\nYintoni eboniswa yile loop ngokuphathelele ukungaguquki?",
+    "options_xh": [
+      "I-iteration nganye yenza i-string entsha kwaye iyisabela ngokutsha kwi-text",
+      "isicatshulwa siyatshintshwa ngalo lonke ixesha",
+      "I-ch.upper() itshintsha i-string yoqobo ngokusisigxina",
+      "I-loop isebenza kanye kuphela"
+    ],
+    "answer_xh": "I-iteration nganye yenza i-string entsha kwaye iyisabela ngokutsha kwi-text"
   },
   {
     "module_id": "immutability",
@@ -1874,7 +2506,18 @@
       "text[0] = 'Z'  (direct assignment)": "immutability_in_place"
     },
     "xp": 15,
-    "prompt_xh": "Khetha zonke iinkqubo ezingezantsi ezibuyisela i- NEW string endaweni yokuguqula eyokuqala."
+    "prompt_xh": "Khetha zonke iinkqubo ezingezantsi ezibuyisela i- NEW string endaweni yokuguqula eyokuqala.",
+    "options_xh": [
+      "text.upper()",
+      "text.replace('a','b')",
+      "text[1:3]",
+      "text[0] = 'Z' (umsebenzi othe ngqo)"
+    ],
+    "answers_xh": [
+      "text.upper()",
+      "text.replace('a','b')",
+      "text[1:3]"
+    ]
   },
   {
     "module_id": "immutability",
@@ -1896,7 +2539,18 @@
       "text[0] = 'Z'  (direct assignment)": "immutability_in_place"
     },
     "xp": 15,
-    "prompt_xh": "Khetha zonke iinkqubo ezingezantsi ezibuyisela i- NEW string endaweni yokuguqula eyokuqala."
+    "prompt_xh": "Khetha zonke iinkqubo ezingezantsi ezibuyisela i- NEW string endaweni yokuguqula eyokuqala.",
+    "options_xh": [
+      "text.upper()",
+      "text.replace('a','b')",
+      "text[1:3]",
+      "text[0] = 'Z' (umsebenzi othe ngqo)"
+    ],
+    "answers_xh": [
+      "text.upper()",
+      "text.replace('a','b')",
+      "text[1:3]"
+    ]
   },
   {
     "module_id": "immutability",
@@ -1918,7 +2572,18 @@
       "text[0] = 'Z'  (direct assignment)": "immutability_in_place"
     },
     "xp": 15,
-    "prompt_xh": "Khetha zonke iinkqubo ezingezantsi ezibuyisela i- NEW string endaweni yokuguqula eyokuqala."
+    "prompt_xh": "Khetha zonke iinkqubo ezingezantsi ezibuyisela i- NEW string endaweni yokuguqula eyokuqala.",
+    "options_xh": [
+      "text.upper()",
+      "text.replace('a','b')",
+      "text[1:3]",
+      "text[0] = 'Z' (umsebenzi othe ngqo)"
+    ],
+    "answers_xh": [
+      "text.upper()",
+      "text.replace('a','b')",
+      "text[1:3]"
+    ]
   },
   {
     "module_id": "immutability",
@@ -1978,7 +2643,14 @@
       "It was modified in place to become uppercase": "immutability_in_place"
     },
     "xp": 15,
-    "prompt_xh": "s = \"cat\"\ns = s.upper()\nEmva kokuqhuba, kwenzeka ntoni kwinto yokuqala yestring \"cat\"?"
+    "prompt_xh": "s = \"cat\"\ns = s.upper()\nEmva kokuqhuba, kwenzeka ntoni kwinto yokuqala yestring \"cat\"?",
+    "options_xh": [
+      "Isekho ingatshintshanga; s ngoku ibonisa into eyahlukileyo, entsha string",
+      "Yatshintshwa endaweni yayo ukuze ibe ngoonobumba abakhulu",
+      "Yasuswa kwangoko kwimemori",
+      "Yaba yi string 'upper'"
+    ],
+    "answer_xh": "Isekho ingatshintshanga; s ngoku ibonisa into eyahlukileyo, entsha string"
   },
   {
     "module_id": "immutability",
@@ -1996,7 +2668,14 @@
       "It was modified in place to become uppercase": "immutability_in_place"
     },
     "xp": 15,
-    "prompt_xh": "word = \"dog\"\nword = word.upper()\nEmva kokuqhuba, kwenzeka ntoni kwinto yokuqala yestring \"dog\"?"
+    "prompt_xh": "word = \"dog\"\nword = word.upper()\nEmva kokuqhuba, kwenzeka ntoni kwinto yokuqala yestring \"dog\"?",
+    "options_xh": [
+      "Isekho ingatshintshanga; igama ngoku libonisa into eyahlukileyo, entsha string",
+      "Yatshintshwa endaweni yayo ukuze ibe ngoonobumba abakhulu",
+      "Yasuswa kwangoko kwimemori",
+      "Yaba yi string 'upper'"
+    ],
+    "answer_xh": "Isekho ingatshintshanga; igama ngoku libonisa into eyahlukileyo, entsha string"
   },
   {
     "module_id": "immutability",
@@ -2014,7 +2693,14 @@
       "It was modified in place to become uppercase": "immutability_in_place"
     },
     "xp": 15,
-    "prompt_xh": "text = \"owl\"\ntext = text.upper()\nEmva kokuqhuba, kwenzeka ntoni kwinto yokuqala yestring \"owl\"?"
+    "prompt_xh": "text = \"owl\"\ntext = text.upper()\nEmva kokuqhuba, kwenzeka ntoni kwinto yokuqala yestring \"owl\"?",
+    "options_xh": [
+      "Isekho ingatshintshanga; umbhalo ngoku ubonisa into eyahlukileyo, entsha string",
+      "Yatshintshwa endaweni yayo ukuze ibe ngoonobumba abakhulu",
+      "Yasuswa kwangoko kwimemori",
+      "Yaba yi string 'upper'"
+    ],
+    "answer_xh": "Isekho ingatshintshanga; umbhalo ngoku ubonisa into eyahlukileyo, entsha string"
   },
   {
     "module_id": "comparison",
@@ -2032,7 +2718,14 @@
       "True": "comparison_ignores_case"
     },
     "xp": 10,
-    "prompt_xh": "print(\"Cat\" == \"cat\")"
+    "prompt_xh": "print(\"Cat\" == \"cat\")",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo",
+      "None"
+    ],
+    "answer_xh": "False"
   },
   {
     "module_id": "comparison",
@@ -2050,7 +2743,14 @@
       "True": "comparison_ignores_case"
     },
     "xp": 10,
-    "prompt_xh": "print(\"Python\" == \"python\")"
+    "prompt_xh": "print(\"Python\" == \"python\")",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo",
+      "None"
+    ],
+    "answer_xh": "False"
   },
   {
     "module_id": "comparison",
@@ -2068,7 +2768,14 @@
       "True": "comparison_ignores_case"
     },
     "xp": 10,
-    "prompt_xh": "print(\"XHOSA\" == \"xhosa\")"
+    "prompt_xh": "print(\"XHOSA\" == \"xhosa\")",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo",
+      "None"
+    ],
+    "answer_xh": "False"
   },
   {
     "module_id": "comparison",
@@ -2086,7 +2793,14 @@
       "True": "comparison_ignores_case"
     },
     "xp": 10,
-    "prompt_xh": "print(\"Cape\" == \"cape\")"
+    "prompt_xh": "print(\"Cape\" == \"cape\")",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo",
+      "None"
+    ],
+    "answer_xh": "False"
   },
   {
     "module_id": "comparison",
@@ -2104,7 +2818,14 @@
       "True": "comparison_ignores_case"
     },
     "xp": 10,
-    "prompt_xh": "print(\"Dog\" == \"dog\")"
+    "prompt_xh": "print(\"Dog\" == \"dog\")",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo",
+      "None"
+    ],
+    "answer_xh": "False"
   },
   {
     "module_id": "comparison",
@@ -2122,7 +2843,14 @@
       "True": "comparison_ignores_case"
     },
     "xp": 10,
-    "prompt_xh": "print(\"Owl\" == \"owl\")"
+    "prompt_xh": "print(\"Owl\" == \"owl\")",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo",
+      "None"
+    ],
+    "answer_xh": "False"
   },
   {
     "module_id": "comparison",
@@ -2140,7 +2868,14 @@
       "Cannot compare strings with <": "strings_not_orderable_myth"
     },
     "xp": 15,
-    "prompt_xh": "print(\"apple\" < \"banana\")"
+    "prompt_xh": "print(\"apple\" < \"banana\")",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo",
+      "Ayikwazi ukuthelekisa strings kunye <"
+    ],
+    "answer_xh": "True"
   },
   {
     "module_id": "comparison",
@@ -2158,7 +2893,14 @@
       "Cannot compare strings with <": "strings_not_orderable_myth"
     },
     "xp": 15,
-    "prompt_xh": "print(\"cat\" < \"dog\")"
+    "prompt_xh": "print(\"cat\" < \"dog\")",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo",
+      "Ayikwazi ukuthelekisa strings kunye <"
+    ],
+    "answer_xh": "True"
   },
   {
     "module_id": "comparison",
@@ -2176,7 +2918,14 @@
       "Cannot compare strings with <": "strings_not_orderable_myth"
     },
     "xp": 15,
-    "prompt_xh": "print(\"umuntu\" < \"ubuntu\")"
+    "prompt_xh": "print(\"umuntu\" < \"ubuntu\")",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo",
+      "Ayikwazi ukuthelekisa strings kunye <"
+    ],
+    "answer_xh": "False"
   },
   {
     "module_id": "comparison",
@@ -2194,7 +2943,14 @@
       "Cannot compare strings with <": "strings_not_orderable_myth"
     },
     "xp": 15,
-    "prompt_xh": "print(\"code\" < \"conundrum\")"
+    "prompt_xh": "print(\"code\" < \"conundrum\")",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo",
+      "Ayikwazi ukuthelekisa strings kunye <"
+    ],
+    "answer_xh": "True"
   },
   {
     "module_id": "comparison",
@@ -2208,7 +2964,13 @@
     ],
     "answer": "True",
     "xp": 15,
-    "prompt_xh": "print(\"Z\" < \"a\")\nKhumbula: oonobumba abakhulu bangaphambi koonobumba abancinci ngokulandelelana kweASCII."
+    "prompt_xh": "print(\"Z\" < \"a\")\nKhumbula: oonobumba abakhulu bangaphambi koonobumba abancinci ngokulandelelana kweASCII.",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo"
+    ],
+    "answer_xh": "True"
   },
   {
     "module_id": "comparison",
@@ -2222,7 +2984,13 @@
     ],
     "answer": "True",
     "xp": 15,
-    "prompt_xh": "print(\"A\" < \"z\")\nKhumbula: oonobumba abakhulu bangaphambi koonobumba abancinci ngokulandelelana kweASCII."
+    "prompt_xh": "print(\"A\" < \"z\")\nKhumbula: oonobumba abakhulu bangaphambi koonobumba abancinci ngokulandelelana kweASCII.",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo"
+    ],
+    "answer_xh": "True"
   },
   {
     "module_id": "comparison",
@@ -2236,7 +3004,13 @@
     ],
     "answer": "True",
     "xp": 15,
-    "prompt_xh": "print(\"B\" < \"b\")\nKhumbula: oonobumba abakhulu bangaphambi koonobumba abancinci ngokulandelelana kweASCII."
+    "prompt_xh": "print(\"B\" < \"b\")\nKhumbula: oonobumba abakhulu bangaphambi koonobumba abancinci ngokulandelelana kweASCII.",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo"
+    ],
+    "answer_xh": "True"
   },
   {
     "module_id": "comparison",
@@ -2259,7 +3033,18 @@
       "'10' == '10'": "string_number_equality_myth"
     },
     "xp": 15,
-    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezixabisa kwi-True."
+    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezixabisa kwi-True.",
+    "options_xh": [
+      "'10' == 10",
+      "'10' == '10'",
+      "'a' < 'b'",
+      "'Z' < 'a'"
+    ],
+    "answers_xh": [
+      "'10' == '10'",
+      "'a' < 'b'",
+      "'Z' < 'a'"
+    ]
   },
   {
     "module_id": "comparison",
@@ -2280,7 +3065,17 @@
       "'5' == 5": "string_number_equality_myth"
     },
     "xp": 15,
-    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezixabisa kwi-True."
+    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezixabisa kwi-True.",
+    "options_xh": [
+      "'cat' == 'cat'",
+      "'cat' == 'Cat'",
+      "'5' == 5",
+      "'dog' > 'cat'"
+    ],
+    "answers_xh": [
+      "'cat' == 'cat'",
+      "'dog' > 'cat'"
+    ]
   },
   {
     "module_id": "comparison",
@@ -2301,7 +3096,17 @@
       "3 == '3'": "string_number_equality_myth"
     },
     "xp": 15,
-    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezixabisa kwi-True."
+    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezixabisa kwi-True.",
+    "options_xh": [
+      "3 == '3'",
+      "'a' != 'b'",
+      "'x' < 'y'",
+      "'A' == 'a'"
+    ],
+    "answers_xh": [
+      "'a' != 'b'",
+      "'x' < 'y'"
+    ]
   },
   {
     "module_id": "comparison",
@@ -2322,7 +3127,17 @@
       "'10' == 10": "string_number_equality_myth"
     },
     "xp": 15,
-    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezixabisa kwi-True."
+    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezixabisa kwi-True.",
+    "options_xh": [
+      "'py' in 'python'",
+      "'10' == 10",
+      "'z' > 'a'",
+      "'Cat' == 'cat'"
+    ],
+    "answers_xh": [
+      "'py' in 'python'",
+      "'z' > 'a'"
+    ]
   },
   {
     "module_id": "comparison",
@@ -2363,7 +3178,13 @@
     ],
     "answer": "True",
     "xp": 15,
-    "prompt_xh": "print(\"Cat\".lower() == \"cat\".lower())"
+    "prompt_xh": "print(\"Cat\".lower() == \"cat\".lower())",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo"
+    ],
+    "answer_xh": "True"
   },
   {
     "module_id": "comparison",
@@ -2377,7 +3198,13 @@
     ],
     "answer": "True",
     "xp": 15,
-    "prompt_xh": "print(\"PYTHON\".lower() == \"python\".lower())"
+    "prompt_xh": "print(\"PYTHON\".lower() == \"python\".lower())",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo"
+    ],
+    "answer_xh": "True"
   },
   {
     "module_id": "comparison",
@@ -2391,7 +3218,13 @@
     ],
     "answer": "True",
     "xp": 15,
-    "prompt_xh": "print(\"Dog\".lower() == \"DOG\".lower())"
+    "prompt_xh": "print(\"Dog\".lower() == \"DOG\".lower())",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo"
+    ],
+    "answer_xh": "True"
   },
   {
     "module_id": "comparison",
@@ -2405,7 +3238,13 @@
     ],
     "answer": "True",
     "xp": 15,
-    "prompt_xh": "print(\"cat\" in \"concatenate\")"
+    "prompt_xh": "print(\"cat\" in \"concatenate\")",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo"
+    ],
+    "answer_xh": "True"
   },
   {
     "module_id": "comparison",
@@ -2419,7 +3258,13 @@
     ],
     "answer": "False",
     "xp": 15,
-    "prompt_xh": "print(\"xyz\" in \"python\")"
+    "prompt_xh": "print(\"xyz\" in \"python\")",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo"
+    ],
+    "answer_xh": "False"
   },
   {
     "module_id": "comparison",
@@ -2433,7 +3278,13 @@
     ],
     "answer": "True",
     "xp": 15,
-    "prompt_xh": "print(\"py\" in \"python\")"
+    "prompt_xh": "print(\"py\" in \"python\")",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo"
+    ],
+    "answer_xh": "True"
   },
   {
     "module_id": "comparison",
@@ -2487,7 +3338,14 @@
     ],
     "answer": "apple",
     "xp": 10,
-    "prompt_xh": "Ngawaphi kula magama alandelayo afumaneka kuqala ngokulandelelana kwealfabhethi (isichazi-magama)?"
+    "prompt_xh": "Ngawaphi kula magama alandelayo afumaneka kuqala ngokulandelelana kwealfabhethi (isichazi-magama)?",
+    "options_xh": [
+      "apple",
+      "banana",
+      "cherry",
+      "Bonke bayalingana"
+    ],
+    "answer_xh": "apple"
   },
   {
     "module_id": "looping",
@@ -2565,7 +3423,14 @@
       "Nothing, it errors": "off_by_one_length"
     },
     "xp": 15,
-    "prompt_xh": "word = \"dog\"\ni = 0\nwhile i < len(word):\n    print(word[i])\n    i += 1\nYintoni eprintiweyo kumgca wokugqibela wokuphuma?"
+    "prompt_xh": "word = \"dog\"\ni = 0\nwhile i < len(word):\n    print(word[i])\n    i += 1\nYintoni eprintiweyo kumgca wokugqibela wokuphuma?",
+    "options_xh": [
+      "d",
+      "o",
+      "g",
+      "Akukho nto, kukho iimpazamo"
+    ],
+    "answer_xh": "g"
   },
   {
     "module_id": "looping",
@@ -2583,7 +3448,14 @@
       "Nothing, it errors": "off_by_one_length"
     },
     "xp": 15,
-    "prompt_xh": "word = \"cat\"\ni = 0\nwhile i < len(word):\n    print(word[i])\n    i += 1\nYintoni eprintiweyo kumgca wokugqibela wokuphuma?"
+    "prompt_xh": "word = \"cat\"\ni = 0\nwhile i < len(word):\n    print(word[i])\n    i += 1\nYintoni eprintiweyo kumgca wokugqibela wokuphuma?",
+    "options_xh": [
+      "c",
+      "a",
+      "t",
+      "Akukho nto, kukho iimpazamo"
+    ],
+    "answer_xh": "t"
   },
   {
     "module_id": "looping",
@@ -2601,7 +3473,14 @@
       "Nothing, it errors": "off_by_one_length"
     },
     "xp": 15,
-    "prompt_xh": "word = \"owl\"\ni = 0\nwhile i < len(word):\n    print(word[i])\n    i += 1\nYintoni eprintiweyo kumgca wokugqibela wokuphuma?"
+    "prompt_xh": "word = \"owl\"\ni = 0\nwhile i < len(word):\n    print(word[i])\n    i += 1\nYintoni eprintiweyo kumgca wokugqibela wokuphuma?",
+    "options_xh": [
+      "o",
+      "w",
+      "l",
+      "Akukho nto, kukho iimpazamo"
+    ],
+    "answer_xh": "l"
   },
   {
     "module_id": "looping",
@@ -2619,7 +3498,14 @@
       "Nothing, it errors": "off_by_one_length"
     },
     "xp": 15,
-    "prompt_xh": "word = \"sun\"\ni = 0\nwhile i < len(word):\n    print(word[i])\n    i += 1\nYintoni eprintiweyo kumgca wokugqibela wokuphuma?"
+    "prompt_xh": "word = \"sun\"\ni = 0\nwhile i < len(word):\n    print(word[i])\n    i += 1\nYintoni eprintiweyo kumgca wokugqibela wokuphuma?",
+    "options_xh": [
+      "s",
+      "u",
+      "n",
+      "Akukho nto, kukho iimpazamo"
+    ],
+    "answer_xh": "n"
   },
   {
     "module_id": "looping",
@@ -2751,7 +3637,14 @@
     ],
     "answer": "a",
     "xp": 15,
-    "prompt_xh": "w = \"cat\"\nfor i, ch in enumerate(w):\n    if i == 1:\n        print(ch)\nYintoni ebhaliweyo kulo mfanekiso?"
+    "prompt_xh": "w = \"cat\"\nfor i, ch in enumerate(w):\n    if i == 1:\n        print(ch)\nYintoni ebhaliweyo kulo mfanekiso?",
+    "options_xh": [
+      "c",
+      "a",
+      "t",
+      "Nothing"
+    ],
+    "answer_xh": "a"
   },
   {
     "module_id": "looping",
@@ -2766,7 +3659,14 @@
     ],
     "answer": "d",
     "xp": 15,
-    "prompt_xh": "w = \"dog\"\nfor i, ch in enumerate(w):\n    if i == 0:\n        print(ch)\nYintoni ebhaliweyo kulo mfanekiso?"
+    "prompt_xh": "w = \"dog\"\nfor i, ch in enumerate(w):\n    if i == 0:\n        print(ch)\nYintoni ebhaliweyo kulo mfanekiso?",
+    "options_xh": [
+      "d",
+      "o",
+      "g",
+      "Nothing"
+    ],
+    "answer_xh": "d"
   },
   {
     "module_id": "looping",
@@ -2781,7 +3681,14 @@
     ],
     "answer": "l",
     "xp": 15,
-    "prompt_xh": "w = \"owl\"\nfor i, ch in enumerate(w):\n    if i == 2:\n        print(ch)\nYintoni ebhaliweyo kulo mfanekiso?"
+    "prompt_xh": "w = \"owl\"\nfor i, ch in enumerate(w):\n    if i == 2:\n        print(ch)\nYintoni ebhaliweyo kulo mfanekiso?",
+    "options_xh": [
+      "o",
+      "w",
+      "l",
+      "Nothing"
+    ],
+    "answer_xh": "l"
   },
   {
     "module_id": "looping",
@@ -2874,7 +3781,14 @@
     ],
     "answer": "not found",
     "xp": 15,
-    "prompt_xh": "for ch in \"cat\":\n    if ch == \"z\":\n        break\nelse:\n    print(\"not found\")\nYintoni ebhaliweyo kulo mfanekiso?"
+    "prompt_xh": "for ch in \"cat\":\n    if ch == \"z\":\n        break\nelse:\n    print(\"not found\")\nYintoni ebhaliweyo kulo mfanekiso?",
+    "options_xh": [
+      "not found",
+      "Nothing",
+      "cat",
+      "Impazamo"
+    ],
+    "answer_xh": "not found"
   },
   {
     "module_id": "looping",
@@ -2889,7 +3803,14 @@
     ],
     "answer": "c",
     "xp": 15,
-    "prompt_xh": "for ch in \"cat\":\n    if ch == \"a\":\n        break\n    print(ch)\nYintoni ebhaliweyo kulo mfanekiso?"
+    "prompt_xh": "for ch in \"cat\":\n    if ch == \"a\":\n        break\n    print(ch)\nYintoni ebhaliweyo kulo mfanekiso?",
+    "options_xh": [
+      "c",
+      "cat",
+      "c\na\nt",
+      "Nothing"
+    ],
+    "answer_xh": "c"
   },
   {
     "module_id": "methods",
@@ -2904,7 +3825,14 @@
     ],
     "answer": "HELLO",
     "xp": 10,
-    "prompt_xh": "print(\"Hello\".upper())"
+    "prompt_xh": "print(\"Hello\".upper())",
+    "options_xh": [
+      "HELLO",
+      "Hello",
+      "Hello",
+      "Impazamo"
+    ],
+    "answer_xh": "HELLO"
   },
   {
     "module_id": "methods",
@@ -2919,7 +3847,14 @@
     ],
     "answer": "python",
     "xp": 10,
-    "prompt_xh": "print(\"PyThOn\".lower())"
+    "prompt_xh": "print(\"PyThOn\".lower())",
+    "options_xh": [
+      "python",
+      "PyThOn",
+      "Python",
+      "Impazamo"
+    ],
+    "answer_xh": "python"
   },
   {
     "module_id": "methods",
@@ -2934,7 +3869,14 @@
     ],
     "answer": "CAPE TOWN",
     "xp": 10,
-    "prompt_xh": "print(\"cape TOWN\".upper())"
+    "prompt_xh": "print(\"cape TOWN\".upper())",
+    "options_xh": [
+      "CAPE TOWN",
+      "cape TOWN",
+      "Cape Town",
+      "Impazamo"
+    ],
+    "answer_xh": "CAPE TOWN"
   },
   {
     "module_id": "methods",
@@ -2949,7 +3891,14 @@
     ],
     "answer": "xhosa",
     "xp": 10,
-    "prompt_xh": "print(\"XHOSA\".lower())"
+    "prompt_xh": "print(\"XHOSA\".lower())",
+    "options_xh": [
+      "xhosa",
+      "XHOSA",
+      "Xhosa",
+      "Impazamo"
+    ],
+    "answer_xh": "xhosa"
   },
   {
     "module_id": "methods",
@@ -2964,7 +3913,14 @@
     ],
     "answer": "Hello World",
     "xp": 15,
-    "prompt_xh": "print(\"hello world\".title())"
+    "prompt_xh": "print(\"hello world\".title())",
+    "options_xh": [
+      "Hello World",
+      "Hello World",
+      "Hello world",
+      "HELLO WORLD"
+    ],
+    "answer_xh": "Hello World"
   },
   {
     "module_id": "methods",
@@ -2979,7 +3935,14 @@
     ],
     "answer": "Hello world",
     "xp": 15,
-    "prompt_xh": "print(\"hello world\".capitalize())"
+    "prompt_xh": "print(\"hello world\".capitalize())",
+    "options_xh": [
+      "Hello world",
+      "Hello World",
+      "Hello world",
+      "HELLO WORLD"
+    ],
+    "answer_xh": "Hello world"
   },
   {
     "module_id": "methods",
@@ -2997,7 +3960,14 @@
       "'  hello  '": "strip_only_removes_one_char"
     },
     "xp": 15,
-    "prompt_xh": "print(repr(\"  hello  \".strip()))\n(i-repr ibonisa amanqaku okucaphula ukuze ubone indawo emhlophe ngokucacileyo)"
+    "prompt_xh": "print(repr(\"  hello  \".strip()))\n(i-repr ibonisa amanqaku okucaphula ukuze ubone indawo emhlophe ngokucacileyo)",
+    "options_xh": [
+      "'hello'",
+      "'hello  '",
+      "'  hello'",
+      "'  hello  '"
+    ],
+    "answer_xh": "'hello'"
   },
   {
     "module_id": "methods",
@@ -3015,7 +3985,14 @@
       "'  hello  '": "strip_only_removes_one_char"
     },
     "xp": 15,
-    "prompt_xh": "print(repr(\"  hello  \".lstrip()))\n(i-repr ibonisa amanqaku okucaphula ukuze ubone indawo emhlophe ngokucacileyo)"
+    "prompt_xh": "print(repr(\"  hello  \".lstrip()))\n(i-repr ibonisa amanqaku okucaphula ukuze ubone indawo emhlophe ngokucacileyo)",
+    "options_xh": [
+      "'hello'",
+      "'hello  '",
+      "'  hello'",
+      "'  hello  '"
+    ],
+    "answer_xh": "'hello  '"
   },
   {
     "module_id": "methods",
@@ -3033,7 +4010,14 @@
       "'  hello  '": "strip_only_removes_one_char"
     },
     "xp": 15,
-    "prompt_xh": "print(repr(\"  hello  \".rstrip()))\n(i-repr ibonisa amanqaku okucaphula ukuze ubone indawo emhlophe ngokucacileyo)"
+    "prompt_xh": "print(repr(\"  hello  \".rstrip()))\n(i-repr ibonisa amanqaku okucaphula ukuze ubone indawo emhlophe ngokucacileyo)",
+    "options_xh": [
+      "'hello'",
+      "'hello  '",
+      "'  hello'",
+      "'  hello  '"
+    ],
+    "answer_xh": "'  hello'"
   },
   {
     "module_id": "methods",
@@ -3090,7 +4074,17 @@
       "word.count(\"o\")": "count_vs_find_confusion"
     },
     "xp": 15,
-    "prompt_xh": "word = \"hello world\"\nKhetha konke oku kulandelayo okuya kufumana ngokuchanekileyo indawo yokuvela kokuqala kwe\"o\"."
+    "prompt_xh": "word = \"hello world\"\nKhetha konke oku kulandelayo okuya kufumana ngokuchanekileyo indawo yokuvela kokuqala kwe\"o\".",
+    "options_xh": [
+      "word.find(\"o\")",
+      "word.index(\"o\")",
+      "word.count(\"o\")",
+      "word[4]"
+    ],
+    "answers_xh": [
+      "word.find(\"o\")",
+      "word.index(\"o\")"
+    ]
   },
   {
     "module_id": "methods",
@@ -3111,7 +4105,17 @@
       "word.count(\"n\")": "count_vs_find_confusion"
     },
     "xp": 15,
-    "prompt_xh": "word = \"banana\"\nKhetha konke oku kulandelayo okuya kufumana ngokuchanekileyo indawo yokuvela kokuqala kwe\"n\"."
+    "prompt_xh": "word = \"banana\"\nKhetha konke oku kulandelayo okuya kufumana ngokuchanekileyo indawo yokuvela kokuqala kwe\"n\".",
+    "options_xh": [
+      "word.find(\"n\")",
+      "word.index(\"n\")",
+      "word.count(\"n\")",
+      "word[2]"
+    ],
+    "answers_xh": [
+      "word.find(\"n\")",
+      "word.index(\"n\")"
+    ]
   },
   {
     "module_id": "methods",
@@ -3132,7 +4136,17 @@
       "word.count(\"ngumuntu\")": "count_vs_find_confusion"
     },
     "xp": 15,
-    "prompt_xh": "word = \"umuntu ngumuntu\"\nKhetha konke oku kulandelayo okuya kufumana ngokuchanekileyo indawo yokuvela kokuqala kwe\"ngumuntu\"."
+    "prompt_xh": "word = \"umuntu ngumuntu\"\nKhetha konke oku kulandelayo okuya kufumana ngokuchanekileyo indawo yokuvela kokuqala kwe\"ngumuntu\".",
+    "options_xh": [
+      "word.find(\"ngumuntu\")",
+      "word.index(\"ngumuntu\")",
+      "word.count(\"ngumuntu\")",
+      "word[7]"
+    ],
+    "answers_xh": [
+      "word.find(\"ngumuntu\")",
+      "word.index(\"ngumuntu\")"
+    ]
   },
   {
     "module_id": "methods",
@@ -3147,7 +4161,14 @@
     ],
     "answer": "bonono",
     "xp": 15,
-    "prompt_xh": "print(\"banana\".replace(\"a\", \"o\"))"
+    "prompt_xh": "print(\"banana\".replace(\"a\", \"o\"))",
+    "options_xh": [
+      "bonono",
+      "bonana",
+      "banana",
+      "Impazamo"
+    ],
+    "answer_xh": "bonono"
   },
   {
     "module_id": "methods",
@@ -3162,7 +4183,14 @@
     ],
     "answer": "hell0 w0rld",
     "xp": 15,
-    "prompt_xh": "print(\"hello world\".replace(\"o\", \"0\"))"
+    "prompt_xh": "print(\"hello world\".replace(\"o\", \"0\"))",
+    "options_xh": [
+      "hell0 w0rld",
+      "hell0 world",
+      "hello world",
+      "Impazamo"
+    ],
+    "answer_xh": "hell0 w0rld"
   },
   {
     "module_id": "methods",
@@ -3177,7 +4205,14 @@
     ],
     "answer": "m!ss!ss!pp!",
     "xp": 15,
-    "prompt_xh": "print(\"mississippi\".replace(\"i\", \"!\"))"
+    "prompt_xh": "print(\"mississippi\".replace(\"i\", \"!\"))",
+    "options_xh": [
+      "m!ss!ss!pp!",
+      "m!ssissippi",
+      "mississippi",
+      "Impazamo"
+    ],
+    "answer_xh": "m!ss!ss!pp!"
   },
   {
     "module_id": "methods",
@@ -3192,7 +4227,14 @@
     ],
     "answer": "['cat', 'dog', 'owl']",
     "xp": 15,
-    "prompt_xh": "print(\"cat dog owl\".split())"
+    "prompt_xh": "print(\"cat dog owl\".split())",
+    "options_xh": [
+      "['cat', 'dog', 'owl']",
+      "\"cat dog owl\".split()",
+      "Impazamo",
+      "None"
+    ],
+    "answer_xh": "['cat', 'dog', 'owl']"
   },
   {
     "module_id": "methods",
@@ -3207,7 +4249,14 @@
     ],
     "answer": "a-b-c",
     "xp": 15,
-    "prompt_xh": "print(\"-\".join([\"a\",\"b\",\"c\"]))"
+    "prompt_xh": "print(\"-\".join([\"a\",\"b\",\"c\"]))",
+    "options_xh": [
+      "a-b-c",
+      "\"-\".join([\"a\",\"b\",\"c\"])",
+      "Impazamo",
+      "None"
+    ],
+    "answer_xh": "a-b-c"
   },
   {
     "module_id": "methods",
@@ -3222,7 +4271,14 @@
     ],
     "answer": "['one', 'two', 'three']",
     "xp": 15,
-    "prompt_xh": "print(\"one,two,three\".split(\",\"))"
+    "prompt_xh": "print(\"one,two,three\".split(\",\"))",
+    "options_xh": [
+      "['one', 'two', 'three']",
+      "\"one,two,three\".split(\",\")",
+      "Impazamo",
+      "None"
+    ],
+    "answer_xh": "['one', 'two', 'three']"
   },
   {
     "module_id": "methods",
@@ -3236,7 +4292,13 @@
     ],
     "answer": "True",
     "xp": 15,
-    "prompt_xh": "print(\"hello.py\".endswith(\".py\"))"
+    "prompt_xh": "print(\"hello.py\".endswith(\".py\"))",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo"
+    ],
+    "answer_xh": "True"
   },
   {
     "module_id": "methods",
@@ -3250,7 +4312,13 @@
     ],
     "answer": "True",
     "xp": 15,
-    "prompt_xh": "print(\"umuntu\".startswith(\"umu\"))"
+    "prompt_xh": "print(\"umuntu\".startswith(\"umu\"))",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo"
+    ],
+    "answer_xh": "True"
   },
   {
     "module_id": "methods",
@@ -3264,7 +4332,13 @@
     ],
     "answer": "True",
     "xp": 15,
-    "prompt_xh": "print(\"banana\".endswith(\"nana\"))"
+    "prompt_xh": "print(\"banana\".endswith(\"nana\"))",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo"
+    ],
+    "answer_xh": "True"
   },
   {
     "module_id": "methods",
@@ -3278,7 +4352,13 @@
     ],
     "answer": "True",
     "xp": 15,
-    "prompt_xh": "print(\"hello\".isalpha())"
+    "prompt_xh": "print(\"hello\".isalpha())",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo"
+    ],
+    "answer_xh": "True"
   },
   {
     "module_id": "methods",
@@ -3292,7 +4372,13 @@
     ],
     "answer": "True",
     "xp": 15,
-    "prompt_xh": "print(\"12345\".isdigit())"
+    "prompt_xh": "print(\"12345\".isdigit())",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo"
+    ],
+    "answer_xh": "True"
   },
   {
     "module_id": "methods",
@@ -3306,7 +4392,13 @@
     ],
     "answer": "True",
     "xp": 15,
-    "prompt_xh": "print(\"HELLO\".isupper())"
+    "prompt_xh": "print(\"HELLO\".isupper())",
+    "options_xh": [
+      "True",
+      "False",
+      "Impazamo"
+    ],
+    "answer_xh": "True"
   },
   {
     "module_id": "methods",
@@ -3438,7 +4530,14 @@
       "Ada says hi": "fstring_missing_prefix_effect"
     },
     "xp": 15,
-    "prompt_xh": "name = \"Ada\"\nprint(\"{name} says hi\")\nYintoni eprintiweyo? (qwalasela akukho f phambi string)"
+    "prompt_xh": "name = \"Ada\"\nprint(\"{name} says hi\")\nYintoni eprintiweyo? (qwalasela akukho f phambi string)",
+    "options_xh": [
+      "{name} says hi",
+      "Ada says hi",
+      "Impazamo",
+      "hi says hi"
+    ],
+    "answer_xh": "{name} says hi"
   },
   {
     "module_id": "formatting",
@@ -3456,7 +4555,14 @@
       "Joburg says hi": "fstring_missing_prefix_effect"
     },
     "xp": 15,
-    "prompt_xh": "city = \"Joburg\"\nprint(\"{city} says hi\")\nYintoni eprintiweyo? (qwalasela akukho f phambi string)"
+    "prompt_xh": "city = \"Joburg\"\nprint(\"{city} says hi\")\nYintoni eprintiweyo? (qwalasela akukho f phambi string)",
+    "options_xh": [
+      "{city} says hi",
+      "Joburg says hi",
+      "Impazamo",
+      "hi says hi"
+    ],
+    "answer_xh": "{city} says hi"
   },
   {
     "module_id": "formatting",
@@ -3481,7 +4587,12 @@
     ],
     "answer": "A tab character",
     "xp": 10,
-    "prompt_xh": "print(\"A\\tB\")\nNgaba kukho umlinganiswa we-tab okanye i-backslash-t yeempawu ezimbini phakathi kwe-A ne-B?"
+    "prompt_xh": "print(\"A\\tB\")\nNgaba kukho umlinganiswa we-tab okanye i-backslash-t yeempawu ezimbini phakathi kwe-A ne-B?",
+    "options_xh": [
+      "A tab character",
+      "Iimpawu ezimbini backslash kwaye t"
+    ],
+    "answer_xh": "A tab character"
   },
   {
     "module_id": "formatting",
@@ -3509,7 +4620,14 @@
     ],
     "answer": "a-b-c",
     "xp": 15,
-    "prompt_xh": "print(\"a\", \"b\", \"c\", sep=\"-\")\nYintoni ebhaliweyo kulo mfanekiso?"
+    "prompt_xh": "print(\"a\", \"b\", \"c\", sep=\"-\")\nYintoni ebhaliweyo kulo mfanekiso?",
+    "options_xh": [
+      "a-b-c",
+      "a b c",
+      "Impazamo",
+      "Nothing"
+    ],
+    "answer_xh": "a-b-c"
   },
   {
     "module_id": "formatting",
@@ -3524,7 +4642,14 @@
     ],
     "answer": "x!y",
     "xp": 15,
-    "prompt_xh": "print(\"x\", end=\"!\")\nprint(\"y\")\nYintoni ebhaliweyo kulo mfanekiso?"
+    "prompt_xh": "print(\"x\", end=\"!\")\nprint(\"y\")\nYintoni ebhaliweyo kulo mfanekiso?",
+    "options_xh": [
+      "x!y",
+      "xy",
+      "Impazamo",
+      "Nothing"
+    ],
+    "answer_xh": "x!y"
   },
   {
     "module_id": "formatting",
@@ -3539,7 +4664,14 @@
     ],
     "answer": "1, 2, 3",
     "xp": 15,
-    "prompt_xh": "print(1, 2, 3, sep=\", \")\nYintoni ebhaliweyo kulo mfanekiso?"
+    "prompt_xh": "print(1, 2, 3, sep=\", \")\nYintoni ebhaliweyo kulo mfanekiso?",
+    "options_xh": [
+      "1, 2, 3",
+      "1 2 3",
+      "Impazamo",
+      "Nothing"
+    ],
+    "answer_xh": "1, 2, 3"
   },
   {
     "module_id": "formatting",
@@ -3593,7 +4725,14 @@
     ],
     "answer": "Ada is 30",
     "xp": 15,
-    "prompt_xh": "print(\"{} is {}\".format(\"Ada\", 30))"
+    "prompt_xh": "print(\"{} is {}\".format(\"Ada\", 30))",
+    "options_xh": [
+      "I-Ada ingama-30",
+      "\"{} is {}\".format(\"Ada\", 30)",
+      "Impazamo",
+      "None"
+    ],
+    "answer_xh": "I-Ada ingama-30"
   },
   {
     "module_id": "formatting",
@@ -3608,7 +4747,14 @@
     ],
     "answer": "x-y-x",
     "xp": 15,
-    "prompt_xh": "print(\"{0}-{1}-{0}\".format(\"x\", \"y\"))"
+    "prompt_xh": "print(\"{0}-{1}-{0}\".format(\"x\", \"y\"))",
+    "options_xh": [
+      "x-y-x",
+      "\"{0}-{1}-{0}\".format(\"x\", \"y\")",
+      "Impazamo",
+      "None"
+    ],
+    "answer_xh": "x-y-x"
   },
   {
     "module_id": "formatting",
@@ -3623,7 +4769,14 @@
     ],
     "answer": "Score: 95",
     "xp": 15,
-    "prompt_xh": "print(\"Score: {}\".format(95))"
+    "prompt_xh": "print(\"Score: {}\".format(95))",
+    "options_xh": [
+      "Score: 95",
+      "\"Score: {}\".format(95)",
+      "Impazamo",
+      "None"
+    ],
+    "answer_xh": "Score: 95"
   },
   {
     "module_id": "formatting",
@@ -3637,7 +4790,13 @@
     ],
     "answer": "Ada is 30",
     "xp": 15,
-    "prompt_xh": "print(\"%s is %d\" % (\"Ada\", 30))"
+    "prompt_xh": "print(\"%s is %d\" % (\"Ada\", 30))",
+    "options_xh": [
+      "I-Ada ingama-30",
+      "\"%s is %d\" % (\"Ada\", 30)",
+      "Impazamo"
+    ],
+    "answer_xh": "I-Ada ingama-30"
   },
   {
     "module_id": "formatting",
@@ -3651,7 +4810,13 @@
     ],
     "answer": "50%",
     "xp": 15,
-    "prompt_xh": "print(\"%d%%\" % 50)"
+    "prompt_xh": "print(\"%d%%\" % 50)",
+    "options_xh": [
+      "50%",
+      "\"%d%%\" % 50",
+      "Impazamo"
+    ],
+    "answer_xh": "50%"
   },
   {
     "module_id": "formatting",
@@ -3666,7 +4831,14 @@
     ],
     "answer": "'        hi'",
     "xp": 15,
-    "prompt_xh": "print(repr(f\"{'hi':>10}\"))\n(repr ibonisa izithuba ukuze ulungelelwaniso lubonakale)"
+    "prompt_xh": "print(repr(f\"{'hi':>10}\"))\n(repr ibonisa izithuba ukuze ulungelelwaniso lubonakale)",
+    "options_xh": [
+      "'        hi'",
+      "'hi'",
+      "'    hi    '",
+      "'hi        '"
+    ],
+    "answer_xh": "'        hi'"
   },
   {
     "module_id": "formatting",
@@ -3681,7 +4853,14 @@
     ],
     "answer": "'hi        '",
     "xp": 15,
-    "prompt_xh": "print(repr(f\"{'hi':<10}\"))\n(repr ibonisa izithuba ukuze ulungelelwaniso lubonakale)"
+    "prompt_xh": "print(repr(f\"{'hi':<10}\"))\n(repr ibonisa izithuba ukuze ulungelelwaniso lubonakale)",
+    "options_xh": [
+      "'hi        '",
+      "'hi'",
+      "'    hi    '",
+      "'hi        '"
+    ],
+    "answer_xh": "'hi        '"
   },
   {
     "module_id": "formatting",
@@ -3696,7 +4875,14 @@
     ],
     "answer": "'    hi    '",
     "xp": 15,
-    "prompt_xh": "print(repr(f\"{'hi':^10}\"))\n(repr ibonisa izithuba ukuze ulungelelwaniso lubonakale)"
+    "prompt_xh": "print(repr(f\"{'hi':^10}\"))\n(repr ibonisa izithuba ukuze ulungelelwaniso lubonakale)",
+    "options_xh": [
+      "'    hi    '",
+      "'hi'",
+      "'    hi    '",
+      "'hi        '"
+    ],
+    "answer_xh": "'    hi    '"
   },
   {
     "module_id": "formatting",
@@ -3711,7 +4897,14 @@
     ],
     "answer": "3.14",
     "xp": 15,
-    "prompt_xh": "print(f\"{3.14159:.2f}\")"
+    "prompt_xh": "print(f\"{3.14159:.2f}\")",
+    "options_xh": [
+      "3.14",
+      "3.14159",
+      "Impazamo",
+      "3.14"
+    ],
+    "answer_xh": "3.14"
   },
   {
     "module_id": "formatting",
@@ -3726,7 +4919,14 @@
     ],
     "answer": "0.333",
     "xp": 15,
-    "prompt_xh": "print(f\"{1/3:.3f}\")"
+    "prompt_xh": "print(f\"{1/3:.3f}\")",
+    "options_xh": [
+      "0.333",
+      "0.3333333333333333",
+      "Impazamo",
+      "3.14"
+    ],
+    "answer_xh": "0.333"
   },
   {
     "module_id": "formatting",
@@ -3740,7 +4940,13 @@
     ],
     "answer": "----------",
     "xp": 10,
-    "prompt_xh": "print(\"-\" * 10)"
+    "prompt_xh": "print(\"-\" * 10)",
+    "options_xh": [
+      "----------",
+      "\"-\" * 10",
+      "Impazamo"
+    ],
+    "answer_xh": "----------"
   },
   {
     "module_id": "formatting",
@@ -3754,7 +4960,13 @@
     ],
     "answer": "=====",
     "xp": 10,
-    "prompt_xh": "print(\"=\" * 5)"
+    "prompt_xh": "print(\"=\" * 5)",
+    "options_xh": [
+      "=====",
+      "\"=\" * 5",
+      "Impazamo"
+    ],
+    "answer_xh": "====="
   },
   {
     "module_id": "formatting",
