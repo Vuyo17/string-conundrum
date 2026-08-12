@@ -85,14 +85,43 @@ jobs:
           # EXISTS plus ALTER TABLE ADD COLUMN IF NOT EXISTS, and the seeder
           # upserts by primary key, COALESCEing translations so it never wipes
           # one that is already in the table.
-          if [ -z "${DATABASE_URL:-}" ] && [ -f "$APP_DIR/backend/.env" ]; then
+          # A malformed DATABASE_URL is worse than a missing one. psql treats
+          # anything without a postgresql:// scheme as a bare database name,
+          # connects over the local socket as the runner's own OS user, and
+          # dies with `role "mtmluv001" does not exist` — which is what broke
+          # every deploy from 2026-08-09 onward, once a bad value was added as
+          # an environment secret. The secret is non-empty, so the emptiness
+          # check below passed and the good .env was never consulted.
+          #
+          # So: validate the shape, not just the presence. Anything that is not
+          # a postgres URI is treated as unset, which lets the on-disk .env win.
+          valid_dsn() {
+            case "${1:-}" in
+              postgresql://*|postgres://*) return 0 ;;
+              *) return 1 ;;
+            esac
+          }
+
+          if ! valid_dsn "${DATABASE_URL:-}"; then
+            if [ -n "${DATABASE_URL:-}" ]; then
+              echo "Ignoring DATABASE_URL: not a postgresql:// URI." >&2
+            fi
+            DATABASE_URL=""
+          fi
+
+          if [ -z "$DATABASE_URL" ] && [ -f "$APP_DIR/backend/.env" ]; then
             # shellcheck disable=SC1091
             set -a; . "$APP_DIR/backend/.env"; set +a
           fi
-          if [ -z "${DATABASE_URL:-}" ]; then
-            echo "DATABASE_URL is not set. Add it as a secret on the production" >&2
-            echo "environment, or put it in $APP_DIR/backend/.env. Refusing to" >&2
-            echo "restart: the new code expects columns this database may lack." >&2
+
+          # The .env can hold a malformed value too, so re-check after sourcing
+          # rather than trusting it.
+          if ! valid_dsn "${DATABASE_URL:-}"; then
+            echo "No usable DATABASE_URL. It must be a full connection URI, e.g." >&2
+            echo "  postgresql://user:pass@127.0.0.1:5432/string_conundrum" >&2
+            echo "Set it as a secret on the production environment, or put it in" >&2
+            echo "$APP_DIR/backend/.env. Refusing to restart: the new code expects" >&2
+            echo "columns this database may lack." >&2
             exit 1
           fi
           psql "$DATABASE_URL" -f "$APP_DIR/backend/db/schema.sql"
