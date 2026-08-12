@@ -388,7 +388,9 @@ export function Visualiser() {
                     color: currentStep.conditionResult ? '#0e8a6b' : '#d32f2f',
                   }}
                 >
-                  {currentStep.conditionResult ? 'Condition: True ✓' : 'Condition: False ✗'}
+                  {currentStep.conditionResult
+                    ? t('visualiser.conditionTrueBadge')
+                    : t('visualiser.conditionFalseBadge')}
                 </span>
               )}
               {currentStep.iteration && mode === 'for_loop' && (

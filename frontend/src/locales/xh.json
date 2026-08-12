@@ -490,6 +490,8 @@
     "output": "Imveliso:",
     "iteration": "Ujikelezo {current} / {total}",
     "stepCount": "Inyathelo {current} kwe-{total}",
+    "conditionTrueBadge": "Imeko: True ✓",
+    "conditionFalseBadge": "Imeko: False ✗",
     "start": "Qala",
     "stop": "Yima",
     "inclusive": "(Iyabandakanya)",
