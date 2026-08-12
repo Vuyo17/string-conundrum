@@ -21,3 +21,6 @@ dist/
 
 # local user accounts (dev auth store)
 backend/app/data/users.json
+
+# Local JSON state written by the LOCAL_DB_FALLBACK dev path
+backend/app/data/local_state.json

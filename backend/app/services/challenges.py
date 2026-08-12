@@ -1,9 +1,32 @@
-from ..db import get_cursor
+import json
+from pathlib import Path
+
+from ..db import get_cursor, use_local_fallback
 from .i18n import normalise_lang
 from .sandbox import run_io_challenge
 
+_DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+
+
+def _load_json_challenges() -> list[dict]:
+    path = _DATA_DIR / "challenges.json"
+    if not path.exists():
+        return []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return []
+    return data if isinstance(data, list) else []
+
 
 def _load_challenges() -> list[dict]:
+    # Deliberately not wrapped in try/except. A database error here used to be
+    # swallowed and answered from JSON, which turned a broken or out-of-date
+    # schema into a silent content downgrade — and kept the deploy's
+    # database-backed smoke checks green while they were meant to catch it.
+    if use_local_fallback():
+        return _load_json_challenges()
+
     with get_cursor() as cur:
         cur.execute(
             """

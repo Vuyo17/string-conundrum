@@ -1,4 +1,7 @@
-from ..db import get_cursor
+import json
+from pathlib import Path
+
+from ..db import get_cursor, use_local_fallback
 from .sandbox import run_for_grading
 from .i18n import (
     MISCONCEPTION_FEEDBACK_XH,
@@ -6,6 +9,19 @@ from .i18n import (
     TEMPLATES,
     normalise_lang,
 )
+
+_DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+
+
+def _load_json_exercises() -> list[dict]:
+    path = _DATA_DIR / "exercises.json"
+    if not path.exists():
+        return []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return []
+    return data if isinstance(data, list) else []
 
 MISCONCEPTION_FEEDBACK = {
     "immutability_in_place": "Strings are immutable. String operations return new strings rather than changing existing ones in place.",
@@ -100,6 +116,11 @@ def _explanation_for(exercise: dict, misconception_id: "str | None" = None, lang
 
 
 def _load_exercises() -> list[dict]:
+    # See the note in challenges._load_challenges: database errors must stay
+    # loud rather than quietly downgrading to the JSON bank.
+    if use_local_fallback():
+        return _load_json_exercises()
+
     with get_cursor() as cur:
         cur.execute(
             """
