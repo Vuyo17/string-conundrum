@@ -59,8 +59,12 @@ function splitPrompt(prompt) {
 // Text shown for each option, in the student's language. The VALUE used for
 // selection state and submission is always `exercise.options[i]` (English) —
 // grading compares against that verbatim, so only the label may translate.
-function displayOptionsOf(exercise) {
+// `lang` is required, not optional: keying off "a translation exists" alone
+// rendered isiXhosa option labels to English readers, because the API ships
+// options_xh alongside the English options in both languages.
+function displayOptionsOf(exercise, lang) {
   const { options, options_xh } = exercise;
+  if (lang !== 'xh') return options;
   return options_xh?.length === options.length ? options_xh : options;
 }
 
@@ -404,7 +408,7 @@ function PracticeRunner({ practice, exercises, onSectionComplete }) {
                 disabled={Boolean(result)}
               >
                 <span className={m.choiceKey}>{String.fromCharCode(65 + i)}</span>
-                <span className={m.choiceText}>{displayOptionsOf(exercise)[i]}</span>
+                <span className={m.choiceText}>{displayOptionsOf(exercise, lang)[i]}</span>
               </button>
             ))}
           </div>
@@ -427,7 +431,7 @@ function PracticeRunner({ practice, exercises, onSectionComplete }) {
                   <span className={`${m.choiceBox} ${on ? m.choiceBoxOn : ''}`}>
                     {on && <CheckCircle2 size={14} />}
                   </span>
-                  <span className={m.choiceText}>{displayOptionsOf(exercise)[i]}</span>
+                  <span className={m.choiceText}>{displayOptionsOf(exercise, lang)[i]}</span>
                 </button>
               );
             })}

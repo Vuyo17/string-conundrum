@@ -98,40 +98,49 @@ function isAnswered(exercise, answer) {
 // Text shown for each option, in the student's language. The VALUE used for
 // selection state and submission is always `exercise.options[i]` (English) —
 // grading compares against that verbatim, so only the label may translate.
-function displayOptionsOf(exercise) {
+// `lang` is required, not optional: keying off "a translation exists" alone
+// rendered isiXhosa option labels to English readers, because the API ships
+// options_xh alongside the English options in both languages.
+function displayOptionsOf(exercise, lang) {
   const { options, options_xh } = exercise;
+  if (lang !== 'xh') return options;
   return options_xh?.length === options.length ? options_xh : options;
 }
 
 // Maps an English option value (as stored in `answer.selected`) back to its
 // translated label for display, falling back to the value itself.
-function displayFor(exercise, value) {
+function displayFor(exercise, value, lang) {
   const i = (exercise.options ?? []).indexOf(value);
   if (i === -1) return value;
-  return displayOptionsOf(exercise)[i];
+  return displayOptionsOf(exercise, lang)[i];
 }
 
-function describeStudentAnswer(exercise, answer) {
+function describeStudentAnswer(exercise, answer, lang) {
   if (!isAnswered(exercise, answer)) return '(not answered)';
-  if (exercise.type === 'mcq') return displayFor(exercise, answer.selected);
+  if (exercise.type === 'mcq') return displayFor(exercise, answer.selected, lang);
   if (exercise.type === 'select_all') {
-    return (answer.selected ?? []).map((v) => displayFor(exercise, v)).join(', ');
+    return (answer.selected ?? []).map((v) => displayFor(exercise, v, lang)).join(', ');
   }
   if (exercise.type === 'fill_blank') return answer.value;
   if (exercise.type === 'write_code') return null; // code shown in a block instead
   return '';
 }
 
-function describeCorrectAnswer(exercise) {
+function describeCorrectAnswer(exercise, lang) {
   if (exercise.type === 'select_all') {
-    return (exercise.answers ?? []).map((v) => displayFor(exercise, v)).join(', ');
+    return (exercise.answers ?? []).map((v) => displayFor(exercise, v, lang)).join(', ');
   }
   if (exercise.type === 'write_code') {
     return (exercise.test_cases ?? [])
       .map((tc) => `${tc.input ? `input ${tc.input.trim()} → ` : ''}${tc.expected_output}`)
       .join('   ');
   }
-  if (exercise.type === 'mcq') return exercise.answer_xh || exercise.answer || '';
+  if (exercise.type === 'mcq') {
+    // Same trap as the option labels: answer_xh unconditionally won, so the
+    // review screen showed the isiXhosa answer key in English mode.
+    if (lang === 'xh' && exercise.answer_xh) return exercise.answer_xh;
+    return exercise.answer || '';
+  }
   return exercise.answer ?? '';
 }
 
@@ -153,6 +162,21 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
   const [current, setCurrent] = useState(0);
   const [phase, setPhase] = useState('answering'); // answering | confirm | submitting | results
   const [results, setResults] = useState({});      // question_id → grading result
+
+  // Switching language refetches the bank, but `paper` held the objects drawn
+  // at mount — so the questions stayed in the language they were fetched in
+  // while the surrounding UI switched, which is what made English mode show
+  // isiXhosa questions. Re-point each slot at the new object by question_id
+  // rather than redrawing: a redraw mid-exam would swap the questions out
+  // from under the student and discard their answers.
+  useEffect(() => {
+    if (!exercises.length) return;
+    setPaper((prev) => {
+      if (!prev.length) return drawExam(exercises, questionCount);
+      const byId = new Map(exercises.map((ex) => [ex.question_id, ex]));
+      return prev.map((ex) => byId.get(ex.question_id) ?? ex);
+    });
+  }, [exercises]);
 
   // The exam only counts toward module progress once cleared at PASS_THRESHOLD
   // in one sitting; "Retry with new questions" can re-trigger this.
@@ -304,7 +328,7 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
             const r = results[ex.question_id] ?? {};
             const a = answers[ex.question_id];
             const { title, code } = splitPrompt(ex.prompt);
-            const studentAnswer = describeStudentAnswer(ex, a);
+            const studentAnswer = describeStudentAnswer(ex, a, lang);
             // Offer the visualizer only where we can actually load the
             // question into it, and only where it would teach something.
             const preset = r.correct || !onVisualize ? null : presetForExercise(ex, a);
@@ -337,7 +361,7 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
                   )}
                   <div>
                     <dt>{ex.type === 'write_code' ? t('exercise.expectedOutput') : t('common.correctAnswer')}</dt>
-                    <dd>{describeCorrectAnswer(ex)}</dd>
+                    <dd>{describeCorrectAnswer(ex, lang)}</dd>
                   </div>
                 </dl>
                 {!r.correct && r.feedback && (
@@ -434,7 +458,7 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
                 onClick={() => setCurrentAnswer({ selected: choice })}
               >
                 <span className={m.choiceKey}>{String.fromCharCode(65 + i)}</span>
-                <span className={m.choiceText}>{displayOptionsOf(exercise)[i]}</span>
+                <span className={m.choiceText}>{displayOptionsOf(exercise, lang)[i]}</span>
               </button>
             ))}
           </div>
@@ -456,7 +480,7 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
                   <span className={`${m.choiceBox} ${on ? m.choiceBoxOn : ''}`}>
                     {on && <CheckCircle2 size={14} />}
                   </span>
-                  <span className={m.choiceText}>{displayOptionsOf(exercise)[i]}</span>
+                  <span className={m.choiceText}>{displayOptionsOf(exercise, lang)[i]}</span>
                 </button>
               );
             })}
