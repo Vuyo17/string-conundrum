@@ -393,11 +393,10 @@ export function Visualiser() {
                     : t('visualiser.conditionFalseBadge')}
                 </span>
               )}
-              {currentStep.iteration && mode === 'for_loop' && (
-                <span className={styles.visIterBadge}>
-                  {t('visualiser.iteration', { current: currentStep.iteration, total: currentStep.total })}
-                </span>
-              )}
+              {/* No iteration badge: it only rendered for for_loop, where one
+                  step is exactly one iteration, so it restated the step
+                  counter beside it verbatim. The iteration is still named in
+                  the step description below (descForLoop). */}
             </div>
             <div className={styles.visStepDesc}>{currentStep.description}</div>
 
