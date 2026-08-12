@@ -489,6 +489,7 @@
     "modeMethod": "Method",
     "output": "Imveliso:",
     "iteration": "Ujikelezo {current} / {total}",
+    "stepCount": "Inyathelo {current} kwe-{total}",
     "start": "Qala",
     "stop": "Yima",
     "inclusive": "(Iyabandakanya)",

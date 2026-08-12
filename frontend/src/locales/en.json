@@ -489,6 +489,7 @@
     "modeMethod": "Method",
     "output": "Output:",
     "iteration": "Iteration {current} / {total}",
+    "stepCount": "Step {current} / {total}",
     "start": "Start",
     "stop": "Stop",
     "inclusive": "(Inclusive)",

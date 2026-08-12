@@ -378,7 +378,7 @@ export function Visualiser() {
             </div>
             <div className={styles.visStepInfo}>
               <span className={styles.visStepCount}>
-                Step {stepIndex + 1} / {activeSteps.length}
+                {t('visualiser.stepCount', { current: stepIndex + 1, total: activeSteps.length })}
               </span>
               {currentStep.conditionResult !== undefined && (
                 <span
