@@ -476,7 +476,7 @@ function PracticeRunner({ practice, exercises, onSectionComplete }) {
                 {result.correct ? <CheckCircle2 size={18} /> : <Target size={18} />}
               </span>
               <div>
-                <strong>{result.correct ? 'Correct' : 'Not quite'}</strong>
+                <strong>{result.correct ? t('exercise.correctHeading') : t('exercise.notQuite')}</strong>
                 <p><InlineText text={result.feedback ?? ''} /></p>
                 {result.explanation && (
                   <p className={m.feedbackExplanation}>
@@ -504,11 +504,11 @@ function PracticeRunner({ practice, exercises, onSectionComplete }) {
               onClick={handleCheck}
               disabled={!canCheck || submitting}
             >
-              {submitting ? 'Checking…' : 'Check answer'}
+              {submitting ? t('exercise.checking') : t('exercise.checkAnswer')}
             </button>
           ) : (
             <button type="button" className={m.solidButton} onClick={handleNext}>
-              {index >= exercises.length - 1 ? 'Finish' : 'Next question'} <ChevronRight size={15} />
+              {index >= exercises.length - 1 ? t('exercise.finish') : t('exercise.nextQuestion')} <ChevronRight size={15} />
             </button>
           )}
         </footer>

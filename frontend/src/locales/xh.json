@@ -210,7 +210,8 @@
     "backTo": "Emva: {section}",
     "nextTo": "Okulandelayo: {section}",
     "step": "Inyathelo {current} kwe-{total}",
-    "finishModule": "Gqiba imodyuli"
+    "finishModule": "Gqiba imodyuli",
+    "rememberThese": "Khumbula ezi"
   },
   "search": {
     "placeholder": "Khangela iimodyuli, imixholo…",
@@ -569,6 +570,7 @@
     "practiceRetry": "Zama ukufikelela ku-70% ukuze udlule ukuziqhelanisa. Buyela kwisifundo esingentla uze uzame kwakhona.",
     "practiceAgain": "Ziqhelanise kwakhona",
     "nextStep": "Inyathelo elilandelayo",
-    "markFailed": "Le mpendulo ayikwazanga ukumakwa — iseshoni yakho isenokuba iphelelwe lixesha. Ngena kwakhona uze uzame."
+    "markFailed": "Le mpendulo ayikwazanga ukumakwa — iseshoni yakho isenokuba iphelelwe lixesha. Ngena kwakhona uze uzame.",
+    "finish": "Gqiba"
   }
 }

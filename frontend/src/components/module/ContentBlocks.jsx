@@ -110,10 +110,14 @@ export function Callout({ tone = 'info', title, text }) {
 
 // ─── key points summary ───────────────────────────────────────────────────────
 
-export function KeyPoints({ title = 'Remember these', items }) {
+// The heading defaults inside the body rather than in the parameter list: a
+// default argument is evaluated at module scope, where t() is not available,
+// so 'Remember these' rendered in English regardless of language.
+export function KeyPoints({ title, items }) {
+  const { t } = useLanguage();
   return (
     <div className={m.keyPoints}>
-      <h4 className={m.keyPointsTitle}>{title}</h4>
+      <h4 className={m.keyPointsTitle}>{title ?? t('modulePage.rememberThese')}</h4>
       <ul className={m.keyPointsList}>
         {items.map((item, i) => (
           <li key={i}>

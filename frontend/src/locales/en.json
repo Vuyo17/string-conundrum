@@ -210,7 +210,8 @@
     "backTo": "Back: {section}",
     "nextTo": "Next: {section}",
     "step": "Step {current} of {total}",
-    "finishModule": "Finish module"
+    "finishModule": "Finish module",
+    "rememberThese": "Remember these"
   },
   "search": {
     "placeholder": "Search modules, topics…",
@@ -569,6 +570,7 @@
     "practiceRetry": "Aim for 70% to clear Practice. Revisit the lesson above and try again.",
     "practiceAgain": "Practice again",
     "nextStep": "Next step",
-    "markFailed": "This answer could not be marked — your session may have expired. Sign in again and retry."
+    "markFailed": "This answer could not be marked — your session may have expired. Sign in again and retry.",
+    "finish": "Finish"
   }
 }
