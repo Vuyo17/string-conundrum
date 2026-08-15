@@ -2546,16 +2546,6 @@ p {
   font-size: 10px;
   font-weight: 800;
 }
-.visIterBadge {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 8px;
-  border-radius: 999px;
-  font-size: 10px;
-  font-weight: 700;
-  background: #e6f9f3;
-  color: #0e8a6b;
-}
 .visStepDesc {
   font-size: 11px;
   font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
@@ -4002,9 +3992,6 @@ body,
 :root[data-theme="dark"] .dbgProgressBar,
 :root[data-theme="dark"] .visStepProgressFill {
   background: var(--primary);
-}:root[data-theme="dark"] .visIterBadge {
-  background: hsl(150 35% 13%);
-  color: hsl(150 50% 60%);
 }:root[data-theme="dark"] .dbgVarValue, :root[data-theme="dark"] .visStepDesc {
   color: hsl(150 10% 90%);
 }

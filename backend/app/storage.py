@@ -54,14 +54,3 @@ def save_state(state: dict) -> None:
     path = _state_path()
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(state, indent=2, sort_keys=True), encoding="utf-8")
-
-
-def load_json_file(name: str) -> list[dict]:
-    path = _DATA_DIR / name
-    if not path.exists():
-        return []
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
-        return []
-    return data if isinstance(data, list) else []
