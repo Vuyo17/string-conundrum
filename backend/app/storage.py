@@ -2,7 +2,11 @@ import json
 import os
 from pathlib import Path
 
-_DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+# app/data, NOT backend/data. This file lives in app/, one level shallower
+# than services/challenges.py, so copying that module's `parent.parent /
+# "data"` landed a directory too high — creating a stray backend/data/ and
+# putting the state file somewhere .gitignore was not looking.
+_DATA_DIR = Path(__file__).resolve().parent / "data"
 
 # Where the local fallback keeps its state. Overridable so tests (and anyone
 # running two instances side by side) do not write over the working copy.
