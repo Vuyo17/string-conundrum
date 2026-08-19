@@ -199,6 +199,10 @@ export const slicingModule = {
 
   practice: {
     apiModuleId: 'slicing',
+    // Endless procedural practice (see SlicingEngine.jsx) instead of the
+    // static exercise bank the other modules' Practice tab uses — Exam
+    // still draws from the bank via `exam.questionCount` below.
+    engine: true,
     exam: { questionCount: 10 },
   },
 };

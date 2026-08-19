@@ -188,6 +188,20 @@
     "warmupAllCorrect": "Every character is at its address. You're ready for the graded questions.",
     "warmupSomeWrong": "Some tiles are in the wrong box, and the highlighted slots need another look."
   },
+  "practiceEngine": {
+    "tierBadge": "Tier {tier} of {max}",
+    "tierBadgeMax": "Hardest tier — endless",
+    "streakHint": "{streak} of {needed} correct in a row to reach the next tier",
+    "stop": "Stop",
+    "correctSoFar": "correct so far",
+    "starsAria": "{filled} of {total} tiers cleared",
+    "summaryTitle": "Session complete",
+    "asked": "questions asked",
+    "tierReached": "tiers cleared",
+    "summaryMaxed": "You maxed out the difficulty bar — that's mastery-level slicing. Come back any time for more of the hardest questions.",
+    "summaryPartial": "Solid session. Come back any time — Endless Practice never runs out of questions.",
+    "playAgain": "Play again"
+  },
   "codeExercise": {
     "runCode": "Run code",
     "running": "Running…",
