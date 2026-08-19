@@ -41,7 +41,7 @@
 }
 .wordmark strong {
   display: block;
-  font-family: "Fraunces", Georgia, serif;
+  font-family: "Google Sans", "Roboto", Arial, sans-serif;
   font-size: 16px;
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -109,7 +109,7 @@
   width: 34px;
   display: grid;
   justify-items: center;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
 }
 .specimenChar {
   font-size: 17px;
@@ -628,7 +628,7 @@
 .statusAddress {
   display: inline-block;
   margin-top: 2px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
   color: var(--fg);
   word-break: break-all;

@@ -51,7 +51,8 @@
 body {
   margin: 0;
   font-family:
-    "Plus Jakarta Sans",
+    "Google Sans",
+    "Roboto",
     ui-sans-serif,
     system-ui,
     -apple-system,
@@ -66,7 +67,7 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: "Fraunces", Georgia, serif;
+  font-family: "Google Sans", "Roboto", Arial, sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -125,7 +126,7 @@ input {
 }
 
 .brandButton strong {
-  font-family: "Fraunces", Georgia, serif;
+  font-family: "Google Sans", "Roboto", Arial, sans-serif;
   font-size: 18px;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -657,7 +658,7 @@ p {
   font-size: 14px;
   font-weight: 700;
   margin: 0;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 .moduleCard p {
   font-size: 13px;
@@ -711,7 +712,7 @@ p {
   overflow: auto;
   font-size: 13.5px;
   line-height: 1.9;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   width: 100%;
   box-sizing: border-box;
   resize: vertical;
@@ -726,7 +727,7 @@ p {
   border-radius: 13px;
   padding: 14px;
   min-height: 100px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
   line-height: 1.8;
   color: var(--fg);
@@ -777,7 +778,7 @@ p {
   background: var(--surface-2);
 }
 .leaderRow span:first-child {
-  font-family: "Fraunces", Georgia, serif;
+  font-family: "Google Sans", "Roboto", Arial, sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: var(--muted);
@@ -895,7 +896,7 @@ p {
 
 .codeHero h1 {
   margin: 0;
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-family: "Roboto", system-ui, sans-serif;
   font-size: 24px;
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -985,7 +986,7 @@ p {
 
 .codePanelHeader h2 {
   margin: 0;
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-family: "Roboto", system-ui, sans-serif;
   font-size: 16px;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -1029,7 +1030,7 @@ p {
   align-content: start;
   gap: 0;
   color: var(--muted);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
   line-height: 26px;
   text-align: center;
@@ -1059,7 +1060,7 @@ p {
   inset: 0;
   margin: 0;
   padding: 10px 12px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
   line-height: 26px;
   white-space: pre;
@@ -1078,7 +1079,7 @@ p {
   outline: 0;
   resize: none;
   padding: 10px 12px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
   line-height: 26px;
   color: transparent;
@@ -1123,7 +1124,7 @@ p {
   padding: 10px 12px;
   background: var(--surface);
   color: var(--fg);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
   line-height: 1.45;
   white-space: pre-wrap;
@@ -1295,7 +1296,7 @@ p {
 
 .visualiserHeader h1 {
   margin: 0;
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-family: "Roboto", system-ui, sans-serif;
   font-size: 30px;
   line-height: 1.1;
   letter-spacing: -0.03em;
@@ -1504,7 +1505,7 @@ p {
   display: grid;
   place-items: center;
   font-size: 17px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-weight: 900;
   background: var(--surface);
 }
@@ -1596,7 +1597,7 @@ p {
 
 .visualiserOutput code {
   color: var(--primary);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
   font-weight: 900;
 }
@@ -1771,7 +1772,7 @@ p {
   color: var(--primary);
   border-radius: 4px;
   padding: 1px 5px;
-  font-family: ui-monospace, Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
   margin: 0 2px;
 }
@@ -1837,12 +1838,12 @@ p {
   vertical-align: middle;
 }
 .dbgVarName {
-  font-family: ui-monospace, Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-weight: 700;
   color: var(--primary);
 }
 .dbgVarValue {
-  font-family: ui-monospace, Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   color: var(--fg);
 }
 
@@ -1864,7 +1865,7 @@ p {
 
 .dbgTopLeft h2 {
   margin: 0;
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-family: "Roboto", system-ui, sans-serif;
   font-size: 16px;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -1884,7 +1885,7 @@ p {
   border-radius: 999px;
   background: var(--primary-soft);
   color: var(--primary);
-  font-family: ui-monospace, Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -1898,7 +1899,7 @@ p {
   border-radius: 999px;
   border: 1px solid var(--border);
   color: var(--muted);
-  font-family: ui-monospace, Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 12px;
   font-weight: 700;
 }
@@ -1922,7 +1923,7 @@ p {
   align-items: baseline;
   gap: 10px;
   flex-wrap: wrap;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
   line-height: 1.5;
 }
@@ -1933,7 +1934,7 @@ p {
   border-radius: 999px;
   background: var(--primary-soft);
   color: var(--primary);
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-family: "Roboto", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.02em;
@@ -1991,7 +1992,7 @@ p {
   border-radius: 10px;
   border: 1px solid var(--border);
   background: var(--surface-2);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
 }
 
@@ -2066,11 +2067,11 @@ p {
   font-size: 10px;
   font-weight: 700;
   color: var(--muted);
-  font-family: ui-monospace, Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
 }
 
 .flpCellVal {
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 20px;
   font-weight: 600;
   color: var(--fg);
@@ -2172,7 +2173,7 @@ p {
 }
 
 .flpFlowValue {
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 17px;
   font-weight: 700;
   color: var(--fg);
@@ -2236,7 +2237,7 @@ p {
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--surface-2);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
 }
 
 .flpEvalRaw {
@@ -2270,7 +2271,7 @@ p {
   height: 24px;
   padding: 0 12px;
   border-radius: 999px;
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-family: "Roboto", system-ui, sans-serif;
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.03em;
@@ -2371,7 +2372,7 @@ p {
 
 .ifCondValue {
   flex: 1 1 auto;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 16px;
 }
 
@@ -2497,7 +2498,7 @@ p {
   padding: 1px 6px;
   border-radius: 5px;
   background: var(--surface-2);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
 }
 
@@ -2548,7 +2549,7 @@ p {
 }
 .visStepDesc {
   font-size: 11px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   color: #10172e;
   line-height: 1.35;
   overflow-x: auto;
@@ -2568,7 +2569,7 @@ p {
   padding: 3px 8px;
   background: var(--primary-soft);
   border-radius: 999px;
-  font-family: ui-monospace, Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 10px;
   color: var(--primary-dark);
 }
@@ -2714,7 +2715,7 @@ p {
   padding: 1px 6px;
   border-radius: 5px;
   background: var(--surface-2);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
   color: var(--primary-dark);
 }
@@ -2768,7 +2769,7 @@ p {
 }
 
 .challengeFnTag {
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
   font-weight: 700;
   color: var(--primary-dark);
@@ -2804,7 +2805,7 @@ p {
   inset: 0;
   margin: 0;
   padding: 14px 16px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
   line-height: 24px;
   white-space: pre;
@@ -2822,7 +2823,7 @@ p {
   outline: 0;
   resize: none;
   padding: 14px 16px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
   line-height: 24px;
   color: transparent;
@@ -2927,7 +2928,7 @@ p {
   background: var(--danger-soft);
   border: 1px solid hsl(0 72% 53% / 0.2);
   color: var(--danger);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 12.5px;
   white-space: pre-wrap;
   word-break: break-word;
@@ -2986,7 +2987,7 @@ p {
 }
 
 .testCall {
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
   font-weight: 700;
   color: var(--fg);
@@ -3004,7 +3005,7 @@ p {
   display: flex;
   align-items: baseline;
   gap: 10px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 13px;
 }
 
@@ -3012,7 +3013,7 @@ p {
   flex-shrink: 0;
   width: 64px;
   color: var(--muted);
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-family: "Roboto", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -3479,7 +3480,7 @@ p {
   padding: 12px 14px;
   background: #f8fafc;
   overflow-x: auto;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, Consolas, monospace;
   font-size: 13px;
   line-height: 1.55;
   white-space: pre;
@@ -3497,7 +3498,7 @@ p {
 }
 
 .challengeFnTagLc {
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 12px;
   color: #475569;
   font-weight: 700;
@@ -3525,7 +3526,7 @@ p {
   inset: 0;
   margin: 0;
   padding: 12px 14px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
   line-height: 24px;
   white-space: pre;
@@ -3543,7 +3544,7 @@ p {
   width: 100%;
   height: 100%;
   padding: 12px 14px;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
   line-height: 24px;
   white-space: pre;
@@ -3629,7 +3630,7 @@ p {
   border: 1px solid #fecaca;
   background: #fff1f2;
   color: #b91c1c;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 12px;
   white-space: pre-wrap;
 }
@@ -3667,7 +3668,7 @@ p {
 }
 
 .testCallLc {
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 12.5px;
   color: #334155;
   font-weight: 700;
@@ -3684,7 +3685,7 @@ p {
   display: flex;
   gap: 8px;
   align-items: baseline;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 12.5px;
 }
 
