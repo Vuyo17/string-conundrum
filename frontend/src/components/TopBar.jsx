@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Bell, BookOpen, Languages, Moon, Sun } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { useAuth } from '../context/AuthContext';
@@ -6,11 +6,36 @@ import { useTheme } from '../context/ThemeContext';
 import { GlobalSearch } from './GlobalSearch';
 import { displayNameFor, initialsFor } from '../utils/profile';
 import { useLanguage } from '../context/LanguageContext';
+import { useNotifications } from '../context/NotificationContext';
 
 export function TopBar({ setScreen, onSearchSelect }) {
   const { user, isGuest, canAccess } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const { lang, setLang, languages, t } = useLanguage();
+  const { notifications, unreadCount, markAllRead } = useNotifications();
+  const [notifOpen, setNotifOpen] = useState(false);
+  const notifRef = useRef(null);
+
+  // Clicking anywhere else closes the panel, same pattern as GlobalSearch.
+  useEffect(() => {
+    if (!notifOpen) return undefined;
+    function onPointerDown(event) {
+      if (!notifRef.current?.contains(event.target)) setNotifOpen(false);
+    }
+    document.addEventListener('mousedown', onPointerDown);
+    return () => document.removeEventListener('mousedown', onPointerDown);
+  }, [notifOpen]);
+
+  function toggleNotifications() {
+    // Both setters called directly here, not one nested inside the other's
+    // updater — a state updater has to stay pure, and calling a different
+    // component's setState (markAllRead) from inside one trips React's
+    // "Cannot update a component while rendering a different component"
+    // warning.
+    const next = !notifOpen;
+    setNotifOpen(next);
+    if (next) markAllRead();
+  }
 
   // Cycle rather than hard-code a pair, so adding a third language to
   // LANGUAGES keeps this button working with no change here.
@@ -38,10 +63,34 @@ export function TopBar({ setScreen, onSearchSelect }) {
       <div className={styles.topActions}>
         {isGuest && <span className={styles.guestChip}>{t('common.guest')}</span>}
         {!isGuest && (
-          <button className={styles.notifBtn} aria-label={t('topbar.notifications')}>
-            <Bell size={17} />
-            <span className={styles.notifDot} />
-          </button>
+          <div className={styles.notifWrap} ref={notifRef}>
+            <button
+              type="button"
+              className={styles.notifBtn}
+              aria-label={t('topbar.notifications')}
+              aria-expanded={notifOpen}
+              aria-haspopup="true"
+              onClick={toggleNotifications}
+            >
+              <Bell size={17} />
+              {unreadCount > 0 && <span className={styles.notifDot} />}
+            </button>
+            {notifOpen && (
+              <div className={styles.notifPanel} role="menu">
+                <p className={styles.notifPanelTitle}>{t('notifications.panelTitle')}</p>
+                {notifications.length === 0 ? (
+                  <p className={styles.notifEmpty}>{t('notifications.empty')}</p>
+                ) : (
+                  notifications.map((n) => (
+                    <div key={n.id} className={styles.notifItem}>
+                      <strong>{n.title}</strong>
+                      <p>{n.message}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
         )}
         <button
           type="button"

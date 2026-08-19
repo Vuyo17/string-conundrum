@@ -17,6 +17,7 @@ import { CodeExercise } from './CodeExercise';
 import { CodeBlock, InlineText } from './ContentBlocks';
 import { presetForExercise } from './visualizers/presets';
 import { useLanguage } from '../../context/LanguageContext';
+import { useNotifications } from '../../context/NotificationContext';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ExamMode — the test-conditions counterpart to the practice runner.
@@ -155,6 +156,7 @@ function drawExam(exercises, count) {
 
 export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }) {
   const { t, lang } = useLanguage();
+  const { addNotification } = useNotifications();
   const questionCount = practice.exam?.questionCount ?? 10;
 
   const [paper, setPaper] = useState(() => drawExam(exercises, questionCount));
@@ -186,6 +188,13 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
     const percent = Math.round((correctCount / paper.length) * 100);
     if (percent >= PASS_THRESHOLD) {
       markSectionComplete(practice.apiModuleId, 'exam').then(() => onSectionComplete?.());
+      addNotification({
+        title: t('notifications.examPassedTitle'),
+        message: t('notifications.examPassedMessage', {
+          percent,
+          module: t(`modules.items.${practice.apiModuleId}.title`),
+        }),
+      });
     }
   }, [phase]);
 

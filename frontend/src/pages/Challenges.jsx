@@ -7,6 +7,7 @@ import styles from '../styles/App.module.css';
 import { getApiUrl } from '../config/api';
 import { apiFetch } from '../api';
 import { useLanguage } from '../context/LanguageContext';
+import { useNotifications } from '../context/NotificationContext';
 import { transpilePythonToIsiXhosa, transpileIsiXhosaToPython } from '../utils/isiXhosaTranspiler';
 
 // Difficulty codes come from the backend, so the filter keeps English values
@@ -62,6 +63,7 @@ function formatValue(value) {
 // ─── component ────────────────────────────────────────────────────────────────
 export function Challenges() {
   const { lang, t } = useLanguage();
+  const { addNotification } = useNotifications();
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
@@ -178,6 +180,18 @@ export function Challenges() {
       const data = await res.json();
       setResultById((prev) => ({ ...prev, [challenge.id]: data }));
       if (data.all_passed) {
+        // Only the first clear earns stars server-side (ON CONFLICT DO
+        // NOTHING) — match that here so re-running an already-solved
+        // challenge doesn't notify again.
+        if (!solved.has(challenge.id)) {
+          addNotification({
+            title: t('notifications.challengeSolvedTitle'),
+            message: t('notifications.challengeSolvedMessage', {
+              title: challenge.title,
+              stars: data.stars_awarded ?? 0,
+            }),
+          });
+        }
         setSolved((prev) => new Set(prev).add(challenge.id));
       }
     } catch {

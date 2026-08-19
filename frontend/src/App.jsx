@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import styles from "./styles/App.module.css";
 import { TopBar } from "./components/TopBar";
@@ -15,7 +15,49 @@ import auth from "./pages/auth/Auth.module.css";
 import { useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { LanguageProvider, useLanguage } from "./context/LanguageContext";
+import { NotificationProvider, useNotifications } from "./context/NotificationContext";
 import { useProgress } from "./hooks/useProgress";
+import { modules } from "./data/modules";
+
+// Watches for a module's `completed` flag flipping false -> true during this
+// session and turns that into a notification. Comparing against `undefined`
+// (a module's very first render) rather than `false` matters: it's what
+// stops every module a student finished in a *previous* session from firing
+// a notification the moment they load the app.
+function ModuleUnlockNotifier({ progress }) {
+  const { t } = useLanguage();
+  const { addNotification } = useNotifications();
+  const prevCompletedRef = useRef({});
+
+  useEffect(() => {
+    if (progress.loading) return;
+    const prev = prevCompletedRef.current;
+
+    modules.forEach(({ id }, i) => {
+      const completed = progress.byModuleId[id]?.completed ?? false;
+      if (completed && prev[id] === false) {
+        const next = modules[i + 1];
+        addNotification({
+          title: t('notifications.moduleCompleteTitle'),
+          message: next
+            ? t('notifications.moduleUnlockedMessage', {
+              module: t(`modules.items.${id}.title`),
+              next: t(`modules.items.${next.id}.title`),
+            })
+            : t('notifications.allModulesCompleteMessage', {
+              module: t(`modules.items.${id}.title`),
+            }),
+        });
+      }
+    });
+
+    prevCompletedRef.current = Object.fromEntries(
+      modules.map(({ id }) => [id, progress.byModuleId[id]?.completed ?? false]),
+    );
+  }, [progress.byModuleId, progress.loading, addNotification, t]);
+
+  return null;
+}
 
 function Shell() {
   const { user, loading, emailLinkPending, isGuest, canAccess } = useAuth();
@@ -78,20 +120,23 @@ function Shell() {
   }[safeScreen];
 
   return (
-    <div className={styles.app}>
-      <TopBar screen={safeScreen} setScreen={go} onSearchSelect={openSearchResult} />
-      <main className={styles.shell}>
-        <Sidebar screen={safeScreen} setScreen={go} modulesComplete={progress.allCompleted} />
-        <section className={styles.content}>
-          <CurrentScreen
-            setScreen={go}
-            {...(safeScreen === "Modules" ? { target: moduleTarget, progress } : {})}
-            {...(safeScreen === "Settings" ? { progress } : {})}
-            {...(safeScreen === "Leaderboard" ? { progress } : {})}
-          />
-        </section>
-      </main>
-    </div>
+    <NotificationProvider>
+      <ModuleUnlockNotifier progress={progress} />
+      <div className={styles.app}>
+        <TopBar screen={safeScreen} setScreen={go} onSearchSelect={openSearchResult} />
+        <main className={styles.shell}>
+          <Sidebar screen={safeScreen} setScreen={go} modulesComplete={progress.allCompleted} />
+          <section className={styles.content}>
+            <CurrentScreen
+              setScreen={go}
+              {...(safeScreen === "Modules" ? { target: moduleTarget, progress } : {})}
+              {...(safeScreen === "Settings" ? { progress } : {})}
+              {...(safeScreen === "Leaderboard" ? { progress } : {})}
+            />
+          </section>
+        </main>
+      </div>
+    </NotificationProvider>
   );
 }
 

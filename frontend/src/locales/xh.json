@@ -52,6 +52,17 @@
     "openProfile": "Vula iisethingi zeprofayile",
     "switchLanguage": "Tshintshela kwi-{language}"
   },
+  "notifications": {
+    "panelTitle": "Izaziso",
+    "empty": "Uphelelwe yiyo yonke into — akukho nto intsha okwangoku.",
+    "examPassedTitle": "Uviwo luphumelele",
+    "examPassedMessage": "Ufumene i-{percent}% kuviwo lwe-{module}.",
+    "challengeSolvedTitle": "Umngeni ugqityiwe",
+    "challengeSolvedMessage": "\"{title}\" igqityiwe — +{stars} ⭐",
+    "moduleCompleteTitle": "Imodyuli igqityiwe",
+    "moduleUnlockedMessage": "I-{module} igqityiwe — i-{next} sele ivuliwe.",
+    "allModulesCompleteMessage": "I-{module} igqityiwe — ugqibe zonke iimodyuli! Imingeni sele ivuliwe."
+  },
   "modules": {
     "title": "Iimodyuli Zokufunda",
     "subtitle": "Yiba ngcaphephe kuzo zonke iingqiqo zeestring inyathelo nenyathelo. Gqiba imodyuli nganye kwaye ufumane i-80% kuviwo lwayo ukuze uvule elandelayo.",

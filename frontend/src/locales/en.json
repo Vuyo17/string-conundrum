@@ -52,6 +52,17 @@
     "openProfile": "Open profile settings",
     "switchLanguage": "Switch to {language}"
   },
+  "notifications": {
+    "panelTitle": "Notifications",
+    "empty": "You're all caught up — nothing new yet.",
+    "examPassedTitle": "Exam passed",
+    "examPassedMessage": "You scored {percent}% on the {module} exam.",
+    "challengeSolvedTitle": "Challenge solved",
+    "challengeSolvedMessage": "\"{title}\" solved — +{stars} ⭐",
+    "moduleCompleteTitle": "Module complete",
+    "moduleUnlockedMessage": "{module} complete — {next} is now unlocked.",
+    "allModulesCompleteMessage": "{module} complete — you've finished every module! Challenges are now unlocked."
+  },
   "modules": {
     "title": "Learning Modules",
     "subtitle": "Master all string concepts step by step. Complete each module and score 80% on its exam to unlock the next.",
