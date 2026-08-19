@@ -1326,6 +1326,9 @@
   .visualizerCard,
   .warmupCard { padding: 20px 18px; }
 
+  .engineRailWrap { padding: 14px 18px; }
+  .engineBody { padding: 20px 18px 20px; }
+
   .exampleHeader { padding: 18px 18px 14px; }
   .exampleBody { padding: 16px 18px 20px; }
 }
@@ -1725,25 +1728,77 @@
 }
 
 /* ═══ Slicing endless-practice engine ════════════════════════════════════
-   Unlimited procedurally-generated questions (see SlicingEngine.jsx). The
-   star row IS the progress bar: one star fills per difficulty tier
-   cleared, growing gold as it fills and staying a plain gray outline
-   until then. Once all five are lit the engine keeps asking — only the
-   hardest tier from then on — so the bar reads "mastered", not "done".
+   Unlimited procedurally-generated questions (see SlicingEngine.jsx).
+
+   Everything that used to sit above the question — a tier badge, a running
+   score, a stop button — was removed as clutter. What's left is the rail:
+   five stars, each at the end of the segment leading to it, and that
+   segment fills as the student builds a streak. Earned stars and their
+   segments go gold; the one being worked toward stays teal. That single
+   strip carries the whole progress story, and the session-ending control
+   moved down into the footer where it can't compete with the question.
+
+   The palette is deliberately narrow: surface, border and text tokens do
+   almost all the work, with teal for "in progress" and gold for "earned"
+   as the only two colours that ever mean anything. Right/wrong answers
+   borrow the existing success/danger tokens so grading looks the same here
+   as everywhere else in the app.
    ══════════════════════════════════════════════════════════════════════ */
 
-.engineTopBar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-bottom: 4px;
+.engineCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
 }
 
-.engineStarRow { display: flex; gap: 6px; }
+/* ── progress rail ── */
 
-.engineStarRow svg { transition: color 0.25s ease, fill 0.25s ease; }
+.engineRailWrap {
+  padding: 16px 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.engineRail {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Each node is one segment plus the star it leads to, so the row reads as a
+   single continuous track rather than as stars with bars underneath. */
+.engineRailNode {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 8px;
+  min-width: 0;
+}
+
+.engineRailTrack {
+  flex: 1;
+  height: 4px;
+  min-width: 12px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.engineRailFill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--primary);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.engineRailFillDone { background: var(--accent); }
+
+.engineRailNode svg { flex-shrink: 0; transition: color 0.25s ease, fill 0.25s ease; }
 
 .engineStarFilled {
   color: var(--accent);
@@ -1759,61 +1814,178 @@
   100% { transform: scale(1); }
 }
 
-.engineMeta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-
-.engineTierBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  border-radius: 999px;
-  background: var(--surface-2);
-  color: var(--fg);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-}
-
-.engineTierBadgeMax {
-  background: var(--accent-soft);
-  color: var(--accent);
-}
-
-.engineStreakHint {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted);
-  white-space: nowrap;
-}
-
-.engineStopButton {
-  border-color: transparent;
-  color: var(--danger);
-}
-
-.engineStopButton:hover:not(:disabled) {
-  border-color: var(--danger);
-  color: var(--danger);
-  background: var(--danger-soft);
-}
-
-.engineStatsRow {
-  display: flex;
+.engineBody {
+  padding: 26px 32px 24px;
+  display: grid;
   gap: 18px;
-  flex-wrap: wrap;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--muted);
-  margin: -6px 0 2px;
 }
-
-.engineStatsRow strong { color: var(--fg); font-weight: 750; }
 
 .engineEmptyOption {
   font-style: italic;
   opacity: 0.75;
 }
+
+/* ── graded answer states, shown on the options themselves ── */
+
+.engineChoiceRight {
+  border-color: var(--success);
+  background: var(--success-soft);
+  color: var(--fg);
+}
+
+.engineChoiceWrong {
+  border-color: var(--danger);
+  background: var(--danger-soft);
+  color: var(--fg);
+}
+
+.engineChoiceRight .choiceKey,
+.engineChoiceRight .choiceBox { border-color: var(--success); }
+.engineChoiceWrong .choiceKey,
+.engineChoiceWrong .choiceBox { border-color: var(--danger); }
+
+.engineChoiceMark { margin-left: auto; flex-shrink: 0; }
+.engineChoiceRight .engineChoiceMark { color: var(--success); }
+.engineChoiceWrong .engineChoiceMark { color: var(--danger); }
+
+/* ── fill_blank: expression = [ your answer ] ── */
+
+.engineBlankRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.engineBlankExpr {
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
+  font-size: 14.5px;
+  font-weight: 600;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  white-space: nowrap;
+}
+
+.engineBlankEquals {
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.engineBlankInput {
+  flex: 1;
+  min-width: 160px;
+  max-width: 300px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--fg);
+  padding: 10px 14px;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
+  font-size: 14.5px;
+  transition: border-color 0.15s ease;
+}
+
+.engineBlankInput:focus { outline: none; border-color: var(--primary); }
+.engineBlankInput:disabled { opacity: 0.7; }
+
+/* ── build_slice: type the bounds into the expression itself ── */
+
+.engineBuilder { display: grid; gap: 10px; justify-items: start; }
+
+.engineBuilderExpr {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+}
+
+.engineBuilderToken {
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.engineBuilderInput {
+  width: 52px;
+  text-align: center;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--fg);
+  padding: 6px 4px;
+  margin: 0 3px;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
+  font-size: 16px;
+  font-weight: 600;
+  transition: border-color 0.15s ease;
+}
+
+.engineBuilderInput::placeholder { color: var(--muted); opacity: 0.5; }
+.engineBuilderInput:focus { outline: none; border-color: var(--primary); }
+.engineBuilderInput:disabled { opacity: 0.7; }
+
+.engineBuilderHint { margin: 0; font-size: 12.5px; color: var(--muted); }
+
+/* ── write_code: worked examples above the editor ── */
+
+.engineCodeTask { display: grid; gap: 14px; }
+
+.engineExamples {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+}
+
+.engineExamplesLabel {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.engineExample {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
+  font-size: 12.5px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 11px;
+}
+
+.engineExample svg { color: var(--muted); }
+.engineExampleIn { color: var(--muted); }
+.engineExampleOut { color: var(--fg); font-weight: 700; }
+
+/* ── footer: ending the session is available, not advertised ── */
+
+.engineEndButton {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+
+.engineEndButton:hover { color: var(--danger); }
 
 .engineSummaryStats {
   display: flex;
@@ -1842,8 +2014,12 @@
 .engineSummaryActions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 
 @media (max-width: 640px) {
-  .engineTopBar { flex-direction: column; align-items: flex-start; }
-  .engineMeta { width: 100%; justify-content: space-between; }
+  /* The rail keeps its shape on narrow screens — five stars and four gaps
+     still fit — but the answer widgets need to stack rather than shrink. */
+  .engineBlankRow { align-items: stretch; }
+  .engineBlankInput { max-width: none; width: 100%; }
+  .engineBuilderExpr { flex-wrap: wrap; justify-content: center; }
+  .engineExamples { flex-direction: column; align-items: flex-start; }
 }
 
 @media (prefers-reduced-motion: reduce) {
