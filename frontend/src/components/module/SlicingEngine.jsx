@@ -187,8 +187,16 @@ function FillBlank({ question, answer, result, onChange, onSubmit, inputRef }) {
   const { t } = useLanguage();
   return (
     <div className={m.engineBlankRow}>
-      <code className={m.engineBlankExpr}>{question.expression}</code>
-      <span className={m.engineBlankEquals} aria-hidden="true">=</span>
+      {/* A `trace` question has no expression to put an "=" after — the
+          snippet above already asked it — so it sends a label instead. */}
+      {question.expression ? (
+        <>
+          <code className={m.engineBlankExpr}>{question.expression}</code>
+          <span className={m.engineBlankEquals} aria-hidden="true">=</span>
+        </>
+      ) : (
+        <span className={m.engineBlankLabel}>{question.answer_label}</span>
+      )}
       <input
         ref={inputRef}
         className={m.engineBlankInput}
@@ -300,11 +308,27 @@ export function SlicingEngine({ practice, onSectionComplete }) {
   const completedRef = useRef(false);
   const inputRef = useRef(null);
 
+  // Which concepts this student keeps getting wrong, most-missed first. The
+  // engine is stateless by design, so the tally lives here and rides along
+  // with each request; the backend uses it to weight template selection
+  // towards what needs the practice. Capped so one bad patch early in a
+  // session doesn't dominate the rest of it.
+  const missesRef = useRef(new Map());
+
+  const weakConcepts = useCallback(() => {
+    const ranked = [...missesRef.current.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([concept]) => concept);
+    return ranked.join(',');
+  }, []);
+
   const loadNext = useCallback((forTier) => {
     setLoading(true);
     setLoadError('');
     setResult(null);
-    fetch(getApiUrl(`/api/exercises/slicing/engine/next?tier=${forTier}`))
+    const weak = encodeURIComponent(weakConcepts());
+    fetch(getApiUrl(`/api/exercises/slicing/engine/next?tier=${forTier}&weak=${weak}`))
       .then((res) => res.json())
       .then((data) => {
         setQuestion(data);
@@ -312,7 +336,7 @@ export function SlicingEngine({ practice, onSectionComplete }) {
       })
       .catch(() => setLoadError('practice.serverUnreachable'))
       .finally(() => setLoading(false));
-  }, []);
+  }, [weakConcepts]);
 
   useEffect(() => { loadNext(1); }, [loadNext]);
 
@@ -348,6 +372,13 @@ export function SlicingEngine({ practice, onSectionComplete }) {
         return;
       }
       setResult(data);
+      // Tally what went wrong so later questions can lean that way. The
+      // backend tags every wrong answer with the concept behind it, and
+      // falls back to the template's own concept when nothing matches.
+      const missed = data.correct ? null : (data.misconception_id ?? data.concept);
+      if (missed) {
+        missesRef.current.set(missed, (missesRef.current.get(missed) ?? 0) + 1);
+      }
       setStats((prev) => ({
         asked: prev.asked + 1,
         correct: prev.correct + (data.correct ? 1 : 0),
@@ -384,6 +415,7 @@ export function SlicingEngine({ practice, onSectionComplete }) {
     setStats({ asked: 0, correct: 0, starsEarned: 0 });
     setStopped(false);
     completedRef.current = false;
+    missesRef.current.clear();
     loadNext(1);
   }
 

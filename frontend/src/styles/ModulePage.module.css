@@ -1868,6 +1868,17 @@
   white-space: nowrap;
 }
 
+/* Stands in for the expression on a `trace` question, where the snippet
+   above has already asked the question and there is nothing to put an
+   "=" after. */
+.engineBlankLabel {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 .engineBlankEquals {
   font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 15px;
