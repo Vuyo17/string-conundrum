@@ -580,8 +580,9 @@ TRANSLATABLE_LISTS = {"outcomes", "items", "head"}
 # Never translated, and listed explicitly so the reason survives: `code`, `value`
 # and `string` are Python the student retypes; `output` is what the interpreter
 # actually prints; `id`, `kind`, `tone`, `state` and `apiModuleId` are wiring.
-# `rows` is skipped structurally — it holds code expressions beside their
-# explanations, and merging a partial row by position would misalign the table.
+# `rows` (table cells) IS translated, cell by cell — see the dedicated branch
+# in translate_tree — but position-for-position, same as every other array
+# here, so a partial row still can't get shuffled out of alignment.
 
 # Fixed vocabulary, translated by hand: NLLB renders these inconsistently and
 # there are only a few, so a lookup beats a model call.
@@ -626,21 +627,33 @@ for (const file of (await readdir(src)).filter((f) => f.endsWith('.js') && f !==
     return {p.stem: p for p in sorted(dest.glob("*.json")) if p.stem != "_dump"}
 
 
-def translate_tree(translator, node, label: str, stats: dict[str, int]):
+def translate_tree(translator, node, label: str, stats: dict[str, int], existing=None):
     """Build a partial overlay mirroring `node`, translating only prose fields.
+
+    `existing` is the corresponding subtree of an already-written overlay, if
+    one exists — a field already present there is carried through UNCHANGED
+    rather than re-translated, so re-running this on a module that already
+    has a partial (or hand-written) overlay only fills the gaps, never
+    replaces a translation someone already reviewed or wrote by hand.
 
     Returns None when a subtree yields nothing, so the caller can drop it and
     let the English original show through.
     """
     if isinstance(node, dict):
         out = {}
+        existing_dict = existing if isinstance(existing, dict) else {}
         for key, value in node.items():
+            prior = existing_dict.get(key)
             if isinstance(value, str):
                 if key == "level":
                     if value in LEVELS:
                         out[key] = LEVELS[value]
                     continue
                 if key not in TRANSLATABLE:
+                    continue
+                if isinstance(prior, str) and prior.strip():
+                    out[key] = prior
+                    stats["kept"] += 1
                     continue
                 done = translate_checked(translator, value, f"{label}.{key}")
                 stats["total"] += 1
@@ -651,8 +664,14 @@ def translate_tree(translator, node, label: str, stats: dict[str, int]):
             elif isinstance(value, list) and all(isinstance(x, str) for x in value):
                 if key not in TRANSLATABLE_LISTS:
                     continue
+                prior_list = prior if isinstance(prior, list) else []
                 items = []
                 for i, item in enumerate(value):
+                    prior_item = prior_list[i] if i < len(prior_list) else None
+                    if isinstance(prior_item, str) and prior_item.strip():
+                        items.append(prior_item)
+                        stats["kept"] += 1
+                        continue
                     done = translate_checked(translator, item, f"{label}.{key}[{i}]")
                     stats["total"] += 1
                     if not done:
@@ -660,8 +679,42 @@ def translate_tree(translator, node, label: str, stats: dict[str, int]):
                     items.append(done if done else item)
                 if items:
                     out[key] = items
+            elif (
+                key == "rows"
+                and isinstance(value, list)
+                and all(isinstance(row, list) and all(isinstance(c, str) for c in row) for row in value)
+            ):
+                # A table row. No per-column special-casing needed: a cell that
+                # is pure code (`ord("A")`) is caught by is_code_line and never
+                # touched; a cell that is a bare literal (`'n'`, `IndexError`,
+                # `False`) gets fully masked by mask_spans/GLOSSARY and the
+                # "nothing left to translate" guard in _translate_prose_line
+                # returns it unchanged; only genuine prose — a label like
+                # "First character" or an explanation — actually reaches the
+                # model. Same verify_spans/degenerate rejection as everywhere
+                # else, so a cell that would corrupt still just stays English.
+                prior_rows = prior if isinstance(prior, list) else []
+                rows_out = []
+                for i, row in enumerate(value):
+                    prior_row = prior_rows[i] if i < len(prior_rows) else None
+                    prior_row = prior_row if isinstance(prior_row, list) else []
+                    row_out = []
+                    for j, cell in enumerate(row):
+                        prior_cell = prior_row[j] if j < len(prior_row) else None
+                        if isinstance(prior_cell, str) and prior_cell.strip():
+                            row_out.append(prior_cell)
+                            stats["kept"] += 1
+                            continue
+                        done = translate_checked(translator, cell, f"{label}.{key}[{i}][{j}]")
+                        stats["total"] += 1
+                        if not done:
+                            stats["skipped"] += 1
+                        row_out.append(done if done else cell)
+                    rows_out.append(row_out)
+                if rows_out:
+                    out[key] = rows_out
             else:
-                child = translate_tree(translator, value, f"{label}.{key}", stats)
+                child = translate_tree(translator, value, f"{label}.{key}", stats, prior)
                 if child is not None:
                     out[key] = child
         return out or None
@@ -669,18 +722,71 @@ def translate_tree(translator, node, label: str, stats: dict[str, int]):
     if isinstance(node, list):
         # Arrays deep-merge by position, so every slot must be held — `null`
         # tells the merge to keep the English entry untouched.
-        items = [translate_tree(translator, item, label, stats) for item in node]
+        existing_list = existing if isinstance(existing, list) else []
+        items = [
+            translate_tree(
+                translator, item, label, stats,
+                existing_list[i] if i < len(existing_list) else None,
+            )
+            for i, item in enumerate(node)
+        ]
         return items if any(i is not None for i in items) else None
 
     return None
 
 
+def dump_existing_xh(out_dir: Path, dest: Path) -> dict[str, dict]:
+    """Evaluate `xh/*.js` overlays already on disk and return each as a dict.
+
+    Same node-import trick as `dump_modules_json`, over whatever overlay files
+    already exist. A module with no overlay yet is simply absent from the
+    result, which `do_modules` treats as "nothing to preserve".
+    """
+    if not out_dir.exists() or not any(out_dir.glob("*.js")):
+        return {}
+    dest.mkdir(parents=True, exist_ok=True)
+    script = dest / "_dump_existing.mjs"
+    script.write_text(
+        """
+import { readdir, writeFile } from 'node:fs/promises';
+import { pathToFileURL } from 'node:url';
+import path from 'node:path';
+const [src, out] = process.argv.slice(2);
+for (const file of (await readdir(src)).filter((f) => f.endsWith('.js'))) {
+  const mod = await import(pathToFileURL(path.join(src, file)).href);
+  const key = Object.keys(mod).find((k) => k.endsWith('Xh'));
+  if (!key) continue;
+  await writeFile(path.join(out, file.replace(/\\.js$/, '.json')),
+    JSON.stringify(mod[key], null, 2), 'utf-8');
+}
+""",
+        encoding="utf-8",
+    )
+    subprocess.run(
+        ["node", str(script), str(out_dir), str(dest)],
+        check=True,
+        capture_output=True,
+    )
+    return {
+        p.stem: json.loads(p.read_text(encoding="utf-8"))
+        for p in sorted(dest.glob("*.json"))
+        if p.stem != "_dump_existing"
+    }
+
+
 def do_modules(translator, limit: int | None, dry_run: bool) -> None:
-    """Write `moduleContent/xh/<id>.js` overlays for every untranslated module.
+    """Write/update `moduleContent/xh/<id>.js` overlays for every module.
 
     Overlays are partial by design: `getModuleContent` deep-merges them over the
     English base, so anything omitted keeps its original value. `xh/intro.js` is
     the hand-written reference for the shape and tone.
+
+    Re-running this on a module that already has an overlay does NOT start
+    over: `translate_tree` is handed that overlay as `existing` and carries
+    every field already present through unchanged (including hand-written
+    ones), only translating what's still missing. That's what makes this safe
+    to run again after `xh/intro.js` — or any module — picks up more manual
+    edits later: nothing already there gets clobbered.
     """
     out_dir = MODULE_DIR / "xh"
     if dry_run:
@@ -691,36 +797,50 @@ def do_modules(translator, limit: int | None, dry_run: bool) -> None:
             print(f"{state:12} {out_dir.name}/{path.name}")
         return
 
-    dumped = dump_modules_json(Path(tempfile.mkdtemp(prefix="modulecontent-")))
+    scratch = Path(tempfile.mkdtemp(prefix="modulecontent-"))
+    dumped = dump_modules_json(scratch)
+    existing_by_stem = dump_existing_xh(out_dir, scratch / "existing")
     out_dir.mkdir(parents=True, exist_ok=True)
 
     for stem, json_path in dumped.items():
         target = out_dir / f"{stem}.js"
-        if target.exists():
-            print(f"-- {stem}: already translated, skipping")
+        existing = existing_by_stem.get(stem)
+
+        print(f"\n===== {stem} =====" + (" (topping up existing overlay)" if existing else ""))
+        base = json.loads(json_path.read_text(encoding="utf-8"))
+        stats = {"total": 0, "skipped": 0, "kept": 0}
+        overlay = translate_tree(translator, base, stem, stats, existing) or {}
+
+        if stats["total"] == 0 and existing:
+            print(f"-- {stem}: overlay already covers everything this run would touch")
             continue
 
-        print(f"\n===== {stem} =====")
-        base = json.loads(json_path.read_text(encoding="utf-8"))
-        stats = {"total": 0, "skipped": 0}
-        overlay = translate_tree(translator, base, stem, stats) or {}
+        # A file that already exists carries its own header (hand-written for
+        # intro.js, the standard machine-translated one for the rest) —
+        # preserved verbatim rather than overwritten, since only the object
+        # literal below it changed.
+        if target.exists():
+            old_text = target.read_text(encoding="utf-8")
+            marker = old_text.index("export const")
+            header = old_text[:marker]
+        else:
+            header = (
+                f"// isiXhosa translation of the {base.get('title', stem)!r} module.\n"
+                "//\n"
+                "// Machine-translated with NLLB-200 by scripts/translate_content_nllb.py,\n"
+                "// then merged over the English base by `getModuleContent`. Partial by\n"
+                "// design: `code`, `output` and `value` are omitted so they keep their\n"
+                "// English/original value, and `null` holds an array slot open.\n"
+                "//\n"
+                "// Needs a human read before students see it.\n\n"
+            )
 
         name = f"{stem}Module Xh".replace(" ", "")
         body = json.dumps(overlay, ensure_ascii=False, indent=2)
-        target.write_text(
-            f"// isiXhosa translation of the {base.get('title', stem)!r} module.\n"
-            "//\n"
-            "// Machine-translated with NLLB-200 by scripts/translate_content_nllb.py,\n"
-            "// then merged over the English base by `getModuleContent`. Partial by\n"
-            "// design: `code`, `output`, `value` and table rows are omitted so they keep\n"
-            "// their English/original value, and `null` holds an array slot open.\n"
-            "//\n"
-            "// Needs a human read before students see it.\n"
-            f"\nexport const {name} = {body};\n",
-            encoding="utf-8",
-        )
-        kept = stats["total"] - stats["skipped"]
-        print(f"wrote {target}  ({kept}/{stats['total']} fields translated)")
+        target.write_text(f"{header}export const {name} = {body};\n", encoding="utf-8")
+        kept, total = stats["kept"], stats["total"]
+        translated = total - stats["skipped"]
+        print(f"wrote {target}  ({translated}/{total} new fields translated, {kept} already present)")
 
 
 def main() -> None:

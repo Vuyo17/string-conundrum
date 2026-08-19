@@ -42,6 +42,33 @@ export const methodsModuleXh = {
             "Method",
             "Imbuyekezo",
             "Umzekelo"
+          ],
+          "rows": [
+            [
+              "s.count(x)",
+              "Zingaphi izihlandlo ezingasongeliyo x ezivelayo",
+              "\"banana\".count(\"an\") is 2"
+            ],
+            [
+              "s.find(x)",
+              "Index yesiganeko sokuqala, okanye -1",
+              "\"banana\".find(\"na\") is 2"
+            ],
+            [
+              "s.replace(a, b)",
+              "I-string entsha ene-a nganye ethatyathelw' indawo yi-b",
+              "\"aha\".replace(\"a\", \"o\") is \"oho\""
+            ],
+            [
+              "s.lower()",
+              "Ikopi entsha enobuncinane",
+              "\"MiXed\".lower() is \"mixed\""
+            ],
+            [
+              "s.upper()",
+              "Ikopi entsha enobumba obukhulu",
+              "\"MiXed\".upper() is \"MIXED\""
+            ]
           ]
         },
         {
@@ -68,7 +95,8 @@ export const methodsModuleXh = {
           "caption": "Qaphela ukuba i-capital A ayihambelani ne-minuscript \"aka\", kuba indawo etshintshayo iyathintelwa."
         },
         {
-          "title": "Indlela oku kuhlolwa ngayo"
+          "title": "Indlela oku kuhlolwa ngayo",
+          "text": "Uvavanyo lwethiyori kunye namaphepha amaninzi edlulileyo asebenzisa lo mfuziselo kanye: i-replace elandelwa yi-upper/lower, ngokhetho oluphosakeleyo olusebenzisa iinguqulelo ngokulandelelana okungachanekanga okanye olungakhathaliyo ngoonobumba abakhulu nabancinci. Sombulula uhlelo olunye ngexesha, ubhale phantsi istring ngasinye esiphakathi."
         }
       ]
     },

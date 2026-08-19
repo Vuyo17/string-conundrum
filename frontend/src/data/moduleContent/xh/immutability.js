@@ -54,7 +54,8 @@ export const immutabilityModuleXh = {
           "caption": "I-variable ngoku ibonisa i-string ENTSHA; endala iyalahlwa."
         },
         {
-          "title": "Kutheni imisebenzi ayikwazi ukutshintsha iiparameter ze-string"
+          "title": "Kutheni imisebenzi ayikwazi ukutshintsha iiparameter ze-string",
+          "text": "Ngaphakathi komsebenzi, i-`s = s + \"!\"` yenza igama LENDAWO YOKWENENE (local) likhomba kwistring esitsha. I-variable yalowo ubizayo iseqhubeka ikhomba kweyantsimbi yokuqala, oku kukumiselo oluthandwayo kuviwo lombuzo othi \"yintoni echwethezwayo?\""
         },
         null
       ]

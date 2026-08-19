@@ -77,7 +77,9 @@ export function CodeExercise({ code, onCodeChange, disabled }) {
       setStderr(execData.stderr ?? '');
       setSteps(debugData.steps ?? []);
     } catch {
-      setStderr('Cannot reach the server. Is the backend running?');
+      // Same wording as the leaderboard's identical fallback — reused rather
+      // than duplicating a fourth near-identical "server unreachable" key.
+      setStderr(t('leaderboard.serverUnreachable'));
     } finally {
       setRunning(false);
     }

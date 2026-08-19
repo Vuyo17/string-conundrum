@@ -242,7 +242,7 @@
   },
   "challenges": {
     "title": "Imingeni",
-    "subtitle": "Iingxaki zokukhowuda ezifana nezeLeetCode ezineemeko zovavanyo ze-stdin/stdout.",
+    "subtitle": "Iingxaki zokukhowuda ezineemeko zovavanyo ze-stdin/stdout.",
     "loading": "Ilayisha imingeni…",
     "serverUnreachable": "Ayikwazi ukufikelela kwiseva. Ingaba i-backend iyasebenza?",
     "none": "Akukho mingeni ifumanekayo okwangoku.",
@@ -611,6 +611,45 @@
     "practiceAgain": "Ziqhelanise kwakhona",
     "nextStep": "Inyathelo elilandelayo",
     "markFailed": "Le mpendulo ayikwazanga ukumakwa — iseshoni yakho isenokuba iphelelwe lixesha. Ngena kwakhona uze uzame.",
-    "finish": "Gqiba"
+    "finish": "Gqiba",
+    "notAnswered": "(akuphendulwanga)",
+    "starUnit": "inkwenkwezi",
+    "questionType": {
+      "mcq": "Ukhetho oluninzi",
+      "select_all": "Khetha zonke ezisebenzayo",
+      "fill_blank": "Impendulo emfutshane",
+      "write_code": "Bhala ikhowudi"
+    },
+    "questionsMissed": "{count} imibuzo elahlekileyo",
+    "generalAccuracy": "Ukuchaneka ngokubanzi",
+    "masteryBadge": {
+      "mastered": "Iyilawulile",
+      "proficient": "Inobuchule",
+      "developing": "Iyaphuhla",
+      "keepPractising": "Qhubeka uziqhelanisa"
+    },
+    "masteryBlurb": {
+      "mastered": "Ulungele uviwo. Ungayifundisa le nto.",
+      "proficient": "Umsebenzi omhle, phucula iinkcukacha zokugqibela ezingezantsi.",
+      "developing": "Isiseko sikhona. Buyela kwiimpazamo uze uzame kwakhona.",
+      "keepPractising": "Buyela kwisifundo esingentla, uze uzame kwakhona."
+    },
+    "misconceptions": {
+      "zero_index_start": "Ukubala ukususela ku-0",
+      "off_by_one_length": "Impazamo ye-off-by-one kunye nemida ye-len()",
+      "negative_index_confusion": "Ii-indices ezingezantsi kunye-0",
+      "slice_stop_inclusive": "I-stop ye-slice iyakhutshwa",
+      "negative_step_unfamiliar": "Ii-slices ezine-step engezantsi kunye-0",
+      "immutability_in_place": "Iistring azinakutshintsha zisendaweni yazo",
+      "method_mutates_target": "Iimethodi zibuyisela iistring ezintsha",
+      "comparison_ignores_case": "Ukwahluka kwoonobumba abakhulu nabancinci",
+      "strings_not_orderable_myth": "Uthelekiso lwe-alfabhethi",
+      "string_number_equality_myth": "Iistring ngokuchasene namanani",
+      "escape_sequence_literal_confusion": "Ii-escape sequence",
+      "count_vs_find_confusion": "count() ngokuchasene ne-find()",
+      "count_overlap_confusion": "Ukubala okungadibaniyo",
+      "fstring_missing_prefix_effect": "Isiqalo se-f-string",
+      "strings_need_quotes": "Imithetho yeengcaphuno"
+    }
   }
 }

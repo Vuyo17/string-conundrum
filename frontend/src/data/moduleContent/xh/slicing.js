@@ -65,6 +65,33 @@ export const slicingModuleXh = {
             "Inkcazo",
             "Isiphumo",
             "Kutheni?"
+          ],
+          "rows": [
+            [
+              "\"Jabberwocky\"[::2]",
+              "'Jbewcy'",
+              "Ukuqhubela phambili, umlinganiswa ngamnye wesibini ukusuka kwiindex 0"
+            ],
+            [
+              "\"Jabberwocky\"[::-2]",
+              "'ycwebJ'",
+              "Ukubuyela umva ukusuka kumlinganiswa wokugqibela"
+            ],
+            [
+              "\"Jabberwocky\"[5:0:-2]",
+              "'rba'",
+              "Izikhombisi 5, 3, 1 no stop 0 azibandakanyi"
+            ],
+            [
+              "\"Jabberwocky\"[:5:-1]",
+              "'ykcow'",
+              "Ukususela ekupheleni, ukubuyela (ngaphandle) index 5"
+            ],
+            [
+              "\"hello\"[3:1]",
+              "'' (empty)",
+              "Ukuyeka kusemva kokuqala ngenyathelo eliya phambili: akukho nto iqokelelwe"
+            ]
           ]
         },
         {

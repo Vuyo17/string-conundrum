@@ -242,7 +242,7 @@
   },
   "challenges": {
     "title": "Challenges",
-    "subtitle": "LeetCode-style coding problems with stdin/stdout test cases.",
+    "subtitle": "Coding problems with stdin/stdout test cases.",
     "loading": "Loading challenges…",
     "serverUnreachable": "Cannot reach server. Is the backend running?",
     "none": "No challenges available yet.",
@@ -611,6 +611,45 @@
     "practiceAgain": "Practice again",
     "nextStep": "Next step",
     "markFailed": "This answer could not be marked — your session may have expired. Sign in again and retry.",
-    "finish": "Finish"
+    "finish": "Finish",
+    "notAnswered": "(not answered)",
+    "starUnit": "star",
+    "questionType": {
+      "mcq": "Multiple choice",
+      "select_all": "Select all that apply",
+      "fill_blank": "Short answer",
+      "write_code": "Write code"
+    },
+    "questionsMissed": "{count} questions missed",
+    "generalAccuracy": "General accuracy",
+    "masteryBadge": {
+      "mastered": "Mastered",
+      "proficient": "Proficient",
+      "developing": "Developing",
+      "keepPractising": "Keep practising"
+    },
+    "masteryBlurb": {
+      "mastered": "Exam-ready. You could teach this.",
+      "proficient": "Solid work, polish the last details below.",
+      "developing": "The foundations are there. Review the misses and retry.",
+      "keepPractising": "Revisit the lesson above, then take another attempt."
+    },
+    "misconceptions": {
+      "zero_index_start": "Counting from zero",
+      "off_by_one_length": "Off-by-one and len() bounds",
+      "negative_index_confusion": "Negative indices",
+      "slice_stop_inclusive": "Slice stop is excluded",
+      "negative_step_unfamiliar": "Negative-step slices",
+      "immutability_in_place": "Strings cannot change in place",
+      "method_mutates_target": "Methods return new strings",
+      "comparison_ignores_case": "Case sensitivity",
+      "strings_not_orderable_myth": "Lexicographic comparison",
+      "string_number_equality_myth": "Strings vs numbers",
+      "escape_sequence_literal_confusion": "Escape sequences",
+      "count_vs_find_confusion": "count() vs find()",
+      "count_overlap_confusion": "Non-overlapping counting",
+      "fstring_missing_prefix_effect": "The f-string prefix",
+      "strings_need_quotes": "Quoting rules"
+    }
   }
 }

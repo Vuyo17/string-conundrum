@@ -24,11 +24,13 @@ export function starsOf(exercise) {
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
+// labelKey resolves through exercise.questionType.<type> so these translate
+// like everything else — see the icon-only lookup below.
 const TYPE_META = {
-  mcq: { label: 'Multiple choice', icon: ListChecks },
-  select_all: { label: 'Select all that apply', icon: ListChecks },
-  fill_blank: { label: 'Short answer', icon: PenLine },
-  write_code: { label: 'Write code', icon: SquareMousePointer },
+  mcq: { labelKey: 'mcq', icon: ListChecks },
+  select_all: { labelKey: 'select_all', icon: ListChecks },
+  fill_blank: { labelKey: 'fill_blank', icon: PenLine },
+  write_code: { labelKey: 'write_code', icon: SquareMousePointer },
 };
 
 function shuffle(list) {
@@ -375,9 +377,9 @@ function PracticeRunner({ practice, exercises, onSectionComplete }) {
       <div className={m.questionCard}>
         <header className={m.questionHeader}>
           <div className={m.questionMeta}>
-            <span className={m.questionType}><MetaIcon size={13} /> {meta.label}</span>
+            <span className={m.questionType}><MetaIcon size={13} /> {t(`exercise.questionType.${meta.labelKey}`)}</span>
             <span className={m.questionXp}>
-              <Star size={13} /> {starsOf(exercise)} {starsOf(exercise) === 1 ? 'star' : 'stars'}
+              <Star size={13} /> {starsOf(exercise)} {t('exercise.starUnit')}
             </span>
           </div>
           <div className={m.questionProgress}>

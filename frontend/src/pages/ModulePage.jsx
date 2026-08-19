@@ -144,7 +144,13 @@ export function ModulePage({
             <span className={m.heroEyebrow}>
               {t('modulePage.eyebrow', { number: moduleNumber ?? '' })}
             </span>
-            <h1 className={m.heroTitle}>{content.title}</h1>
+            {/* Locale title, not content.title: moduleContent's title is a
+                glossary-protected term ("String Indexing") the translation
+                pipeline correctly never touches, but the module list already
+                has a properly translated one at modules.items.<id>.title —
+                use that here too instead of leaving the page header in
+                English while the list that links to it is translated. */}
+            <h1 className={m.heroTitle}>{t(`modules.items.${moduleId}.title`)}</h1>
 
             <div className={m.heroMeta}>
               <span><Clock size={14} /> {t('modulePage.minutes', { count: content.minutes })}</span>

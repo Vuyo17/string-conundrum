@@ -43,6 +43,28 @@ export const formattingModuleXh = {
             "Inkcazo",
             "Isiphumo",
             "Kutheni?"
+          ],
+          "rows": [
+            [
+              "\"{0:<6}\".format(\"one\")",
+              "'one   '",
+              "I-Left-aligned: ixabiso lokuqala, 3 izithuba emva"
+            ],
+            [
+              "\"{0:>6}\".format(\"one\")",
+              "'   one'",
+              "Ukulungelelaniswa ngasekunene: 3 izithuba kuqala"
+            ],
+            [
+              "\"{0:^6}\".format(\"one\")",
+              "' one  '",
+              "Ephakathi: indawo eyongezelelweyo iya ngasekunene"
+            ],
+            [
+              "\"{1:^4}\".format(\"AA\", \"BB\")",
+              "' BB '",
+              "Ingxoxo 1 yi \"BB\", igxile kububanzi 4"
+            ]
           ]
         },
         {

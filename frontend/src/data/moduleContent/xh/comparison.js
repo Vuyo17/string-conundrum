@@ -36,12 +36,36 @@ export const comparisonModuleXh = {
     {
       "title": "Iimeko zibalulekile kuyo yonke indawo",
       "blocks": [
-        null,
+        {
+          "text": "Kwi-Unicode, ZONKE iimpawu ezinkulu (65-90) zihamba phambi ZAZO ZONKE iimpawu ezincinci (97-122). Ngoko ke `\"Cat\"` no-`\"cat\"` ziistring ezahlukeneyo, kwaye nayiphi na impawu encinci \"inkulu kune\" nayiphi na impawu enkulu."
+        },
         {
           "head": [
             "Inkcazo",
             "Isiphumo",
             "Kutheni?"
+          ],
+          "rows": [
+            [
+              "\"Cat\" == \"cat\"",
+              "False",
+              "Iimpawu zokuqala ezahlukeneyo: C (67) vs c (99)"
+            ],
+            [
+              "'a' > 'Z'",
+              "True",
+              "ord(\"a\") is 97; ord(\"Z\") is 90"
+            ],
+            [
+              "\"Zebra\" < \"apple\"",
+              "True",
+              "Uhlobo lwe-Z enkulu (90) phambi kwe-a encinci (97)"
+            ],
+            [
+              "\"10\" == 10",
+              "False",
+              "I-string ayikaze ilingane nenani"
+            ]
           ]
         },
         {
@@ -57,7 +81,9 @@ export const comparisonModuleXh = {
     {
       "title": "I-in operator: Uvavanyo lwe-substring",
       "blocks": [
-        null,
+        {
+          "text": "I-`x in s` ngu-True xa istring `x` sibonakala ndawo thile ngaphakathi kwe-`s` njengolandelelwano oluqhubekayo lweempawu. Sesona sivavanyo silungileyo se-membership i-Python esinikelayo, kwaye siyakhathala ngoonobumba abakhulu nabancinci."
+        },
         null,
         {
           "title": "Indlela oku kuhlolwa ngayo",

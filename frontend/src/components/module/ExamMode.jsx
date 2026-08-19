@@ -29,36 +29,27 @@ import { useNotifications } from '../../context/NotificationContext';
 // correct answers, per-question explanations and grouped areas to improve.
 // ─────────────────────────────────────────────────────────────────────────────
 
+// badge/blurb are translation keys under exercise.masteryBadge / .masteryBlurb,
+// not display text — t() resolves them at render time so this list itself
+// never needs to change per language.
 const STAR_BANDS = [
-  { min: 85, stars: 3, badge: 'Mastered', blurb: 'Exam-ready. You could teach this.' },
-  { min: 70, stars: 2, badge: 'Proficient', blurb: 'Solid work, polish the last details below.' },
-  { min: 50, stars: 1, badge: 'Developing', blurb: 'The foundations are there. Review the misses and retry.' },
-  { min: 0, stars: 0, badge: 'Keep practising', blurb: 'Revisit the lesson above, then take another attempt.' },
+  { min: 85, stars: 3, badge: 'mastered', blurb: 'mastered' },
+  { min: 70, stars: 2, badge: 'proficient', blurb: 'proficient' },
+  { min: 50, stars: 1, badge: 'developing', blurb: 'developing' },
+  { min: 0, stars: 0, badge: 'keepPractising', blurb: 'keepPractising' },
 ];
 
-// Friendly labels for misconception ids used in "areas for improvement".
-const MISCONCEPTION_LABELS = {
-  zero_index_start: 'Counting from zero',
-  off_by_one_length: 'Off-by-one and len() bounds',
-  negative_index_confusion: 'Negative indices',
-  slice_stop_inclusive: 'Slice stop is excluded',
-  negative_step_unfamiliar: 'Negative-step slices',
-  immutability_in_place: 'Strings cannot change in place',
-  method_mutates_target: 'Methods return new strings',
-  comparison_ignores_case: 'Case sensitivity',
-  strings_not_orderable_myth: 'Lexicographic comparison',
-  string_number_equality_myth: 'Strings vs numbers',
-  escape_sequence_literal_confusion: 'Escape sequences',
-  count_vs_find_confusion: 'count() vs find()',
-  count_overlap_confusion: 'Non-overlapping counting',
-  fstring_missing_prefix_effect: 'The f-string prefix',
-  strings_need_quotes: 'Quoting rules',
-};
-
-function labelForMisconception(id) {
-  if (!id) return 'General accuracy';
-  return MISCONCEPTION_LABELS[id]
-    ?? id.replaceAll('_', ' ').replace(/^./, (c) => c.toUpperCase());
+// Friendly labels for misconception ids used in "areas for improvement",
+// resolved through exercise.misconceptions.<id> so they translate like
+// everything else. Falls back to a de-slugged id for any id that shows up
+// in the exercise bank without a matching translation key yet.
+function labelForMisconception(id, t) {
+  if (!id) return t('exercise.generalAccuracy');
+  const key = `exercise.misconceptions.${id}`;
+  const translated = t(key);
+  return translated === key
+    ? id.replaceAll('_', ' ').replace(/^./, (c) => c.toUpperCase())
+    : translated;
 }
 
 function shuffle(list) {
@@ -116,8 +107,8 @@ function displayFor(exercise, value, lang) {
   return displayOptionsOf(exercise, lang)[i];
 }
 
-function describeStudentAnswer(exercise, answer, lang) {
-  if (!isAnswered(exercise, answer)) return '(not answered)';
+function describeStudentAnswer(exercise, answer, lang, t) {
+  if (!isAnswered(exercise, answer)) return t('exercise.notAnswered');
   if (exercise.type === 'mcq') return displayFor(exercise, answer.selected, lang);
   if (exercise.type === 'select_all') {
     return (answer.selected ?? []).map((v) => displayFor(exercise, v, lang)).join(', ');
@@ -242,7 +233,7 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
           ? data
           : { correct: false, feedback: t('exercise.markFailed') };
       } catch {
-        graded[ex.question_id] = { correct: false, feedback: 'Could not reach the server for this question.' };
+        graded[ex.question_id] = { correct: false, feedback: t('exercise.markFailed') };
       }
     }));
     setResults(graded);
@@ -273,7 +264,7 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
     paper.forEach((ex) => {
       const r = results[ex.question_id];
       if (r && !r.correct) {
-        const label = labelForMisconception(r.misconception_id);
+        const label = labelForMisconception(r.misconception_id, t);
         weakAreas[label] = (weakAreas[label] ?? 0) + 1;
       }
     });
@@ -307,9 +298,9 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
             ))}
           </div>
           <span className={m.masteryBadge}>
-            <GraduationCap size={15} /> {band.badge}
+            <GraduationCap size={15} /> {t(`exercise.masteryBadge.${band.badge}`)}
           </span>
-          <p className={m.examBlurb}>{band.blurb}</p>
+          <p className={m.examBlurb}>{t(`exercise.masteryBlurb.${band.blurb}`)}</p>
           <button type="button" className={m.solidButton} onClick={retry}>
             <RefreshCcw size={15} /> {t('exercise.retryNewQuestions')}
           </button>
@@ -324,7 +315,7 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
                 .map(([label, count]) => (
                   <li key={label}>
                     <strong>{label}</strong>
-                    <span>{count} {count === 1 ? 'question' : 'questions'} missed</span>
+                    <span>{t('exercise.questionsMissed', { count })}</span>
                   </li>
                 ))}
             </ul>
@@ -337,7 +328,7 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
             const r = results[ex.question_id] ?? {};
             const a = answers[ex.question_id];
             const { title, code } = splitPrompt(ex.prompt);
-            const studentAnswer = describeStudentAnswer(ex, a, lang);
+            const studentAnswer = describeStudentAnswer(ex, a, lang, t);
             // Offer the visualizer only where we can actually load the
             // question into it, and only where it would teach something.
             const preset = r.correct || !onVisualize ? null : presetForExercise(ex, a);
@@ -444,7 +435,7 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
           <div className={m.questionMeta}>
             <span className={m.questionType}><GraduationCap size={13} /> {t('exercise.examQuestion')}</span>
             <span className={m.questionXp}>
-              <Star size={13} /> {starsOf(exercise)} {starsOf(exercise) === 1 ? 'star' : 'stars'}
+              <Star size={13} /> {starsOf(exercise)} {t('exercise.starUnit')}
             </span>
           </div>
           <div className={m.questionProgress}>

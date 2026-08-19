@@ -85,10 +85,43 @@ export const indexingModuleXh = {
             "Inkcazo",
             "Isiphumo",
             "Kutheni?"
+          ],
+          "rows": [
+            [
+              "word[0]",
+              "'p'",
+              "Ibhokisi yokuqala, 0 amanyathelo ukusuka ekuqaleni"
+            ],
+            [
+              "word[5]",
+              "'n'",
+              "Ibhokisi yokugqibela: len(word) - 1 = 5"
+            ],
+            [
+              "word[len(word) - 1]",
+              "'n'",
+              "Ngalo lonke ixesha umlinganiswa wokugqibela, kungakhathaliseki ubude"
+            ],
+            [
+              "word[6]",
+              "IndexError",
+              "I-len(word) yenye emva kokuphela"
+            ],
+            [
+              "word[-6]",
+              "'p'",
+              "Emuva kangangoko unako ukubala"
+            ],
+            [
+              "word[-7]",
+              "IndexError",
+              "Ngaphaya komlinganiswa wokuqala"
+            ]
           ]
         },
         {
-          "title": "Indawo ekhuselekileyo"
+          "title": "Indawo ekhuselekileyo",
+          "text": "Kwistring `s`, wonke ii-index ezisebenzayo zihlala phakathi kwe-`-len(s)` no-`len(s) - 1`, kubandakanywa nazo. Nayiphi na into engaphandle kwelo hlelo iphakamisa i-IndexError."
         }
       ]
     },
@@ -103,6 +136,28 @@ export const indexingModuleXh = {
             "Umgibe",
             "Iimvakalelo ezingalunganga",
             "Inyaniso"
+          ],
+          "rows": [
+            [
+              "Umlinganiswa wokuqala",
+              "I-s[1] yileta yokuqala",
+              "I-s[0], ekubeni ukubalwa kuqala kwi-zero"
+            ],
+            [
+              "Umlinganiswa wokugqibela",
+              "I-s[len(s)] yileta yokugqibela",
+              "s[len(s) - 1] okanye s[-1]; len(s) ingaphaya komda"
+            ],
+            [
+              "Ukuqala okungalunganga",
+              "ii-indices ezingezizo ziqala kwi-0",
+              "ziqala ngo-1 kumlinganiswa wokugqibela"
+            ],
+            [
+              "Ukubhala",
+              "s[0] = 'x' utshintsha string",
+              "I-TypeError: I-indexing ifundeka kuphela"
+            ]
           ]
         },
         {
