@@ -5,7 +5,7 @@ import { getApiUrl } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
-export function Leaderboard() {
+export function Leaderboard({ progress }) {
   const { user } = useAuth();
   const { t } = useLanguage();
   const [leaders, setLeaders] = useState([]);
@@ -31,6 +31,7 @@ export function Leaderboard() {
   }, []);
 
   const myRank = user ? leaders.findIndex((leader) => leader.uid === user.uid) : -1;
+  const optedOut = progress?.leaderboardOptIn === false;
 
   return (
     <div className={styles.leaderboardLayout}>
@@ -62,7 +63,9 @@ export function Leaderboard() {
           {myRank >= 0 ? `#${myRank + 1}` : '—'}
         </h1>
         <p style={{ color: 'var(--muted)', fontSize: '14px', marginTop: '8px' }}>
-          {myRank >= 0 ? t('leaderboard.ranked') : t('leaderboard.unranked')}
+          {myRank >= 0
+            ? t('leaderboard.ranked')
+            : t(optedOut ? 'leaderboard.optedOut' : 'leaderboard.unranked')}
         </p>
       </aside>
     </div>

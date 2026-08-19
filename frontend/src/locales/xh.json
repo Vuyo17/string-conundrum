@@ -278,7 +278,8 @@
     "yourRank": "Isikhundla Sakho",
     "allTime": "Amaxesha onke",
     "ranked": "Umsebenzi omhle! Qhubeka ufunda uze unyuke kwibhodi yeenkokeli.",
-    "unranked": "Gqiba umsebenzi okanye umngeni ukuze ungene kwibhodi."
+    "unranked": "Gqiba umsebenzi okanye umngeni ukuze ungene kwibhodi.",
+    "optedOut": "Ufihliwe kwibhodi yeenkokeli. Vula kwakhona kwiiSethingi ukuze ubone isikhundla sakho."
   },
   "feedback": {
     "empty": "Akukho msebenzi uzanyiweyo okwangoku. Yiya kwithebhu yoMsebenzi, uphendule umbuzo, uze isiphumo sakho sivele apha.",
@@ -313,6 +314,15 @@
     "unlockAllHint": "Tsiba ulandelelwano lweemodyuli nemingeni uze ufikelele kuyo yonke ngoko nangoko.",
     "unlockAllOff": "Icimile",
     "unlockAllOn": "Ivuliwe",
+    "leaderboard": "Ibhodi yeeNkokeli",
+    "leaderboardOptIn": "Vela kwibhodi yeenkokeli",
+    "leaderboardOptInHint": "Ibhodi yeenkokeli ikhetheka ngokupheleleyo — icime ukuba iindawo azikokwakho.",
+    "leaderboardOptInOff": "Icimile",
+    "leaderboardOptInOn": "Ivuliwe",
+    "leaderboardAnonymous": "Bonisa igama lam ngokungaziwa",
+    "leaderboardAnonymousHint": "Hlala unesikhundla, kodwa uvele njenge-\"Ongaziwayo\" endaweni yegama lakho.",
+    "leaderboardAnonymousOff": "Icimile",
+    "leaderboardAnonymousOn": "Ivuliwe",
     "account": "Iakhawunti",
     "signInHint": "Ngena ukuze uvule iimodyuli, imisebenzi kunye nebhodi yeenkokeli.",
     "signOutHint": "Phelisa iseshoni yakho kwesi sixhobo."

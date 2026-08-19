@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, Palette, LogOut, Moon, Sun, Languages, Unlock } from 'lucide-react';
+import { User, Palette, LogOut, Moon, Sun, Languages, Unlock, Trophy } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { useAuth } from '../context/AuthContext';
@@ -12,6 +12,8 @@ export function Settings({ progress }) {
   const { isDark, toggleTheme } = useTheme();
   const { lang, setLang, languages, t } = useLanguage();
   const bypassUnlocks = progress?.bypassUnlocks ?? false;
+  const leaderboardOptIn = progress?.leaderboardOptIn ?? true;
+  const leaderboardAnonymous = progress?.leaderboardAnonymous ?? false;
 
   // ThemeContext only exposes a toggle, so only flip when the pick differs.
   function chooseTheme(wantDark) {
@@ -113,6 +115,63 @@ export function Settings({ progress }) {
                 onClick={() => progress?.setBypassUnlocks(true)}
               >
                 {t('settings.unlockAllOn')}
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {!isGuest && (
+        <section className={styles.card}>
+          <div className={styles.settingsSectionTitle}>
+            <Trophy size={15} /> {t('settings.leaderboard')}
+          </div>
+          <div className={styles.settingsRow}>
+            <div>
+              <strong>{t('settings.leaderboardOptIn')}</strong>
+              <p className={styles.settingsRowHint}>{t('settings.leaderboardOptInHint')}</p>
+            </div>
+            <div className={styles.settingsChoice}>
+              <button
+                type="button"
+                className={!leaderboardOptIn ? styles.settingsChoiceActive : ''}
+                aria-pressed={!leaderboardOptIn}
+                onClick={() => progress?.setLeaderboardOptIn(false)}
+              >
+                {t('settings.leaderboardOptInOff')}
+              </button>
+              <button
+                type="button"
+                className={leaderboardOptIn ? styles.settingsChoiceActive : ''}
+                aria-pressed={leaderboardOptIn}
+                onClick={() => progress?.setLeaderboardOptIn(true)}
+              >
+                {t('settings.leaderboardOptInOn')}
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.settingsRow}>
+            <div>
+              <strong>{t('settings.leaderboardAnonymous')}</strong>
+              <p className={styles.settingsRowHint}>{t('settings.leaderboardAnonymousHint')}</p>
+            </div>
+            <div className={styles.settingsChoice}>
+              <button
+                type="button"
+                className={!leaderboardAnonymous ? styles.settingsChoiceActive : ''}
+                aria-pressed={!leaderboardAnonymous}
+                onClick={() => progress?.setLeaderboardAnonymous(false)}
+              >
+                {t('settings.leaderboardAnonymousOff')}
+              </button>
+              <button
+                type="button"
+                className={leaderboardAnonymous ? styles.settingsChoiceActive : ''}
+                aria-pressed={leaderboardAnonymous}
+                onClick={() => progress?.setLeaderboardAnonymous(true)}
+              >
+                {t('settings.leaderboardAnonymousOn')}
               </button>
             </div>
           </div>

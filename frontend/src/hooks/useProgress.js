@@ -14,12 +14,19 @@ export function useProgress() {
   const { user, isGuest } = useAuth();
   const [sectionsByModule, setSectionsByModule] = useState({});
   const [bypassUnlocks, setBypassUnlocksState] = useState(false);
+  // Leaderboard participation defaults to on (matching how every account
+  // behaved before these settings existed) so a fetch failure or a guest
+  // session degrades to "visible", not "silently opted out".
+  const [leaderboardOptIn, setLeaderboardOptInState] = useState(true);
+  const [leaderboardAnonymous, setLeaderboardAnonymousState] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(() => {
     if (!user || isGuest) {
       setSectionsByModule({});
       setBypassUnlocksState(false);
+      setLeaderboardOptInState(true);
+      setLeaderboardAnonymousState(false);
       setLoading(false);
       return Promise.resolve();
     }
@@ -34,10 +41,14 @@ export function useProgress() {
         });
         setSectionsByModule(byId);
         setBypassUnlocksState(Boolean(data.bypass_unlocks));
+        setLeaderboardOptInState(data.leaderboard_optin ?? true);
+        setLeaderboardAnonymousState(Boolean(data.leaderboard_anonymous));
       })
       .catch(() => {
         setSectionsByModule({});
         setBypassUnlocksState(false);
+        setLeaderboardOptInState(true);
+        setLeaderboardAnonymousState(false);
       })
       .finally(() => setLoading(false));
   }, [user, isGuest]);
@@ -71,5 +82,42 @@ export function useProgress() {
     }
   }
 
-  return { byModuleId, allCompleted, loading, bypassUnlocks, setBypassUnlocks, refresh };
+  async function setLeaderboardOptIn(next) {
+    setLeaderboardOptInState(next); // optimistic; refresh() reconciles on failure
+    try {
+      await apiFetch(getApiUrl('/api/settings'), {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ leaderboard_optin: next }),
+      });
+    } catch {
+      refresh();
+    }
+  }
+
+  async function setLeaderboardAnonymous(next) {
+    setLeaderboardAnonymousState(next); // optimistic; refresh() reconciles on failure
+    try {
+      await apiFetch(getApiUrl('/api/settings'), {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ leaderboard_anonymous: next }),
+      });
+    } catch {
+      refresh();
+    }
+  }
+
+  return {
+    byModuleId,
+    allCompleted,
+    loading,
+    bypassUnlocks,
+    setBypassUnlocks,
+    leaderboardOptIn,
+    setLeaderboardOptIn,
+    leaderboardAnonymous,
+    setLeaderboardAnonymous,
+    refresh,
+  };
 }

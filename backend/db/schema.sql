@@ -116,3 +116,9 @@ ALTER TABLE challenges ADD COLUMN IF NOT EXISTS io_xh JSONB;
 -- Lets a student unlock every module/challenge from Settings, bypassing the
 -- sequential-completion gate entirely.
 ALTER TABLE users ADD COLUMN IF NOT EXISTS bypass_unlocks BOOLEAN NOT NULL DEFAULT false;
+-- The leaderboard is optional, to avoid demotivating students who'd rather
+-- not see themselves ranked. Defaults to true so it keeps behaving the way
+-- it already did for every account that existed before this column, and a
+-- student can opt out (or stay in but show up as "Anonymous") from Settings.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS leaderboard_optin BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS leaderboard_anonymous BOOLEAN NOT NULL DEFAULT false;

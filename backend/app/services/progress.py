@@ -87,6 +87,37 @@ def set_bypass_unlocks(user_id: str, value: bool) -> None:
         cur.execute("UPDATE users SET bypass_unlocks = %s WHERE uid = %s", (value, user_id))
 
 
+def get_leaderboard_prefs(user_id: str) -> dict:
+    """Whether this student appears on the leaderboard, and under what name.
+
+    The leaderboard is opt-in-by-default (so it keeps working for everyone
+    who existed before these columns) but a student can turn it off entirely,
+    or stay ranked while showing up as "Anonymous", from Settings.
+    """
+    with get_cursor() as cur:
+        cur.execute(
+            "SELECT leaderboard_optin, leaderboard_anonymous FROM users WHERE uid = %s",
+            (user_id,),
+        )
+        row = cur.fetchone()
+    if not row:
+        return {"leaderboard_optin": True, "leaderboard_anonymous": False}
+    return {
+        "leaderboard_optin": bool(row["leaderboard_optin"]),
+        "leaderboard_anonymous": bool(row["leaderboard_anonymous"]),
+    }
+
+
+def set_leaderboard_optin(user_id: str, value: bool) -> None:
+    with get_cursor() as cur:
+        cur.execute("UPDATE users SET leaderboard_optin = %s WHERE uid = %s", (value, user_id))
+
+
+def set_leaderboard_anonymous(user_id: str, value: bool) -> None:
+    with get_cursor() as cur:
+        cur.execute("UPDATE users SET leaderboard_anonymous = %s WHERE uid = %s", (value, user_id))
+
+
 def get_leaderboard(limit: int = 20) -> list[dict]:
     with get_cursor() as cur:
         cur.execute(
@@ -95,6 +126,7 @@ def get_leaderboard(limit: int = 20) -> list[dict]:
                 u.uid,
                 u.display_name,
                 u.email,
+                u.leaderboard_anonymous,
                 COALESCE(ex.stars, 0) + COALESCE(ch.stars, 0) AS total_stars
             FROM users u
             LEFT JOIN (
@@ -108,6 +140,7 @@ def get_leaderboard(limit: int = 20) -> list[dict]:
                 GROUP BY user_id
             ) ch ON ch.user_id = u.uid
             WHERE COALESCE(ex.stars, 0) + COALESCE(ch.stars, 0) > 0
+              AND u.leaderboard_optin
             ORDER BY total_stars DESC
             LIMIT %s
             """,
@@ -118,7 +151,8 @@ def get_leaderboard(limit: int = 20) -> list[dict]:
     return [
         {
             "uid": row["uid"],
-            "name": row["display_name"] or ((row["email"] or "Anonymous").split("@")[0]),
+            "name": "Anonymous" if row["leaderboard_anonymous"]
+                else (row["display_name"] or ((row["email"] or "Anonymous").split("@")[0])),
             "stars": row["total_stars"],
         }
         for row in rows

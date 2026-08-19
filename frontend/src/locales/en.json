@@ -278,7 +278,8 @@
     "yourRank": "Your Rank",
     "allTime": "All time",
     "ranked": "Great work! Keep learning and climb the leaderboard.",
-    "unranked": "Complete an exercise or challenge to get on the board."
+    "unranked": "Complete an exercise or challenge to get on the board.",
+    "optedOut": "You're hidden from the leaderboard. Turn it back on in Settings to see your rank."
   },
   "feedback": {
     "empty": "No exercise attempted yet. Head to the Exercise tab, answer a question, and your result will show up here.",
@@ -313,6 +314,15 @@
     "unlockAllHint": "Skip the module and challenge order and access it all right away.",
     "unlockAllOff": "Off",
     "unlockAllOn": "On",
+    "leaderboard": "Leaderboard",
+    "leaderboardOptIn": "Appear on the leaderboard",
+    "leaderboardOptInHint": "The leaderboard is entirely optional — turn it off if rankings aren't for you.",
+    "leaderboardOptInOff": "Off",
+    "leaderboardOptInOn": "On",
+    "leaderboardAnonymous": "Show my name anonymously",
+    "leaderboardAnonymousHint": "Stay ranked, but show up as \"Anonymous\" instead of your name.",
+    "leaderboardAnonymousOff": "Off",
+    "leaderboardAnonymousOn": "On",
     "account": "Account",
     "signInHint": "Sign in to unlock modules, exercises and the leaderboard.",
     "signOutHint": "End your session on this device."

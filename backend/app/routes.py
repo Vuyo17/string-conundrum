@@ -5,11 +5,14 @@ from .services.feedback import evaluate_answer, get_module_exercises
 from .services.progress import (
     get_bypass_unlocks,
     get_leaderboard,
+    get_leaderboard_prefs,
     get_section_progress,
     record_challenge_completion,
     record_exercise_completion,
     record_section_completion,
     set_bypass_unlocks,
+    set_leaderboard_anonymous,
+    set_leaderboard_optin,
 )
 from .services.sandbox import execute_code, trace_steps
 from .services.visualizer import build_visual_state
@@ -131,6 +134,7 @@ def get_progress(user_id: str):
         "user_id": user_id,
         "modules": get_section_progress(user_id),
         "bypass_unlocks": get_bypass_unlocks(user_id),
+        **get_leaderboard_prefs(user_id),
     }
 
 
@@ -150,7 +154,15 @@ def update_settings():
     payload = request.get_json(silent=True) or {}
     if "bypass_unlocks" in payload:
         set_bypass_unlocks(g.uid, bool(payload["bypass_unlocks"]))
-    return {"ok": True, "bypass_unlocks": get_bypass_unlocks(g.uid)}
+    if "leaderboard_optin" in payload:
+        set_leaderboard_optin(g.uid, bool(payload["leaderboard_optin"]))
+    if "leaderboard_anonymous" in payload:
+        set_leaderboard_anonymous(g.uid, bool(payload["leaderboard_anonymous"]))
+    return {
+        "ok": True,
+        "bypass_unlocks": get_bypass_unlocks(g.uid),
+        **get_leaderboard_prefs(g.uid),
+    }
 
 
 @api_bp.get("/leaderboard")

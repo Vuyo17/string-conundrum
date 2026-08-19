@@ -96,6 +96,8 @@ class _LocalCursor:
                 "email": email,
                 "display_name": display_name,
                 "bypass_unlocks": False,
+                "leaderboard_optin": True,
+                "leaderboard_anonymous": False,
             }
 
         elif "SELECT bypass_unlocks FROM users" in query:
@@ -108,6 +110,26 @@ class _LocalCursor:
             user = state["users"].get(user_id)
             if user is not None:
                 user["bypass_unlocks"] = bool(value)
+
+        elif "SELECT leaderboard_optin, leaderboard_anonymous FROM users" in query:
+            row = state["users"].get(params[0])
+            if row:
+                self._rows = [{
+                    "leaderboard_optin": row.get("leaderboard_optin", True),
+                    "leaderboard_anonymous": row.get("leaderboard_anonymous", False),
+                }]
+
+        elif "UPDATE users SET leaderboard_optin" in query:
+            value, user_id = params[0], params[1]
+            user = state["users"].get(user_id)
+            if user is not None:
+                user["leaderboard_optin"] = bool(value)
+
+        elif "UPDATE users SET leaderboard_anonymous" in query:
+            value, user_id = params[0], params[1]
+            user = state["users"].get(user_id)
+            if user is not None:
+                user["leaderboard_anonymous"] = bool(value)
 
         elif "INSERT INTO exercise_completions" in query:
             user_id, module_id, question_id, stars = params
