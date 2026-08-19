@@ -55,6 +55,12 @@ const PAGES = [
     keywords: ['ranking', 'scores', 'points', 'top', 'rank'],
   },
   {
+    screen: 'Docs',
+    title: 'isiXhosa <-> Python Reference',
+    subtitle: 'Every transpiler keyword, English and isiXhosa side by side',
+    keywords: ['docs', 'documentation', 'isixhosa', 'xhosa', 'transpiler', 'glossary', 'dictionary', 'keywords'],
+  },
+  {
     screen: 'Settings',
     title: 'Settings',
     subtitle: 'Theme, account and preferences',

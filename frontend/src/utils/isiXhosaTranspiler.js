@@ -71,74 +71,89 @@ const TO_PYTHON_REPLACEMENTS = [
   { pattern: /\bvula\b/g,         replacement: 'open' },
 ];
 
+// Category labels for the student-facing reference table (Docs page). Kept as
+// keys here, translated in the locale bundles under docs.categories.*, so
+// KEYWORD_PAIRS below stays the single source of truth for both the
+// transpiler's regex table and the reference table students read.
+export const CATEGORIES = {
+  CONTROL_FLOW: 'controlFlow',
+  FUNCTIONS_CLASSES: 'functionsClasses',
+  IMPORTS: 'imports',
+  EXCEPTIONS: 'exceptions',
+  MISC: 'misc',
+  BOOLEAN_OPS: 'booleanOps',
+  LITERALS: 'literals',
+  BUILTINS: 'builtins',
+};
+
 const TO_XHOSA_REPLACEMENTS = [
   // multi-word first
-  { pattern: /\belif\b/g,         replacement: 'okanye ukuba' },
-  { pattern: /\bnot in\b/g,       replacement: 'hayi ku' },
-  { pattern: /\bis not\b/g,       replacement: 'ayi yi' },
+  { pattern: /\belif\b/g,         replacement: 'okanye ukuba', category: CATEGORIES.CONTROL_FLOW },
+  { pattern: /\bnot in\b/g,       replacement: 'hayi ku',      category: CATEGORIES.BOOLEAN_OPS },
+  { pattern: /\bis not\b/g,       replacement: 'ayi yi',       category: CATEGORIES.BOOLEAN_OPS },
   // control flow
-  { pattern: /\bif\b/g,           replacement: 'ukuba' },
-  { pattern: /\belse\b/g,         replacement: 'ngaphandle' },
-  { pattern: /\bwhile\b/g,        replacement: 'ngelixa' },
-  { pattern: /\bfor\b/g,          replacement: 'kwi' },
-  { pattern: /\bin\b/g,           replacement: 'ku' },
-  { pattern: /\bpass\b/g,         replacement: 'dlula' },
-  { pattern: /\bbreak\b/g,        replacement: 'yeka' },
-  { pattern: /\bcontinue\b/g,     replacement: 'qhuba' },
+  { pattern: /\bif\b/g,           replacement: 'ukuba',        category: CATEGORIES.CONTROL_FLOW },
+  { pattern: /\belse\b/g,         replacement: 'ngaphandle',   category: CATEGORIES.CONTROL_FLOW },
+  { pattern: /\bwhile\b/g,        replacement: 'ngelixa',      category: CATEGORIES.CONTROL_FLOW },
+  { pattern: /\bfor\b/g,          replacement: 'kwi',          category: CATEGORIES.CONTROL_FLOW },
+  { pattern: /\bin\b/g,           replacement: 'ku',           category: CATEGORIES.CONTROL_FLOW },
+  { pattern: /\bpass\b/g,         replacement: 'dlula',        category: CATEGORIES.CONTROL_FLOW },
+  { pattern: /\bbreak\b/g,        replacement: 'yeka',         category: CATEGORIES.CONTROL_FLOW },
+  { pattern: /\bcontinue\b/g,     replacement: 'qhuba',        category: CATEGORIES.CONTROL_FLOW },
   // functions / classes
-  { pattern: /\bdef\b/g,          replacement: 'chaza' },
-  { pattern: /\breturn\b/g,       replacement: 'buyisa' },
-  { pattern: /\bclass\b/g,        replacement: 'klasi' },
-  { pattern: /\blambda\b/g,       replacement: 'isenzo' },
-  { pattern: /\byield\b/g,        replacement: 'nikela' },
+  { pattern: /\bdef\b/g,          replacement: 'chaza',        category: CATEGORIES.FUNCTIONS_CLASSES },
+  { pattern: /\breturn\b/g,       replacement: 'buyisa',       category: CATEGORIES.FUNCTIONS_CLASSES },
+  { pattern: /\bclass\b/g,        replacement: 'klasi',        category: CATEGORIES.FUNCTIONS_CLASSES },
+  { pattern: /\blambda\b/g,       replacement: 'isenzo',       category: CATEGORIES.FUNCTIONS_CLASSES },
+  { pattern: /\byield\b/g,        replacement: 'nikela',       category: CATEGORIES.FUNCTIONS_CLASSES },
   // imports
-  { pattern: /\bimport\b/g,       replacement: 'ngenisa' },
-  { pattern: /\bfrom\b/g,         replacement: 'ukusuka' },
-  { pattern: /\bas\b/g,           replacement: 'njenge' },
+  { pattern: /\bimport\b/g,       replacement: 'ngenisa',      category: CATEGORIES.IMPORTS },
+  { pattern: /\bfrom\b/g,         replacement: 'ukusuka',      category: CATEGORIES.IMPORTS },
+  { pattern: /\bas\b/g,           replacement: 'njenge',       category: CATEGORIES.IMPORTS },
   // exception handling
-  { pattern: /\btry\b/g,          replacement: 'zama' },
-  { pattern: /\bexcept\b/g,       replacement: 'bamba' },
-  { pattern: /\bfinally\b/g,      replacement: 'ekugqibeleni' },
-  { pattern: /\braise\b/g,        replacement: 'phakamisa' },
-  { pattern: /\bwith\b/g,         replacement: 'nge' },
+  { pattern: /\btry\b/g,          replacement: 'zama',         category: CATEGORIES.EXCEPTIONS },
+  { pattern: /\bexcept\b/g,       replacement: 'bamba',        category: CATEGORIES.EXCEPTIONS },
+  { pattern: /\bfinally\b/g,      replacement: 'ekugqibeleni', category: CATEGORIES.EXCEPTIONS },
+  { pattern: /\braise\b/g,        replacement: 'phakamisa',    category: CATEGORIES.EXCEPTIONS },
+  { pattern: /\bwith\b/g,         replacement: 'nge',          category: CATEGORIES.EXCEPTIONS },
   // misc
-  { pattern: /\bdel\b/g,          replacement: 'cima' },
-  { pattern: /\bglobal\b/g,       replacement: 'jikelele' },
-  { pattern: /\bnonlocal\b/g,     replacement: 'ayijikelele' },
-  { pattern: /\bassert\b/g,       replacement: 'qinisekisa' },
+  { pattern: /\bdel\b/g,          replacement: 'cima',         category: CATEGORIES.MISC },
+  { pattern: /\bglobal\b/g,       replacement: 'jikelele',     category: CATEGORIES.MISC },
+  { pattern: /\bnonlocal\b/g,     replacement: 'ayijikelele',  category: CATEGORIES.MISC },
+  { pattern: /\bassert\b/g,       replacement: 'qinisekisa',   category: CATEGORIES.MISC },
   // boolean operators (longest first to avoid 'not' matching inside 'not in')
-  { pattern: /\bnot\b/g,          replacement: 'hayi' },
-  { pattern: /\band\b/g,          replacement: 'kwaye' },
-  { pattern: /\bor\b/g,           replacement: 'okanye' },
-  { pattern: /\bis\b/g,           replacement: 'yi' },
+  { pattern: /\bnot\b/g,          replacement: 'hayi',         category: CATEGORIES.BOOLEAN_OPS },
+  { pattern: /\band\b/g,          replacement: 'kwaye',        category: CATEGORIES.BOOLEAN_OPS },
+  { pattern: /\bor\b/g,           replacement: 'okanye',       category: CATEGORIES.BOOLEAN_OPS },
+  { pattern: /\bis\b/g,           replacement: 'yi',           category: CATEGORIES.BOOLEAN_OPS },
   // literals
-  { pattern: /\bTrue\b/g,         replacement: 'Ewe' },
-  { pattern: /\bFalse\b/g,        replacement: 'Hayi' },
-  { pattern: /\bNone\b/g,         replacement: 'Lutho' },
+  { pattern: /\bTrue\b/g,         replacement: 'Ewe',          category: CATEGORIES.LITERALS },
+  { pattern: /\bFalse\b/g,        replacement: 'Hayi',         category: CATEGORIES.LITERALS },
+  { pattern: /\bNone\b/g,         replacement: 'Lutho',        category: CATEGORIES.LITERALS },
   // builtins
-  { pattern: /\bprint\b/g,        replacement: 'bhala' },
-  { pattern: /\blen\b/g,          replacement: 'ubude' },
-  { pattern: /\brange\b/g,        replacement: 'ithuba' },
-  { pattern: /\binput\b/g,        replacement: 'faka' },
-  { pattern: /\bstr\b/g,          replacement: 'isigama' },
-  { pattern: /\bint\b/g,          replacement: 'inombolo' },
-  { pattern: /\bfloat\b/g,        replacement: 'decimali' },
-  { pattern: /\blist\b/g,         replacement: 'uluhlu' },
-  { pattern: /\bdict\b/g,         replacement: 'isichazi' },
-  { pattern: /\bset\b/g,          replacement: 'iqela' },
-  { pattern: /\btuple\b/g,        replacement: 'iqoqo' },
-  { pattern: /\btype\b/g,         replacement: 'uhlobo' },
-  { pattern: /\benumerate\b/g,    replacement: 'balela' },
-  { pattern: /\bzip\b/g,          replacement: 'hlanganisa' },
-  { pattern: /\bmap\b/g,          replacement: 'guqula' },
-  { pattern: /\bfilter\b/g,       replacement: 'chonga' },
-  { pattern: /\bsorted\b/g,       replacement: 'hlela' },
-  { pattern: /\breversed\b/g,     replacement: 'buyisela' },
-  { pattern: /\bsum\b/g,          replacement: 'yonke' },
-  { pattern: /\bmin\b/g,          replacement: 'uncinci' },
-  { pattern: /\bmax\b/g,          replacement: 'unkulu' },
-  { pattern: /\babs\b/g,          replacement: 'ixabiso' },
-  { pattern: /\bopen\b/g,         replacement: 'vula' },
+  { pattern: /\bprint\b/g,        replacement: 'bhala',        category: CATEGORIES.BUILTINS },
+  { pattern: /\blen\b/g,          replacement: 'ubude',        category: CATEGORIES.BUILTINS },
+  { pattern: /\brange\b/g,        replacement: 'ithuba',       category: CATEGORIES.BUILTINS },
+  { pattern: /\binput\b/g,        replacement: 'faka',         category: CATEGORIES.BUILTINS },
+  { pattern: /\bstr\b/g,          replacement: 'isigama',      category: CATEGORIES.BUILTINS },
+  { pattern: /\bint\b/g,          replacement: 'inombolo',     category: CATEGORIES.BUILTINS },
+  { pattern: /\bfloat\b/g,        replacement: 'decimali',     category: CATEGORIES.BUILTINS },
+  { pattern: /\blist\b/g,         replacement: 'uluhlu',       category: CATEGORIES.BUILTINS },
+  { pattern: /\bdict\b/g,         replacement: 'isichazi',     category: CATEGORIES.BUILTINS },
+  { pattern: /\bset\b/g,          replacement: 'iqela',        category: CATEGORIES.BUILTINS },
+  { pattern: /\btuple\b/g,        replacement: 'iqoqo',        category: CATEGORIES.BUILTINS },
+  { pattern: /\btype\b/g,         replacement: 'uhlobo',       category: CATEGORIES.BUILTINS },
+  { pattern: /\benumerate\b/g,    replacement: 'balela',       category: CATEGORIES.BUILTINS },
+  { pattern: /\bzip\b/g,          replacement: 'hlanganisa',   category: CATEGORIES.BUILTINS },
+  { pattern: /\bmap\b/g,          replacement: 'guqula',       category: CATEGORIES.BUILTINS },
+  { pattern: /\bfilter\b/g,       replacement: 'chonga',       category: CATEGORIES.BUILTINS },
+  { pattern: /\bsorted\b/g,       replacement: 'hlela',        category: CATEGORIES.BUILTINS },
+  { pattern: /\breversed\b/g,     replacement: 'buyisela',     category: CATEGORIES.BUILTINS },
+  { pattern: /\bsum\b/g,          replacement: 'yonke',        category: CATEGORIES.BUILTINS },
+  { pattern: /\bmin\b/g,          replacement: 'incinci',      category: CATEGORIES.BUILTINS },
+  { pattern: /\bmax\b/g,          replacement: 'inkulu',       category: CATEGORIES.BUILTINS },
+  { pattern: /\babs\b/g,          replacement: 'ixabiso',      category: CATEGORIES.BUILTINS },
+  { pattern: /\bopen\b/g,         replacement: 'vula',         category: CATEGORIES.BUILTINS },
 ];
 
 // Skips string literals and comments so only code tokens are translated.
@@ -184,6 +199,18 @@ function translateOutsideStrings(line, replacements) {
     )
     .join('');
 }
+
+// The full Python-keyword <-> isiXhosa-word map, for the student-facing
+// reference table (Docs page). Derived from TO_XHOSA_REPLACEMENTS itself —
+// not a hand-copied duplicate — so the reference table can never drift out
+// of sync with what the transpiler actually does. Every pattern here is a
+// plain \b-wrapped word or phrase with no other regex metacharacters, so
+// stripping the \b anchors recovers the literal Python text safely.
+export const KEYWORD_PAIRS = TO_XHOSA_REPLACEMENTS.map(({ pattern, replacement, category }) => ({
+  python: pattern.source.replace(/\\b/g, ''),
+  xhosa: replacement,
+  category,
+}));
 
 export function transpileIsiXhosaToPython(source) {
   return applyReplacements(source, TO_PYTHON_REPLACEMENTS);

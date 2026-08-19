@@ -34,6 +34,7 @@
     "codeSpace": "Code Space",
     "challenges": "Challenges",
     "leaderboard": "Leaderboard",
+    "docs": "Docs",
     "settings": "Settings",
     "signIn": "Sign in",
     "signOut": "Sign out",
@@ -280,6 +281,26 @@
     "ranked": "Great work! Keep learning and climb the leaderboard.",
     "unranked": "Complete an exercise or challenge to get on the board.",
     "optedOut": "You're hidden from the leaderboard. Turn it back on in Settings to see your rank."
+  },
+  "docs": {
+    "title": "isiXhosa ↔ Python Reference",
+    "subtitle": "Every keyword the Code Space transpiler understands, English and isiXhosa side by side.",
+    "searchPlaceholder": "Search a keyword, e.g. \"if\" or \"ukuba\"...",
+    "searchEmpty": "No keywords match \"{query}\".",
+    "pythonColumn": "Python (English)",
+    "xhosaColumn": "isiXhosa",
+    "exampleTitle": "Example: the same program, both ways",
+    "exampleIntro": "The transpiler swaps keywords and builtins word-for-word — everything else about the program (indentation, punctuation, strings, numbers) stays exactly the same.",
+    "categories": {
+      "controlFlow": "Control flow",
+      "functionsClasses": "Functions & classes",
+      "imports": "Imports",
+      "exceptions": "Exception handling & context managers",
+      "booleanOps": "Boolean operators & comparisons",
+      "literals": "Literals",
+      "builtins": "Built-in functions",
+      "misc": "Misc"
+    }
   },
   "feedback": {
     "empty": "No exercise attempted yet. Head to the Exercise tab, answer a question, and your result will show up here.",

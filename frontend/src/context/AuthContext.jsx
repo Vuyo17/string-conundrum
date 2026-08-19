@@ -14,7 +14,7 @@ import {
 import { auth } from '../firebase';
 
 const AuthContext = createContext(null);
-const GUEST_SCREENS = ['Visualiser', 'Code Space', 'Settings'];
+const GUEST_SCREENS = ['Visualiser', 'Code Space', 'Docs', 'Settings'];
 
 // Firebase requires the address back on the device that opens the sign-in link.
 const EMAIL_STORAGE_KEY = 'stringConundrum.signUpEmail';

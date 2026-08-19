@@ -34,6 +34,7 @@
     "codeSpace": "Indawo yeKhowudi",
     "challenges": "Imingeni",
     "leaderboard": "Ibhodi yeeNkokeli",
+    "docs": "Uxwebhu",
     "settings": "Iisethingi",
     "signIn": "Ngena",
     "signOut": "Phuma",
@@ -280,6 +281,26 @@
     "ranked": "Umsebenzi omhle! Qhubeka ufunda uze unyuke kwibhodi yeenkokeli.",
     "unranked": "Gqiba umsebenzi okanye umngeni ukuze ungene kwibhodi.",
     "optedOut": "Ufihliwe kwibhodi yeenkokeli. Vula kwakhona kwiiSethingi ukuze ubone isikhundla sakho."
+  },
+  "docs": {
+    "title": "Isichazi-magama: isiXhosa ↔ Python",
+    "subtitle": "Onke amagama asetyenziswa yi-transpiler yeCode Space, ngesiNgesi nangesiXhosa ngokulinganayo.",
+    "searchPlaceholder": "Khangela igama, umz. \"if\" okanye \"ukuba\"...",
+    "searchEmpty": "Akukho magama afana ne-\"{query}\".",
+    "pythonColumn": "Python (isiNgesi)",
+    "xhosaColumn": "isiXhosa",
+    "exampleTitle": "Umzekelo: enye inkqubo, ngeendlela zombini",
+    "exampleIntro": "I-transpiler itshintsha amagama abalulekileyo igama ngalinye — yonke enye into kwinkqubo (ukungqinelana, uphawu, izigama, amanani) ihlala injalo ngokupheleleyo.",
+    "categories": {
+      "controlFlow": "Ukulawula inkqubo",
+      "functionsClasses": "Imisebenzi neeklasi",
+      "imports": "Ukungenisa",
+      "exceptions": "Ukuphathwa kweempazamo",
+      "booleanOps": "Ii-operator zeBhulean",
+      "literals": "Iiliteral",
+      "builtins": "Imisebenzi eyakhelweyo",
+      "misc": "Ezinye"
+    }
   },
   "feedback": {
     "empty": "Akukho msebenzi uzanyiweyo okwangoku. Yiya kwithebhu yoMsebenzi, uphendule umbuzo, uze isiphumo sakho sivele apha.",

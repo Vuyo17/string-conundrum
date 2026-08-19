@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   LayoutGrid, Eye, Code2, Trophy, Sparkles, Lock, Target,
-  Settings, LogOut,
+  Settings, LogOut, BookOpen,
 } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { useAuth } from '../context/AuthContext';
@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { id: 'Code Space', icon: Code2, labelKey: 'nav.codeSpace' },
   { id: 'Challenges', icon: Target, labelKey: 'nav.challenges' },
   { id: 'Leaderboard', icon: Trophy, labelKey: 'nav.leaderboard' },
+  { id: 'Docs', icon: BookOpen, labelKey: 'nav.docs' },
 ];
 
 export function Sidebar({ screen, setScreen, modulesComplete }) {
