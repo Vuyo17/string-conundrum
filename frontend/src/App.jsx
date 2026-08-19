@@ -1,15 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  Suspense, lazy, useEffect, useRef, useState,
+} from "react";
 import { Loader2 } from "lucide-react";
 import styles from "./styles/App.module.css";
 import { TopBar } from "./components/TopBar";
 import { Sidebar } from "./components/Sidebar";
-import { Modules } from "./pages/Modules";
-import { Visualiser } from "./pages/Visualiser";
-import { CodeSpace } from "./pages/CodeSpace";
-import { Challenges } from "./pages/Challenges";
-import { Leaderboard } from "./pages/Leaderboard";
-import { Docs } from "./pages/Docs";
-import { Settings } from "./pages/Settings";
 import { AuthPage } from "./pages/auth/AuthPage";
 import auth from "./pages/auth/Auth.module.css";
 import { useAuth } from "./context/AuthContext";
@@ -18,6 +13,32 @@ import { LanguageProvider, useLanguage } from "./context/LanguageContext";
 import { NotificationProvider, useNotifications } from "./context/NotificationContext";
 import { useProgress } from "./hooks/useProgress";
 import { modules } from "./data/modules";
+
+// Each screen is its own chunk, fetched only when a student actually opens
+// it — the whole app used to ship as one ~650KB bundle regardless of which
+// single screen someone landed on first. Named exports (not default), hence
+// the `.then` unwrap; AuthPage stays a normal eager import above since it's
+// the very first thing an unauthenticated visitor sees and lazy-loading it
+// would just add a network round-trip before anyone can even sign in.
+const Modules = lazy(() => import("./pages/Modules").then((m) => ({ default: m.Modules })));
+const Visualiser = lazy(() => import("./pages/Visualiser").then((m) => ({ default: m.Visualiser })));
+const CodeSpace = lazy(() => import("./pages/CodeSpace").then((m) => ({ default: m.CodeSpace })));
+const Challenges = lazy(() => import("./pages/Challenges").then((m) => ({ default: m.Challenges })));
+const Leaderboard = lazy(() => import("./pages/Leaderboard").then((m) => ({ default: m.Leaderboard })));
+const Docs = lazy(() => import("./pages/Docs").then((m) => ({ default: m.Docs })));
+const Settings = lazy(() => import("./pages/Settings").then((m) => ({ default: m.Settings })));
+
+// Same spinner as the auth-loading state, so a screen chunk still loading
+// doesn't look like a different kind of "stuck" to a student.
+function ScreenLoading() {
+  const { t } = useLanguage();
+  return (
+    <div className={auth.boot}>
+      <Loader2 size={20} className={auth.spin} aria-hidden="true" />
+      <p>{t('common.loading')}</p>
+    </div>
+  );
+}
 
 // Watches for a module's `completed` flag flipping false -> true during this
 // session and turns that into a notification. Comparing against `undefined`
@@ -127,12 +148,14 @@ function Shell() {
         <main className={styles.shell}>
           <Sidebar screen={safeScreen} setScreen={go} modulesComplete={progress.allCompleted} />
           <section className={styles.content}>
-            <CurrentScreen
-              setScreen={go}
-              {...(safeScreen === "Modules" ? { target: moduleTarget, progress } : {})}
-              {...(safeScreen === "Settings" ? { progress } : {})}
-              {...(safeScreen === "Leaderboard" ? { progress } : {})}
-            />
+            <Suspense fallback={<ScreenLoading />}>
+              <CurrentScreen
+                setScreen={go}
+                {...(safeScreen === "Modules" ? { target: moduleTarget, progress } : {})}
+                {...(safeScreen === "Settings" ? { progress } : {})}
+                {...(safeScreen === "Leaderboard" ? { progress } : {})}
+              />
+            </Suspense>
           </section>
         </main>
       </div>

@@ -18,6 +18,9 @@ import { CodeBlock, InlineText } from './ContentBlocks';
 import { presetForExercise } from './visualizers/presets';
 import { useLanguage } from '../../context/LanguageContext';
 import { useNotifications } from '../../context/NotificationContext';
+import {
+  starsOf, shuffle, splitPrompt, displayOptionsOf, defaultAnswer,
+} from './exerciseHelpers';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ExamMode — the test-conditions counterpart to the practice runner.
@@ -52,29 +55,6 @@ function labelForMisconception(id, t) {
     : translated;
 }
 
-function shuffle(list) {
-  const copy = [...list];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
-
-function starsOf(exercise) {
-  return exercise?.stars ?? Math.max(1, Math.round((exercise?.xp ?? 10) / 10));
-}
-
-function blankAnswer(exercise) {
-  if (exercise.type === 'mcq') return { selected: null };
-  if (exercise.type === 'select_all') return { selected: [] };
-  if (exercise.type === 'fill_blank') return { value: '' };
-  if (exercise.type === 'write_code') {
-    return { code: exercise.starter_code ?? '# Write your solution here\n' };
-  }
-  return {};
-}
-
 function isAnswered(exercise, answer) {
   if (!answer) return false;
   if (exercise.type === 'mcq') return Boolean(answer.selected);
@@ -93,12 +73,6 @@ function isAnswered(exercise, answer) {
 // `lang` is required, not optional: keying off "a translation exists" alone
 // rendered isiXhosa option labels to English readers, because the API ships
 // options_xh alongside the English options in both languages.
-function displayOptionsOf(exercise, lang) {
-  const { options, options_xh } = exercise;
-  if (lang !== 'xh') return options;
-  return options_xh?.length === options.length ? options_xh : options;
-}
-
 // Maps an English option value (as stored in `answer.selected`) back to its
 // translated label for display, falling back to the value itself.
 function displayFor(exercise, value, lang) {
@@ -134,11 +108,6 @@ function describeCorrectAnswer(exercise, lang) {
     return exercise.answer || '';
   }
   return exercise.answer ?? '';
-}
-
-function splitPrompt(prompt) {
-  const [first, ...rest] = prompt.split('\n');
-  return { title: first, code: rest.join('\n') };
 }
 
 function drawExam(exercises, count) {
@@ -190,7 +159,7 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
   }, [phase]);
 
   const exercise = paper[current];
-  const answer = answers[exercise?.question_id] ?? blankAnswer(exercise ?? { type: 'mcq' });
+  const answer = answers[exercise?.question_id] ?? defaultAnswer(exercise ?? { type: 'mcq' });
 
   const answeredCount = useMemo(
     () => paper.filter((ex) => isAnswered(ex, answers[ex.question_id])).length,
@@ -214,7 +183,7 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
     setPhase('submitting');
     const graded = {};
     await Promise.all(paper.map(async (ex) => {
-      const a = answers[ex.question_id] ?? blankAnswer(ex);
+      const a = answers[ex.question_id] ?? defaultAnswer(ex);
       const payload = { module_id: ex.module_id, question_id: ex.question_id, lang };
       if (ex.type === 'mcq') payload.answer = a.selected ?? '';
       if (ex.type === 'fill_blank') payload.answer = a.value ?? '';

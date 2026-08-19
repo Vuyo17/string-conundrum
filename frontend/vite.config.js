@@ -12,4 +12,20 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Firebase and React are needed on every screen (auth gates the
+        // whole app), so per-screen lazy-loading can't split them out —
+        // but they change far less often than app code, so their own
+        // chunk lets a returning visitor's browser keep them cached
+        // across a normal app deploy instead of re-downloading on every
+        // release.
+        manualChunks: {
+          firebase: ["firebase/app", "firebase/auth"],
+          "react-vendor": ["react", "react-dom"],
+        },
+      },
+    },
+  },
 });

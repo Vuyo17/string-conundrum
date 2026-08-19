@@ -10,18 +10,15 @@ import { CodeExercise } from './CodeExercise';
 import { CodeBlock, InlineText } from './ContentBlocks';
 import { SlicingEngine } from './SlicingEngine';
 import { useLanguage } from '../../context/LanguageContext';
+import {
+  starsOf, shuffle, splitPrompt, displayOptionsOf, defaultAnswer,
+} from './exerciseHelpers';
 
 // A practice run is recorded once a student clears this bar in one sitting.
 // Practice is no longer part of the module-completion gate (see
 // getModuleSectionIds in utils/moduleSections.js) — this only drives
 // Practice's own pass/fail display and stats, not module unlocking.
 const PASS_THRESHOLD = 70;
-
-// Star value of an exercise. The bank's legacy `xp` field is stars * 10;
-// newer questions carry `stars` directly. The UI speaks ONLY in stars.
-export function starsOf(exercise) {
-  return exercise?.stars ?? Math.max(1, Math.round((exercise?.xp ?? 10) / 10));
-}
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -33,43 +30,6 @@ const TYPE_META = {
   fill_blank: { labelKey: 'fill_blank', icon: PenLine },
   write_code: { labelKey: 'write_code', icon: SquareMousePointer },
 };
-
-function shuffle(list) {
-  const copy = [...list];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
-
-function defaultAnswer(exercise) {
-  if (!exercise) return null;
-  if (exercise.type === 'mcq') return { selected: null };
-  if (exercise.type === 'select_all') return { selected: [] };
-  if (exercise.type === 'fill_blank') return { value: '' };
-  if (exercise.type === 'write_code') {
-    return { code: exercise.starter_code ?? '# Write your solution here\n' };
-  }
-  return null;
-}
-
-function splitPrompt(prompt) {
-  const [first, ...rest] = prompt.split('\n');
-  return { title: first, code: rest.join('\n') };
-}
-
-// Text shown for each option, in the student's language. The VALUE used for
-// selection state and submission is always `exercise.options[i]` (English) —
-// grading compares against that verbatim, so only the label may translate.
-// `lang` is required, not optional: keying off "a translation exists" alone
-// rendered isiXhosa option labels to English readers, because the API ships
-// options_xh alongside the English options in both languages.
-function displayOptionsOf(exercise, lang) {
-  const { options, options_xh } = exercise;
-  if (lang !== 'xh') return options;
-  return options_xh?.length === options.length ? options_xh : options;
-}
 
 // ─── drag & drop warm-up (client-side, ungraded) ──────────────────────────────
 

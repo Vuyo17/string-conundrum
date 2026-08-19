@@ -221,35 +221,9 @@ def leaderboard():
 
 
 # ─── authentication ──────────────────────────────────────────────────────────
-
-@api_bp.post("/auth/signup")
-def auth_signup():
-    from .services.auth_store import signup
-
-    payload = request.get_json(silent=True) or {}
-    session, error = signup(
-        name=payload.get("name", ""),
-        email=payload.get("email", ""),
-        password=payload.get("password", ""),
-    )
-    if error:
-        return {"ok": False, "error": error}, 400
-    return {"ok": True, **session}
-
-
-@api_bp.post("/auth/login")
-def auth_login():
-    from .services.auth_store import login
-
-    payload = request.get_json(silent=True) or {}
-    session, error = login(
-        email=payload.get("email", ""),
-        password=payload.get("password", ""),
-    )
-    if error:
-        return {"ok": False, "error": error}, 401
-    return {"ok": True, **session}
-
+# Real sign-up/sign-in goes through the Firebase client SDK directly (see
+# frontend/src/context/AuthContext.jsx), not this Flask backend — the only
+# auth endpoint the frontend actually calls is /auth/guest below.
 
 @api_bp.post("/auth/guest")
 def auth_guest():
