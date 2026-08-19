@@ -3,7 +3,12 @@ import secrets
 from flask import Blueprint, g, request
 
 from .auth import require_auth
-from .services.feedback import engine_feedback, evaluate_answer, get_module_exercises
+from .services.feedback import (
+    engine_code_feedback,
+    engine_feedback,
+    evaluate_answer,
+    get_module_exercises,
+)
 from .services.progress import (
     get_bypass_unlocks,
     get_leaderboard,
@@ -100,7 +105,12 @@ def slicing_engine_next():
         tier = int(request.args.get("tier", 1))
     except (TypeError, ValueError):
         tier = 1
-    question = generate_slicing_question(tier)
+    # `weak` is the client's own tally of what it has recently got wrong,
+    # sent back so template selection can lean that way. Keeping the tally
+    # on the client is what lets adaptive selection work without giving the
+    # engine session state; it is advisory, and unknown ids are dropped.
+    weak = request.args.get("weak", "")
+    question = generate_slicing_question(tier, weak=weak)
     return {"ok": True, **question}
 
 
@@ -109,10 +119,11 @@ def slicing_engine_next():
 def slicing_engine_answer():
     payload = request.get_json(silent=True) or {}
     token = payload.get("token", "")
-    answer = payload.get("answer", "")
     lang = payload.get("lang")
 
-    result = grade_slicing_question(token, answer)
+    # The whole payload goes to the grader: which field holds the answer
+    # depends on the question's format, and only the token knows the format.
+    result = grade_slicing_question(token, payload)
     if not result.get("ok"):
         return {"ok": False, "error": result.get("error", "invalid_token")}, 400
 
@@ -124,6 +135,19 @@ def slicing_engine_answer():
         synthetic_id = f"engine-{result['tier']}-{token[:24]}"
         record_exercise_completion(g.uid, "slicing", synthetic_id, result["stars_awarded"])
 
+    if result.get("format") == "write_code":
+        feedback = engine_code_feedback(result["correct"], result.get("detail", ""), lang)
+    else:
+        feedback = engine_feedback(
+            result["correct"], result["correct_answer"], result["misconception_id"], lang,
+        )
+        # A format-specific observation ("word[2:5] produces \"ep\".") is
+        # appended rather than substituted: the student still needs to be
+        # told what the right answer was.
+        detail = result.get("detail")
+        if detail and not result["correct"]:
+            feedback["feedback"] = f"{feedback['feedback']} {detail}"
+
     return {
         "ok": True,
         "correct": result["correct"],
@@ -131,7 +155,8 @@ def slicing_engine_answer():
         "misconception_id": result["misconception_id"],
         "stars_awarded": result["stars_awarded"],
         "tier": result["tier"],
-        **engine_feedback(result["correct"], result["correct_answer"], result["misconception_id"], lang),
+        "format": result.get("format"),
+        **feedback,
     }
 
 

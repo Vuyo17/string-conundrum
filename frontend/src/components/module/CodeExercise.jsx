@@ -20,7 +20,15 @@ const HIGHLIGHT_CLASSES = {
 // Compact code editor + runner for embedded coding exercises.
 // Runs against the existing backend: /api/execute for output and
 // /api/debug for the step-by-step trace used by "Visualize code".
-export function CodeExercise({ code, onCodeChange, disabled }) {
+//
+// `prelude` is code the exercise supplies rather than the student — the
+// Slicing engine's write_code questions hand out tasks phrased against an
+// already-defined `word`, and without prepending that definition here
+// pressing Run would only ever raise NameError. It is deliberately not part
+// of `code`: the grader prepends its own definition (with a different word
+// each run, so a hardcoded answer fails), and a copy sitting in the editor
+// would let the student shadow it.
+export function CodeExercise({ code, onCodeChange, disabled, prelude = '' }) {
   const { t, lang } = useLanguage();
   const displayed = lang === 'xh' ? transpilePythonToIsiXhosa(code) : code;
   const html = useMemo(() => highlightPython(displayed, HIGHLIGHT_CLASSES), [displayed]);
@@ -58,24 +66,32 @@ export function CodeExercise({ code, onCodeChange, disabled }) {
     setStderr('');
     setSteps([]);
     setStepIndex(0);
+    const sent = prelude ? `${prelude}${code}` : code;
     try {
       const [execRes, debugRes] = await Promise.all([
         fetch('/api/execute', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code }),
+          body: JSON.stringify({ code: sent }),
         }),
         fetch('/api/debug', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code }),
+          body: JSON.stringify({ code: sent }),
         }),
       ]);
       const execData = await execRes.json();
       const debugData = await debugRes.json();
       setStdout(execData.stdout ?? '');
       setStderr(execData.stderr ?? '');
-      setSteps(debugData.steps ?? []);
+      // The backend traced the prelude too, so its steps are dropped and the
+      // rest are shifted back — otherwise "Line 2" would point at the first
+      // line of an editor whose numbering starts at 1. Later steps still
+      // carry `word` in their variable snapshot, so nothing is lost.
+      const preludeLines = prelude ? prelude.split('\n').length - 1 : 0;
+      setSteps((debugData.steps ?? [])
+        .filter((s) => (s.line ?? 1) > preludeLines)
+        .map((s) => ({ ...s, line: (s.line ?? 1) - preludeLines })));
     } catch {
       // Same wording as the leaderboard's identical fallback — reused rather
       // than duplicating a fourth near-identical "server unreachable" key.
