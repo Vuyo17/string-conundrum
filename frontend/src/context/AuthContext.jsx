@@ -5,16 +5,26 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
   sendSignInLinkToEmail,
-  signInAnonymously,
+  signInWithCustomToken,
   signInWithEmailAndPassword,
   signInWithEmailLink,
   signOut,
   updatePassword,
 } from 'firebase/auth';
 import { auth } from '../firebase';
+import { getApiUrl } from '../config/api';
 
 const AuthContext = createContext(null);
 const GUEST_SCREENS = ['Visualiser', 'Code Space', 'Docs', 'Settings'];
+
+// Guests sign in via a backend-minted custom token (see /api/auth/guest),
+// not signInAnonymously() — that needs the "Anonymous" provider switched on
+// in the Firebase console, which it isn't for this project. A custom-token
+// session doesn't get Firebase's built-in `isAnonymous` flag the way an
+// anonymous one would, so a guest is recognised by its uid prefix instead.
+function isGuestUser(u) {
+  return Boolean(u?.isAnonymous || u?.uid?.startsWith('guest-'));
+}
 
 // Firebase requires the address back on the device that opens the sign-in link.
 const EMAIL_STORAGE_KEY = 'stringConundrum.signUpEmail';
@@ -42,7 +52,7 @@ export function AuthProvider({ children }) {
     user,
     loading,
     emailLinkPending,
-    isGuest: Boolean(user?.isAnonymous),
+    isGuest: isGuestUser(user),
     isAuthed: Boolean(user),
 
     signup: (email, password) => createUserWithEmailAndPassword(auth, email, password),
@@ -52,11 +62,18 @@ export function AuthProvider({ children }) {
 
     canAccess: (screen) => {
       if (!user) return false;
-      if (!user.isAnonymous) return true;
+      if (!isGuestUser(user)) return true;
       return GUEST_SCREENS.includes(screen);
     },
 
-    continueAsGuest: () => signInAnonymously(auth),
+    continueAsGuest: async () => {
+      const res = await fetch(getApiUrl('/api/auth/guest'), { method: 'POST' });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.ok || !data?.token) {
+        throw new Error('Could not start a guest session.');
+      }
+      return signInWithCustomToken(auth, data.token);
+    },
 
     sendSignUpLink: async (email) => {
       await sendSignInLinkToEmail(auth, email, {

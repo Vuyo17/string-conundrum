@@ -1,3 +1,5 @@
+import secrets
+
 from flask import Blueprint, g, request
 
 from .auth import require_auth
@@ -247,3 +249,24 @@ def auth_login():
     if error:
         return {"ok": False, "error": error}, 401
     return {"ok": True, **session}
+
+
+@api_bp.post("/auth/guest")
+def auth_guest():
+    """Issue a Firebase custom token for a fresh guest session.
+
+    The frontend's obvious path here is `signInAnonymously()`, but that
+    requires the "Anonymous" provider to be switched on in the Firebase
+    console for this project, which it isn't. A custom token is a different
+    code path Firebase Admin can mint unconditionally — the app already
+    holds full admin credentials (see firebase_admin_init.py) — so guest
+    mode works without touching any console setting. The client exchanges
+    this token for a normal Firebase session via `signInWithCustomToken()`;
+    from that point on it behaves exactly like any other signed-in user,
+    just with a random `guest-` uid the frontend recognises as a guest.
+    """
+    from firebase_admin import auth as firebase_auth
+
+    uid = f"guest-{secrets.token_hex(12)}"
+    token = firebase_auth.create_custom_token(uid)
+    return {"ok": True, "token": token.decode("utf-8") if isinstance(token, bytes) else token}
