@@ -24,3 +24,11 @@ backend/app/data/users.json
 
 # Local JSON state written by the LOCAL_DB_FALLBACK dev path
 backend/app/data/local_state.json
+
+# Dev-server output/pid files from running backend/frontend locally
+backend/backend_out.log
+backend/backend_err.log
+backend/backend_pid.txt
+frontend/frontend_out.log
+frontend/frontend_err.log
+frontend/frontend_pid.txt

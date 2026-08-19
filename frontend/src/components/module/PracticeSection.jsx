@@ -8,6 +8,7 @@ import { apiFetch, markSectionComplete } from '../../api';
 import { getApiUrl } from '../../config/api';
 import { CodeExercise } from './CodeExercise';
 import { CodeBlock, InlineText } from './ContentBlocks';
+import { SlicingEngine } from './SlicingEngine';
 import { useLanguage } from '../../context/LanguageContext';
 
 // A practice run is recorded once a student clears this bar in one sitting.
@@ -201,6 +202,21 @@ function DragDropWarmup({ config }) {
 // ─── section wrapper: fetches the module's exercise bank for Practice ─────────
 
 export function PracticeSection({ practice, onSectionComplete }) {
+  // Slicing's Practice tab runs the endless procedural engine instead of
+  // the static exercise bank below — see SlicingEngine.jsx. It needs
+  // nothing this component fetches (no bank, no warmup), so it branches
+  // off before any of that runs.
+  if (practice.engine) {
+    return (
+      <div className={m.practiceStack}>
+        <SlicingEngine practice={practice} onSectionComplete={onSectionComplete} />
+      </div>
+    );
+  }
+  return <BankPracticeSection practice={practice} onSectionComplete={onSectionComplete} />;
+}
+
+function BankPracticeSection({ practice, onSectionComplete }) {
   const { lang, t } = useLanguage();
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
