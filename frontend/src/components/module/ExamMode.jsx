@@ -12,7 +12,7 @@ import { getApiUrl } from '../../config/api';
 // Practice at all, only Learn/Examples/Visualize exposure plus this Exam
 // score. Also independent of the "Proficient" star band further down, which
 // rates skill level and isn't the unlock gate.
-const PASS_THRESHOLD = 75;
+const PASS_THRESHOLD = 80;
 import { CodeExercise } from './CodeExercise';
 import { CodeBlock, InlineText } from './ContentBlocks';
 import { presetForExercise } from './visualizers/presets';
