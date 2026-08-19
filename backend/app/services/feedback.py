@@ -44,6 +44,14 @@ MISCONCEPTION_FEEDBACK = {
     "concatenation_adds_space": "The + operator joins strings exactly as they are, with no added space.",
     "concatenation_requires_same_type_fear": "Two strings can always be joined with +, regardless of what they contain.",
     "repetition_confused_with_multiplication": "The * operator repeats a string instead of doing arithmetic, so \"ab\" * 3 builds \"ababab\". The number never appears in the result.",
+    # Concepts the Slicing engine's templates probe (see slicing_templates.py).
+    # These are not errors of belief like the entries above — they are the
+    # rules a generated question is built to exercise — but they travel
+    # through the same field, so they live in the same table.
+    "slice_defaults": "An omitted bound falls back to its default: text[:n] starts at the beginning, text[n:] runs to the end, and text[:] copies the whole string.",
+    "slice_step": "The third value is the step. text[::2] takes every second character, and a step never changes where the slice starts or stops, only which characters inside it are kept.",
+    "slice_clamping": "Slice bounds are clamped to the string, so text[0:999] simply returns everything rather than raising. Indexing is not: text[999] raises IndexError.",
+    "slice_empty_result": "A slice whose start is not before its stop, in the direction the step travels, returns the empty string rather than raising an error.",
 }
 
 # The rule each module teaches. Used to explain *why* an answer is what it is
@@ -359,6 +367,23 @@ def engine_feedback(
         "feedback": feedback,
         "explanation": specific or _module_explanations(lang).get("slicing", ""),
     }
+
+
+def engine_code_feedback(correct: bool, detail: str = "", lang: "str | None" = None) -> dict:
+    """Feedback for a generated *write_code* question.
+
+    `engine_feedback` above wraps the correct answer in "the answer is
+    {answer}", which only makes sense when there is a single expected value.
+    A coding task has no one right answer — any program printing the right
+    thing passes — so the useful feedback is the run itself: which word was
+    tried, what it printed, what it should have printed. `detail` carries
+    that from the grader; this only supplies the surrounding voice.
+    """
+    lang = normalise_lang(lang)
+    explanation = _module_explanations(lang).get("slicing", "")
+    if correct:
+        return {"feedback": _tpl(lang, "all_tests_passed"), "explanation": explanation}
+    return {"feedback": detail, "explanation": explanation}
 
 
 def get_exercise(module_id: str, question_id: str) -> dict | None:
