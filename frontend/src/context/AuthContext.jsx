@@ -10,6 +10,7 @@ import {
   signInWithEmailLink,
   signOut,
   updatePassword,
+  updateProfile,
 } from 'firebase/auth';
 import { auth } from '../firebase';
 import { getApiUrl } from '../config/api';
@@ -89,6 +90,27 @@ export function AuthProvider({ children }) {
       return credential;
     },
     setAccountPassword: (password) => updatePassword(auth.currentUser, password),
+
+    // updateProfile() mutates the Firebase User object in place but does not
+    // itself trigger onAuthStateChanged, so `user` in context would be stale
+    // until the next unrelated auth event. reload() pulls the fresh profile
+    // from Firebase, and spreading it into a new plain object (rather than
+    // re-passing the same User instance) is what actually gets React to
+    // re-render — setState bails out on an identical object reference.
+    //
+    // The backend's own copy of this name (users.display_name, what the
+    // leaderboard actually shows) comes from the `name` claim on whatever ID
+    // token a request carries, baked in at token-issue time — apiFetch()
+    // reuses the cached token until it's near expiry, so without a forced
+    // refresh here the backend wouldn't see the new name for up to an hour.
+    // getIdToken(true) fetches a fresh token with the updated claim now, so
+    // the very next authenticated request's upsert_user() picks it up.
+    setDisplayName: async (name) => {
+      await updateProfile(auth.currentUser, { displayName: name });
+      await auth.currentUser.reload();
+      await auth.currentUser.getIdToken(true);
+      setUser({ ...auth.currentUser });
+    },
 
     // Clears the link out of the address bar and hands control back to the app.
     finishEmailLinkFlow: () => {

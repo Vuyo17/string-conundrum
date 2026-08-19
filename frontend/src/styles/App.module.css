@@ -4054,6 +4054,57 @@ body,
   font-size: 17px;
 }
 
+.profileNameRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.profileNameEdit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.profileNameInput {
+  height: 32px;
+  min-width: 180px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  padding: 0 10px;
+  color: var(--fg);
+  font-size: 15px;
+  font-weight: 700;
+  outline: none;
+}
+.profileNameInput:focus {
+  border-color: var(--primary);
+  background: var(--surface);
+}
+.profileNameIconBtn {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+  flex: none;
+  transition: background 0.15s, color 0.15s;
+}
+.profileNameIconBtn:hover:not(:disabled) {
+  background: var(--surface-2);
+  color: var(--fg);
+}
+.profileNameIconBtn:disabled {
+  opacity: 0.5;
+}
+.profileNameError {
+  color: var(--danger);
+  font-size: 12.5px;
+  margin: 4px 0 0;
+}
+
 .settingsRow {
   display: flex;
   align-items: center;

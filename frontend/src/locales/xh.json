@@ -26,7 +26,9 @@
     "yourAnswer": "Impendulo yakho",
     "correctAnswer": "Impendulo echanekileyo",
     "notAnswered": "(ayiphendulwanga)",
-    "guest": "Undwendwe"
+    "guest": "Undwendwe",
+    "save": "Gcina",
+    "cancel": "Rhoxisa"
   },
   "nav": {
     "modules": "Iimodyuli",
@@ -334,6 +336,11 @@
     "subtitle": "Iprofayile yakho, inkangeleko kunye nokhetho lweakhawunti.",
     "profile": "Iprofayile",
     "guestHint": "Ukhangela njengondwendwe — inkqubela yakho ayigcinwa.",
+    "editName": "Hlela igama",
+    "editNameLabel": "Igama lakho",
+    "namePlaceholder": "Faka igama lakho",
+    "nameRequired": "Igama alinakuba nto.",
+    "nameSaveFailed": "Ayikwazanga ukugcina igama lakho. Zama kwakhona.",
     "appearance": "Inkangeleko",
     "theme": "Umxholo",
     "themeHint": "Khetha indlela ekhangeleka ngayo i-String Conundrum.",
