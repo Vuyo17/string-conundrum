@@ -334,6 +334,33 @@ def evaluate_answer(
     return result
 
 
+def engine_feedback(
+    correct: bool, correct_answer: str, misconception_id: "str | None" = None, lang: "str | None" = None,
+) -> dict:
+    """Feedback text for a procedurally generated exercise, e.g. the
+    Slicing module's endless-practice engine (slicing_engine.py).
+
+    Those questions aren't in the static bank `evaluate_answer` reads from,
+    so they can't go through `_grade_mcq` — but they use the same
+    misconception ids and templates, so this reuses that copy rather than
+    duplicating it, keeping the two feel like one voice.
+    """
+    lang = normalise_lang(lang)
+    if correct:
+        return {
+            "feedback": _tpl(lang, "correct", answer=correct_answer),
+            "explanation": _module_explanations(lang).get("slicing", ""),
+        }
+
+    correction = _tpl(lang, "not_quite", answer=correct_answer)
+    specific = _misconceptions(lang).get(misconception_id)
+    feedback = f"{correction} — {specific}" if specific else correction
+    return {
+        "feedback": feedback,
+        "explanation": specific or _module_explanations(lang).get("slicing", ""),
+    }
+
+
 def get_exercise(module_id: str, question_id: str) -> dict | None:
     """Return the exercise definition, e.g. for rendering the question UI."""
     return _find_exercise(module_id, question_id)

@@ -1,7 +1,7 @@
 from flask import Blueprint, g, request
 
 from .auth import require_auth
-from .services.feedback import evaluate_answer, get_module_exercises
+from .services.feedback import engine_feedback, evaluate_answer, get_module_exercises
 from .services.progress import (
     get_bypass_unlocks,
     get_leaderboard,
@@ -15,6 +15,7 @@ from .services.progress import (
     set_leaderboard_optin,
 )
 from .services.sandbox import execute_code, trace_steps
+from .services.slicing_engine import generate as generate_slicing_question, grade as grade_slicing_question
 from .services.visualizer import build_visual_state
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
@@ -84,6 +85,52 @@ def list_module_exercises(module_id: str):
     """Return every exercise for a module, e.g. to render the Exercise screen."""
     exercises = get_module_exercises(module_id, request.args.get("lang"))
     return {"ok": True, "module_id": module_id, "exercises": exercises}
+
+
+# ─── slicing endless-practice engine ───────────────────────────────────────
+# Procedurally generated questions, not the static bank above — see
+# services/slicing_engine.py for why this needs no database or session
+# state of its own.
+
+@api_bp.get("/exercises/slicing/engine/next")
+def slicing_engine_next():
+    try:
+        tier = int(request.args.get("tier", 1))
+    except (TypeError, ValueError):
+        tier = 1
+    question = generate_slicing_question(tier)
+    return {"ok": True, **question}
+
+
+@api_bp.post("/exercises/slicing/engine/answer")
+@require_auth
+def slicing_engine_answer():
+    payload = request.get_json(silent=True) or {}
+    token = payload.get("token", "")
+    answer = payload.get("answer", "")
+    lang = payload.get("lang")
+
+    result = grade_slicing_question(token, answer)
+    if not result.get("ok"):
+        return {"ok": False, "error": result.get("error", "invalid_token")}, 400
+
+    if result["correct"]:
+        # Every generated question carries a fresh random nonce, so unlike
+        # the static bank a synthetic id per attempt is correct here —
+        # endless mode is meant to award stars every time, not just the
+        # first time a particular question is seen.
+        synthetic_id = f"engine-{result['tier']}-{token[:24]}"
+        record_exercise_completion(g.uid, "slicing", synthetic_id, result["stars_awarded"])
+
+    return {
+        "ok": True,
+        "correct": result["correct"],
+        "correct_answer": result["correct_answer"],
+        "misconception_id": result["misconception_id"],
+        "stars_awarded": result["stars_awarded"],
+        "tier": result["tier"],
+        **engine_feedback(result["correct"], result["correct_answer"], result["misconception_id"], lang),
+    }
 
 
 @api_bp.get("/challenges")
