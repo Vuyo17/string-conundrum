@@ -76,6 +76,33 @@ export function AuthProvider({ children }) {
       return signInWithCustomToken(auth, data.token);
     },
 
+    // Username-only entry: no email, no password, no verification mail. The
+    // backend derives a stable uid from the name and mints a custom token
+    // carrying it as a `name` claim, so the server already knows who this is.
+    //
+    // updateProfile() is still needed on top of that claim: `displayName` on
+    // the client User object is read from the Firebase user record, not from
+    // the token, so without this write the UI would fall back to "Student"
+    // even though the leaderboard had the right name. Spreading into a plain
+    // object is what makes React re-render (see setDisplayName below).
+    signInWithUsername: async (username) => {
+      const res = await fetch(getApiUrl('/api/auth/username'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.ok || !data?.token) {
+        throw new Error(data?.error === 'invalid_username'
+          ? 'invalid_username'
+          : 'Could not start a session.');
+      }
+      await signInWithCustomToken(auth, data.token);
+      await updateProfile(auth.currentUser, { displayName: data.username });
+      await auth.currentUser.reload();
+      setUser({ ...auth.currentUser });
+    },
+
     sendSignUpLink: async (email) => {
       await sendSignInLinkToEmail(auth, email, {
         url: window.location.origin,

@@ -7,7 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import { authErrorKey, validateEmailShape } from './authErrors';
 import { useLanguage } from '../../context/LanguageContext';
 
-export function SignInForm({ onForgotPassword, onCreateAccount, onGuest }) {
+export function SignInForm({ onForgotPassword, onCreateAccount, onGuest, onUsername }) {
   const { login, continueAsGuest } = useAuth();
   const { t } = useLanguage();
 
@@ -128,6 +128,14 @@ export function SignInForm({ onForgotPassword, onCreateAccount, onGuest }) {
           {t('auth.createAccount')}
         </button>
       </p>
+
+      {onUsername && (
+        <p className={s.footerNote}>
+          <button type="button" className={s.inlineLink} onClick={onUsername}>
+            {t('auth.useUsernameInstead')}
+          </button>
+        </p>
+      )}
     </div>
   );
 }

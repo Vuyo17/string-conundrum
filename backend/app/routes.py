@@ -1,3 +1,5 @@
+import hashlib
+import re
 import secrets
 
 from flask import Blueprint, g, request
@@ -269,3 +271,66 @@ def auth_guest():
     uid = f"guest-{secrets.token_hex(12)}"
     token = firebase_auth.create_custom_token(uid)
     return {"ok": True, "token": token.decode("utf-8") if isinstance(token, bytes) else token}
+
+
+# Display names are the whole identity here, so they get the same normalising
+# treatment an email address would: trimmed, inner whitespace collapsed, and
+# capped at a length the leaderboard can render without truncation.
+_USERNAME_RE = re.compile(r"^[\w \-'.]+$", re.UNICODE)
+_USERNAME_MIN = 2
+_USERNAME_MAX = 24
+
+
+def _normalise_username(raw: "str | None") -> "str | None":
+    if not isinstance(raw, str):
+        return None
+    name = " ".join(raw.split())
+    if not (_USERNAME_MIN <= len(name) <= _USERNAME_MAX):
+        return None
+    if not _USERNAME_RE.match(name):
+        return None
+    return name
+
+
+@api_bp.post("/auth/username")
+def auth_username():
+    """Issue a Firebase custom token for a username-only account.
+
+    Same custom-token mechanism as /auth/guest above, with two differences that
+    matter.
+
+    First, the uid is derived from the username rather than random, so typing
+    the same name again returns to the same account and the same progress.
+    That is deliberate: without an email there is no other way back in, and a
+    random uid would silently strand a student's work the moment they cleared
+    site data. The trade-off is that the name alone is the credential — anyone
+    who types it gets that account — which is the accepted cost of letting
+    people in without authentication.
+
+    Second, the display name rides along as a `name` developer claim. Firebase
+    copies developer claims into the ID token, and require_auth() feeds
+    decoded['name'] straight to upsert_user(), so the leaderboard has the right
+    name on the very first authenticated request — no profile write, no forced
+    token refresh.
+
+    The uid is prefixed `named-`, not `guest-`, because the frontend keys guest
+    restrictions off that prefix: a named account is a full account.
+    """
+    from firebase_admin import auth as firebase_auth
+
+    payload = request.get_json(silent=True) or {}
+    username = _normalise_username(payload.get("username"))
+    if username is None:
+        return {"ok": False, "error": "invalid_username"}, 400
+
+    # Case- and spacing-insensitive, so "Thabo M" and "thabo  m" are one account.
+    digest = hashlib.sha256(username.casefold().encode("utf-8")).hexdigest()
+    uid = f"named-{digest[:24]}"
+
+    token = firebase_auth.create_custom_token(uid, {"name": username})
+    return {
+        "ok": True,
+        "token": token.decode("utf-8") if isinstance(token, bytes) else token,
+        "username": username,
+        "uid": uid,
+    }

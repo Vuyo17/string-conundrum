@@ -52,3 +52,24 @@ export function validateUctEmail(email) {
   }
   return '';
 }
+
+// Kept deliberately in step with _normalise_username() in backend/app/routes.py:
+// same length bounds, same allowed characters, same whitespace collapsing. The
+// client copy exists only to give an instant, translated message — the backend
+// is the one that actually decides.
+const USERNAME_MIN = 2;
+const USERNAME_MAX = 24;
+const USERNAME_SHAPE = /^[\p{L}\p{N}_ \-'.]+$/u;
+
+export function normaliseUsername(username) {
+  return username.trim().split(/\s+/).join(' ');
+}
+
+export function validateUsername(username) {
+  const value = normaliseUsername(username);
+  if (!value) return 'auth.errors.usernameRequired';
+  if (value.length < USERNAME_MIN) return 'auth.errors.usernameTooShort';
+  if (value.length > USERNAME_MAX) return 'auth.errors.usernameTooLong';
+  if (!USERNAME_SHAPE.test(value)) return 'auth.errors.usernameInvalid';
+  return '';
+}

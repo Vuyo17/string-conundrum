@@ -6,6 +6,7 @@ import { AuthStatusPanel } from './AuthStatusPanel';
 import { AuthError } from './AuthError';
 import { SignInForm } from './SignInForm';
 import { SignUpForm } from './SignUpForm';
+import { UsernameForm } from './UsernameForm';
 import { ForgotPasswordForm } from './ForgotPasswordForm';
 import { PasswordSetupForm } from './PasswordSetupForm';
 import { useAuth } from '../../context/AuthContext';
@@ -45,7 +46,7 @@ export function AuthPage() {
 
   // Opening the emailed link drops the student straight into password setup.
   const [view, setView] = useState(() =>
-    emailLinkPending && !user ? 'passwordSetup' : 'signIn',
+    emailLinkPending && !user ? 'passwordSetup' : 'username',
   );
   const [email, setEmail] = useState(() => (emailLinkPending ? storedSignUpEmail() : ''));
   const [resendState, setResendState] = useState({ busy: false, sent: false, error: '' });
@@ -98,10 +99,15 @@ export function AuthPage() {
 
   return (
     <AuthLayout>
+      {view === 'username' && (
+        <UsernameForm onSignIn={() => go('signIn')} />
+      )}
+
       {view === 'signIn' && (
         <SignInForm
           onForgotPassword={() => go('forgotPassword')}
           onCreateAccount={() => go('signUp')}
+          onUsername={() => go('username')}
         />
       )}
 

@@ -476,8 +476,22 @@
       "operationNotAllowed": "This sign-in method is not enabled yet. Please contact the site administrator.",
       "guestDisabled": "Guest access is not enabled yet. Please sign in with your UCT email.",
       "uctOnly": "Registration is open to UCT students. Please use your {domain} address.",
-      "generic": "Something went wrong on our side. Please try again in a moment."
-    }
+      "generic": "Something went wrong on our side. Please try again in a moment.",
+      "usernameRequired": "Please enter a display name.",
+      "usernameTooShort": "That name is too short. Use at least 2 characters.",
+      "usernameTooLong": "That name is too long. Use at most 24 characters.",
+      "usernameInvalid": "Use letters, numbers, spaces, hyphens or apostrophes only."
+    },
+    "usernameTitle": "Choose a display name",
+    "usernameSubtitle": "No email, no password. Pick a name and start learning straight away.",
+    "usernameLabel": "Display name",
+    "usernamePlaceholder": "e.g. Thabo M",
+    "usernameHint": "Use the same name next time to pick up where you left off.",
+    "usernameContinue": "Start learning",
+    "usernameNote": "Anyone who types this name gets this progress, so pick something only you would use. Sign in with a UCT email if you want an account only you can open.",
+    "haveEmailAccount": "Already have a UCT account?",
+    "signInWithEmail": "Sign in with email",
+    "useUsernameInstead": "Or just use a display name"
   },
   "codeSpace": {
     "title": "Code Space",
