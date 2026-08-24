@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  AlertOctagon, CheckCircle2, Play, RotateCcw, Sparkles,
+  AlertOctagon, CheckCircle2, Play, RotateCcw, Sparkles, Volume2, VolumeX,
 } from 'lucide-react';
 import m from '../../../styles/ModulePage.module.css';
 import { useLanguage } from '../../../context/LanguageContext';
 import { computeSlice, parseSlicePart } from '../../../utils/pythonStringOps';
+import { useSpeech } from '../../../utils/useSpeech';
 
 const MAX_LENGTH = 14;
 const TICK_MS = 460;
@@ -14,8 +15,9 @@ function prefersReducedMotion() {
     && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 }
 
-export function SlicingVisualizer({ config, preset }) {
-  const { t } = useLanguage();
+export function SlicingVisualizer({ config, preset, autoPlayKey }) {
+  const { t, lang } = useLanguage();
+  const speech = useSpeech(lang);
   const [text, setText] = useState(config.defaults?.text ?? 'Jabberwocky');
   const [startIn, setStartIn] = useState(config.defaults?.start ?? '');
   const [stopIn, setStopIn] = useState(config.defaults?.stop ?? '');
@@ -92,6 +94,19 @@ export function SlicingVisualizer({ config, preset }) {
     startRun();
   }, [autoRun]);
 
+  // Opening the module's Visualize section plays the slice straight away
+  // rather than waiting for a manual trigger (cycle-1 feedback). ModulePage
+  // bumps `autoPlayKey` each time the section becomes active; undefined
+  // (the Visualiser screen's own standalone use) never auto-plays, so that
+  // page still waits for the student to press Visualize.
+  useEffect(() => {
+    if (autoPlayKey === undefined) return;
+    setRun(null);
+    setPos(-1);
+    setDone(false);
+    setAutoRun(true);
+  }, [autoPlayKey]);
+
   const chars = (run?.text ?? text).split('');
   const revealed = run && !run.error ? run.picked.slice(0, pos + 1) : [];
   const current = revealed.length > 0 ? revealed[revealed.length - 1] : null;
@@ -99,6 +114,24 @@ export function SlicingVisualizer({ config, preset }) {
   const resultValue = run && !run.error
     ? revealed.map((i) => run.text[i]).join('')
     : '';
+
+  // The step commentary, as one plain string: rendered into the aria-live
+  // region for screen readers AND handed to read-aloud, so both stay in sync
+  // with whatever the animation is showing rather than drifting apart.
+  const narration = !run ? '' : [
+    !finished && current !== null && t('viz.collecting', {
+      index: current,
+      char: run.text[current],
+      step: `${run.step > 0 ? '+' : ''}${run.step}`,
+    }),
+    finished && run.picked.length > 0 && t(
+      run.picked.length === 1 ? 'viz.collectedOne' : 'viz.collected',
+      { count: run.picked.length, indices: run.picked.join(', ') },
+    ),
+    finished && run.picked.length === 0 && t('viz.collectedNone'),
+  ].filter(Boolean).join(' ');
+
+  useEffect(() => { speech.speak(narration); }, [narration, speech]);
 
   return (
     <div className={m.visualizerCard}>
@@ -128,6 +161,18 @@ export function SlicingVisualizer({ config, preset }) {
           {finished ? <RotateCcw size={16} /> : <Play size={16} />}
           {finished ? t('viz.replay') : t('viz.visualize')}
         </button>
+        {speech.supported && (
+          <button
+            type="button"
+            className={m.ghostButton}
+            onClick={speech.toggle}
+            aria-pressed={speech.enabled}
+            title={speech.enabled ? t('viz.readAloudOff') : t('viz.readAloudOn')}
+          >
+            {speech.enabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+            {t('viz.readAloud')}
+          </button>
+        )}
       </div>
 
       {!inputsValid && text.length > 0 && (
@@ -170,16 +215,7 @@ export function SlicingVisualizer({ config, preset }) {
         </div>
         {run && !run.error && (
           <p className={m.vizNarration} aria-live="polite">
-            {!finished && current !== null && t('viz.collecting', {
-              index: current,
-              char: run.text[current],
-              step: `${run.step > 0 ? '+' : ''}${run.step}`,
-            })}
-            {finished && run.picked.length > 0 && t(
-              run.picked.length === 1 ? 'viz.collectedOne' : 'viz.collected',
-              { count: run.picked.length, indices: run.picked.join(', ') },
-            )}
-            {finished && run.picked.length === 0 && t('viz.collectedNone')}
+            {narration}
           </p>
         )}
       </div>

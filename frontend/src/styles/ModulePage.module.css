@@ -450,7 +450,17 @@
 
 .calloutTip { background: var(--success-soft); border-color: hsl(152, 40%, 78%); color: hsl(152, 60%, 20%); }
 .calloutTip .calloutIcon { color: var(--success); }
-.calloutWarn { background: var(--accent-soft); border-color: hsl(37, 80%, 78%); color: hsl(30, 70%, 24%); }
+/* cycle-1 usability feedback: this text was unreadable in dark mode — the
+   light-theme ink color above never flipped, so it sat dark-on-dark against
+   --success-soft's dark-mode background. */
+:root[data-theme="dark"] .calloutTip { color: hsl(150, 45%, 78%); }
+
+/* Was hardcoded to a light-theme-only border/ink pair (same dark-on-dark bug
+   as calloutTip above — this is the "Common mistake" box cycle-1 feedback
+   called out specifically). --warn-bg/--warn-border/--warn-ink already exist
+   in App.module.css with correct light AND dark values, just never wired up
+   to anything until now. */
+.calloutWarn { background: var(--warn-bg); border-color: var(--warn-border); color: var(--warn-ink); }
 .calloutWarn .calloutIcon { color: var(--accent); }
 .calloutInfo { background: var(--primary-soft); border-color: hsl(173, 45%, 76%); color: var(--primary-dark); }
 .calloutInfo .calloutIcon { color: var(--primary); }
@@ -1198,11 +1208,36 @@
   padding: 3px 8px;
 }
 
+/* Stacked so each case reads as its own given/prints pair, instead of a
+   wrapping row of chips where the pairing got lost (cycle-1 feedback). */
 .testCases {
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.testCaseRow {
+  display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   flex-wrap: wrap;
+}
+
+.testCaseKey {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* The value the student is actually aiming for, so it reads as the answer
+   rather than as just another chip beside the input. */
+.testCaseExpected {
+  border-color: var(--primary) !important;
+  color: var(--primary-dark);
+  font-weight: 600;
 }
 
 .testCasesLabel {

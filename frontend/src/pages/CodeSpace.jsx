@@ -543,11 +543,19 @@ export function CodeSpace() {
 
       const execData = await execRes.json();
       const debugData = await debugRes.json();
+      const newSteps = debugData.steps ?? [];
 
       setStdout(execData.stdout ?? '');
       setStderr(execData.stderr ?? '');
-      setSteps(debugData.steps ?? []);
-      setDebugging((debugData.steps ?? []).length > 0);
+      setSteps(newSteps);
+      setDebugging(newSteps.length > 0);
+      // Auto-play the visualiser on a successful run, rather than leaving the
+      // student to find the separate Play button — P1's usability report
+      // read as "pressed play, nothing happened" when what actually
+      // happened is Run and Play are two different triangle icons, and Play
+      // stays correctly disabled until there's something to play. Starting
+      // playback here removes the need to find that second button at all.
+      if (newSteps.length > 0) setPlaying(true);
     } catch {
       setStderr(t('codeSpace.serverUnreachable'));
     } finally {

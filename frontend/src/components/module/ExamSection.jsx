@@ -7,7 +7,7 @@ import { useLanguage } from '../../context/LanguageContext';
 // Fetches the module's exercise bank for the Exam stage. A separate fetch
 // from Practice's, kept simple rather than threading shared state down from
 // ModulePage — the bank is small and rarely changes mid-session.
-export function ExamSection({ practice, onVisualize, onSectionComplete }) {
+export function ExamSection({ practice, onVisualize, onSectionComplete, onGoToPractice }) {
   const { lang, t } = useLanguage();
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,6 +41,7 @@ export function ExamSection({ practice, onVisualize, onSectionComplete }) {
         exercises={exercises}
         onVisualize={onVisualize}
         onSectionComplete={onSectionComplete}
+        onGoToPractice={onGoToPractice}
       />
     </div>
   );

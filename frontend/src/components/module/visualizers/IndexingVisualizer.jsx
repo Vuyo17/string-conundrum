@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  AlertOctagon, CheckCircle2, Play, RotateCcw, Sparkles,
+  AlertOctagon, CheckCircle2, Play, RotateCcw, Sparkles, Volume2, VolumeX,
 } from 'lucide-react';
 import m from '../../../styles/ModulePage.module.css';
 import { useLanguage } from '../../../context/LanguageContext';
 import { buildIndexWalk, parseIndexInput } from '../../../utils/pythonStringOps';
+import { useSpeech } from '../../../utils/useSpeech';
 
 const MAX_LENGTH = 14;
 const TICK_MS = 420;
@@ -14,8 +15,9 @@ function prefersReducedMotion() {
     && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 }
 
-export function IndexingVisualizer({ config, preset }) {
-  const { t } = useLanguage();
+export function IndexingVisualizer({ config, preset, autoPlayKey }) {
+  const { t, lang } = useLanguage();
+  const speech = useSpeech(lang);
   const [text, setText] = useState(config.defaults?.text ?? 'python');
   const [indexInput, setIndexInput] = useState(config.defaults?.index ?? '0');
   const [run, setRun] = useState(null);       // { text, index, walk }
@@ -87,6 +89,18 @@ export function IndexingVisualizer({ config, preset }) {
     startRun();
   }, [autoRun]);
 
+  // Opening the module's Visualize section plays the walk straight away
+  // rather than waiting for a manual trigger (cycle-1 feedback). ModulePage
+  // bumps `autoPlayKey` each time the section becomes active; undefined
+  // (the Visualiser screen's own standalone use) never auto-plays, so that
+  // page still waits for the student to press Visualize.
+  useEffect(() => {
+    if (autoPlayKey === undefined) return;
+    setRun(null);
+    setDone(false);
+    setAutoRun(true);
+  }, [autoPlayKey]);
+
   const chars = (run?.text ?? text).split('');
   const pointerCell = run && walkPos >= 0 ? run.walk.path[walkPos] : null;
   const finished = Boolean(run) && done;
@@ -97,6 +111,27 @@ export function IndexingVisualizer({ config, preset }) {
   const stepsTaken = run && walkPos >= 0
     ? (run.index >= 0 ? run.walk.path[walkPos] : run.walk.path[walkPos] - run.text.length)
     : null;
+
+  // The step commentary, as one plain string: rendered into the aria-live
+  // region for screen readers AND handed to read-aloud, so both stay in sync
+  // with whatever the animation is showing rather than drifting apart.
+  const narration = !run ? '' : [
+    !finished && pointerCell !== null && (
+      run.index >= 0
+        ? t(
+            run.walk.path[walkPos] === 1 ? 'viz.walkingForwardOne' : 'viz.walkingForward',
+            { steps: run.walk.path[walkPos] },
+          )
+        : t('viz.countingBack', { steps: run.walk.path[walkPos] - run.text.length })
+    ),
+    success && t('viz.landedOn', {
+      index: run.walk.path[run.walk.path.length - 1],
+      char: resultChar,
+    }),
+    failure && t('viz.ranOut', { index: run.index }),
+  ].filter(Boolean).join(' ');
+
+  useEffect(() => { speech.speak(narration); }, [narration, speech]);
 
   return (
     <div className={m.visualizerCard}>
@@ -130,6 +165,18 @@ export function IndexingVisualizer({ config, preset }) {
           {finished ? <RotateCcw size={16} /> : <Play size={16} />}
           {finished ? t('viz.replay') : t('viz.visualize')}
         </button>
+        {speech.supported && (
+          <button
+            type="button"
+            className={m.ghostButton}
+            onClick={speech.toggle}
+            aria-pressed={speech.enabled}
+            title={speech.enabled ? t('viz.readAloudOff') : t('viz.readAloudOn')}
+          >
+            {speech.enabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+            {t('viz.readAloud')}
+          </button>
+        )}
       </div>
 
       {parsedIndex === null && indexInput.trim() !== '' && (
@@ -172,19 +219,7 @@ export function IndexingVisualizer({ config, preset }) {
         </div>
         {run && (
           <p className={m.vizNarration} aria-live="polite">
-            {!finished && pointerCell !== null && (
-              run.index >= 0
-                ? t(
-                    run.walk.path[walkPos] === 1 ? 'viz.walkingForwardOne' : 'viz.walkingForward',
-                    { steps: run.walk.path[walkPos] },
-                  )
-                : t('viz.countingBack', { steps: run.walk.path[walkPos] - run.text.length })
-            )}
-            {success && t('viz.landedOn', {
-              index: run.walk.path[run.walk.path.length - 1],
-              char: resultChar,
-            })}
-            {failure && t('viz.ranOut', { index: run.index })}
+            {narration}
           </p>
         )}
       </div>

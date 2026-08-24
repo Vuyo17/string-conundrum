@@ -112,7 +112,15 @@ function Shell() {
   function go(next) {
     if (!canAccessScreen(next)) return;
     setScreen(next);
-    setModuleTarget(null);
+    // A plain object reference here (rather than `null`) so clicking
+    // "Modules" in the sidebar while already inside a module reliably
+    // clears it back to the overview grid. `moduleTarget` is often already
+    // `null` at that point (any module opened by clicking its card, rather
+    // than via search, never sets it) — setting it to `null` again is a
+    // same-value no-op React skips, so the reset never reached Modules.jsx.
+    // A fresh `{ nonce }` on every call always changes reference and always
+    // fires the effect that closes the open module.
+    setModuleTarget(next === "Modules" ? { nonce: Date.now() } : null);
   }
 
   // A search result carries its own destination (see data/searchIndex.js).

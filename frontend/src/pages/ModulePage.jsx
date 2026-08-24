@@ -44,6 +44,14 @@ export function ModulePage({
   const content = getModuleContent(moduleId, lang);
   const [activeSection, setActiveSection] = useState(initialSection ?? 'learn');
   const [visualizerPreset, setVisualizerPreset] = useState(null);
+  // Bumped each time the Visualize section becomes active, so the visualizer
+  // replays on arrival instead of sitting still until a manual trigger
+  // (cycle-1 feedback). A counter rather than a boolean: revisiting the
+  // section has to re-fire even though "is active" hasn't changed value.
+  const [visualizerPlayKey, setVisualizerPlayKey] = useState(0);
+  useEffect(() => {
+    if (activeSection === 'visualize') setVisualizerPlayKey((k) => k + 1);
+  }, [activeSection]);
   const topRef = useRef(null);
   // An id to scroll to once its section is actually on screen; cleared as soon
   // as it has been used, so ordinary section changes go back to the top.
@@ -241,7 +249,11 @@ export function ModulePage({
                 title={content.visualizer.title ?? t('modulePage.visualize')}
                 subtitle={content.visualizer.description}
               />
-              <Visualizer config={content.visualizer} preset={visualizerPreset} />
+              <Visualizer
+                config={content.visualizer}
+                preset={visualizerPreset}
+                autoPlayKey={visualizerPlayKey}
+              />
             </SectionPage>
           )}
 
@@ -268,6 +280,7 @@ export function ModulePage({
                 practice={content.practice}
                 onVisualize={Visualizer ? showInVisualizer : undefined}
                 onSectionComplete={onProgressChange}
+                onGoToPractice={() => setActiveSection('practice')}
               />
             </SectionPage>
           )}

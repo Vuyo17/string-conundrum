@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  AlertTriangle, Award, CheckCircle2, ChevronLeft, ChevronRight, Eye,
-  GraduationCap, RefreshCcw, Star, Target, TrendingUp, XCircle,
+  Award, CheckCircle2, ChevronLeft, ChevronRight, Dumbbell, Eye,
+  GraduationCap, RefreshCcw, Star, TrendingUp, XCircle,
 } from 'lucide-react';
 import m from '../../styles/ModulePage.module.css';
 import { apiFetch, markSectionComplete } from '../../api';
@@ -19,7 +19,7 @@ import { presetForExercise } from './visualizers/presets';
 import { useLanguage } from '../../context/LanguageContext';
 import { useNotifications } from '../../context/NotificationContext';
 import {
-  starsOf, shuffle, splitPrompt, displayOptionsOf, defaultAnswer,
+  starsOf, shuffle, splitPrompt, displayOptionsOf, defaultAnswer, optionOrder,
 } from './exerciseHelpers';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -114,7 +114,7 @@ function drawExam(exercises, count) {
   return shuffle(exercises).slice(0, Math.min(count, exercises.length));
 }
 
-export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }) {
+export function ExamMode({ practice, exercises, onVisualize, onSectionComplete, onGoToPractice }) {
   const { t, lang } = useLanguage();
   const { addNotification } = useNotifications();
   const questionCount = practice.exam?.questionCount ?? 10;
@@ -122,7 +122,7 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
   const [paper, setPaper] = useState(() => drawExam(exercises, questionCount));
   const [answers, setAnswers] = useState({});     // question_id → answer object
   const [current, setCurrent] = useState(0);
-  const [phase, setPhase] = useState('answering'); // answering | confirm | submitting | results
+  const [phase, setPhase] = useState('answering'); // answering | submitting | results
   const [results, setResults] = useState({});      // question_id → grading result
 
   // Switching language refetches the bank, but `paper` held the objects drawn
@@ -160,6 +160,11 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
 
   const exercise = paper[current];
   const answer = answers[exercise?.question_id] ?? defaultAnswer(exercise ?? { type: 'mcq' });
+
+  // Recomputed only when the question changes, not on every render — the
+  // exam re-renders on every keystroke/click, and reshuffling then would
+  // move choices under the student mid-answer.
+  const order = useMemo(() => optionOrder(exercise ?? {}), [exercise?.question_id]);
 
   const answeredCount = useMemo(
     () => paper.filter((ex) => isAnswered(ex, answers[ex.question_id])).length,
@@ -210,8 +215,12 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
   }
 
   function handleSubmitClick() {
-    if (answeredCount < paper.length) setPhase('confirm');
-    else gradeAll();
+    // Submit is now hard-disabled (see the pager button below) until every
+    // question is answered, so this only ever fires on a complete paper.
+    // Previously this branched into a "3 unanswered — submit anyway?"
+    // confirm step; that path is gone now that the button itself blocks an
+    // incomplete submission rather than asking about it after the fact.
+    gradeAll();
   }
 
   function retry() {
@@ -270,6 +279,15 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
             <GraduationCap size={15} /> {t(`exercise.masteryBadge.${band.badge}`)}
           </span>
           <p className={m.examBlurb}>{t(`exercise.masteryBlurb.${band.blurb}`)}</p>
+          {/* cycle-1 usability feedback: "Finish module" gave no indication
+              of whether the 80% bar was actually cleared, or what to do if
+              not — Practice already has this same passed/retry line, Exam
+              never did. */}
+          <p className={m.examBlurb}>
+            {percent >= PASS_THRESHOLD
+              ? t('exercise.examPassed')
+              : t('exercise.examRetry')}
+          </p>
           <button type="button" className={m.solidButton} onClick={retry}>
             <RefreshCcw size={15} /> {t('exercise.retryNewQuestions')}
           </button>
@@ -288,6 +306,16 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
                   </li>
                 ))}
             </ul>
+            {/* Cycle-1 feedback asked for the tool to point students at more
+                practice on what they got wrong. The weak areas were already
+                identified here but were a dead end — this turns them into a
+                route back into Practice, which draws from the same bank the
+                missed questions came from. */}
+            {onGoToPractice && (
+              <button type="button" className={m.ghostButton} onClick={onGoToPractice}>
+                <Dumbbell size={15} /> {t('exercise.practiceTheseAreas')}
+              </button>
+            )}
           </div>
         )}
 
@@ -417,29 +445,36 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
 
         {exercise.type === 'mcq' && (
           <div className={m.choiceList} role="radiogroup" aria-label={t('a11y.answerChoices')}>
-            {exercise.options.map((choice, i) => (
-              <button
-                key={choice}
-                type="button"
-                role="radio"
-                aria-checked={answer.selected === choice}
-                className={`${m.choice} ${answer.selected === choice ? m.choiceSelected : ''}`}
-                onClick={() => setCurrentAnswer({ selected: choice })}
-              >
-                <span className={m.choiceKey}>{String.fromCharCode(65 + i)}</span>
-                <span className={m.choiceText}>{displayOptionsOf(exercise, lang)[i]}</span>
-              </button>
-            ))}
+            {order.map((i, pos) => {
+              const choice = exercise.options[i];
+              return (
+                // Keyed by original index, not by value: option values are not
+                // guaranteed unique (several questions ship repeated choices),
+                // and a duplicate value made React collide the two buttons.
+                <button
+                  key={i}
+                  type="button"
+                  role="radio"
+                  aria-checked={answer.selected === choice}
+                  className={`${m.choice} ${answer.selected === choice ? m.choiceSelected : ''}`}
+                  onClick={() => setCurrentAnswer({ selected: choice })}
+                >
+                  <span className={m.choiceKey}>{String.fromCharCode(65 + pos)}</span>
+                  <span className={m.choiceText}>{displayOptionsOf(exercise, lang)[i]}</span>
+                </button>
+              );
+            })}
           </div>
         )}
 
         {exercise.type === 'select_all' && (
           <div className={m.choiceList}>
-            {exercise.options.map((choice, i) => {
+            {order.map((i) => {
+              const choice = exercise.options[i];
               const on = (answer.selected ?? []).includes(choice);
               return (
                 <button
-                  key={choice}
+                  key={i}
                   type="button"
                   role="checkbox"
                   aria-checked={on}
@@ -475,10 +510,21 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
             {exercise.test_cases?.length > 0 && (
               <div className={m.testCases}>
                 <span className={m.testCasesLabel}>{t('exercise.expectedOutput')}</span>
+                {/* One labelled row per case rather than a wrapping row of
+                    bare chips: cycle-1 feedback asked for expected output to
+                    be clearer, and inline `input: x → y` chips lost which
+                    half was which as soon as they wrapped. */}
                 {exercise.test_cases.map((tc, i) => (
-                  <code key={i}>
-                    {tc.input ? `input: ${tc.input.trim()} → ` : ''}{tc.expected_output}
-                  </code>
+                  <div key={i} className={m.testCaseRow}>
+                    {tc.input ? (
+                      <>
+                        <span className={m.testCaseKey}>{t('exercise.given')}</span>
+                        <code>{tc.input.trim()}</code>
+                      </>
+                    ) : null}
+                    <span className={m.testCaseKey}>{t('exercise.prints')}</span>
+                    <code className={m.testCaseExpected}>{tc.expected_output}</code>
+                  </div>
                 ))}
               </div>
             )}
@@ -498,7 +544,8 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
             type="button"
             className={m.solidButton}
             onClick={handleSubmitClick}
-            disabled={phase === 'submitting'}
+            disabled={phase === 'submitting' || answeredCount < paper.length}
+            title={answeredCount < paper.length ? t('exercise.answerAllToSubmit') : undefined}
           >
             {phase === 'submitting' ? t('exercise.marking') : t('exercise.submitExam')}
           </button>
@@ -512,24 +559,6 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete }
           </button>
         </footer>
       </div>
-
-      {phase === 'confirm' && (
-        <div className={m.confirmBanner} role="alertdialog" aria-label={t('a11y.unansweredQuestions')}>
-          <AlertTriangle size={18} />
-          <div>
-            <strong>{paper.length - answeredCount} unanswered {paper.length - answeredCount === 1 ? 'question' : 'questions'}</strong>
-            <p>{t('exercise.unansweredWarning')}</p>
-          </div>
-          <div className={m.confirmActions}>
-            <button type="button" className={m.ghostButton} onClick={() => setPhase('answering')}>
-              {t('exercise.keepAnswering')}
-            </button>
-            <button type="button" className={m.solidButton} onClick={gradeAll}>
-              <Target size={15} /> {t('exercise.submitNow')}
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

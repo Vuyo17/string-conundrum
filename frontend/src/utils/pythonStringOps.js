@@ -58,7 +58,17 @@ export function parseSliceNotation(notation) {
 export function computeSlice(text, startRaw, stopRaw, stepRaw) {
   const length = text.length;
   const step = stepRaw.empty ? 1 : stepRaw.value;
-  if (step === 0) return { error: 'step cannot be zero (Python raises ValueError)' };
+  // `picked`/`step`/`start`/`stop` always present, error case included: every
+  // caller reads `.picked` unconditionally for the character grid and output
+  // text, and an object with only `{ error }` made `slice.picked.map(...)`
+  // throw outright — typing a step of 0 crashed the whole visualiser instead
+  // of showing the ValueError Python actually raises for `text[::0]`.
+  if (step === 0) {
+    return {
+      error: 'step cannot be zero (Python raises ValueError)',
+      picked: [], step: 0, start: 0, stop: 0,
+    };
+  }
 
   const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
   const normalise = (v, forNegStepDefault) => {
@@ -68,19 +78,33 @@ export function computeSlice(text, startRaw, stopRaw, stepRaw) {
 
   let start;
   let stop;
+  // Pre-clamp values, so an out-of-range bound the student actually typed
+  // (as opposed to an omitted one quietly taking its default) can be told
+  // apart from one that landed in range on its own — Python doesn't error on
+  // this the way indexing does, but silently accepting e.g. stop=30 on a
+  // 13-character string with no visual sign anything was adjusted still
+  // read as "did my input even get used?"
+  let normalisedStart = null;
+  let normalisedStop = null;
   if (step > 0) {
-    start = clamp(normalise(startRaw.empty ? null : startRaw.value, 0) ?? 0, 0, length);
-    stop = clamp(normalise(stopRaw.empty ? null : stopRaw.value, length) ?? length, 0, length);
+    normalisedStart = startRaw.empty ? null : normalise(startRaw.value, 0);
+    normalisedStop = stopRaw.empty ? null : normalise(stopRaw.value, length);
+    start = clamp(normalisedStart ?? 0, 0, length);
+    stop = clamp(normalisedStop ?? length, 0, length);
   } else {
-    start = startRaw.empty ? length - 1 : clamp(normalise(startRaw.value, null), -1, length - 1);
-    stop = stopRaw.empty ? -1 : clamp(normalise(stopRaw.value, null), -1, length - 1);
+    normalisedStart = startRaw.empty ? null : normalise(startRaw.value, null);
+    normalisedStop = stopRaw.empty ? null : normalise(stopRaw.value, null);
+    start = startRaw.empty ? length - 1 : clamp(normalisedStart, -1, length - 1);
+    stop = stopRaw.empty ? -1 : clamp(normalisedStop, -1, length - 1);
   }
+  const startClamped = normalisedStart !== null && normalisedStart !== start;
+  const stopClamped = normalisedStop !== null && normalisedStop !== stop;
 
   const picked = [];
   if (step > 0) for (let i = start; i < stop; i += step) picked.push(i);
   else for (let i = start; i > stop; i += step) picked.push(i);
 
-  return { picked, step, start, stop };
+  return { picked, step, start, stop, startClamped, stopClamped };
 }
 
 // Convenience wrapper for callers holding a "start:stop:step" string.

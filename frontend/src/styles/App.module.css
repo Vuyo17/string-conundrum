@@ -122,7 +122,17 @@ input {
   color: var(--fg);
   text-align: left;
   min-width: 210px;
-  padding: 0;
+  padding: 6px 8px;
+  margin: -6px -8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+/* cycle-1 feedback wanted a "home" button — this already IS one (goes to the
+   overview and resets any open module, see App.jsx's `go`), it just gave no
+   visual sign it was clickable rather than a static logo. */
+.brandButton:hover {
+  background: var(--surface-2);
 }
 
 .brandButton strong {
@@ -668,6 +678,13 @@ p {
 }
 .cardTopLine strong {
   color: var(--primary);
+}
+
+.cardTopHint {
+  margin: -6px 0 0;
+  padding: 0 2px;
+  font-size: 12.5px;
+  color: var(--muted);
 }
 
 .moduleGrid {
@@ -1435,6 +1452,37 @@ p {
 .visualiserSpeedRow {
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Read-aloud toggle, sitting beside the speed picker. Borrows the speed
+   picker's quiet chrome so it reads as a setting rather than an action. */
+.vizSpeakButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.vizSpeakButton:hover {
+  background: var(--surface-2);
+}
+
+.vizSpeakButton[aria-pressed="true"] {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary-dark);
 }
 
 .visualiserHeader {
@@ -1726,6 +1774,15 @@ p {
   color: var(--primary);
   font-size: 14px;
   font-weight: 900;
+}
+
+/* The bound Python actually clamped an out-of-range typed value to — not an
+   error (no exception is raised), but visually distinct so it doesn't read
+   as "my input was silently ignored." */
+.sliceMarkerClamped,
+.sliceMarkerClamped strong,
+.sliceMarkerClamped small {
+  color: #d32f2f !important;
 }
 
 .visualiserOutput {
@@ -2704,6 +2761,14 @@ p {
   word-break: break-all;
   margin-bottom: 6px;
 }
+
+/* An expression that couldn't be evaluated at all (cycle-1 feedback: no
+   error messages in the visualiser) — visually distinct from an ordinary
+   condition result so it never reads as a legitimate False. */
+.visStepDescError {
+  color: #d32f2f;
+  font-weight: 600;
+}
 .visVarRow {
   display: flex;
   flex-wrap: wrap;
@@ -3668,9 +3733,38 @@ p {
   height: 320px;
 }
 
+/* Line-number gutter. Shares the highlight/textarea's 24px line-height and
+   12px top padding so row N of the gutter sits exactly on row N of the code —
+   any mismatch here shows up immediately as drifting numbers. */
+.challengeLineNumbersLc {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 42px;
+  padding: 12px 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
+  font-size: 13px;
+  line-height: 24px;
+  text-align: right;
+  color: var(--muted);
+  background: var(--surface-2);
+  border-right: 1px solid var(--border);
+  user-select: none;
+  pointer-events: none;
+}
+
+.challengeLineNumbersLc span {
+  padding-right: 9px;
+  flex: 0 0 24px;
+}
+
 .challengeHighlightLc {
   position: absolute;
-  inset: 0;
+  inset: 0 0 0 42px;
   margin: 0;
   padding: 12px 14px;
   font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
@@ -3684,11 +3778,11 @@ p {
 
 .challengeTextareaLc {
   position: absolute;
-  inset: 0;
+  inset: 0 0 0 42px;
   border: 0;
   outline: 0;
   resize: none;
-  width: 100%;
+  width: calc(100% - 42px);
   height: 100%;
   padding: 12px 14px;
   font-family: "Roboto Mono", ui-monospace, Menlo, monospace;

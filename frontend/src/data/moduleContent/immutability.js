@@ -22,7 +22,7 @@ export const immutabilityModule = {
       blocks: [
         {
           kind: 'p',
-          text: 'Indexing lets you READ any character, but never WRITE one. A string is **immutable**: once created, its characters are fixed forever, like letters carved into stone. You can carve a new stone, but you cannot edit the old one.',
+          text: 'Indexing lets you READ any character, but never WRITE one. A string is **immutable**: once created, its characters are fixed forever, like letters carved into stone. You can carve a new stone, but you cannot edit the old one — in code, that means creating a brand-new string and reassigning the variable to it; the original string object never changes.',
         },
         {
           kind: 'code',

@@ -1,18 +1,47 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, ChevronDown, Pause, Play } from 'lucide-react';
+import {
+  ChevronLeft, ChevronRight, ChevronDown, Pause, Play, Volume2, VolumeX,
+} from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { SpeedControl } from '../components/SpeedControl';
 import { useLanguage } from '../context/LanguageContext';
 import { parseIndexInput, resolveIndex, sliceFromNotation } from '../utils/pythonStringOps';
+import { useSpeech } from '../utils/useSpeech';
 
 // How long one step is held at 1× speed; the speed picker divides this.
 const STEP_INTERVAL_MS = 800;
 
 // ─── pure helpers ─────────────────────────────────────────────────────────────
 
+// Python collapses a backslash escape in a non-raw string literal to the ONE
+// character it names — "\n" is a single newline, "\t" a single tab — before
+// the string even exists as a value. This tool used to skip that step
+// entirely and hand the raw two-character "\" + "n" straight to the character
+// grid, so `word = "Hello\nWorld!"` showed as 13 characters (with a literal
+// backslash and a literal n) instead of Python's real 12. That's not a
+// cosmetic gap — it's the exact misconception this project's own exercise
+// feedback calls out elsewhere (escape_sequence_literal_confusion: "\n
+// inside a string is a single newline character, not the two characters
+// backslash and n"), so leaving it unhandled here actively taught the wrong
+// thing on the one screen dedicated to showing students what a string
+// actually contains.
+//
+// Covers the escapes CSC1015F material actually uses; an unrecognised
+// sequence (e.g. "\q") is left as the literal two characters, matching
+// Python's own behaviour for unknown escapes in a non-raw string.
+const ESCAPE_MAP = {
+  n: '\n', t: '\t', r: '\r', '0': '\0',
+  a: '\x07', b: '\b', f: '\f', v: '\v',
+  '\\': '\\', "'": "'", '"': '"',
+};
+
+function interpretEscapes(raw) {
+  return raw.replace(/\\(.)/g, (whole, ch) => ESCAPE_MAP[ch] ?? whole);
+}
+
 function parseStringInput(value) {
   const match = value.match(/^\s*\w+\s*=\s*(["'])(.*)\1\s*$/);
-  return match ? match[2] : value;
+  return match ? interpretEscapes(match[2]) : value;
 }
 
 // The shared slice resolver reports bounds in Python terms, where a negative
@@ -36,7 +65,28 @@ function modeLabel(mode, t) {
 
 function buildForSteps(text, rangeInput, t) {
   // rangeInput is like "0:5:1" — we use the chars at those indices
-  const { picked } = sliceFromNotation(text, rangeInput);
+  const { picked, invalid, error } = sliceFromNotation(text, rangeInput);
+  // `invalid`/`error` used to be dropped on the floor here: a malformed range
+  // or a step of 0 just produced zero steps, `currentStep` stayed null, and
+  // the ENTIRE step panel silently disappeared — no badge, no message,
+  // nothing to say why. A single synthetic error step reuses the same
+  // error-step rendering buildIfSteps already established, rather than the
+  // step panel just not being there.
+  if (invalid || error) {
+    return [{
+      iteration: 1,
+      total: 1,
+      charIndex: -1,
+      char: '',
+      highlight: [],
+      event: 'for-error',
+      error: true,
+      description: error
+        ? t('visualiser.sliceZeroStep')
+        : t('visualiser.sliceInvalid', { slice: rangeInput }),
+      variables: {},
+    }];
+  }
   const chars = text.split('');
   return picked.map((idx, iteration) => ({
     iteration: iteration + 1,
@@ -52,7 +102,24 @@ function buildForSteps(text, rangeInput, t) {
 function buildWhileSteps(text, whileInput, t) {
   // whileInput: "i < N" style — we simulate i=0..N-1 stepping through string
   const maxMatch = whileInput.match(/i\s*[<=>]+\s*(\d+)/);
-  const limit = maxMatch ? Math.min(Number(maxMatch[1]), text.length) : Math.min(5, text.length);
+  // An unrecognised condition (a typo, "i != 5" — `!` isn't in the matched
+  // char class, or anything not shaped like "i <op> N") used to silently
+  // fall back to "loop 5 times" with nothing said about why — indistinguish-
+  // able from a real 5-iteration result the student actually asked for.
+  if (!maxMatch) {
+    return [{
+      iteration: 1,
+      total: 1,
+      charIndex: -1,
+      char: '',
+      highlight: [],
+      event: 'while-error',
+      error: true,
+      description: t('visualiser.whileConditionUnrecognised', { cond: whileInput }),
+      variables: {},
+    }];
+  }
+  const limit = Math.min(Number(maxMatch[1]), text.length);
   const steps = [];
   for (let i = 0; i < limit; i++) {
     // condition-check step
@@ -88,7 +155,14 @@ function buildWhileSteps(text, whileInput, t) {
 function buildIfSteps(text, expression, t) {
   // expression: e.g. "len(text) > 5" or "text[0] == 'H'"
   let result = false;
-  let detail = '';
+  // A malformed expression (unbalanced quotes, a typo, an unsupported
+  // operator) used to be swallowed here — `result` fell back to its `false`
+  // default and the step rendered as an ordinary, legitimate "condition is
+  // False" instead of "this could not be evaluated at all". Cycle-1 feedback
+  // called this out generally ("no error messages for string visualiser");
+  // this is the most misleading instance of it, since a real False and a
+  // silently-failed eval looked pixel-identical.
+  let evalError = false;
   try {
     // safe eval: replace text with actual value, len() supported
     const safe = expression
@@ -98,10 +172,11 @@ function buildIfSteps(text, expression, t) {
       });
     // eslint-disable-next-line no-new-func
     result = Boolean(new Function(`return (${safe})`)());
-    detail = t('visualiser.evaluatesTo', { result });
   } catch {
-    detail = t('visualiser.couldNotEvaluate');
+    evalError = true;
   }
+
+  const errorDesc = t('visualiser.couldNotEvaluateDetail', { expr: expression });
 
   return [
     {
@@ -109,14 +184,17 @@ function buildIfSteps(text, expression, t) {
       total: 2,
       charIndex: -1,
       char: '',
-      highlight: result ? text.split('').map((_, i) => i) : [],
-      event: 'if',
+      highlight: evalError ? [] : (result ? text.split('').map((_, i) => i) : []),
+      event: evalError ? 'if-error' : 'if',
       condition: expression,
-      conditionResult: result,
-      description: result
-        ? t('visualiser.descIfTrue', { expr: expression })
-        : t('visualiser.descIfFalse', { expr: expression }),
-      variables: { condition_result: result },
+      conditionResult: evalError ? undefined : result,
+      error: evalError,
+      description: evalError
+        ? errorDesc
+        : (result
+            ? t('visualiser.descIfTrue', { expr: expression })
+            : t('visualiser.descIfFalse', { expr: expression })),
+      variables: evalError ? {} : { condition_result: result },
     },
     {
       iteration: 2,
@@ -124,13 +202,16 @@ function buildIfSteps(text, expression, t) {
       charIndex: -1,
       char: '',
       highlight: [],
-      event: 'if-done',
+      event: evalError ? 'if-error' : 'if-done',
       condition: expression,
-      conditionResult: result,
-      description: result
-        ? t('visualiser.descIfDone')
-        : t('visualiser.descElseDone'),
-      variables: { condition_result: result },
+      conditionResult: evalError ? undefined : result,
+      error: evalError,
+      description: evalError
+        ? errorDesc
+        : (result
+            ? t('visualiser.descIfDone')
+            : t('visualiser.descElseDone')),
+      variables: evalError ? {} : { condition_result: result },
     },
   ];
 }
@@ -138,7 +219,8 @@ function buildIfSteps(text, expression, t) {
 // ─── component ────────────────────────────────────────────────────────────────
 
 export function Visualiser() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const speech = useSpeech(lang);
   const [mode, setMode] = useState('slice');
   const [stringInput, setStringInput] = useState('word = "Hello, World!"');
   const [indexInput, setIndexInput] = useState('2');
@@ -173,16 +255,23 @@ export function Visualiser() {
   const whileSteps = useMemo(() => buildWhileSteps(text, whileInput, t), [text, whileInput, t]);
   const ifSteps = useMemo(() => buildIfSteps(text, ifInput, t), [text, ifInput, t]);
 
+  // { value, unsupported }, not a bare string: a typo or a real Python method
+  // this teaching tool just hasn't implemented (count, replace, find, ...)
+  // used to fall through to a FABRICATED result — `'text'.count()` printed as
+  // if it had actually run, when nothing was evaluated at all. Cycle-1
+  // feedback called this out generally ("no error messages ... why the error
+  // happened"); this was the most actively misleading instance of it, since
+  // the fake output looked exactly as confident as a real one.
   const methodResult = useMemo(() => {
     const m = methodInput.trim().toLowerCase();
-    if (m === 'upper') return text.toUpperCase();
-    if (m === 'lower') return text.toLowerCase();
-    if (m === 'reverse') return text.split('').reverse().join('');
-    if (m === 'strip') return text.trim();
-    if (m === 'title') return text.replace(/\b\w/g, c => c.toUpperCase());
+    if (m === 'upper') return { value: text.toUpperCase() };
+    if (m === 'lower') return { value: text.toLowerCase() };
+    if (m === 'reverse') return { value: text.split('').reverse().join('') };
+    if (m === 'strip') return { value: text.trim() };
+    if (m === 'title') return { value: text.replace(/\b\w/g, c => c.toUpperCase()) };
     const lenMatch = m.match(/^len\s*\(?\s*\)?$/);
-    if (lenMatch) return String(length);
-    return `'${text}'.${m}()`;
+    if (lenMatch) return { value: String(length) };
+    return { value: '', unsupported: true };
   }, [text, methodInput, length]);
 
   // ── active steps array for stepped modes ─────────────────────────────────
@@ -207,10 +296,73 @@ export function Visualiser() {
   const output = useMemo(() => {
     if (mode === 'index') return indexLookup.valid ? chars[indexLookup.resolved] : '';
     if (mode === 'slice') return slice.picked.map(i => chars[i] ?? '').join('');
-    if (mode === 'method') return methodResult;
+    if (mode === 'method') return methodResult.value;
     if (currentStep) return currentStep.char || (currentStep.conditionResult !== undefined ? String(currentStep.conditionResult) : '');
     return '';
   }, [mode, indexLookup, chars, slice.picked, methodResult, currentStep]);
+
+  // Declared here rather than beside the other label helpers further down:
+  // the narration memo below reads it, and a `const` is not hoisted.
+  const isStepped = ['for_loop', 'while_loop', 'if_stmt'].includes(mode);
+
+  // ── result text for the simple modes (index/slice/method) ────────────────
+  // { text, isError }. Single source of truth for both the output box and
+  // narration below, covering every failure each mode can hit — a bare index
+  // out of range, a non-numeric index, a malformed slice part, a zero slice
+  // step (Python's ValueError), and a method this tool hasn't implemented.
+  // Previously most of these either showed a bare "?" or silently rendered as
+  // if they had succeeded (cycle-1 feedback: "no error messages for string
+  // visualiser").
+  const simpleResult = useMemo(() => {
+    if (mode === 'index') {
+      if (indexLookup.parsed === null) {
+        return { text: t('visualiser.indexNotANumber', { index: indexInput }), isError: true };
+      }
+      if (!indexLookup.valid) {
+        return {
+          text: t('visualiser.indexOutOfRange', {
+            index: indexInput,
+            min: -Math.max(length, 1),
+            max: Math.max(length - 1, 0),
+          }),
+          isError: true,
+        };
+      }
+      return { text: `'${output}'`, isError: false };
+    }
+    if (mode === 'slice') {
+      if (slice.error) return { text: t('visualiser.sliceZeroStep'), isError: true };
+      if (slice.invalid) return { text: t('visualiser.sliceInvalid', { slice: sliceInput }), isError: true };
+      return { text: `'${output}'`, isError: false };
+    }
+    if (mode === 'method') {
+      if (methodResult.unsupported) {
+        return { text: t('visualiser.methodUnsupported', { method: methodInput }), isError: true };
+      }
+      return { text: `'${output}'`, isError: false };
+    }
+    return { text: '', isError: false };
+  }, [mode, indexLookup, indexInput, length, slice, sliceInput, methodResult, methodInput, output, t]);
+
+  // ── spoken narration, for EVERY mode ──────────────────────────────────────
+  // The three stepped modes already author a per-step `description` (if_stmt
+  // includes its own eval-error text — see buildIfSteps), so those read out
+  // as-is. The three simple modes never had any sentence at all — only the
+  // output box — so they get one built from `simpleResult` here rather than
+  // being silently skipped by read-aloud.
+  const narration = useMemo(() => {
+    if (isStepped) return currentStep?.description ?? '';
+    if (simpleResult.isError) return simpleResult.text;
+    if (mode === 'index') return t('visualiser.narrationIndex', { index: indexInput, char: chars[indexLookup.resolved] });
+    if (mode === 'slice') return t('visualiser.narrationSlice', { slice: sliceInput, output });
+    if (mode === 'method') return t('visualiser.narrationMethod', { method: methodInput, output });
+    return '';
+  }, [
+    isStepped, currentStep, mode, simpleResult, indexLookup, indexInput, chars,
+    sliceInput, methodInput, output, t,
+  ]);
+
+  useEffect(() => { speech.speak(narration); }, [narration, speech]);
 
   // ── reset step when mode / inputs change ──────────────────────────────────
   useEffect(() => {
@@ -255,7 +407,6 @@ export function Visualiser() {
   }
 
   // ── label helpers ─────────────────────────────────────────────────────────
-  const isStepped = ['for_loop', 'while_loop', 'if_stmt'].includes(mode);
   const markerBounds = sliceMarkerBounds(slice, length);
 
   const fieldLabel = {
@@ -380,7 +531,14 @@ export function Visualiser() {
               <span className={styles.visStepCount}>
                 {t('visualiser.stepCount', { current: stepIndex + 1, total: activeSteps.length })}
               </span>
-              {currentStep.conditionResult !== undefined && (
+              {currentStep.error ? (
+                <span
+                  className={styles.visCondBadge}
+                  style={{ background: '#fde8e8', color: '#d32f2f' }}
+                >
+                  {t('visualiser.evalErrorBadge')}
+                </span>
+              ) : currentStep.conditionResult !== undefined && (
                 <span
                   className={styles.visCondBadge}
                   style={{
@@ -398,7 +556,9 @@ export function Visualiser() {
                   counter beside it verbatim. The iteration is still named in
                   the step description below (descForLoop). */}
             </div>
-            <div className={styles.visStepDesc}>{currentStep.description}</div>
+            <div className={`${styles.visStepDesc} ${currentStep.error ? styles.visStepDescError : ''}`}>
+              {currentStep.description}
+            </div>
 
             {/* variable mini-table */}
             {currentStep.variables && Object.keys(currentStep.variables).length > 0 && (
@@ -441,7 +601,7 @@ export function Visualiser() {
                   ].join(' ')}
                   style={active ? { animationDelay: `${Math.min(highlighted.indexOf(index) * 60, 600)}ms` } : undefined}
                 >
-                  {char === ' ' ? '\u00b7' : char}
+                  {char}
                 </span>
               );
             })}
@@ -457,11 +617,24 @@ export function Visualiser() {
                   gridColumn: `${Math.min(markerBounds.start, markerBounds.stop) + 1} / ${Math.max(markerBounds.start, markerBounds.stop) + 1}`,
                 }}
               />
-              <span className={styles.sliceStart} style={{ gridColumn: `${markerBounds.start + 1}` }}>
-                ▲<strong>{t('visualiser.start')}: {slice.start}</strong><small>{t('visualiser.inclusive')}</small>
+              {/* Red when the typed bound was out of range and Python
+                  clamped it (e.g. stop=30 on a 13-char string lands at 13)
+                  — clamping isn't an error (no ValueError, unlike indexing),
+                  but showing the adjusted number with no visual sign it had
+                  been changed at all read as "did my input even get used?" */}
+              <span
+                className={`${styles.sliceStart} ${slice.startClamped ? styles.sliceMarkerClamped : ''}`}
+                style={{ gridColumn: `${markerBounds.start + 1}` }}
+              >
+                ▲<strong>{t('visualiser.start')}: {slice.start}</strong>
+                <small>{slice.startClamped ? t('visualiser.clamped') : t('visualiser.inclusive')}</small>
               </span>
-              <span className={styles.sliceStop} style={{ gridColumn: `${markerBounds.stop + 1}` }}>
-                ▲<strong>{t('visualiser.stop')}: {slice.stop}</strong><small>{t('visualiser.exclusive')}</small>
+              <span
+                className={`${styles.sliceStop} ${slice.stopClamped ? styles.sliceMarkerClamped : ''}`}
+                style={{ gridColumn: `${markerBounds.stop + 1}` }}
+              >
+                ▲<strong>{t('visualiser.stop')}: {slice.stop}</strong>
+                <small>{slice.stopClamped ? t('visualiser.clamped') : t('visualiser.exclusive')}</small>
               </span>
             </div>
           ) : (
@@ -493,18 +666,31 @@ export function Visualiser() {
         {/* output box */}
         <div className={styles.visualiserOutput}>
           <strong>{t('visualiser.output')}</strong>
-          <code>
-            {mode === 'if_stmt'
-              ? (currentStep?.conditionResult !== undefined
-                  ? (currentStep.conditionResult
-                      ? t('visualiser.ifBodyRuns')
-                      : t('visualiser.elseRuns'))
-                  : '?')
-              : mode === 'index' && !indexLookup.valid
-                ? (indexLookup.parsed === null
-                    ? '?'
-                    : `IndexError: string index out of range (valid: -${Math.max(length, 1)} to ${Math.max(length - 1, 0)})`)
-                : `'${output}'`}
+          <code className={
+            (isStepped ? currentStep?.error : simpleResult.isError)
+              ? styles.visStepDescError
+              : ''
+          }>
+            {/* Any stepped mode's error step (if_stmt eval failure, an
+                invalid for-loop range, an unrecognised while condition)
+                takes priority over the mode-specific rendering below — same
+                error text as the step panel above, so the box never shows a
+                stale/blank result next to a visible error banner. */}
+            {isStepped && currentStep?.error
+              ? currentStep.description
+              : mode === 'if_stmt'
+                ? (currentStep?.conditionResult !== undefined
+                    ? (currentStep.conditionResult
+                        ? t('visualiser.ifBodyRuns')
+                        : t('visualiser.elseRuns'))
+                    : '?')
+                // index/slice/method have real simpleResult logic (success
+                // text or an error message); for_loop/while_loop fall back to
+                // plain `output` (the current step's character) same as
+                // before the error-step work above.
+                : (mode === 'index' || mode === 'slice' || mode === 'method')
+                  ? simpleResult.text
+                  : `'${output}'`}
           </code>
         </div>
       </section>
@@ -512,6 +698,21 @@ export function Visualiser() {
       {/* ── speed picker (own row, above the playback controls) ── */}
       <div className={styles.visualiserSpeedRow}>
         <SpeedControl value={speed} onChange={setSpeed} disabled={!isStepped} />
+        {/* Not gated on isStepped, unlike the speed picker: every mode now
+            produces a narration line (see the memo above), so read-aloud is
+            useful on the simple index/slice/method modes too. */}
+        {speech.supported && (
+          <button
+            type="button"
+            className={styles.vizSpeakButton}
+            onClick={speech.toggle}
+            aria-pressed={speech.enabled}
+            title={speech.enabled ? t('viz.readAloudOff') : t('viz.readAloudOn')}
+          >
+            {speech.enabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+            {t('viz.readAloud')}
+          </button>
+        )}
       </div>
 
       {/* ── playback controls ── */}

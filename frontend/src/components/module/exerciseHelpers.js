@@ -22,6 +22,20 @@ export function shuffle(list) {
   return copy;
 }
 
+// Shuffled index order for an option-bearing exercise's `options` array, so
+// the correct answer isn't always in the same position (cycle-1 usability
+// feedback). Callers memoize this per question — recomputing it every render
+// would shuffle the choices out from under a student mid-click.
+//
+// Letters (A, B, C...) are assigned strictly by rendered POSITION, never by
+// content: index 0 of the returned order is always "A", regardless of which
+// original option shuffled into that slot. Grading is unaffected either way
+// — it always compares the raw English option VALUE the student clicked,
+// never its position or letter.
+export function optionOrder(exercise) {
+  return shuffle((exercise?.options ?? []).map((_, i) => i));
+}
+
 export function splitPrompt(prompt) {
   const [first, ...rest] = prompt.split('\n');
   return { title: first, code: rest.join('\n') };

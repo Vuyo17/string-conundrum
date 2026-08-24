@@ -82,6 +82,10 @@ export function Challenges() {
 
   const textareaRef = useRef(null);
   const highlightRef = useRef(null);
+  // Line-number gutter, matching Code Space's editor. Cycle-1 feedback asked
+  // for line numbers here: a failing test names the line, and without a
+  // gutter students had to count rows by hand to find it.
+  const lineNumbersRef = useRef(null);
 
   // ── load challenges, and reload when the language changes ────────────────
   // The backend localises title/description/hint/io, so switching language has
@@ -153,6 +157,10 @@ export function Challenges() {
     if (highlightRef.current) {
       highlightRef.current.scrollTop = target.scrollTop;
       highlightRef.current.scrollLeft = target.scrollLeft;
+    }
+    // Vertical only: the gutter must not drift sideways with the code.
+    if (lineNumbersRef.current) {
+      lineNumbersRef.current.scrollTop = target.scrollTop;
     }
   }
 
@@ -395,6 +403,13 @@ export function Challenges() {
                 </button>
               </div>
               <div className={styles.challengeEditorBoxLc}>
+                <div
+                  ref={lineNumbersRef}
+                  className={styles.challengeLineNumbersLc}
+                  aria-hidden="true"
+                >
+                  {code.split('\n').map((_, i) => <span key={i}>{i + 1}</span>)}
+                </div>
                 <pre
                   ref={highlightRef}
                   className={styles.challengeHighlightLc}

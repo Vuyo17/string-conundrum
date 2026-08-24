@@ -11,7 +11,7 @@ import { CodeBlock, InlineText } from './ContentBlocks';
 import { SlicingEngine } from './SlicingEngine';
 import { useLanguage } from '../../context/LanguageContext';
 import {
-  starsOf, shuffle, splitPrompt, displayOptionsOf, defaultAnswer,
+  starsOf, shuffle, splitPrompt, displayOptionsOf, defaultAnswer, optionOrder,
 } from './exerciseHelpers';
 
 // A practice run is recorded once a student clears this bar in one sitting.
@@ -230,6 +230,11 @@ function PracticeRunner({ practice, exercises, onSectionComplete }) {
 
   const exercise = exercises[index] ?? null;
 
+  // Recomputed only when the question changes — Practice re-renders on every
+  // click (selecting an option, seeing feedback), and reshuffling then would
+  // move choices under the student mid-answer.
+  const order = useMemo(() => optionOrder(exercise ?? {}), [exercise?.question_id]);
+
   // Practice only counts toward module progress once cleared at PASS_THRESHOLD
   // in one sitting; retries via "Practice again" can re-trigger this.
   useEffect(() => {
@@ -375,30 +380,37 @@ function PracticeRunner({ practice, exercises, onSectionComplete }) {
 
         {exercise.type === 'mcq' && (
           <div className={m.choiceList} role="radiogroup" aria-label={t('a11y.answerChoices')}>
-            {exercise.options.map((choice, i) => (
-              <button
-                key={choice}
-                type="button"
-                role="radio"
-                aria-checked={answer?.selected === choice}
-                className={`${m.choice} ${answer?.selected === choice ? m.choiceSelected : ''}`}
-                onClick={() => setAnswer({ selected: choice })}
-                disabled={Boolean(result)}
-              >
-                <span className={m.choiceKey}>{String.fromCharCode(65 + i)}</span>
-                <span className={m.choiceText}>{displayOptionsOf(exercise, lang)[i]}</span>
-              </button>
-            ))}
+            {order.map((i, pos) => {
+              const choice = exercise.options[i];
+              return (
+                // Keyed by original index, not by value: option values are not
+                // guaranteed unique (several questions ship repeated choices),
+                // and a duplicate value made React collide the two buttons.
+                <button
+                  key={i}
+                  type="button"
+                  role="radio"
+                  aria-checked={answer?.selected === choice}
+                  className={`${m.choice} ${answer?.selected === choice ? m.choiceSelected : ''}`}
+                  onClick={() => setAnswer({ selected: choice })}
+                  disabled={Boolean(result)}
+                >
+                  <span className={m.choiceKey}>{String.fromCharCode(65 + pos)}</span>
+                  <span className={m.choiceText}>{displayOptionsOf(exercise, lang)[i]}</span>
+                </button>
+              );
+            })}
           </div>
         )}
 
         {exercise.type === 'select_all' && (
           <div className={m.choiceList}>
-            {exercise.options.map((choice, i) => {
+            {order.map((i) => {
+              const choice = exercise.options[i];
               const on = (answer?.selected ?? []).includes(choice);
               return (
                 <button
-                  key={choice}
+                  key={i}
                   type="button"
                   role="checkbox"
                   aria-checked={on}
@@ -437,10 +449,18 @@ function PracticeRunner({ practice, exercises, onSectionComplete }) {
             {exercise.test_cases?.length > 0 && (
               <div className={m.testCases}>
                 <span className={m.testCasesLabel}>{t('exercise.expectedOutput')}</span>
+                {/* Mirrors ExamMode's layout — see the note there. */}
                 {exercise.test_cases.map((tc, i) => (
-                  <code key={i}>
-                    {tc.input ? `input: ${tc.input.trim()} → ` : ''}{tc.expected_output}
-                  </code>
+                  <div key={i} className={m.testCaseRow}>
+                    {tc.input ? (
+                      <>
+                        <span className={m.testCaseKey}>{t('exercise.given')}</span>
+                        <code>{tc.input.trim()}</code>
+                      </>
+                    ) : null}
+                    <span className={m.testCaseKey}>{t('exercise.prints')}</span>
+                    <code className={m.testCaseExpected}>{tc.expected_output}</code>
+                  </div>
                 ))}
               </div>
             )}

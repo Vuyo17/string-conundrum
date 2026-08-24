@@ -6,7 +6,7 @@ import { ModulePage } from './ModulePage';
 import { modules } from '../data/modules';
 import { useLanguage } from '../context/LanguageContext';
 
-export function Modules({ target, progress }) {
+export function Modules({ target, progress, setScreen }) {
   const { t } = useLanguage();
   // Which module is open, if any. Null shows the card grid.
   const [openModule, setOpenModule] = useState(null);
@@ -48,8 +48,19 @@ export function Modules({ target, progress }) {
 
   // A search hit on a module, topic, example or practice section opens it —
   // unless that module is still locked, in which case search can't bypass it.
+  //
+  // A target with no moduleId (the sidebar's "Modules" click sends a bare
+  // `{ nonce }`) means "go back to the overview" — cycle-1 usability
+  // feedback reported the sidebar's Modules button doing nothing while a
+  // module was open, because nothing here ever cleared `openModule` back to
+  // null. `target` is `null` only on first mount (before any navigation),
+  // when there is nothing to close, so that case is still a no-op.
   useEffect(() => {
-    if (!target?.moduleId) return;
+    if (!target) return;
+    if (!target.moduleId) {
+      closeModule();
+      return;
+    }
     const mod = enrichedModules.find((m) => m.id === target.moduleId);
     if (!mod || mod.status === 'Locked') return;
     setOpenModule(mod);
@@ -84,6 +95,19 @@ export function Modules({ target, progress }) {
         <span>{t('modules.allModules')}</span>
         <span>{t('modules.overallProgress')} <strong>{overallProgress}%</strong></span>
       </div>
+      {/* cycle-1 usability feedback: one participant wanted free navigation
+          between modules rather than the sequential 80%-to-advance gate —
+          that's exactly what Settings' "Unlock everything" already does, it
+          just wasn't discoverable. Only shown while it'd actually change
+          something: some module still locked, and not already turned on. */}
+      {!bypassUnlocks && enrichedModules.some((mod) => mod.status === 'Locked') && (
+        <p className={styles.cardTopHint}>
+          {t('modules.unlockHintPrefix')}{' '}
+          <button type="button" className={styles.linkButton} onClick={() => setScreen?.('Settings')}>
+            {t('modules.unlockHintLink')}
+          </button>
+        </p>
+      )}
       <div className={styles.moduleGrid}>
         {enrichedModules.map((mod, i) => (
           <ModuleCard

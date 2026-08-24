@@ -48,6 +48,8 @@ export function TopBar({ setScreen, onSearchSelect }) {
       <button
         className={styles.brandButton}
         onClick={() => setScreen(canAccess('Modules') ? 'Modules' : 'Visualiser')}
+        title={t('nav.goHome')}
+        aria-label={t('nav.goHome')}
       >
         <span className={styles.logo}>
           <BookOpen size={18} />
