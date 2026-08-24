@@ -22,7 +22,7 @@ def normalise_lang(lang: "str | None") -> str:
 TEMPLATES = {
     "en": {
         "correct": "Correct. The answer is {answer}.",
-        "correct_selection": "Correct. You picked exactly the right set.",
+        "correct_selection": "Correct. You picked exactly the right set: {answer}.",
         "not_quite": "Not quite. The correct answer is: {answer}",
         "not_quite_selection": "Not quite. The correct selection is: {answer}",
         "all_tests_passed": "All test cases passed.",
@@ -33,7 +33,7 @@ TEMPLATES = {
     },
     "xh": {
         "correct": "Ichanekile. Impendulo ngu-{answer}.",
-        "correct_selection": "Ichanekile. Ukhethe kanye iseti echanekileyo.",
+        "correct_selection": "Ichanekile. Ukhethe kanye iseti echanekileyo: {answer}.",
         "not_quite": "Ayikho kanye. Impendulo echanekileyo ngu: {answer}",
         "not_quite_selection": "Ayikho kanye. Ukhetho olucanekileyo ngu: {answer}",
         "all_tests_passed": "Zonke iimeko zovavanyo ziphumelele.",

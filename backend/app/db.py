@@ -90,14 +90,25 @@ class _LocalCursor:
         state = self.state
 
         if "INSERT INTO users" in query:
+            # The real query is an upsert — ON CONFLICT (uid) DO UPDATE SET
+            # email=..., display_name=... — that only ever touches those two
+            # columns, leaving bypass_unlocks/leaderboard prefs alone on a
+            # returning user. require_auth() runs this on every single
+            # authenticated request, not just first login, so replacing the
+            # whole record here (rather than merging into it) silently reset
+            # bypass_unlocks/leaderboard_optin/leaderboard_anonymous back to
+            # their defaults on the very next request after anyone changed
+            # them — e.g. Settings' "Unlock everything" toggle would flip on,
+            # then revert the moment any other authenticated call fired.
             uid, email, display_name = params
+            existing = state["users"].get(uid, {})
             state["users"][uid] = {
                 "uid": uid,
                 "email": email,
-                "display_name": display_name,
-                "bypass_unlocks": False,
-                "leaderboard_optin": True,
-                "leaderboard_anonymous": False,
+                "display_name": display_name if display_name is not None else existing.get("display_name"),
+                "bypass_unlocks": existing.get("bypass_unlocks", False),
+                "leaderboard_optin": existing.get("leaderboard_optin", True),
+                "leaderboard_anonymous": existing.get("leaderboard_anonymous", False),
             }
 
         elif "SELECT bypass_unlocks FROM users" in query:

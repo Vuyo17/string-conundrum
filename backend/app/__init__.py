@@ -29,8 +29,8 @@ def create_app() -> Flask:
                 "http://137.158.61.235",
                 "http://137.158.61.235:80",
             ],
-            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            "allow_headers": ["Content-Type"],
+            "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"],
             "supports_credentials": True
         }
     })

@@ -226,7 +226,10 @@ def _grade_select_all(exercise: dict, answers: list[str], lang: str) -> dict:
         return {
             "correct": True,
             "misconception_id": None,
-            "feedback": _tpl(lang, "correct_selection"),
+            "feedback": _tpl(
+                lang, "correct_selection",
+                answer=_display_correct_set_text(exercise, correct_set, lang),
+            ),
             "explanation": _explanation_for(exercise, lang=lang),
         }
 
