@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 """Generate isiXhosa translations for the lesson and exercise content.
 
+DEPRECATED as the active pipeline. `translate_content_nllb.py` is the one now
+used for all translation work: it runs locally at no API cost and is the only
+script of the two that covers every content type (`exercises`, `options`,
+`modules`, `challenges`, `locales`) — this script only ever implemented
+`exercises` and `modules`, and never touched options, challenges, or the UI
+locale file. Kept in the repo only as a reference/comparison implementation,
+not as something to run to generate shipped content.
+
 Runs ONCE, offline, and writes files that get committed — the app never calls a
 translation API at runtime. That keeps lessons instant, free and available
 offline, and makes every translation reviewable in a pull request.

@@ -619,8 +619,7 @@
     "options": [
       "\"dog\"",
       "['d', 'o', 'g']",
-      "'dog'",
-      "['d', 'o', 'g']"
+      "'dog'"
     ],
     "answers": [
       "\"dog\"",
@@ -634,8 +633,7 @@
     "options_xh": [
       "\"dog\"",
       "['d', 'o', 'g']",
-      "'dog'",
-      "['d', 'o', 'g']"
+      "'dog'"
     ],
     "answers_xh": [
       "\"dog\"",
@@ -650,8 +648,7 @@
     "options": [
       "\"cat\"",
       "['c', 'a', 't']",
-      "'cat'",
-      "['c', 'a', 't']"
+      "'cat'"
     ],
     "answers": [
       "\"cat\"",
@@ -665,8 +662,7 @@
     "options_xh": [
       "\"cat\"",
       "['c', 'a', 't']",
-      "'cat'",
-      "['c', 'a', 't']"
+      "'cat'"
     ],
     "answers_xh": [
       "\"cat\"",
@@ -681,8 +677,7 @@
     "options": [
       "\"sun\"",
       "['s', 'u', 'n']",
-      "'sun'",
-      "['s', 'u', 'n']"
+      "'sun'"
     ],
     "answers": [
       "\"sun\"",
@@ -696,8 +691,7 @@
     "options_xh": [
       "\"sun\"",
       "['s', 'u', 'n']",
-      "'sun'",
-      "['s', 'u', 'n']"
+      "'sun'"
     ],
     "answers_xh": [
       "\"sun\"",
@@ -1011,7 +1005,6 @@
     "type": "mcq",
     "options": [
       "u",
-      "u",
       "Index error",
       "empty string"
     ],
@@ -1022,7 +1015,6 @@
     "xp": 10,
     "prompt_xh": "text = \"umuntu\"\nprint(text[-1])",
     "options_xh": [
-      "u",
       "u",
       "Iphutha Index",
       "empty string"
@@ -1523,7 +1515,6 @@
     "type": "mcq",
     "options": [
       "Xhosa",
-      "Xhosa",
       "Xhos",
       "An error"
     ],
@@ -1534,7 +1525,6 @@
     "xp": 10,
     "prompt_xh": "word = \"isiXhosa\"\nprint(word[3:8])",
     "options_xh": [
-      "Xhosa",
       "Xhosa",
       "Xhos",
       "Impazamo"
@@ -1548,7 +1538,6 @@
     "type": "mcq",
     "options": [
       "base",
-      "base",
       "bas",
       "An error"
     ],
@@ -1559,7 +1548,6 @@
     "xp": 10,
     "prompt_xh": "word = \"firebase\"\nprint(word[4:8])",
     "options_xh": [
-      "base",
       "base",
       "bas",
       "Impazamo"
@@ -1696,7 +1684,6 @@
     "type": "mcq",
     "options": [
       "prog",
-      "prog",
       "ramming",
       "An error"
     ],
@@ -1704,7 +1691,6 @@
     "xp": 15,
     "prompt_xh": "word = \"programming\"\nprint(word[:4])",
     "options_xh": [
-      "prog",
       "prog",
       "ramming",
       "Impazamo"
@@ -1719,7 +1705,6 @@
     "options": [
       "ramming",
       "prog",
-      "ramming",
       "An error"
     ],
     "answer": "ramming",
@@ -1728,7 +1713,6 @@
     "options_xh": [
       "ramming",
       "prog",
-      "ramming",
       "Impazamo"
     ],
     "answer_xh": "ramming"
@@ -3523,7 +3507,14 @@
       "the loop condition should be i <= len(word)": "off_by_one_length"
     },
     "xp": 15,
-    "prompt_xh": "Okwangoku iloop yenzelwe ukuprinta zonke iileta zegama kodwa ayipheli.\nword = \"owl\"\ni = 0\nwhile i < len(word):\n    print(word[i])"
+    "prompt_xh": "Okwangoku iloop yenzelwe ukuprinta zonke iileta zegama kodwa ayipheli.\nword = \"owl\"\ni = 0\nwhile i < len(word):\n    print(word[i])",
+    "options_xh": [
+      "i += 1 is missing from inside the loop body",
+      "while should be for",
+      "I-len(word) kufuneka ibe yi-len(word) - 1",
+      "the loop condition should be i <= len(word)"
+    ],
+    "answer_xh": "i += 1 is missing from inside the loop body"
   },
   {
     "module_id": "looping",
@@ -3541,7 +3532,14 @@
       "the loop condition should be i <= len(word)": "off_by_one_length"
     },
     "xp": 15,
-    "prompt_xh": "Okwangoku iloop yenzelwe ukuprinta zonke iileta zegama kodwa ayipheli.\nword = \"cat\"\ni = 0\nwhile i < len(word):\n    print(word[i])"
+    "prompt_xh": "Okwangoku iloop yenzelwe ukuprinta zonke iileta zegama kodwa ayipheli.\nword = \"cat\"\ni = 0\nwhile i < len(word):\n    print(word[i])",
+    "options_xh": [
+      "i += 1 is missing from inside the loop body",
+      "while should be for",
+      "I-len(word) kufuneka ibe yi-len(word) - 1",
+      "the loop condition should be i <= len(word)"
+    ],
+    "answer_xh": "i += 1 is missing from inside the loop body"
   },
   {
     "module_id": "looping",
@@ -3559,7 +3557,14 @@
       "the loop condition should be i <= len(word)": "off_by_one_length"
     },
     "xp": 15,
-    "prompt_xh": "Okwangoku iloop yenzelwe ukuprinta zonke iileta zegama kodwa ayipheli.\nword = \"dog\"\ni = 0\nwhile i < len(word):\n    print(word[i])"
+    "prompt_xh": "Okwangoku iloop yenzelwe ukuprinta zonke iileta zegama kodwa ayipheli.\nword = \"dog\"\ni = 0\nwhile i < len(word):\n    print(word[i])",
+    "options_xh": [
+      "i += 1 is missing from inside the loop body",
+      "while should be for",
+      "I-len(word) kufuneka ibe yi-len(word) - 1",
+      "the loop condition should be i <= len(word)"
+    ],
+    "answer_xh": "i += 1 is missing from inside the loop body"
   },
   {
     "module_id": "looping",
@@ -3820,7 +3825,6 @@
     "options": [
       "HELLO",
       "Hello",
-      "Hello",
       "An error"
     ],
     "answer": "HELLO",
@@ -3828,7 +3832,6 @@
     "prompt_xh": "print(\"Hello\".upper())",
     "options_xh": [
       "HELLO",
-      "Hello",
       "Hello",
       "Impazamo"
     ],
@@ -3907,7 +3910,6 @@
     "type": "mcq",
     "options": [
       "Hello World",
-      "Hello World",
       "Hello world",
       "HELLO WORLD"
     ],
@@ -3915,7 +3917,6 @@
     "xp": 15,
     "prompt_xh": "print(\"hello world\".title())",
     "options_xh": [
-      "Hello World",
       "Hello World",
       "Hello world",
       "HELLO WORLD"
@@ -3930,7 +3931,6 @@
     "options": [
       "Hello world",
       "Hello World",
-      "Hello world",
       "HELLO WORLD"
     ],
     "answer": "Hello world",
@@ -3939,7 +3939,6 @@
     "options_xh": [
       "Hello world",
       "Hello World",
-      "Hello world",
       "HELLO WORLD"
     ],
     "answer_xh": "Hello world"
@@ -4458,7 +4457,14 @@
       "{name} is {age}": "fstring_missing_prefix_effect"
     },
     "xp": 10,
-    "prompt_xh": "name = \"Ada\"\nage = 30\nprint(f\"{name} is {age}\")"
+    "prompt_xh": "name = \"Ada\"\nage = 30\nprint(f\"{name} is {age}\")",
+    "options_xh": [
+      "I-Ada ingama-30",
+      "igama lixesha lobudala",
+      "{name} is {age}",
+      "Impazamo"
+    ],
+    "answer_xh": "I-Ada ingama-30"
   },
   {
     "module_id": "formatting",
@@ -4476,7 +4482,14 @@
       "{city} is {year}": "fstring_missing_prefix_effect"
     },
     "xp": 10,
-    "prompt_xh": "city = \"Cape Town\"\nyear = 2026\nprint(f\"{city} is {year}\")"
+    "prompt_xh": "city = \"Cape Town\"\nyear = 2026\nprint(f\"{city} is {year}\")",
+    "options_xh": [
+      "I-Cape Town ngu-2026",
+      "isixeko kunyaka",
+      "{city} is {year}",
+      "Impazamo"
+    ],
+    "answer_xh": "I-Cape Town ngu-2026"
   },
   {
     "module_id": "formatting",
@@ -4494,7 +4507,14 @@
       "{word} is {len}": "fstring_missing_prefix_effect"
     },
     "xp": 10,
-    "prompt_xh": "word = \"Python\"\nlen = 6\nprint(f\"{word} is {len}\")"
+    "prompt_xh": "word = \"Python\"\nlen = 6\nprint(f\"{word} is {len}\")",
+    "options_xh": [
+      "I-Python ngu-6",
+      "igama ngu len",
+      "{word} is {len}",
+      "Impazamo"
+    ],
+    "answer_xh": "I-Python ngu-6"
   },
   {
     "module_id": "formatting",
@@ -4512,7 +4532,14 @@
       "{student} is {mark}": "fstring_missing_prefix_effect"
     },
     "xp": 10,
-    "prompt_xh": "student = \"Hlomla\"\nmark = 95\nprint(f\"{student} is {mark}\")"
+    "prompt_xh": "student = \"Hlomla\"\nmark = 95\nprint(f\"{student} is {mark}\")",
+    "options_xh": [
+      "I-Hlomla yi-95",
+      "umfundi nguMark",
+      "{student} is {mark}",
+      "Impazamo"
+    ],
+    "answer_xh": "I-Hlomla yi-95"
   },
   {
     "module_id": "formatting",
@@ -4605,7 +4632,12 @@
     ],
     "answer": "Quotation marks",
     "xp": 10,
-    "prompt_xh": "print(\"She said \\\"hi\\\"\")\nYintoni ebonakalayo phakathi kokuthi \"Hayi\" nothi \"Hayi\" kwi-output?"
+    "prompt_xh": "print(\"She said \\\"hi\\\"\")\nYintoni ebonakalayo phakathi kokuthi \"Hayi\" nothi \"Hayi\" kwi-output?",
+    "options_xh": [
+      "Quotation marks",
+      "Iimpawu backslash-quote"
+    ],
+    "answer_xh": "Quotation marks"
   },
   {
     "module_id": "formatting",
@@ -4848,8 +4880,7 @@
     "options": [
       "'hi        '",
       "'hi'",
-      "'    hi    '",
-      "'hi        '"
+      "'    hi    '"
     ],
     "answer": "'hi        '",
     "xp": 15,
@@ -4857,8 +4888,7 @@
     "options_xh": [
       "'hi        '",
       "'hi'",
-      "'    hi    '",
-      "'hi        '"
+      "'    hi    '"
     ],
     "answer_xh": "'hi        '"
   },
@@ -4870,7 +4900,6 @@
     "options": [
       "'    hi    '",
       "'hi'",
-      "'    hi    '",
       "'hi        '"
     ],
     "answer": "'    hi    '",
@@ -4879,7 +4908,6 @@
     "options_xh": [
       "'    hi    '",
       "'hi'",
-      "'    hi    '",
       "'hi        '"
     ],
     "answer_xh": "'    hi    '"
@@ -4892,8 +4920,7 @@
     "options": [
       "3.14",
       "3.14159",
-      "An error",
-      "3.14"
+      "An error"
     ],
     "answer": "3.14",
     "xp": 15,
@@ -4901,8 +4928,7 @@
     "options_xh": [
       "3.14",
       "3.14159",
-      "Impazamo",
-      "3.14"
+      "Impazamo"
     ],
     "answer_xh": "3.14"
   },
@@ -5429,5 +5455,166 @@
     ],
     "xp": 30,
     "prompt_xh": "Bhala inkqubo efunda ilist yamazwi (umz. ama-apile, ibhanana, i-cherries) ahlukaniswe ngamagqabaza kwaye uwaprinte adibaniswe kwisivakalisi sendalo: izinto ezahlulwe ngamagqabaza, kunye ne'and' phambi kwento yokugqibela."
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-31",
+    "prompt": "word = \"banana\"\nprint(word[-2])",
+    "type": "mcq",
+    "options": [
+      "n",
+      "a",
+      "b",
+      "IndexError"
+    ],
+    "answer": "n",
+    "misconception_map": {
+      "a": "negative_index_confusion",
+      "IndexError": "negative_index_confusion"
+    },
+    "xp": 10,
+    "prompt_xh": "word = \"banana\"\nprint(word[-2])",
+    "options_xh": [
+      "n",
+      "a",
+      "b",
+      "IndexError"
+    ],
+    "answer_xh": "n"
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-32",
+    "prompt": "name = \"Hlomla\"\nprint(name[-3])",
+    "type": "mcq",
+    "options": [
+      "m",
+      "o",
+      "l",
+      "a"
+    ],
+    "answer": "m",
+    "misconception_map": {
+      "o": "negative_index_confusion"
+    },
+    "xp": 10,
+    "prompt_xh": "name = \"Hlomla\"\nprint(name[-3])",
+    "options_xh": [
+      "m",
+      "o",
+      "l",
+      "a"
+    ],
+    "answer_xh": "m"
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-33",
+    "prompt": "s = \"cat\"\nprint(s[-4])",
+    "type": "mcq",
+    "options": [
+      "IndexError",
+      "c",
+      "t",
+      "empty string"
+    ],
+    "answer": "IndexError",
+    "misconception_map": {
+      "c": "off_by_one_length",
+      "empty string": "negative_index_confusion"
+    },
+    "xp": 15,
+    "prompt_xh": "s = \"cat\"\nprint(s[-4])",
+    "options_xh": [
+      "IndexError",
+      "c",
+      "t",
+      "empty string"
+    ],
+    "answer_xh": "IndexError"
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-34",
+    "prompt": "text = \"hello\"\nprint(text[-5])",
+    "type": "mcq",
+    "options": [
+      "h",
+      "o",
+      "e",
+      "IndexError"
+    ],
+    "answer": "h",
+    "misconception_map": {
+      "o": "negative_index_confusion",
+      "IndexError": "off_by_one_length"
+    },
+    "xp": 10,
+    "prompt_xh": "text = \"hello\"\nprint(text[-5])",
+    "options_xh": [
+      "h",
+      "o",
+      "e",
+      "IndexError"
+    ],
+    "answer_xh": "h"
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-35",
+    "prompt": "word = \"Cape\"\nprint(word[-1] + word[0])",
+    "type": "mcq",
+    "options": [
+      "eC",
+      "Ce",
+      "ep",
+      "IndexError"
+    ],
+    "answer": "eC",
+    "misconception_map": {
+      "Ce": "negative_index_confusion"
+    },
+    "xp": 15,
+    "prompt_xh": "word = \"Cape\"\nprint(word[-1] + word[0])",
+    "options_xh": [
+      "eC",
+      "Ce",
+      "ep",
+      "IndexError"
+    ],
+    "answer_xh": "eC"
+  },
+  {
+    "module_id": "indexing",
+    "question_id": "indexing-36",
+    "prompt": "word = \"python\"\nSelect all expressions below that give the LAST character.",
+    "type": "select_all",
+    "options": [
+      "word[-1]",
+      "word[len(word) - 1]",
+      "word[5]",
+      "word[len(word)]"
+    ],
+    "answers": [
+      "word[-1]",
+      "word[len(word) - 1]",
+      "word[5]"
+    ],
+    "misconception_map": {
+      "word[len(word)]": "off_by_one_length"
+    },
+    "xp": 20,
+    "prompt_xh": "word = \"python\"\nKhetha onke amagama angaphantsi anika uphawu LOKUGQIBELA.",
+    "options_xh": [
+      "word[-1]",
+      "word[len(word) - 1]",
+      "word[5]",
+      "word[len(word)]"
+    ],
+    "answers_xh": [
+      "word[-1]",
+      "word[len(word) - 1]",
+      "word[5]"
+    ]
   }
 ]

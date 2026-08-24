@@ -11,7 +11,14 @@ Usage:
     python scripts/translate_content_nllb.py exercises      # backend exercise bank
     python scripts/translate_content_nllb.py options        # mcq/select_all option text
     python scripts/translate_content_nllb.py modules        # lesson content stubs
+    python scripts/translate_content_nllb.py challenges     # coding-challenge bank
+    python scripts/translate_content_nllb.py locales        # frontend UI strings (xh.json)
     python scripts/translate_content_nllb.py exercises --limit 20 --dry-run
+
+This is the only one of the two translation scripts that covers every piece of
+translatable content in the repo — `translate_content.py` (the Claude-API
+counterpart) only implements `exercises` and `modules`, and does not touch
+`options`, `challenges`, or the locale file at all.
 
 Scope: prose only — prompts, hints and lesson text. Python source is never
 translated, in any direction. (An isiXhosa/Python keyword transpiler is separate
@@ -63,6 +70,8 @@ TGT_LANG = "xho_Latn"
 ROOT = Path(__file__).resolve().parent.parent
 EXERCISES = ROOT / "backend" / "app" / "data" / "exercises.json"
 CHALLENGES = ROOT / "backend" / "app" / "data" / "challenges.json"
+LOCALES_EN = ROOT / "frontend" / "src" / "locales" / "en.json"
+LOCALES_XH = ROOT / "frontend" / "src" / "locales" / "xh.json"
 
 
 # ---------------------------------------------------------------------------
@@ -128,8 +137,34 @@ GLOSSARY_CI = re.compile(
       | variables? | methods? | lists? | Unicode | concatenat\w+
       | Python | Firebase | ASCII | Cape\ Town | Joburg | Hlomla | isiXhosa
       | Xhosa | Ada | [A-Za-z]+Error
+      # Names for string SYNTAX, which the student has to reproduce exactly.
+      # Unprotected, NLLB rendered the option "The characters backslash-quote"
+      # as "Abalingiswa backslash-caption" — "quote" became the unrelated
+      # sense "caption", naming the wrong character entirely.
+      | backslash(?:es)? | quotations? | quotes? | apostrophes?
     )\b""",
     re.VERBOSE | re.IGNORECASE,
+)
+
+# An OPTION that names Python keywords as bare words, e.g. the distractor
+# "while should be for". These are not code spans (no call, subscript or
+# assignment syntax for INLINE_SPAN to catch) and not glossary terms, so they
+# reached NLLB fully exposed — and it dropped "for" entirely, turning the
+# option into "ngelixa kufuneka ukuba", which no longer names the keyword the
+# exercise is asking the student to swap in.
+#
+# Used ONLY as a do_options "leave this untranslated" guard, never as a mask:
+# masking these inside general prose would wreck ordinary sentences, since a
+# lesson paragraph says "for" and "while" in their English senses constantly.
+# Kept to control-flow/definition keywords rather than every keyword for the
+# same reason — `in`, `is`, `and`, `not` and `as` are ordinary English words
+# far more often than they are Python here.
+#
+# Case-SENSITIVE on purpose, matching GLOSSARY_CS's rationale: a capitalised
+# "For"/"While" opens a normal sentence, a lowercase one names the keyword.
+PY_KEYWORD_OPTION = re.compile(
+    r"\b(?:for|while|elif|def|lambda|import|global|nonlocal|yield"
+    r"|assert|del|raise|except|finally)\b"
 )
 
 # Case-SENSITIVE on purpose: these are Python literals, and matching them
@@ -212,6 +247,20 @@ def looks_like_literal_value(option: str) -> bool:
 # rationale as BARE_MULTIWORD_ASSIGNMENT: narrow, known instances, left
 # untranslated rather than risking the shared regex everywhere else.
 BARE_OPERATOR_CODE = re.compile(r"\b[a-zA-Z_]\w*\s*(?:[+\-*/%]=|<=|>=|==|!=)\s*\S")
+
+# An unresolved f-string placeholder surviving in the option text itself, e.g.
+# "{name} is {age}" (formatting-01..04's "forgot the f-prefix" distractor —
+# the literal string Python prints when the `f` is left off). No mask in this
+# file protects bare `{...}` — CODE_SPAN/INLINE_SPAN were written for Python
+# syntax, not f-string braces — so unlike a real code span this reaches the
+# model fully exposed. It also slips past `looks_like_literal_value`, because
+# these read as three words and one of them ("is") is a SENTENCE_SIGNAL word
+# that the description/literal split treats as a description marker. But the
+# braces are exactly what the exercise is testing, and there's nothing
+# describing behaviour here — it's the literal output. Same rationale as
+# BARE_MULTIWORD_ASSIGNMENT and BARE_OPERATOR_CODE: narrow, known instance,
+# left untranslated rather than risking the shared regex everywhere else.
+BARE_PLACEHOLDER_LITERAL = re.compile(r"\{\w+\}")
 
 # Prose label prefixing a code line in some prompts: `Line 2: word.upper()`.
 # The label stays English — splitting the line to translate two words is not
@@ -499,6 +548,8 @@ def do_options(translator, limit: int | None, dry_run: bool) -> None:
             opt if (
                 BARE_MULTIWORD_ASSIGNMENT.match(opt.strip())
                 or BARE_OPERATOR_CODE.search(opt)
+                or BARE_PLACEHOLDER_LITERAL.search(opt)
+                or PY_KEYWORD_OPTION.search(opt)
                 or looks_like_literal_value(opt)
             )
             else translate_checked(translator, opt, f"{label}.options[{j}]")
@@ -568,6 +619,132 @@ def do_challenges(translator, limit: int | None, dry_run: bool) -> None:
             json.dumps(bank, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )
         print(f"\nwrote {CHALLENGES}")
+
+
+# ---------------------------------------------------------------------------
+# UI locale strings (frontend/src/locales/{en,xh}.json)
+# ---------------------------------------------------------------------------
+
+# i18next-style interpolation, e.g. "{filled} of {total} tiers cleared". These
+# are substituted at render time, so the token itself must survive untouched
+# the same way a code span must — NLLB has no idea `{filled}` is not a word
+# and will happily "translate" the braces away or reorder the token.
+LOCALE_PLACEHOLDER = re.compile(r"\{[^}]*\}")
+
+# NLLB silently drops a bare em dash used as a sentence-break punctuation mark
+# (confirmed by running it: "bar — that's mastery-level" came back "bar  that's
+# mastery-level" — the surrounding spaces survive but the dash itself
+# vanishes, leaving a double space with no visible sign anything is wrong).
+# Masked the same way as a placeholder so it survives verbatim like one.
+EM_DASH = re.compile(r"—")
+
+
+def mask_locale(text: str) -> tuple[str, list[str]]:
+    """Like `mask_spans`, but for UI copy: no code spans, just placeholders,
+    em dashes, and glossary terms (a locale string can still say "Python" or
+    "isiXhosa").
+    """
+    if PLACEHOLDER_RE.search(text):
+        raise ValueError("text already contains a placeholder-shaped token")
+
+    spans: list[str] = []
+
+    def take(match: re.Match[str]) -> str:
+        spans.append(match.group(0))
+        return PLACEHOLDER.format(len(spans) - 1)
+
+    masked = LOCALE_PLACEHOLDER.sub(take, text)
+    masked = EM_DASH.sub(take, masked)
+    masked = GLOSSARY_CI.sub(take, masked)
+    return GLOSSARY_CS.sub(take, masked), spans
+
+
+def protected_locale_spans(text: str) -> list[str]:
+    return mask_locale(text)[1]
+
+
+def verify_locale_spans(source: str, translated: str) -> list[str]:
+    return [span for span in protected_locale_spans(source) if span not in translated]
+
+
+def translate_locale_string(translator: "Translator", text: str, label: str) -> str | None:
+    """Translate one UI string, masking placeholders/glossary terms first."""
+    try:
+        masked, spans = mask_locale(text)
+    except ValueError as exc:
+        print(f"  ! {label}: {exc} — skipped", file=sys.stderr)
+        return None
+
+    if not re.search(r"[A-Za-z]", PLACEHOLDER_RE.sub("", masked)):
+        out = text  # nothing but placeholders/punctuation — no prose to translate
+    else:
+        out = unmask_spans(translator._generate(masked), spans)
+
+    broken = verify_locale_spans(text, out)
+    if broken:
+        print(f"  ! {label}: placeholder/glossary altered {broken} — skipped", file=sys.stderr)
+        return None
+    damage = degenerate(text, out)
+    if damage:
+        print(f"  ! {label}: {damage} — skipped", file=sys.stderr)
+        return None
+    return out
+
+
+def _flatten(node: dict, prefix: str = "") -> dict[str, str]:
+    out = {}
+    for key, value in node.items():
+        full = f"{prefix}.{key}" if prefix else key
+        if isinstance(value, dict):
+            out.update(_flatten(value, full))
+        else:
+            out[full] = value
+    return out
+
+
+def _set_path(root: dict, dotted: str, value: str) -> None:
+    parts = dotted.split(".")
+    node = root
+    for part in parts[:-1]:
+        node = node.setdefault(part, {})
+    node[parts[-1]] = value
+
+
+def do_locales(translator, limit: int | None, dry_run: bool) -> None:
+    """Fill in whatever keys `xh.json` is missing relative to `en.json`.
+
+    Purely additive, same as every other target here: an xh.json key that
+    already exists (hand-translated or from a previous run) is left alone.
+    """
+    en = json.loads(LOCALES_EN.read_text(encoding="utf-8"))
+    xh = json.loads(LOCALES_XH.read_text(encoding="utf-8")) if LOCALES_XH.exists() else {}
+
+    en_flat = _flatten(en)
+    xh_flat = _flatten(xh)
+    todo = [k for k in en_flat if k not in xh_flat][:limit]
+    print(f"{len(todo)} of {len(en_flat)} locale keys need translating")
+
+    for i, key in enumerate(todo, 1):
+        value = en_flat[key]
+        print(f"[{i}/{len(todo)}] {key}")
+        if dry_run:
+            masked, _ = mask_locale(value)
+            print(f"    {masked}")
+            continue
+
+        out = translate_locale_string(translator, value, key)
+        if out:
+            _set_path(xh, key, out)
+            print(f"    {out}")
+
+    if not dry_run:
+        # xh.json ships with CRLF line endings. write_text's own newline
+        # translation would double an already-inserted \r\n into \r\r\n, so
+        # this bypasses it (newline="") and does the substitution itself.
+        text = json.dumps(xh, ensure_ascii=False, indent=2) + "\n"
+        with open(LOCALES_XH, "w", encoding="utf-8", newline="") as f:
+            f.write(text.replace("\n", "\r\n"))
+        print(f"wrote {LOCALES_XH}")
 
 
 MODULE_DIR = ROOT / "frontend" / "src" / "data" / "moduleContent"
@@ -845,7 +1022,9 @@ def do_modules(translator, limit: int | None, dry_run: bool) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("target", choices=["exercises", "options", "modules", "challenges"])
+    parser.add_argument(
+        "target", choices=["exercises", "options", "modules", "challenges", "locales"]
+    )
     parser.add_argument("--limit", type=int, help="only process the first N items")
     parser.add_argument(
         "--dry-run", action="store_true", help="show the code/prose split, load nothing"
@@ -858,6 +1037,7 @@ def main() -> None:
         "options": do_options,
         "modules": do_modules,
         "challenges": do_challenges,
+        "locales": do_locales,
     }[args.target]
     runner(translator, args.limit, args.dry_run)
 
