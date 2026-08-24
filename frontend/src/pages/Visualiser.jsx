@@ -6,7 +6,8 @@ import styles from '../styles/App.module.css';
 import { SpeedControl } from '../components/SpeedControl';
 import { useLanguage } from '../context/LanguageContext';
 import { parseIndexInput, resolveIndex, sliceFromNotation } from '../utils/pythonStringOps';
-import { useSpeech } from '../utils/useSpeech';
+import { SpeechUnavailableDialog } from '../components/SpeechUnavailableDialog';
+import { joinSpeech, useSpeech } from '../utils/useSpeech';
 
 // How long one step is held at 1× speed; the speed picker divides this.
 const STEP_INTERVAL_MS = 800;
@@ -94,7 +95,9 @@ function buildForSteps(text, rangeInput, t) {
     charIndex: idx,
     char: chars[idx] ?? '',
     highlight: [idx],
-    description: t('visualiser.descForLoop', { n: iteration + 1, total: picked.length, ch: chars[idx] ?? '' }),
+    description: t('visualiser.descForLoop', {
+      n: iteration + 1, total: picked.length, ch: chars[idx] ?? '', i: idx,
+    }),
     variables: { c: chars[idx] ?? '', i: idx },
   }));
 }
@@ -235,6 +238,7 @@ export function Visualiser() {
   // Bumped by the Visualise button to replay the highlight animation.
   const [runId, setRunId] = useState(0);
   const playTimer = useRef(null);
+  const stepsLenRef = useRef(0);
 
   const text = useMemo(() => parseStringInput(stringInput), [stringInput]);
   const chars = useMemo(() => text.split(''), [text]);
@@ -281,6 +285,7 @@ export function Visualiser() {
     if (mode === 'if_stmt') return ifSteps;
     return [];
   }, [mode, forSteps, whileSteps, ifSteps]);
+  stepsLenRef.current = activeSteps.length;
 
   const currentStep = activeSteps[Math.min(stepIndex, activeSteps.length - 1)] ?? null;
 
@@ -322,6 +327,7 @@ export function Visualiser() {
         return {
           text: t('visualiser.indexOutOfRange', {
             index: indexInput,
+            length,
             min: -Math.max(length, 1),
             max: Math.max(length - 1, 0),
           }),
@@ -345,24 +351,74 @@ export function Visualiser() {
   }, [mode, indexLookup, indexInput, length, slice, sliceInput, methodResult, methodInput, output, t]);
 
   // ── spoken narration, for EVERY mode ──────────────────────────────────────
-  // The three stepped modes already author a per-step `description` (if_stmt
-  // includes its own eval-error text — see buildIfSteps), so those read out
-  // as-is. The three simple modes never had any sentence at all — only the
-  // output box — so they get one built from `simpleResult` here rather than
-  // being silently skipped by read-aloud.
+  // Stepped modes already author a per-step `description` that now includes
+  // why the step happens (and, on error, the error name plus the reason).
+  // Simple modes used to stop at "index 2 is l" / a bare exception name —
+  // read-aloud also has to say why that is the answer, or what the error is
+  // and why Python raised it.
   const narration = useMemo(() => {
     if (isStepped) return currentStep?.description ?? '';
     if (simpleResult.isError) return simpleResult.text;
-    if (mode === 'index') return t('visualiser.narrationIndex', { index: indexInput, char: chars[indexLookup.resolved] });
-    if (mode === 'slice') return t('visualiser.narrationSlice', { slice: sliceInput, output });
-    if (mode === 'method') return t('visualiser.narrationMethod', { method: methodInput, output });
+    if (mode === 'index') {
+      const char = chars[indexLookup.resolved];
+      return joinSpeech(
+        t('visualiser.narrationIndex', { index: indexInput, char }),
+        indexLookup.parsed < 0
+          ? t('visualiser.whyIndexNegative', {
+              index: indexInput, resolved: indexLookup.resolved, char,
+            })
+          : t('visualiser.whyIndexPositive', { index: indexInput, char }),
+      );
+    }
+    if (mode === 'slice') {
+      const why = slice.step < 0
+        ? t('visualiser.whySliceNegative', {
+            start: slice.start, stop: slice.stop, step: slice.step,
+          })
+        : t('visualiser.whySlice', {
+            start: slice.start, stop: slice.stop, step: slice.step,
+          });
+      return joinSpeech(
+        t('visualiser.narrationSlice', { slice: sliceInput, output }),
+        why,
+        slice.picked.length === 0 && t('visualiser.whySliceEmpty'),
+        (slice.startClamped || slice.stopClamped) && t('visualiser.whySliceClamped'),
+      );
+    }
+    if (mode === 'method') {
+      const m = methodInput.trim().toLowerCase();
+      const whyKey = m === 'upper' ? 'visualiser.whyUpper'
+        : m === 'lower' ? 'visualiser.whyLower'
+        : m === 'reverse' ? 'visualiser.whyReverse'
+        : m === 'strip' ? 'visualiser.whyStrip'
+        : m === 'title' ? 'visualiser.whyTitle'
+        : /^len\s*\(?\s*\)?$/.test(m) ? 'visualiser.whyLen'
+        : null;
+      return joinSpeech(
+        t('visualiser.narrationMethod', { method: methodInput, output }),
+        whyKey && t(whyKey),
+      );
+    }
     return '';
   }, [
     isStepped, currentStep, mode, simpleResult, indexLookup, indexInput, chars,
-    sliceInput, methodInput, output, t,
+    slice, sliceInput, methodInput, output, t,
   ]);
 
-  useEffect(() => { speech.speak(narration); }, [narration, speech]);
+  function advanceStep() {
+    setStepIndex((prev) => {
+      if (prev >= stepsLenRef.current - 1) {
+        setIsPlaying(false);
+        return prev;
+      }
+      return prev + 1;
+    });
+  }
+
+  useEffect(() => {
+    const wait = speech.enabled && isStepped && isPlaying;
+    speech.speak(narration, wait ? advanceStep : undefined);
+  }, [narration, speech.speak, speech.enabled, isStepped, isPlaying]);
 
   // ── reset step when mode / inputs change ──────────────────────────────────
   useEffect(() => {
@@ -372,18 +428,14 @@ export function Visualiser() {
   }, [mode, forInput, whileInput, ifInput, stringInput]);
 
   // ── auto-play ─────────────────────────────────────────────────────────────
-  // `speed` is a multiplier on the base interval; changing it mid-play rebuilds
-  // the timer, so the new pace takes effect immediately.
+  // Silent mode: `speed` multiplies the base interval. With read-aloud on,
+  // the next step waits until the current sentence has finished speaking
+  // (see the speak effect above) so the "why" is never cut off.
   useEffect(() => {
-    if (!isPlaying || activeSteps.length === 0) return;
-    playTimer.current = setInterval(() => {
-      setStepIndex(prev => {
-        if (prev >= activeSteps.length - 1) { setIsPlaying(false); return prev; }
-        return prev + 1;
-      });
-    }, STEP_INTERVAL_MS / speed);
+    if (!isPlaying || activeSteps.length === 0 || speech.enabled) return undefined;
+    playTimer.current = setInterval(advanceStep, STEP_INTERVAL_MS / speed);
     return () => clearInterval(playTimer.current);
-  }, [isPlaying, activeSteps.length, speed]);
+  }, [isPlaying, activeSteps.length, speed, speech.enabled]);
 
   function stopPlay() { clearInterval(playTimer.current); setIsPlaying(false); }
 
@@ -664,7 +716,14 @@ export function Visualiser() {
         </div>
 
         {/* output box */}
-        <div className={styles.visualiserOutput}>
+        <div
+          className={`${styles.visualiserOutput} ${
+            (isStepped ? currentStep?.error : simpleResult.isError)
+              ? styles.visualiserOutputError
+              : ''
+          }`}
+          aria-live="polite"
+        >
           <strong>{t('visualiser.output')}</strong>
           <code className={
             (isStepped ? currentStep?.error : simpleResult.isError)
@@ -693,6 +752,14 @@ export function Visualiser() {
                   : `'${output}'`}
           </code>
         </div>
+        {/* Simple modes have no step panel, so the "why this is the answer /
+            what the error is and why" line lives here — same string that
+            read-aloud speaks. Stepped modes already show it as visStepDesc. */}
+        {!isStepped && !simpleResult.isError && narration && (
+          <p className={styles.visualiserNarration} aria-live="polite">
+            {narration}
+          </p>
+        )}
       </section>
 
       {/* ── speed picker (own row, above the playback controls) ── */}
@@ -707,12 +774,17 @@ export function Visualiser() {
             className={styles.vizSpeakButton}
             onClick={speech.toggle}
             aria-pressed={speech.enabled}
-            title={speech.enabled ? t('viz.readAloudOff') : t('viz.readAloudOn')}
+            title={
+              speech.available
+                ? (speech.enabled ? t('viz.readAloudOff') : t('viz.readAloudOn'))
+                : t('viz.readAloudUnavailable')
+            }
           >
             {speech.enabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
             {t('viz.readAloud')}
           </button>
         )}
+        <SpeechUnavailableDialog open={speech.noticeOpen} onClose={speech.dismissNotice} />
       </div>
 
       {/* ── playback controls ── */}

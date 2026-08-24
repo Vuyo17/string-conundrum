@@ -1475,8 +1475,13 @@ p {
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
-.vizSpeakButton:hover {
+.vizSpeakButton:hover:not(:disabled) {
   background: var(--surface-2);
+}
+
+.vizSpeakButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .vizSpeakButton[aria-pressed="true"] {
@@ -1484,6 +1489,61 @@ p {
   border-color: var(--primary);
   color: var(--primary-dark);
 }
+
+.speechNoticeOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: hsl(220 20% 8% / 0.45);
+}
+
+.speechNoticeCard {
+  width: min(420px, 100%);
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  text-align: center;
+  padding: 28px 24px 22px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--fg);
+  box-shadow: 0 18px 50px hsl(220 20% 8% / 0.28);
+}
+
+.speechNoticeCard svg { color: var(--danger); }
+
+.speechNoticeCard h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.speechNoticeCard p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.speechNoticeOk {
+  margin-top: 8px;
+  min-width: 96px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  padding: 9px 18px;
+  background: var(--primary);
+  color: var(--primary-fg);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.speechNoticeOk:hover { background: var(--primary-dark); }
 
 .visualiserHeader {
   margin-bottom: 0;
@@ -1794,7 +1854,10 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 10px;
+  padding: 10px 14px;
+  box-sizing: border-box;
   background: var(--primary-soft);
   font-size: 14px;
 }
@@ -1804,6 +1867,34 @@ p {
   font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
   font-size: 14px;
   font-weight: 900;
+}
+
+.visualiserOutput code.visStepDescError {
+  font-weight: 700;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.visualiserOutputError {
+  background: var(--danger-soft);
+  border-color: var(--danger);
+}
+
+.visualiserOutputError strong,
+.visualiserOutputError code,
+.visualiserOutputError code.visStepDescError {
+  color: var(--danger);
+}
+
+.visualiserNarration {
+  width: 100%;
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);
+  text-align: left;
 }
 
 .visualiserControls {

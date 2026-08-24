@@ -5,7 +5,8 @@ import {
 import m from '../../../styles/ModulePage.module.css';
 import { useLanguage } from '../../../context/LanguageContext';
 import { buildIndexWalk, parseIndexInput } from '../../../utils/pythonStringOps';
-import { useSpeech } from '../../../utils/useSpeech';
+import { SpeechUnavailableDialog } from '../../SpeechUnavailableDialog';
+import { joinSpeech, useSpeech } from '../../../utils/useSpeech';
 
 const MAX_LENGTH = 14;
 const TICK_MS = 420;
@@ -25,6 +26,8 @@ export function IndexingVisualizer({ config, preset, autoPlayKey }) {
   const [done, setDone] = useState(false);
   const [autoRun, setAutoRun] = useState(false);
   const timerRef = useRef(null);
+  const runRef = useRef(run);
+  runRef.current = run;
 
   const parsedIndex = useMemo(() => parseIndexInput(indexInput), [indexInput]);
 
@@ -53,21 +56,26 @@ export function IndexingVisualizer({ config, preset, autoPlayKey }) {
     setDone(walk.path.length === 1);
   }
 
-  // advance the pointer on a timer
+  function advanceWalk() {
+    setWalkPos((pos) => {
+      const pathLen = runRef.current?.walk.path.length ?? 0;
+      if (pos >= pathLen - 1) {
+        stopTimer();
+        setDone(true);
+        return pos;
+      }
+      return pos + 1;
+    });
+  }
+
+  // Silent mode keeps the original tick. With read-aloud on, the pointer
+  // waits for the current sentence to finish — cutting mid-word taught the
+  // opposite of what the narration is for.
   useEffect(() => {
-    if (!run || done) return undefined;
-    timerRef.current = setInterval(() => {
-      setWalkPos((pos) => {
-        if (pos >= run.walk.path.length - 1) {
-          stopTimer();
-          setDone(true);
-          return pos;
-        }
-        return pos + 1;
-      });
-    }, TICK_MS);
+    if (!run || done || speech.enabled) return undefined;
+    timerRef.current = setInterval(advanceWalk, TICK_MS);
     return stopTimer;
-  }, [run, done]);
+  }, [run, done, speech.enabled]);
 
   useEffect(() => stopTimer, []);
 
@@ -115,23 +123,47 @@ export function IndexingVisualizer({ config, preset, autoPlayKey }) {
   // The step commentary, as one plain string: rendered into the aria-live
   // region for screen readers AND handed to read-aloud, so both stay in sync
   // with whatever the animation is showing rather than drifting apart.
-  const narration = !run ? '' : [
+  // Finished / error lines also say *why* — cycle-1 asked read-aloud to name
+  // the result or error and explain the reason, not just narrate the walk.
+  const lastPos = run ? run.walk.path[run.walk.path.length - 1] : null;
+  const narration = !run ? '' : joinSpeech(
     !finished && pointerCell !== null && (
       run.index >= 0
         ? t(
             run.walk.path[walkPos] === 1 ? 'viz.walkingForwardOne' : 'viz.walkingForward',
-            { steps: run.walk.path[walkPos] },
+            { steps: run.walk.path[walkPos], char: run.text[pointerCell] },
           )
-        : t('viz.countingBack', { steps: run.walk.path[walkPos] - run.text.length })
+        : t('viz.countingBack', {
+            steps: run.walk.path[walkPos] - run.text.length,
+            char: run.text[pointerCell],
+          })
     ),
     success && t('viz.landedOn', {
-      index: run.walk.path[run.walk.path.length - 1],
+      index: lastPos,
       char: resultChar,
     }),
-    failure && t('viz.ranOut', { index: run.index }),
-  ].filter(Boolean).join(' ');
+    success && t('viz.whyLanded', {
+      requested: run.index,
+      pos: lastPos,
+      neg: lastPos - run.text.length,
+      char: resultChar,
+      length: run.text.length,
+      last: Math.max(run.text.length - 1, 0),
+    }),
+    failure && t('viz.indexErrorTitle'),
+    failure && t('viz.indexErrorWhy', {
+      text: run.text,
+      length: run.text.length,
+      min: -run.text.length,
+      max: Math.max(run.text.length - 1, 0),
+      index: run.index,
+    }),
+  );
 
-  useEffect(() => { speech.speak(narration); }, [narration, speech]);
+  useEffect(() => {
+    const wait = speech.enabled && Boolean(run) && !done;
+    speech.speak(narration, wait ? advanceWalk : undefined);
+  }, [narration, speech.speak, speech.enabled, run, done]);
 
   return (
     <div className={m.visualizerCard}>
@@ -171,19 +203,24 @@ export function IndexingVisualizer({ config, preset, autoPlayKey }) {
             className={m.ghostButton}
             onClick={speech.toggle}
             aria-pressed={speech.enabled}
-            title={speech.enabled ? t('viz.readAloudOff') : t('viz.readAloudOn')}
+            title={
+              speech.available
+                ? (speech.enabled ? t('viz.readAloudOff') : t('viz.readAloudOn'))
+                : t('viz.readAloudUnavailable')
+            }
           >
             {speech.enabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
             {t('viz.readAloud')}
           </button>
         )}
+        <SpeechUnavailableDialog open={speech.noticeOpen} onClose={speech.dismissNotice} />
       </div>
 
       {parsedIndex === null && indexInput.trim() !== '' && (
         <p className={m.vizHint}>{t('viz.indexWholeNumber')}</p>
       )}
 
-      <div className={m.vizExpression}>
+      <div className={`${m.vizExpression} ${failure ? m.vizExpressionError : ''}`}>
         <code>
           text = "{run?.text ?? text}"
           {'   '}

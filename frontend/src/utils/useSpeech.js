@@ -10,21 +10,41 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 // are NOT running a screen reader but still want the steps spoken.
 //
 // Language note: browsers ship a good English voice almost everywhere, but an
-// isiXhosa (xh-ZA) voice essentially nowhere. `pickVoice` therefore degrades
-// deliberately rather than silently mispronouncing: it prefers an exact xh
-// match, then any South African voice (en-ZA is far closer to isiXhosa vowel
-// values than en-US), then whatever the browser considers default.
+// isiXhosa (xh-ZA) voice essentially nowhere. Falling back to en-ZA / the
+// default voice would *sound* like it was working while mispronouncing the
+// lesson, so isiXhosa does not speak. Clicking Read aloud opens a popup
+// that says so, instead of silently doing nothing.
 
 export function speechSupported() {
   return typeof window !== 'undefined' && 'speechSynthesis' in window;
 }
 
-function pickVoice(voices, lang) {
+// Join explanation fragments into one utterance. Empty bits are dropped so
+// callers can pass optional "why" / error clauses without extra spaces.
+export function joinSpeech(...parts) {
+  return parts
+    .flat()
+    .filter((p) => typeof p === 'string' && p.trim())
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Speech engines read "→" as "right arrow" and "✓" as "check mark". Strip
+// the decoration so the student hears the explanation, not the glyphs.
+function forSpeech(text) {
+  return text
+    .replace(/[→←]/g, ', ')
+    .replace(/[✓✗]/g, '')
+    .replace(/…/g, '.')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function pickVoice(voices) {
   if (!voices.length) return null;
-  const want = lang === 'xh' ? 'xh' : 'en';
   return (
-    voices.find((v) => v.lang?.toLowerCase().startsWith(want))
-    ?? (want === 'xh' ? voices.find((v) => v.lang?.toLowerCase().endsWith('-za')) : null)
+    voices.find((v) => v.lang?.toLowerCase().startsWith('en'))
     ?? voices.find((v) => v.default)
     ?? voices[0]
   );
@@ -33,16 +53,26 @@ function pickVoice(voices, lang) {
 /**
  * @param {string} lang  current UI language ('en' | 'xh')
  * @returns {{
- *   supported: boolean, enabled: boolean, toggle: () => void, speak: (text: string) => void
+ *   supported: boolean, available: boolean, enabled: boolean,
+ *   noticeOpen: boolean, dismissNotice: () => void,
+ *   toggle: () => void,
+ *   speak: (text: string, onEnded?: () => void) => void
  * }}
  */
 export function useSpeech(lang) {
   const [enabled, setEnabled] = useState(false);
+  const [noticeOpen, setNoticeOpen] = useState(false);
   const [voices, setVoices] = useState([]);
   const supported = speechSupported();
+  // Browsers cannot speak isiXhosa. The button stays clickable so we can
+  // show a popup instead of mispronouncing the translated narration.
+  const available = supported && lang !== 'xh';
   // What was last spoken, so re-renders that don't change the narration text
   // don't restart the same sentence mid-word.
   const lastSpokenRef = useRef('');
+  // Bumped on every new utterance / cancel so a cancelled utterance's
+  // onend/onerror cannot be mistaken for "this sentence finished, advance".
+  const utteranceIdRef = useRef(0);
 
   useEffect(() => {
     if (!supported) return undefined;
@@ -57,33 +87,111 @@ export function useSpeech(lang) {
   // this, navigating off mid-sentence keeps talking over the next screen.
   useEffect(() => {
     if (!supported) return undefined;
-    return () => window.speechSynthesis.cancel();
+    return () => {
+      utteranceIdRef.current += 1;
+      window.speechSynthesis.cancel();
+    };
   }, [supported]);
 
   useEffect(() => {
     if (!supported || enabled) return;
+    utteranceIdRef.current += 1;
     window.speechSynthesis.cancel();
     lastSpokenRef.current = '';
   }, [enabled, supported]);
 
-  const speak = useCallback((text) => {
-    if (!supported || !enabled) return;
-    const clean = (text ?? '').trim();
-    if (!clean || clean === lastSpokenRef.current) return;
+  // Switching the UI to isiXhosa must stop any in-flight English utterance
+  // and drop the toggle. Switching back to English closes the "not supported"
+  // popup if it was still open.
+  useEffect(() => {
+    if (available) {
+      setNoticeOpen(false);
+      return;
+    }
+    setEnabled(false);
+  }, [available]);
+
+  const speak = useCallback((text, onEnded) => {
+    if (!supported || !available || !enabled) return;
+    const clean = forSpeech(text ?? '');
+    if (!clean) {
+      onEnded?.();
+      return;
+    }
+    // Re-renders that don't change the line must not restart it mid-word.
+    // When the caller is waiting to advance (onEnded), a repeat of the same
+    // line still has to produce an end event or the animation stalls.
+    if (!onEnded && clean === lastSpokenRef.current) return;
+
+    const id = utteranceIdRef.current + 1;
+    utteranceIdRef.current = id;
     lastSpokenRef.current = clean;
 
-    // Cancel first: queuing would make a fast-stepping visualizer read out a
-    // growing backlog of stale steps long after the animation had moved on.
+    // Cancel first: without this, a fast-stepping visualizer would queue a
+    // backlog of stale steps. cancel() fires onend/onerror on the old
+    // utterance — the generation id above is what stops that from looking
+    // like the new sentence finished.
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(clean);
-    const voice = pickVoice(voices, lang);
+    const voice = pickVoice(voices);
     if (voice) utterance.voice = voice;
-    utterance.lang = voice?.lang ?? (lang === 'xh' ? 'xh-ZA' : 'en-ZA');
+    utterance.lang = voice?.lang ?? 'en-ZA';
     utterance.rate = 0.95;
-    window.speechSynthesis.speak(utterance);
-  }, [supported, enabled, voices, lang]);
 
-  const toggle = useCallback(() => setEnabled((on) => !on), []);
+    let settled = false;
+    let fallback = 0;
+    let resumeWatch = 0;
+    const finish = () => {
+      if (settled || utteranceIdRef.current !== id) return;
+      settled = true;
+      window.clearTimeout(fallback);
+      window.clearInterval(resumeWatch);
+      onEnded?.();
+    };
+    utterance.onend = finish;
+    // cancel() reports 'interrupted'/'canceled' on the *old* utterance; that
+    // is not "this sentence finished". Ignoring it is what lets the current
+    // line play to the end instead of jumping to the next step.
+    utterance.onerror = (event) => {
+      if (event.error === 'interrupted' || event.error === 'canceled') return;
+      finish();
+    };
+    // Safety net only: onend is what actually advances. Sized well above a
+    // slow reading of the line so a hang unsticks without clipping speech.
+    const fallbackMs = Math.min(45000, Math.max(8000, clean.split(/\s+/).length * 800));
+    fallback = window.setTimeout(finish, fallbackMs);
 
-  return { supported, enabled, toggle, speak };
+    // Chrome can drop the next speak() if it is issued in the same turn as
+    // cancel(). A tick later is enough for the engine to accept it.
+    window.setTimeout(() => {
+      if (utteranceIdRef.current !== id) return;
+      window.speechSynthesis.speak(utterance);
+    }, 40);
+    // Chrome pauses the engine after ~15s of continuous speech. Resume so a
+    // long "why" is not truncated mid-sentence.
+    resumeWatch = window.setInterval(() => {
+      if (utteranceIdRef.current !== id) return;
+      if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+    }, 4000);
+  }, [supported, available, enabled, voices]);
+
+  const toggle = useCallback(() => {
+    if (!available) {
+      setNoticeOpen(true);
+      return;
+    }
+    setEnabled((on) => !on);
+  }, [available]);
+
+  const dismissNotice = useCallback(() => setNoticeOpen(false), []);
+
+  return {
+    supported,
+    available,
+    enabled: available && enabled,
+    noticeOpen,
+    dismissNotice,
+    toggle,
+    speak,
+  };
 }

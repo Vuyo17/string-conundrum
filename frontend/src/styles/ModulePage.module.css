@@ -748,6 +748,15 @@
 
 .vizExpressionResult { color: hsl(33, 95%, 68%); font-weight: 700; }
 
+.vizExpressionError {
+  background: hsl(0, 42%, 16%);
+  box-shadow: inset 0 0 0 2px var(--danger);
+}
+
+.vizExpressionError .vizExpressionResult {
+  color: hsl(0, 82%, 72%);
+}
+
 .vizStage { display: grid; gap: 12px; padding-top: 18px; }
 
 .vizNarration {
