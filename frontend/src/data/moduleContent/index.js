@@ -23,8 +23,7 @@ import { loopingModule } from './looping';
 import { methodsModule } from './methods';
 import { formattingModule } from './formatting';
 
-// isiXhosa overlays. `intro` is hand-written; the rest are machine-translated
-// by scripts/translate_content_nllb.py and pending a human read.
+// isiXhosa overlays. Machine-translated by scripts/translate_content_nllb.py.
 import { introModuleXh } from './xh/intro';
 import { indexingModuleXh } from './xh/indexing';
 import { immutabilityModuleXh } from './xh/immutability';

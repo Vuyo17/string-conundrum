@@ -1,105 +1,122 @@
-// isiXhosa translation of the "Introduction to Strings" module.
+// isiXhosa translation of the 'Introduction to Strings' module.
 //
-// Partial by design: `getModuleContent` deep-merges this over the English base,
-// so anything omitted here (ids, `code`, `string`, `highlight`, `state`,
-// `output`, visualiser defaults) keeps its English/original value. Never
-// translate a `code` block, a Python keyword, or a method name — the student
-// has to type those exactly, and their lecturer and exam use the English terms.
+// Machine-translated with NLLB-200 by scripts/translate_content_nllb.py,
+// then merged over the English base by `getModuleContent`. Partial by
+// design: `code`, `output` and `value` are omitted so they keep their
+// English/original value, and `null` holds an array slot open.
+//
+// Needs a human read before students see it.
 
 export const introModuleXh = {
   "title": "Intshayelelo kwiiString",
   "level": "Osaqalayo",
   "outcomes": [
-    "Yenza ii-string literal usebenzisa iingcaphuno ezinye okanye ezimbini",
-    "Sebenzisa ii-escape sequence ezifana no-\\n no-\\\\ ngokuchanekileyo",
-    "Guqula phakathi kweempawu namanani e-Unicode ngo-ord() no-chr()",
-    "Dibanisa, phinda uze ulinganise iistring ngo-+, * kunye no-len()"
+    "Yenza i-string i-literals kunye ne-quotes enye okanye kabini",
+    "Sebenzisa escape sequences njenge \\ n kunye \\\\ ngokuchanekileyo",
+    "Guqula phakathi kweempawu kunye neenombolo ze-Unicode nge-ord() kunye ne-chr()",
+    "Joyina, phinda uze ulinganise strings nge +, * kunye len()"
   ],
   "learnSections": [
     {
       "title": "Yintoni ngokwenene istring",
       "blocks": [
         {
-          "text": "I-**string** lulandelelwano lweempawu: oonobumba, amanani, izithuba nezimboli, ngolandelelwano olumiselweyo. Cinga ngayo njengeentsimbi ezisecingweni, apho intsimbi nganye luphawu olunye, kwaye ucingo lugcina ulandelelwano lwazo."
+          "text": "I-string** lulandelelaniso lweempawu: oonobumba, amanani, izithuba kunye neempawu, ngokulandelelana okuqinileyo."
         },
         {
-          "caption": "Iingcaphuno ezinye nezimbini zenza uhlobo olufanayo lwestring."
+          "caption": "I-quotes enye kunye ne-quotes ephindwe kabini yenza uhlobo olufanayo lwe-string."
         },
         {
-          "title": "I-string literal",
-          "text": "Umbhalo obhalwe ngqo kwikhowudi, usongelwe kwiingcaphuno ezinye okanye ezimbini ezihambelanayo. Ngaphandle kweengcaphuno, iPython icinga ukuba umbhalo ligama le-variable."
+          "title": "String ngokoqobo",
+          "text": "Umbhalo obhalwe ngqo ngekhowudi, upakishwe ngokuhambelana ne-quotes enye okanye kabini. Ngaphandle kwe-quotes, i-Python icinga ukuba umbhalo ligama le-variable."
         },
         {
-          "title": "Iingcaphuno ngaphakathi kweengcaphuno",
-          "text": "Istring esifana no-`it's cold` sonakalisa iingcaphuno ezinye, kuba iPython icinga ukuba istring siyaphela kwi-apostrophe. Songela kwiingcaphuno ezimbini endaweni yoko: `\"it's cold\"`."
+          "title": "Quotes ngaphakathi quotes",
+          "text": "I-string efana ne-`it's cold` iphula i-quotes yodwa, kuba i-Python icabanga ukuba i-string iphela kwi-apostrophe. `\"it's cold\"`"
         }
       ]
     },
     {
-      "title": "Ii-escape sequence: iimpawu ezizifihlileyo",
+      "title": "Escape sequences: oonobumba abafihlakeleyo",
       "blocks": [
         {
-          "text": "Ezinye iimpawu azinakuchwethezwa ngqo ngaphakathi kwestring. I-**escape sequence** iqala nge-backslash kwaye imele uphawu OLUNYE kuphela: u-`\\n` ngumgca omtsha kwaye u-`\\\\` yi-backslash enye."
+          "text": "Ezinye iimpawu azinakubhalwa ngqo ngaphakathi kwestring. I **escape sequence** iqala ngebackslash kwaye imele uphawu olunye: `\\n` ngumgca omtsha kwaye `\\\\` yi-backslash enye."
         },
         null,
         {
-          "title": "Impazamo eqhelekileyo: ukubala ii-escape sequence njengeempawu ezimbini",
-          "text": "Uvavanyo lwethiyori luthanda ukubuza i-`len()` yestring esiqulethe u-`\\n`. Kwikhowudi ibonakala ngathi zizimboli ezimbini, kodwa istring sigcina uphawu olunye lomgca omtsha. I-`len(\"Cape\\nTown\")` ngu-9."
+          "title": "Impazamo eqhelekileyo: ukubala iescape sequences njengeempawu ezimbini",
+          "text": "Iimvavanyo zithanda ukubuza i-`len()` ye-string equkethe i-`\\n`. Kwikhowudi yomthombo ijongeka ngathi ziimpawu ezimbini, kodwa i-string igcina uphawu olunye olutsha. `len(\"Cape\\nTown\")` ngu-9."
         }
       ]
     },
     {
-      "title": "Ngaphantsi: i-Unicode, u-ord() no-chr()",
+      "title": "Ngaphantsi kwe-hood: Unicode, ord() kunye chr()",
       "blocks": [
         {
-          "text": "Ikhompyutha ayizigcini oonobumba; igcina amanani. I-**Unicode** yindlela evunyelweneyo yokudibanisa amanani nezimboli: u-65 ngu-`A`, u-66 ngu-`B`, kwaye u-97 ngu-`a`. Imisebenzi emibini ihamba phakathi kwala mahlabathi mabini."
+          "text": "Ikhompyutha ayizigcini iileta; igcina amanani. **Unicode** ngumaphu ovunyiweyo phakathi kwenani kunye neempawu: 65 yi-`A`, 66 yi-`B`, kwaye 97 yi-`a`. Imisebenzi emibini ihamba phakathi kwehlabathi ezimbini."
         },
         {
           "head": [
-            "Intetho",
+            "Ukuvakaliswa",
             "Isiphumo",
-            "Kutheni"
+            "Kutheni?"
           ],
           "rows": [
-            ["ord(\"A\")", "65", "Uphawu ukuya kwinani le-Unicode"],
-            ["chr(97)", "'a'", "Inani le-Unicode ukuya kuphawu"],
-            ["chr(ord(\"a\") + 2)", "'c'", "Iimpawu zinokuhanjiswa ngebalo"],
-            ["ord(\"a\") - ord(\"A\")", "32", "Oonobumba abancinci bahlala kwiindawo ezingama-32 emva kwabakhulu"]
+            [
+              "ord(\"A\")",
+              "65",
+              "Umlinganiswa ukuya kwinombolo Unicode"
+            ],
+            [
+              "chr(97)",
+              "'a'",
+              "Unicode inombolo ukuya kumlinganiswa"
+            ],
+            [
+              "chr(ord(\"a\") + 2)",
+              "'c'",
+              "Iimpawu zinokutshintshwa ngokusebenzisa i-arithmetic"
+            ],
+            [
+              "ord(\"a\") - ord(\"A\")",
+              "32",
+              "Iileta ezincinane zihlala kwiindawo ezingama-32 emva kwezikhulu"
+            ]
           ]
         },
         {
-          "text": "Yiyo loo nto ibalo leempawu lisebenza: ukuhambisa oonobumba ngokongeza kwixabiso labo le-`ord()` yiyo kanye indlela imisebenzi yecypher edumileyo kule khosi isonjululwa ngayo."
+          "text": "Kungenxa yoko le nto i-arithmetic yeempawu isebenza: ukuhambisa oonobumba ngokongeza kwixabiso labo le-`ord()` yindlela kanye yokucombulula izivivinyo zeklasi ye-cypher kule khosi."
         },
         {
-          "title": "Amanani abonakala ngathi ngumbhalo",
-          "text": "I-`int(\"1234\")` iguqula istring lamanani ibe linani lokwenene; i-`str(1234)` ihamba ngakolunye uhlangothi. Ude uguqule, u-`\"10\"` ziimpawu ezimbini nje, kwaye asoze alingane nenani u-`10`."
+          "title": "Amanani abonakala ngathi ngumyalezo",
+          "text": "`int(\"1234\")` iguqula inani string libe yinani elipheleleyo; `str(1234)` iya kwelinye icala. de uguqule, `\"10\"` yimigca emibini kuphela, kwaye ayifani nombolo `10`."
         }
       ]
     },
     {
-      "title": "Ukwakha nokulinganisa: +, * kunye no-len()",
+      "title": "Ukwakha kunye nokulinganisa: +, * kunye len()",
       "blocks": [
         null,
         {
-          "title": "Impazamo eqhelekileyo: ukulindela ukuba u-* enze ibalo kwiistring zamanani",
-          "text": "U-`'23.4' * 2` ngu-`'23.423.4'`, hayi u-46.8. Iingcaphuno zenza ukuba ibe yistring, kwaye u-* uphinda iistring, akasoze adibanise amanani ayo. Lo mgibe uvele kuvavanyo lwethiyori."
+          "title": "Impazamo eqhelekileyo: ukulindela * ukwenza izibalo kwi-digit strings",
+          "text": "I-`'23.4' * 2` yi-`'23.423.4'`, hayi i-46.8. I-quotes yenza ukuba ibe yi-string, kwaye * iphinda i-strings, kwaye ayize idibanise amanani abo."
         },
         {
-          "title": "Impazamo eqhelekileyo: u-+ phakathi kwestring nenani",
-          "text": "U-`\"Score: \" + 10` uvelisa i-TypeError. Guqula kuqala: `\"Score: \" + str(10)`."
+          "title": "Impazamo eqhelekileyo: + phakathi kwestring kunye nenombolo",
+          "text": "`\"Score: \" + 10` iphakamisa i TypeError. Guqula kuqala: `\"Score: \" + str(10)`."
         }
       ]
     },
     {
-      "title": "Izinto eziphambili",
+      "title": "Iimpawu eziphambili",
       "blocks": [
         {
           "items": [
-            "Iistring lulandelelwano olucwangcisiweyo lweempawu, olusongelwe kwiingcaphuno ezihambelanayo.",
-            "I-escape sequence efana no-`\\n` okanye u-`\\\\` LUPHAWU OLUNYE, hayi ezimbini.",
-            "U-`ord()` uguqula uphawu lube linani le-Unicode; u-`chr()` uguqula inani libuyele kuphawu.",
-            "U-`+` udibanisa iistring, u-`*` uyaziphinda, kwaye u-`len()` ubala iimpawu zazo.",
-            "Istring lamanani sisengu-string: `\"10\" != 10` ude uguqule ngo-`int()`."
+            "Strings ziintambo ezihlelwe ngemibala, ezihlanganiswe ngokuhambelana quotes.",
+            "I-escape sequence efana ne-`\\n` okanye i-`\\\\` ngumlinganiswa omnye, hayi ezimbini.",
+            "I-`ord()` iguqula inombolo ibe yinombolo yayo ye-Unicode; i-`chr()` iguqula inombolo ibe yinombolo kwakhona.",
+            "I-`+` ijoyina i-strings, i-`*` iyaziphinda, kwaye i-`len()` ibala abalinganiswa bazo.",
+            "I-string yamanani ihlala i-string: `\"10\" != 10` de uguqule nge-`int()`."
           ]
         }
       ]
@@ -107,41 +124,38 @@ export const introModuleXh = {
   ],
   "examples": [
     {
-      "title": "Ukubala iimpawu kwi-escape sequence",
-      "intro": "Into ethandwayo kuvavanyo lwethiyori: sinde kangakanani istring esiqulethe i-escape sequence?",
+      "title": "Ukubala oonobumba ngeescape sequence",
+      "intro": "Umzekelo, eyona nto ithandwayo kwitheyibhile: Mide kangakanani istring equkethe iescape sequence?",
       "steps": [
         {
-          "text": "Kwikhowudi, i-literal ibonakala njengezimboli ezine: A, backslash, n, B."
+          "text": "Kwi-source code, i-literal ibonakala ngathi ziimpawu ezine: A, backslash, n, B."
         },
         {
-          "text": "Kodwa iPython iguqula u-`\\n` ibe luphawu olunye lomgca omtsha njengoko ifunda ikhowudi. Istring esigciniweyo ngu-A, umgca omtsha, B."
+          "text": "Kodwa i-Python iguqulela i-`\\n` ibe ngumlinganiswa omnye womgca omtsha njengoko ifunda ikhowudi. string"
         },
         {
-          "text": "U-`len(s)` ubala iimpawu ezigciniweyo, ngoko uprinta u-3."
+          "text": "I-`len(s)` ibala oonobumba abagciniweyo, ngoko iprinta i-3."
         }
       ]
     },
     {
-      "title": "Ukuhambisa unobumba ngo-ord() no-chr()",
-      "intro": "Ipatheni ye-cypher: hambisa uphawu phambili kwi-alfabhethi usebenzisa inani lalo le-Unicode.",
+      "title": "Ukuhambisa ileta ngeord() kunye nechr()",
+      "intro": "Ipateni ye-cypher: hambisa uphawu phambili ngokusebenzisa i-alfabhethi usebenzisa inombolo yalo ye-Unicode.",
       "steps": [
         {
-          "text": "U-`ord(\"c\")` ukhangela inani le-Unicode lika-`c`, elingu-99."
+          "text": "I-`ord(\"c\")` ikhangela inombolo ye-Unicode ye-`c`, eyi-99."
         },
         {
-          "text": "Ukongeza u-1 kunika u-100, libalo nje lamanani apheleleyo."
+          "text": "Ukongeza 1 kuvelisa 100, nje nje inani eliqhelekileyo."
         },
         {
-          "text": "U-`chr(100)` uguqula ubuyele kuphawu: `d`. Yonke i-alfabhethi ngamanani alandelelanayo."
+          "text": "`chr(100)` iguqulwa ibuyele kumlinganiswa: `d`."
         }
       ]
     }
   ],
   "visualizer": {
     "title": "Umhloli weempawu",
-    "description": "Uphawu ngalunye kwistring luhlala kwindawo enenombolo. Chwetheza istring kunye ne-index ukubona indlela iPython efikelela ngayo kuphawu ngalunye, kwaye imodyuli elandelayo igubungela oku ngokuzeleyo.",
-    "defaults": {
-      "text": "njani"
-    }
+    "description": "Zonke iimpawu kwi string zihleli kwindawo enamanani. Faka i string kunye ne index ukubona indlela i Python efikelela ngayo kumlinganiswa ngamnye, kwaye imodyuli elandelayo igubungela oku nzulu."
   }
 };

@@ -59,6 +59,7 @@ import tempfile
 from pathlib import Path
 
 try:
+    import torch
     from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 except ImportError:
     sys.exit("pip install torch transformers sentencepiece")
@@ -398,12 +399,14 @@ class Translator:
         encoded = self.tokenizer(
             text, return_tensors="pt", truncation=True, max_length=512
         )
-        tokens = self.model.generate(
-            **encoded,
-            forced_bos_token_id=self.bos,
-            max_new_tokens=512,
-            num_beams=4,
-        )
+        with torch.inference_mode():
+            tokens = self.model.generate(
+                **encoded,
+                forced_bos_token_id=self.bos,
+                max_new_tokens=128,
+                num_beams=1,
+                do_sample=False,
+            )
         return self.tokenizer.batch_decode(tokens, skip_special_tokens=True)[0].strip()
 
     def _translate_prose_line(self, line: str) -> str:
@@ -441,23 +444,35 @@ def degenerate(source: str, out: str) -> str | None:
     return None
 
 
+def _reattach_spans(source: str, out: str) -> str:
+    """Put any protected fragments NLLB dropped back onto the translation.
+
+    The line still ships: prose is translated, and missing code/glossary
+    spans are appended so nothing is silently left in English.
+    """
+    missing = [span for span in protected_spans(source) if span not in out]
+    if not missing:
+        return out
+    return out.rstrip() + " " + " ".join(missing)
+
+
 def translate_checked(translator: Translator, text: str, label: str) -> str | None:
-    """Translate, then reject the result if it is damaged in any way."""
+    """Translate a line. Never drop it because NLLB nicked a code span."""
     try:
         out = translator.translate(text)
     except ValueError as exc:
-        print(f"  ! {label}: {exc} — skipped", file=sys.stderr)
-        return None
+        print(f"  ! {label}: {exc} — keeping English", file=sys.stderr)
+        return text
 
     broken = verify_spans(text, out)
     if broken:
-        print(f"  ! {label}: code altered {broken} — skipped", file=sys.stderr)
-        return None
+        print(f"  ! {label}: code altered {broken} — reattached, keeping line", file=sys.stderr)
+        out = _reattach_spans(text, out)
 
     damage = degenerate(text, out)
     if damage:
-        print(f"  ! {label}: {damage} — skipped", file=sys.stderr)
-        return None
+        print(f"  ! {label}: {damage} — keeping English", file=sys.stderr)
+        return text
     return out
 
 
@@ -466,10 +481,12 @@ def translate_checked(translator: Translator, text: str, label: str) -> str | No
 # ---------------------------------------------------------------------------
 
 
-def do_exercises(translator, limit: int | None, dry_run: bool) -> None:
+def do_exercises(translator, limit: int | None, dry_run: bool, force: bool = False) -> None:
     bank = json.loads(EXERCISES.read_text(encoding="utf-8"))
-    todo = [e for e in bank if "prompt_xh" not in e][:limit]
-    print(f"{len(todo)} of {len(bank)} exercises need translating")
+    todo = list(bank) if force else [e for e in bank if "prompt_xh" not in e]
+    if limit is not None:
+        todo = todo[:limit]
+    print(f"{len(todo)} of {len(bank)} exercises need translating" + (" (force)" if force else ""))
 
     for i, ex in enumerate(todo, 1):
         label = ex.get("question_id", f"#{i}")
@@ -500,14 +517,16 @@ def do_exercises(translator, limit: int | None, dry_run: bool) -> None:
             if hint_xh:
                 ex["hint_xh"] = hint_xh
 
+        if not dry_run:
+            EXERCISES.write_text(
+                json.dumps(bank, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+            )
+
     if not dry_run:
-        EXERCISES.write_text(
-            json.dumps(bank, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-        )
         print(f"\nwrote {EXERCISES}")
 
 
-def do_options(translator, limit: int | None, dry_run: bool) -> None:
+def do_options(translator, limit: int | None, dry_run: bool, force: bool = False) -> None:
     """Translate `options` for mcq/select_all exercises, for DISPLAY ONLY.
 
     Grading always compares the raw English `answer`/`answers` against what
@@ -527,9 +546,12 @@ def do_options(translator, limit: int | None, dry_run: bool) -> None:
     bank = json.loads(EXERCISES.read_text(encoding="utf-8"))
     todo = [
         e for e in bank
-        if e.get("type") in ("mcq", "select_all") and "options_xh" not in e
-    ][:limit]
-    print(f"{len(todo)} of {len(bank)} option-bearing exercises need translating")
+        if e.get("type") in ("mcq", "select_all")
+        and (force or "options_xh" not in e)
+    ]
+    if limit is not None:
+        todo = todo[:limit]
+    print(f"{len(todo)} of {len(bank)} option-bearing exercises need translating" + (" (force)" if force else ""))
 
     for i, ex in enumerate(todo, 1):
         label = ex.get("question_id", f"#{i}")
@@ -569,14 +591,16 @@ def do_options(translator, limit: int | None, dry_run: bool) -> None:
         elif ex.get("type") == "select_all" and ex.get("answers"):
             ex["answers_xh"] = [lookup[a] for a in ex["answers"] if a in lookup]
 
+        if not dry_run:
+            EXERCISES.write_text(
+                json.dumps(bank, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+            )
+
     if not dry_run:
-        EXERCISES.write_text(
-            json.dumps(bank, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-        )
         print(f"\nwrote {EXERCISES}")
 
 
-def do_challenges(translator, limit: int | None, dry_run: bool) -> None:
+def do_challenges(translator, limit: int | None, dry_run: bool, force: bool = False) -> None:
     """Translate the coding-challenge bank in place.
 
     `starter_code`, `solution` and `tests` are never translated: the first two
@@ -584,8 +608,10 @@ def do_challenges(translator, limit: int | None, dry_run: bool) -> None:
     literally against program output. Only the prose a reader sees is touched.
     """
     bank = json.loads(CHALLENGES.read_text(encoding="utf-8"))
-    todo = [c for c in bank if "title_xh" not in c][:limit]
-    print(f"{len(todo)} of {len(bank)} challenges need translating")
+    todo = list(bank) if force else [c for c in bank if "title_xh" not in c]
+    if limit is not None:
+        todo = todo[:limit]
+    print(f"{len(todo)} of {len(bank)} challenges need translating" + (" (force)" if force else ""))
 
     for i, ch in enumerate(todo, 1):
         label = ch.get("id", f"#{i}")
@@ -613,6 +639,11 @@ def do_challenges(translator, limit: int | None, dry_run: bool) -> None:
                 io_xh[key] = done
         if io_xh:
             ch["io_xh"] = io_xh
+
+        if not dry_run:
+            CHALLENGES.write_text(
+                json.dumps(bank, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+            )
 
     if not dry_run:
         CHALLENGES.write_text(
@@ -663,6 +694,41 @@ def protected_locale_spans(text: str) -> list[str]:
     return mask_locale(text)[1]
 
 
+# Read-aloud / visualiser narration is written for speech, not for NLLB.
+# Force-translating it would replace the plain-English-and-isiXhosa lines
+# the visualiser actually speaks. The speech *engine* is also out of scope.
+_SPEECH_LOCALE_PREFIXES = (
+    "viz.readAloud",
+    "viz.walking",
+    "viz.counting",
+    "viz.landed",
+    "viz.why",
+    "viz.indexErrorWhy",
+    "viz.valueErrorWhy",
+    "viz.collect",
+    "viz.sliceEmpty",
+    "viz.sliceNegative",
+    "viz.sliceDefault",
+    "viz.whySlice",
+    "viz.whyCollecting",
+    "viz.whyLanded",
+    "visualiser.desc",
+    "visualiser.why",
+    "visualiser.narration",
+    "visualiser.whileCondition",
+    "visualiser.indexNot",
+    "visualiser.indexOut",
+    "visualiser.sliceZero",
+    "visualiser.sliceInvalid",
+    "visualiser.methodUn",
+    "visualiser.couldNot",
+)
+
+
+def _is_speech_locale_key(key: str) -> bool:
+    return any(key.startswith(prefix) for prefix in _SPEECH_LOCALE_PREFIXES)
+
+
 def verify_locale_spans(source: str, translated: str) -> list[str]:
     return [span for span in protected_locale_spans(source) if span not in translated]
 
@@ -710,7 +776,7 @@ def _set_path(root: dict, dotted: str, value: str) -> None:
     node[parts[-1]] = value
 
 
-def do_locales(translator, limit: int | None, dry_run: bool) -> None:
+def do_locales(translator, limit: int | None, dry_run: bool, force: bool = False) -> None:
     """Fill in whatever keys `xh.json` is missing relative to `en.json`.
 
     Purely additive, same as every other target here: an xh.json key that
@@ -721,8 +787,15 @@ def do_locales(translator, limit: int | None, dry_run: bool) -> None:
 
     en_flat = _flatten(en)
     xh_flat = _flatten(xh)
-    todo = [k for k in en_flat if k not in xh_flat][:limit]
-    print(f"{len(todo)} of {len(en_flat)} locale keys need translating")
+    # Speech-engine copy is hand-tuned for read-aloud; never send it through NLLB.
+    todo = [
+        k for k in en_flat
+        if not _is_speech_locale_key(k)
+        and (force or k not in xh_flat)
+    ]
+    if limit is not None:
+        todo = todo[:limit]
+    print(f"{len(todo)} of {len(en_flat)} locale keys need translating" + (" (force)" if force else ""))
 
     for i, key in enumerate(todo, 1):
         value = en_flat[key]
@@ -735,6 +808,7 @@ def do_locales(translator, limit: int | None, dry_run: bool) -> None:
         out = translate_locale_string(translator, value, key)
         if out:
             _set_path(xh, key, out)
+            # Windows consoles are often cp1252; don't crash on ⭐ / isiXhosa.
             print(f"    {out}")
 
     if not dry_run:
@@ -751,15 +825,45 @@ MODULE_DIR = ROOT / "frontend" / "src" / "data" / "moduleContent"
 
 # Fields holding prose. Everything absent here is left in English by omission,
 # which `getModuleContent`'s deep-merge handles for free.
-TRANSLATABLE = {"text", "title", "intro", "caption", "description", "prompt"}
+TRANSLATABLE = {"text", "title", "intro", "caption", "description", "prompt", "prerequisite"}
 TRANSLATABLE_LISTS = {"outcomes", "items", "head"}
+
+# Headings the glossary would freeze as English (every word is a protected
+# term). Looked up rather than sent to NLLB so the module rail and
+# "complete X to unlock" copy actually appear in isiXhosa.
+TITLE_OVERRIDES = {
+    "Introduction to Strings": "Intshayelelo kwiiString",
+    "String Indexing": "Ukufikelela nge-Index kwiString",
+    "String Slicing": "Ukusika iString",
+    "String Immutability": "Ukunga-tshintshwa kweeString",
+    "String Comparison": "Ukuthelekisa iiString",
+    "Looping Through Strings": "Ukujikeleza kwiistring",
+    "String Methods": "Ii-method zeString",
+    "String Formatting": "Ukulungisa iiString",
+    "Index Explorer": "Umhloli we-Index",
+    "Slice Machine": "Umatshini we-Slice",
+    "Read-Only Explorer": "Umhloli onga-tshintshiyo",
+    "Loop Walker": "Umhambi we-Loop",
+    "Character Explorer": "Umhloli weempawu",
+    "Predicting an IndexError": "Ukuqikelela i-IndexError",
+    "Chaining methods": "Ukudibanisa ii-method",
+    # Headwords of `tone: 'define'` callouts. The English term itself has to
+    # stay legible (the exam is written in English), so these are the isiXhosa
+    # noun-class form of the term rather than a paraphrase.
+    "Indexing": "Ukufikelela nge-Index",
+    "Slice": "I-slice",
+    "Method": "I-method",
+}
 
 # Never translated, and listed explicitly so the reason survives: `code`, `value`
 # and `string` are Python the student retypes; `output` is what the interpreter
 # actually prints; `id`, `kind`, `tone`, `state` and `apiModuleId` are wiring.
-# `rows` (table cells) IS translated, cell by cell — see the dedicated branch
-# in translate_tree — but position-for-position, same as every other array
-# here, so a partial row still can't get shuffled out of alignment.
+# `defaults` is the visualiser's example Python string/index (key `text` would
+# otherwise look like lesson prose and get sent to NLLB). `word` is the warmup
+# drag-drop sample. `rows` (table cells) IS translated, cell by cell — see the
+# dedicated branch in translate_tree — but position-for-position, same as every
+# other array here, so a partial row still can't get shuffled out of alignment.
+SKIP_SUBTREES = {"defaults"}
 
 # Fixed vocabulary, translated by hand: NLLB renders these inconsistently and
 # there are only a few, so a lookup beats a model call.
@@ -768,6 +872,21 @@ LEVELS = {
     "Intermediate": "Ophakathi",
     "Advanced": "Ophezulu",
 }
+
+
+# Result/example table cells are Python code joined by a word or two of English
+# glue ("...count("an") is 2", "'' (empty)"). Masking hides the code, which
+# leaves too little context for NLLB to translate sensibly, so the glue is
+# substituted from this table instead of being sent to the model.
+CELL_GLUE = ((" is ", " ivelisa "), ("(empty)", "(ayinanto)"))
+
+
+def translate_cell_glue(cell: str) -> str | None:
+    """Return `cell` with its English glue words in isiXhosa, or None if it had none."""
+    out = cell
+    for source, target in CELL_GLUE:
+        out = out.replace(source, target)
+    return out if out != cell else None
 
 
 def dump_modules_json(dest: Path) -> dict[str, Path]:
@@ -820,11 +939,17 @@ def translate_tree(translator, node, label: str, stats: dict[str, int], existing
         out = {}
         existing_dict = existing if isinstance(existing, dict) else {}
         for key, value in node.items():
+            if key in SKIP_SUBTREES:
+                continue
             prior = existing_dict.get(key)
             if isinstance(value, str):
                 if key == "level":
                     if value in LEVELS:
                         out[key] = LEVELS[value]
+                    continue
+                if value in TITLE_OVERRIDES:
+                    out[key] = TITLE_OVERRIDES[value]
+                    stats["total"] += 1
                     continue
                 if key not in TRANSLATABLE:
                     continue
@@ -845,6 +970,10 @@ def translate_tree(translator, node, label: str, stats: dict[str, int], existing
                 items = []
                 for i, item in enumerate(value):
                     prior_item = prior_list[i] if i < len(prior_list) else None
+                    if item in TITLE_OVERRIDES:
+                        items.append(TITLE_OVERRIDES[item])
+                        stats["total"] += 1
+                        continue
                     if isinstance(prior_item, str) and prior_item.strip():
                         items.append(prior_item)
                         stats["kept"] += 1
@@ -878,6 +1007,15 @@ def translate_tree(translator, node, label: str, stats: dict[str, int], existing
                     row_out = []
                     for j, cell in enumerate(row):
                         prior_cell = prior_row[j] if j < len(prior_row) else None
+                        if cell in TITLE_OVERRIDES:
+                            row_out.append(TITLE_OVERRIDES[cell])
+                            stats["total"] += 1
+                            continue
+                        glued = translate_cell_glue(cell)
+                        if glued:
+                            row_out.append(glued)
+                            stats["total"] += 1
+                            continue
                         if isinstance(prior_cell, str) and prior_cell.strip():
                             row_out.append(prior_cell)
                             stats["kept"] += 1
@@ -951,19 +1089,16 @@ for (const file of (await readdir(src)).filter((f) => f.endsWith('.js'))) {
     }
 
 
-def do_modules(translator, limit: int | None, dry_run: bool) -> None:
+def do_modules(translator, limit: int | None, dry_run: bool, force: bool = False, only: str | None = None) -> None:
     """Write/update `moduleContent/xh/<id>.js` overlays for every module.
 
     Overlays are partial by design: `getModuleContent` deep-merges them over the
-    English base, so anything omitted keeps its original value. `xh/intro.js` is
-    the hand-written reference for the shape and tone.
+    English base, so anything omitted keeps its original value.
 
     Re-running this on a module that already has an overlay does NOT start
-    over: `translate_tree` is handed that overlay as `existing` and carries
-    every field already present through unchanged (including hand-written
-    ones), only translating what's still missing. That's what makes this safe
-    to run again after `xh/intro.js` — or any module — picks up more manual
-    edits later: nothing already there gets clobbered.
+    over unless `--force` is set: `translate_tree` is handed that overlay as
+    `existing` and carries every field already present through unchanged,
+    only translating what's still missing.
     """
     out_dir = MODULE_DIR / "xh"
     if dry_run:
@@ -979,11 +1114,30 @@ def do_modules(translator, limit: int | None, dry_run: bool) -> None:
     existing_by_stem = dump_existing_xh(out_dir, scratch / "existing")
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    for stem, json_path in dumped.items():
-        target = out_dir / f"{stem}.js"
-        existing = existing_by_stem.get(stem)
+    stems = list(dumped.items())
+    if only:
+        stems = [(stem, path) for stem, path in stems if stem == only]
+        if not stems:
+            raise SystemExit(f"no module named {only!r}")
+    if limit is not None:
+        stems = stems[:limit]
 
-        print(f"\n===== {stem} =====" + (" (topping up existing overlay)" if existing else ""))
+    nllb_header = (
+        "// isiXhosa translation of the {title!r} module.\n"
+        "//\n"
+        "// Machine-translated with NLLB-200 by scripts/translate_content_nllb.py,\n"
+        "// then merged over the English base by `getModuleContent`. Partial by\n"
+        "// design: `code`, `output` and `value` are omitted so they keep their\n"
+        "// English/original value, and `null` holds an array slot open.\n"
+        "//\n"
+        "// Needs a human read before students see it.\n\n"
+    )
+
+    for stem, json_path in stems:
+        target = out_dir / f"{stem}.js"
+        existing = None if force else existing_by_stem.get(stem)
+
+        print(f"\n===== {stem} =====" + (" (topping up existing overlay)" if existing else "") + (" (force)" if force else ""))
         base = json.loads(json_path.read_text(encoding="utf-8"))
         stats = {"total": 0, "skipped": 0, "kept": 0}
         overlay = translate_tree(translator, base, stem, stats, existing) or {}
@@ -992,14 +1146,8 @@ def do_modules(translator, limit: int | None, dry_run: bool) -> None:
             print(f"-- {stem}: overlay already covers everything this run would touch")
             continue
 
-        # A file that already exists carries its own header (hand-written for
-        # intro.js, the standard machine-translated one for the rest) —
-        # preserved verbatim rather than overwritten, since only the object
-        # literal below it changed.
-        if target.exists():
-            old_text = target.read_text(encoding="utf-8")
-            marker = old_text.index("export const")
-            header = old_text[:marker]
+        if force or not target.exists():
+            header = nllb_header.format(title=base.get("title", stem))
         else:
             header = (
                 f"// isiXhosa translation of the {base.get('title', stem)!r} module.\n"
@@ -1023,13 +1171,28 @@ def do_modules(translator, limit: int | None, dry_run: bool) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "target", choices=["exercises", "options", "modules", "challenges", "locales"]
+        "target",
+        choices=["exercises", "options", "modules", "challenges", "locales", "all"],
     )
     parser.add_argument("--limit", type=int, help="only process the first N items")
     parser.add_argument(
         "--dry-run", action="store_true", help="show the code/prose split, load nothing"
     )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="re-translate items that already have an isiXhosa field (NLLB over Claude/old copy)",
+    )
+    parser.add_argument(
+        "--only",
+        help="for modules: only this stem, e.g. intro",
+    )
     args = parser.parse_args()
+
+    # Windows consoles default to cp1252; NLLB output includes isiXhosa and ⭐.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
     translator = None if args.dry_run else Translator()
     runner = {
@@ -1038,8 +1201,18 @@ def main() -> None:
         "modules": do_modules,
         "challenges": do_challenges,
         "locales": do_locales,
-    }[args.target]
-    runner(translator, args.limit, args.dry_run)
+    }
+    targets = (
+        ["exercises", "options", "challenges", "modules", "locales"]
+        if args.target == "all"
+        else [args.target]
+    )
+    for name in targets:
+        print(f"\n######## {name} ########", flush=True)
+        if name == "modules":
+            runner[name](translator, args.limit, args.dry_run, args.force, args.only)
+        else:
+            runner[name](translator, args.limit, args.dry_run, args.force)
 
 
 if __name__ == "__main__":

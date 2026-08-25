@@ -144,7 +144,7 @@
       "word = [p,y,t]": "string_vs_list_confusion"
     },
     "xp": 10,
-    "prompt_xh": "Khetha zonke iindlela ezilandelayo ezisemthethweni zokudala i-string \"python\" kwi-Python.",
+    "prompt_xh": "Khetha zonke iindlela ezifanelekileyo zokwenza i-string \"python\" kwi-Python.",
     "options_xh": [
       "word = 'python'",
       "word = \"python\"",
@@ -177,7 +177,7 @@
       "word = [l,e,a]": "string_vs_list_confusion"
     },
     "xp": 10,
-    "prompt_xh": "Khetha zonke iindlela ezilandelayo ezisemthethweni zokudala i-string \"learning\" kwi-Python.",
+    "prompt_xh": "Khetha zonke iindlela ezifanelekileyo zokwenza i-string \"learning\" kwi-Python.",
     "options_xh": [
       "word = 'learning'",
       "word = \"learning\"",
@@ -210,7 +210,7 @@
       "word = [c,a,p]": "string_vs_list_confusion"
     },
     "xp": 10,
-    "prompt_xh": "Khetha zonke iindlela ezilandelayo ezisemthethweni zokudala i-string \"capstone\" kwi-Python.",
+    "prompt_xh": "Khetha zonke iindlela ezifanelekileyo zokwenza i-string \"capstone\" kwi-Python.",
     "options_xh": [
       "word = 'capstone'",
       "word = \"capstone\"",
@@ -240,7 +240,7 @@
       "An error": "concatenation_requires_same_type_fear"
     },
     "xp": 10,
-    "prompt_xh": "Yintoni eprintiweyo kule khowudi ilandelayo?\nword = \"cat\" + \"fish\"\nprint(word)",
+    "prompt_xh": "Yintoni eboniswa yile khowudi ilandelayo?\nword = \"cat\" + \"fish\"\nprint(word)",
     "options_xh": [
       "catfish",
       "cat fish",
@@ -266,7 +266,7 @@
       "An error": "concatenation_requires_same_type_fear"
     },
     "xp": 10,
-    "prompt_xh": "Yintoni eprintiweyo kule khowudi ilandelayo?\nword = \"Cape\" + \"Town\"\nprint(word)",
+    "prompt_xh": "Yintoni eboniswa yile khowudi ilandelayo?\nword = \"Cape\" + \"Town\"\nprint(word)",
     "options_xh": [
       "CapeTown",
       "Cape Town",
@@ -292,7 +292,7 @@
       "An error": "concatenation_requires_same_type_fear"
     },
     "xp": 10,
-    "prompt_xh": "Yintoni eprintiweyo kule khowudi ilandelayo?\nword = \"un\" + \"happy\"\nprint(word)",
+    "prompt_xh": "Yintoni eboniswa yile khowudi ilandelayo?\nword = \"un\" + \"happy\"\nprint(word)",
     "options_xh": [
       "unhappy",
       "un happy",
@@ -318,7 +318,7 @@
       "An error": "concatenation_requires_same_type_fear"
     },
     "xp": 10,
-    "prompt_xh": "Yintoni eprintiweyo kule khowudi ilandelayo?\nword = \"post\" + \"graduate\"\nprint(word)",
+    "prompt_xh": "Yintoni eboniswa yile khowudi ilandelayo?\nword = \"post\" + \"graduate\"\nprint(word)",
     "options_xh": [
       "postgraduate",
       "post graduate",
@@ -344,7 +344,7 @@
       "An error": "concatenation_requires_same_type_fear"
     },
     "xp": 10,
-    "prompt_xh": "Yintoni eprintiweyo kule khowudi ilandelayo?\nword = \"play\" + \"ground\"\nprint(word)",
+    "prompt_xh": "Yintoni eboniswa yile khowudi ilandelayo?\nword = \"play\" + \"ground\"\nprint(word)",
     "options_xh": [
       "playground",
       "play ground",
@@ -422,7 +422,14 @@
       "xo4": "repetition_confused_with_multiplication"
     },
     "xp": 10,
-    "prompt_xh": "print(\"xo\" * 4)"
+    "prompt_xh": "print(\"xo\" * 4)",
+    "options_xh": [
+      "xoxoxoxo",
+      "x x x x x",
+      "xo4",
+      "Impazamo"
+    ],
+    "answer_xh": "xoxoxoxo"
   },
   {
     "module_id": "intro",
@@ -552,7 +559,7 @@
       "price becomes the string 'hello'": "strings_need_quotes"
     },
     "xp": 15,
-    "prompt_xh": "Kwenzeka ntoni xa i-Python isebenzisa umgca: price = hello (ngaphandle kweengcaphuno ezikufutshane nemibuliso)?",
+    "prompt_xh": "Kwenzeka ntoni xa i-Python isebenza kumgca: price = hello (ngaphandle kwe-quotes ejikeleze hello)?",
     "options_xh": [
       "NameError, kuba Python ikhangela variable ebizwa ngokuba hello",
       "ixabiso liba yi string 'hello'",
@@ -577,7 +584,7 @@
       "flag becomes the string 'hello'": "strings_need_quotes"
     },
     "xp": 15,
-    "prompt_xh": "Kwenzeka ntoni xa i-Python isebenzisa umgca: flag = hello (ngaphandle kweengcaphuno ezikufutshane nemibuliso)?",
+    "prompt_xh": "Kwenzeka ntoni xa i-Python isebenza kumgca: flag = hello (ngaphandle kwe-quotes ejikeleze hello)?",
     "options_xh": [
       "NameError, kuba Python ikhangela variable ebizwa ngokuba hello",
       "iflegi iba yi string 'hello'",
@@ -602,7 +609,7 @@
       "level becomes the string 'hello'": "strings_need_quotes"
     },
     "xp": 15,
-    "prompt_xh": "Kwenzeka ntoni xa i-Python isebenzisa umgca: level = hello (ngaphandle kweengcaphuno ezikufutshane nemibuliso)?",
+    "prompt_xh": "Kwenzeka ntoni xa i-Python isebenza kumgca: level = hello (ngaphandle kwe-quotes ejikeleze hello)?",
     "options_xh": [
       "NameError, kuba Python ikhangela variable ebizwa ngokuba hello",
       "inqanaba liba yi string 'hello'",
@@ -629,7 +636,7 @@
       "['d', 'o', 'g']": "string_vs_list_confusion"
     },
     "xp": 15,
-    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezenza i-string \"dog\".",
+    "prompt_xh": "Khetha zonke izimbo ezingezantsi ezenza i-string \"dog\".",
     "options_xh": [
       "\"dog\"",
       "['d', 'o', 'g']",
@@ -658,7 +665,7 @@
       "['c', 'a', 't']": "string_vs_list_confusion"
     },
     "xp": 15,
-    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezenza i-string \"cat\".",
+    "prompt_xh": "Khetha zonke izimbo ezingezantsi ezenza i-string \"cat\".",
     "options_xh": [
       "\"cat\"",
       "['c', 'a', 't']",
@@ -687,7 +694,7 @@
       "['s', 'u', 'n']": "string_vs_list_confusion"
     },
     "xp": 15,
-    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezenza i-string \"sun\".",
+    "prompt_xh": "Khetha zonke izimbo ezingezantsi ezenza i-string \"sun\".",
     "options_xh": [
       "\"sun\"",
       "['s', 'u', 'n']",
@@ -717,9 +724,9 @@
     "prompt_xh": "count = 5\nprint(\"Count: \" + count)\nKwenzeka ntoni?",
     "options_xh": [
       "TypeError, kuba awukwazi concatenate a str kunye int ngqo",
-      "I-\"Count: 5\" iprintiwe",
+      "I-\"Count: 5\" ipapashwa",
       "I-\"Count: \" ipapashwa, emva koko i-5 kumgca omtsha",
-      "inani liguqulwa ngokuzenzekelayo libe yi-string"
+      "count itshintshwe ngokuzenzekelayo ibe yi string"
     ],
     "answer_xh": "TypeError, kuba awukwazi concatenate a str kunye int ngqo"
   },
@@ -1031,7 +1038,7 @@
       "3": "indexing_from_one"
     },
     "xp": 10,
-    "prompt_xh": "Gcwalisa i-index engekhoyo ukuze i-text[__] ibuyisele i-'t' kwi-text = \"python\""
+    "prompt_xh": "Gcwalisa i-index engekhoyo ukuze i-text[__] ibuyise i-'t' kwi-text = \"python\""
   },
   {
     "module_id": "indexing",
@@ -1043,7 +1050,7 @@
       "4": "indexing_from_one"
     },
     "xp": 10,
-    "prompt_xh": "Gcwalisa i-index engekhoyo ukuze i-text[__] ibuyisele i-'a' kwi-text = \"banana\""
+    "prompt_xh": "Gcwalisa i-index engekhoyo ukuze i-text[__] ibuyise i-'a' kwi-text = \"banana\""
   },
   {
     "module_id": "indexing",
@@ -1055,7 +1062,7 @@
       "5": "indexing_from_one"
     },
     "xp": 10,
-    "prompt_xh": "Gcwalisa i-index engekhoyo ukuze i-text[__] ibuyisele i-'a' kwi-text = \"xhosa\""
+    "prompt_xh": "Gcwalisa i-index engekhoyo ukuze i-text[__] ibuyise i-'a' kwi-text = \"xhosa\""
   },
   {
     "module_id": "indexing",
@@ -1067,7 +1074,7 @@
       "2": "indexing_from_one"
     },
     "xp": 10,
-    "prompt_xh": "Gcwalisa i-index engekhoyo ukuze i-text[__] ibuyisele i-'m' kwi-text = \"umuntu\""
+    "prompt_xh": "Gcwalisa i-index engekhoyo ukuze i-text[__] ibuyise i-'m' kwi-text = \"umuntu\""
   },
   {
     "module_id": "indexing",
@@ -1089,7 +1096,7 @@
       "mL[-11]": "negative_index_confusion"
     },
     "xp": 15,
-    "prompt_xh": "mL = \"programming\" (ubude 11). Khetha zonke ii-indices ezingezantsi eziza kubangela i-IndexError.",
+    "prompt_xh": "mL = \"programming\" (ubude 11). Khetha zonke iindiza ezingezantsi eziza kubangela i-IndexError.",
     "options_xh": [
       "mL[10]",
       "mL[11]",
@@ -1215,12 +1222,12 @@
     "xp": 15,
     "prompt_xh": "Le khowudi yenzelwe ukuprinta oonobumba bokugqibela besicatshulwa. Kutheni isilela?\ntext = \"python\"\nprint(text[len(text)])",
     "options_xh": [
-      "I-len(text) yenye emva kwe-index yokugqibela esebenzayo",
-      "I-print() ayinakwamkela ibinzana",
-      "I-strings ayixhasi i-len()",
+      "len(text) omnye emva yokugqibela index esebenzayo",
+      "I-print() ayinakwamkela ingxelo",
+      "strings ayixhasi len()",
       "ikhowudi ichanekile"
     ],
-    "answer_xh": "I-len(text) yenye emva kwe-index yokugqibela esebenzayo"
+    "answer_xh": "len(text) omnye emva yokugqibela index esebenzayo"
   },
   {
     "module_id": "indexing",
@@ -1240,12 +1247,12 @@
     "xp": 15,
     "prompt_xh": "Le khowudi yenzelwe ukuprinta oonobumba bokugqibela besicatshulwa. Kutheni isilela?\ntext = \"hello\"\nprint(text[len(text)])",
     "options_xh": [
-      "I-len(text) yenye emva kwe-index yokugqibela esebenzayo",
-      "I-print() ayinakwamkela ibinzana",
-      "I-strings ayixhasi i-len()",
+      "len(text) omnye emva yokugqibela index esebenzayo",
+      "I-print() ayinakwamkela ingxelo",
+      "strings ayixhasi len()",
       "ikhowudi ichanekile"
     ],
-    "answer_xh": "I-len(text) yenye emva kwe-index yokugqibela esebenzayo"
+    "answer_xh": "len(text) omnye emva yokugqibela index esebenzayo"
   },
   {
     "module_id": "indexing",
@@ -1265,12 +1272,12 @@
     "xp": 15,
     "prompt_xh": "Le khowudi yenzelwe ukuprinta oonobumba bokugqibela besicatshulwa. Kutheni isilela?\ntext = \"capstone\"\nprint(text[len(text)])",
     "options_xh": [
-      "I-len(text) yenye emva kwe-index yokugqibela esebenzayo",
-      "I-print() ayinakwamkela ibinzana",
-      "I-strings ayixhasi i-len()",
+      "len(text) omnye emva yokugqibela index esebenzayo",
+      "I-print() ayinakwamkela ingxelo",
+      "strings ayixhasi len()",
       "ikhowudi ichanekile"
     ],
-    "answer_xh": "I-len(text) yenye emva kwe-index yokugqibela esebenzayo"
+    "answer_xh": "len(text) omnye emva yokugqibela index esebenzayo"
   },
   {
     "module_id": "indexing",
@@ -1290,12 +1297,12 @@
     "xp": 15,
     "prompt_xh": "text = \"python\"\nprint(text[-7])\nKutheni oku kuphakamisa iIndexError?",
     "options_xh": [
-      "-7 ibuyela umva kunobude bestring obuvumelayo",
-      "ii-indices ezingalunganga azinakusetyenziswa kunye ne-variables, kuphela ii-literals",
-      "I-string kufuneka ibuyiselwe umva kuqala",
-      "ayibangeli mpazamo"
+      "-7 iya emva lee kunobude bestring obuvumelayo",
+      "ii-indices ezingezizo azinakusetyenziswa nge-variables, kuphela iileta",
+      "string kufuneka ibuyiselwe umva kuqala",
+      "it does not raise an error"
     ],
-    "answer_xh": "-7 ibuyela umva kunobude bestring obuvumelayo"
+    "answer_xh": "-7 iya emva lee kunobude bestring obuvumelayo"
   },
   {
     "module_id": "indexing",
@@ -1315,12 +1322,12 @@
     "xp": 15,
     "prompt_xh": "text = \"banana\"\nprint(text[-7])\nKutheni oku kuphakamisa iIndexError?",
     "options_xh": [
-      "-7 ibuyela umva kunobude bestring obuvumelayo",
-      "ii-indices ezingalunganga azinakusetyenziswa kunye ne-variables, kuphela ii-literals",
-      "I-string kufuneka ibuyiselwe umva kuqala",
-      "ayibangeli mpazamo"
+      "-7 iya emva lee kunobude bestring obuvumelayo",
+      "ii-indices ezingezizo azinakusetyenziswa nge-variables, kuphela iileta",
+      "string kufuneka ibuyiselwe umva kuqala",
+      "it does not raise an error"
     ],
-    "answer_xh": "-7 ibuyela umva kunobude bestring obuvumelayo"
+    "answer_xh": "-7 iya emva lee kunobude bestring obuvumelayo"
   },
   {
     "module_id": "indexing",
@@ -1340,12 +1347,12 @@
     "xp": 15,
     "prompt_xh": "text = \"umuntu\"\nprint(text[-7])\nKutheni oku kuphakamisa iIndexError?",
     "options_xh": [
-      "-7 ibuyela umva kunobude bestring obuvumelayo",
-      "ii-indices ezingalunganga azinakusetyenziswa kunye ne-variables, kuphela ii-literals",
-      "I-string kufuneka ibuyiselwe umva kuqala",
-      "ayibangeli mpazamo"
+      "-7 iya emva lee kunobude bestring obuvumelayo",
+      "ii-indices ezingezizo azinakusetyenziswa nge-variables, kuphela iileta",
+      "string kufuneka ibuyiselwe umva kuqala",
+      "it does not raise an error"
     ],
-    "answer_xh": "-7 ibuyela umva kunobude bestring obuvumelayo"
+    "answer_xh": "-7 iya emva lee kunobude bestring obuvumelayo"
   },
   {
     "module_id": "indexing",
@@ -1399,14 +1406,14 @@
     ],
     "answer": "Index 0 is both the first and only valid index",
     "xp": 10,
-    "prompt_xh": "text = \"a\"\nprint(text[0])\nYintoni ekhethekileyo malunga indexing a-one-character string ezifana nale?",
+    "prompt_xh": "text = \"a\"\nprint(text[0])\nYintoni ekhethekileyo ngeindexing istring enobumba obunye?",
     "options_xh": [
-      "I-Index 0 yindawo yokuqala kunye neyokuphela kwe-index esebenzayo",
-      "Ihlala ibangela impazamo kuba akukho nto kwi-index",
+      "Index 0 yeyona nto yokuqala neyokuphela kwe-index",
+      "Kusoloko kuphakama impazamo kuba akukho nto kwiindex",
       "Kufuneka usebenzise i-text[-1] endaweni ye-text[0]",
       "Iimpawu ezizodwa azinakugcinwa njenge-strings"
     ],
-    "answer_xh": "I-Index 0 yindawo yokuqala kunye neyokuphela kwe-index esebenzayo"
+    "answer_xh": "Index 0 yeyona nto yokuqala neyokuphela kwe-index"
   },
   {
     "module_id": "slicing",
@@ -1564,7 +1571,7 @@
       "4": "slice_stop_inclusive"
     },
     "xp": 10,
-    "prompt_xh": "Gcwalisa i-stop index ukuze i-word[0:__] ibuyisele i-'Hello' kwi-word = \"Hello, World!\""
+    "prompt_xh": "Gcwalisa indawo yokumisa index ukuze i-word[0:__] ibuyise i-'Hello' ukusuka kwi-word = \"Hello, World!\""
   },
   {
     "module_id": "slicing",
@@ -1576,7 +1583,7 @@
       "8": "slice_stop_inclusive"
     },
     "xp": 10,
-    "prompt_xh": "Gcwalisa i-stop index ukuze i-word[5:__] ibuyisele i-'Town' kwi-word = \"Cape Town\""
+    "prompt_xh": "Gcwalisa indawo yokumisa index ukuze i-word[5:__] ibuyise i-'Town' ukusuka kwi-word = \"Cape Town\""
   },
   {
     "module_id": "slicing",
@@ -1588,7 +1595,7 @@
       "6": "slice_stop_inclusive"
     },
     "xp": 10,
-    "prompt_xh": "Gcwalisa i-stop index ukuze i-word[2:__] ibuyisele i-'muntu' kwi-word = \"umuntu\""
+    "prompt_xh": "Gcwalisa indawo yokumisa index ukuze i-word[2:__] ibuyise i-'muntu' ukusuka kwi-word = \"umuntu\""
   },
   {
     "module_id": "slicing",
@@ -1600,7 +1607,7 @@
       "11": "slice_stop_inclusive"
     },
     "xp": 10,
-    "prompt_xh": "Gcwalisa i-stop index ukuze i-word[7:__] ibuyisele i-'split' kwi-word = \"banana split\""
+    "prompt_xh": "Gcwalisa indawo yokumisa index ukuze i-word[7:__] ibuyise i-'split' ukusuka kwi-word = \"banana split\""
   },
   {
     "module_id": "slicing",
@@ -1774,14 +1781,14 @@
     ],
     "answer": "It prints \"cat\", slice bounds are clamped rather than erroring",
     "xp": 15,
-    "prompt_xh": "word = \"cat\" (ubude beempawu ezi-3 kuphela)\nprint(word[0:10])\nKwenzeka ntoni?",
+    "prompt_xh": "word = \"cat\" (ngobude obungama-3 kuphela)\nprint(word[0:10])\nKwenzeka ntoni?",
     "options_xh": [
-      "Iprinta i-\"cat\", imida ye-slice iqhotyoshelwe kunokuba iphosakele",
+      "Iprinta i-\"cat\", i-slice imida iqhotyoshelwe endaweni yokufaka impazamo",
       "IndexError, kuba imida idlula ubude string",
-      "Iprinta i-string engenanto kungakhathaliseki ukuba yintoni",
-      "Izalisa oonobumba abangekhoyo ngamathuba"
+      "Iprinta istring engenanto nokuba yintoni",
+      "Iphakamisa oonobumba abangekhoyo ngendawo"
     ],
-    "answer_xh": "Iprinta i-\"cat\", imida ye-slice iqhotyoshelwe kunokuba iphosakele"
+    "answer_xh": "Iprinta i-\"cat\", i-slice imida iqhotyoshelwe endaweni yokufaka impazamo"
   },
   {
     "module_id": "slicing",
@@ -1796,14 +1803,14 @@
     ],
     "answer": "It prints \"og\", slice bounds are clamped rather than erroring",
     "xp": 15,
-    "prompt_xh": "word = \"dog\" (ubude beempawu ezi-3 kuphela)\nprint(word[1:99])\nKwenzeka ntoni?",
+    "prompt_xh": "word = \"dog\" (ngobude obungama-3 kuphela)\nprint(word[1:99])\nKwenzeka ntoni?",
     "options_xh": [
-      "Iprinta i-\"og\", imida ye-slice iqhotyoshelwe kunokuba iphosakele",
+      "Iprinta i-\"og\", i-slice imida iqhotyoshelwe endaweni yokufaka impazamo",
       "IndexError, kuba imida idlula ubude string",
-      "Iprinta i-string engenanto kungakhathaliseki ukuba yintoni",
-      "Izalisa oonobumba abangekhoyo ngamathuba"
+      "Iprinta istring engenanto nokuba yintoni",
+      "Iphakamisa oonobumba abangekhoyo ngendawo"
     ],
-    "answer_xh": "Iprinta i-\"og\", imida ye-slice iqhotyoshelwe kunokuba iphosakele"
+    "answer_xh": "Iprinta i-\"og\", i-slice imida iqhotyoshelwe endaweni yokufaka impazamo"
   },
   {
     "module_id": "slicing",
@@ -1818,14 +1825,14 @@
     ],
     "answer": "It prints \"ow\", slice bounds are clamped rather than erroring",
     "xp": 15,
-    "prompt_xh": "word = \"owl\" (ubude beempawu ezi-3 kuphela)\nprint(word[-50:2])\nKwenzeka ntoni?",
+    "prompt_xh": "word = \"owl\" (ngobude obungama-3 kuphela)\nprint(word[-50:2])\nKwenzeka ntoni?",
     "options_xh": [
-      "Iprinta i-\"ow\", imida ye-slice iqhotyoshelwe kunokuba iphosakele",
+      "Iprinta i-\"ow\", i-slice imida iqhotyoshelwe endaweni yokufaka impazamo",
       "IndexError, kuba imida idlula ubude string",
-      "Iprinta i-string engenanto kungakhathaliseki ukuba yintoni",
-      "Izalisa oonobumba abangekhoyo ngamathuba"
+      "Iprinta istring engenanto nokuba yintoni",
+      "Iphakamisa oonobumba abangekhoyo ngendawo"
     ],
-    "answer_xh": "Iprinta i-\"ow\", imida ye-slice iqhotyoshelwe kunokuba iphosakele"
+    "answer_xh": "Iprinta i-\"ow\", i-slice imida iqhotyoshelwe endaweni yokufaka impazamo"
   },
   {
     "module_id": "slicing",
@@ -1844,7 +1851,7 @@
       "word[-5:]"
     ],
     "xp": 15,
-    "prompt_xh": "word = \"hello world\"\nKhetha zonke ii-slicing ezingezantsi ezivelisa i-\"world\".",
+    "prompt_xh": "word = \"hello world\"\nKhetha zonke izishwankathelo ze-slicing ezingezantsi ezivelisa i-\"world\".",
     "options_xh": [
       "word[6:11]",
       "word[6:]",
@@ -1873,7 +1880,7 @@
       "word[3:6]"
     ],
     "xp": 15,
-    "prompt_xh": "word = \"banana\"\nKhetha zonke ii-slicing ezingezantsi ezivelisa i-\"ana\".",
+    "prompt_xh": "word = \"banana\"\nKhetha zonke izishwankathelo ze-slicing ezingezantsi ezivelisa i-\"ana\".",
     "options_xh": [
       "word[1:4]",
       "word[3:6]",
@@ -1902,7 +1909,7 @@
       "word[3:]"
     ],
     "xp": 15,
-    "prompt_xh": "word = \"umuntu\"\nKhetha zonke ii-slicing ezingezantsi ezivelisa i-\"ntu\".",
+    "prompt_xh": "word = \"umuntu\"\nKhetha zonke izishwankathelo ze-slicing ezingezantsi ezivelisa i-\"ntu\".",
     "options_xh": [
       "word[3:6]",
       "word[-3:]",
@@ -1926,7 +1933,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "source = \"was it a car or a cat i saw\"\nBhala i-EXPRESSION ONE Python (hayi inkqubo epheleleyo) eprinta i-\"a car or a cat\" usebenzisa i-slicing kumthombo."
+    "prompt_xh": "source = \"was it a car or a cat i saw\"\nBhala i-EXPRESS ONE Python (hayi inkqubo epheleleyo) ephrinta i-\"a car or a cat\" usebenzisa i-slicing kumthombo. Kunokuba neendlela ezingaphezu kweyodwa ezifanelekileyo (i-indices ezifanelekileyo, ii-indices ezibi, okanye inyathelo elibi)"
   },
   {
     "module_id": "slicing",
@@ -1939,7 +1946,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "source = \"the level is fine\"\nBhala i-EXPRESSION ONE Python (hayi inkqubo epheleleyo) eprinta i-\"level\" usebenzisa i-slicing kumthombo."
+    "prompt_xh": "source = \"the level is fine\"\nBhala i-EXPRESS ONE Python (hayi inkqubo epheleleyo) ephrinta i-\"level\" usebenzisa i-slicing kumthombo. Kunokuba neendlela ezingaphezu kweyodwa ezifanelekileyo (i-indices ezifanelekileyo, ii-indices ezibi, okanye inyathelo elibi)"
   },
   {
     "module_id": "slicing",
@@ -1952,7 +1959,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "source = \"a radar station beeped\"\nBhala i-EXPRESSION ONE Python (hayi inkqubo epheleleyo) eprinta i-\"radar\" usebenzisa i-slicing kumthombo."
+    "prompt_xh": "source = \"a radar station beeped\"\nBhala i-EXPRESS ONE Python (hayi inkqubo epheleleyo) ephrinta i-\"radar\" usebenzisa i-slicing kumthombo. Kunokuba neendlela ezingaphezu kweyodwa ezifanelekileyo (i-indices ezifanelekileyo, ii-indices ezibi, okanye inyathelo elibi)"
   },
   {
     "module_id": "slicing",
@@ -1965,7 +1972,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo egcina i-\"report_final.pdf\" kwi-variable ebizwa ngokuba ngumbhalo kwaye uprinte ulwandiso lwefayile (iimpawu ezi-3 zokugqibela), usebenzisa i-slicing kuphela."
+    "prompt_xh": "Bhala inkqubo egcina i-\"report_final.pdf\" kwi-variable ebizwa ngokuba yombhalo kwaye uprinte ulwandiso lwefayile (iimpawu ezi-3 zokugqibela), usebenzisa i-slicing kuphela."
   },
   {
     "module_id": "slicing",
@@ -1978,7 +1985,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo egcina i-\"user@example.com\" kwi-variable ebizwa ngokuba yi-text kwaye uprinte yonke into emva kwesimboli @ (ihlala i-index 4 kulo mthombo), usebenzisa i-slicing kuphela."
+    "prompt_xh": "Bhala inkqubo egcina i-\"user@example.com\" kwi-variable ebizwa ngokuba yombhalo kwaye uprinte yonke into emva kwethoni @ (ihlala i-index 4 kule nto), usebenzisa i-slicing kuphela."
   },
   {
     "module_id": "slicing",
@@ -1991,7 +1998,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo egcina i-\"2026-07-06\" kwi-variable ebizwa ngokuba ngumbhalo kwaye uprinte unyaka (iimpawu ezi-4 zokuqala), usebenzisa i-slicing kuphela."
+    "prompt_xh": "Bhala inkqubo egcina i-\"2026-07-06\" kwi-variable ebizwa ngokuba ngumxholo kwaye iphrinta unyaka (iimpawu zokuqala ezi-4), usebenzisa i-slicing kuphela."
   },
   {
     "module_id": "slicing",
@@ -2038,7 +2045,7 @@
     "options_xh": [
       "Iphakamisa i-TypeError kuba i-strings ayitshintshi",
       "Utshintsha igama libe yi-'Ada'",
-      "Akenzi nto ngokuthe cwaka",
+      "Akenzi nto ngokuthula",
       "Idala i-variable entsha ebizwa ngokuba yi-name[0]"
     ],
     "answer_xh": "Iphakamisa i-TypeError kuba i-strings ayitshintshi"
@@ -2062,8 +2069,8 @@
     "prompt_xh": "Kwenzeka ntoni xa kusebenza ikhowudi elandelayo?\nword = \"cat\"\nword[0] = \"C\"",
     "options_xh": [
       "Iphakamisa i-TypeError kuba i-strings ayitshintshi",
-      "Utshintsha igama libe yi-'Cat'",
-      "Akenzi nto ngokuthe cwaka",
+      "Utshintsha igama libe yi'Cat'",
+      "Akenzi nto ngokuthula",
       "Idala i-variable entsha ebizwa ngokuba yi-word[0]"
     ],
     "answer_xh": "Iphakamisa i-TypeError kuba i-strings ayitshintshi"
@@ -2088,7 +2095,7 @@
     "options_xh": [
       "Iphakamisa i-TypeError kuba i-strings ayitshintshi",
       "Utshintsha isixeko sibe yi'Kape'",
-      "Akenzi nto ngokuthe cwaka",
+      "Akenzi nto ngokuthula",
       "Idala i-variable entsha ebizwa ngokuba yi-city[0]"
     ],
     "answer_xh": "Iphakamisa i-TypeError kuba i-strings ayitshintshi"
@@ -2112,8 +2119,8 @@
     "prompt_xh": "Kwenzeka ntoni xa kusebenza ikhowudi elandelayo?\ncode = \"abc\"\ncode[0] = \"X\"",
     "options_xh": [
       "Iphakamisa i-TypeError kuba i-strings ayitshintshi",
-      "Utshintsha ikhowudi ibe yi-'Xbc'",
-      "Akenzi nto ngokuthe cwaka",
+      "Utshintsha ikhowudi ibe yi'Xbc'",
+      "Akenzi nto ngokuthula",
       "Idala i-variable entsha ebizwa ngokuba yi-code[0]"
     ],
     "answer_xh": "Iphakamisa i-TypeError kuba i-strings ayitshintshi"
@@ -2137,8 +2144,8 @@
     "prompt_xh": "Kwenzeka ntoni xa kusebenza ikhowudi elandelayo?\nflag = \"red\"\nflag[0] = \"G\"",
     "options_xh": [
       "Iphakamisa i-TypeError kuba i-strings ayitshintshi",
-      "Utshintsha iflegi ibe yi-'Ged'",
-      "Akenzi nto ngokuthe cwaka",
+      "Utshintsha iflegi ibe yi'Ged'",
+      "Akenzi nto ngokuthula",
       "Idala i-variable entsha ebizwa ngokuba yi-flag[0]"
     ],
     "answer_xh": "Iphakamisa i-TypeError kuba i-strings ayitshintshi"
@@ -2162,8 +2169,8 @@
     "prompt_xh": "Kwenzeka ntoni xa kusebenza ikhowudi elandelayo?\nword = \"owl\"\nword[0] = \"O\"",
     "options_xh": [
       "Iphakamisa i-TypeError kuba i-strings ayitshintshi",
-      "Utshintsha igama libe yi-'Owl'",
-      "Akenzi nto ngokuthe cwaka",
+      "Utshintsha igama libe yi'Owl'",
+      "Akenzi nto ngokuthula",
       "Idala i-variable entsha ebizwa ngokuba yi-word[0]"
     ],
     "answer_xh": "Iphakamisa i-TypeError kuba i-strings ayitshintshi"
@@ -2184,14 +2191,14 @@
       "upper() only works on the whole string, not variables": "method_mutates_target"
     },
     "xp": 15,
-    "prompt_xh": "Le khowudi yenzelwe ukuguqula igama, kodwa iphukile.\nname = \"ada\"\nname.upper()\nprint(name)",
+    "prompt_xh": "Le khowudi yenzelwe ukutshintsha igama, kodwa yaphulwe.\nname = \"ada\"\nname.upper()\nprint(name)",
     "options_xh": [
-      "I-upper() ibuyisela i-string entsha engakhange igcinwe, ngoko igama aliguquki",
-      "I-upper() isebenza kuphela kwi-string epheleleyo, hayi i-variables",
-      "igama alikwazi ukufundwa emva kokuba libhaliwe",
-      "I-print(name) idinga ingxoxo eyongezelelweyo"
+      "upper() ibuyisa i-string entsha engaze igcinwe, ngoko igama aliguquki",
+      "upper() isebenza kuphela kwi string yonke, hayi variables",
+      "igama alifuneki emva kokuba libhaliwe",
+      "I-print(name) ifuna ingxoxo eyongezelelweyo"
     ],
-    "answer_xh": "I-upper() ibuyisela i-string entsha engakhange igcinwe, ngoko igama aliguquki"
+    "answer_xh": "upper() ibuyisa i-string entsha engaze igcinwe, ngoko igama aliguquki"
   },
   {
     "module_id": "immutability",
@@ -2209,14 +2216,14 @@
       "lower() only works on the whole string, not variables": "method_mutates_target"
     },
     "xp": 15,
-    "prompt_xh": "Le khowudi yenzelwe ukuguqula isixeko, kodwa iphukile.\ncity = \"CAPE\"\ncity.lower()\nprint(city)",
+    "prompt_xh": "Le khowudi yenzelwe ukuguqula isixeko, kodwa yaphulwe.\ncity = \"CAPE\"\ncity.lower()\nprint(city)",
     "options_xh": [
-      "I-lower() ibuyisela i-string entsha engakhange igcinwe, ngoko isixeko asitshintshi",
-      "I-lower() isebenza kuphela kwi-string epheleleyo, hayi i-variables",
-      "isixeko asinakufundwa emva kokuba sibhaliwe",
-      "I-print(city) idinga ingxoxo eyongezelelweyo"
+      "I-lower() ibuyisa i-string entsha engakhange igcinwe, ngoko isixeko asitshintshi",
+      "lower() isebenza kuphela kwi string yonke, hayi variables",
+      "isixeko asinakubalwa emva kokuba sibhaliwe",
+      "I-print(city) ifuna ingxoxo eyongezelelweyo"
     ],
-    "answer_xh": "I-lower() ibuyisela i-string entsha engakhange igcinwe, ngoko isixeko asitshintshi"
+    "answer_xh": "I-lower() ibuyisa i-string entsha engakhange igcinwe, ngoko isixeko asitshintshi"
   },
   {
     "module_id": "immutability",
@@ -2234,14 +2241,14 @@
       "strip() only works on the whole string, not variables": "method_mutates_target"
     },
     "xp": 15,
-    "prompt_xh": "Le khowudi yenzelwe ukuguqula igama, kodwa iphukile.\nword = \" hi \"\nword.strip()\nprint(word)",
+    "prompt_xh": "Le khowudi yenzelwe ukuguqula igama, kodwa yaphulwe.\nword = \" hi \"\nword.strip()\nprint(word)",
     "options_xh": [
-      "I-strip() ibuyisela i-string entsha engakhange igcinwe, ngoko igama aliguquki",
-      "I-strip() isebenza kuphela kwi-string epheleleyo, hayi i-variables",
-      "igama alikwazi ukufundwa emva kokuba libhaliwe",
-      "I-print(word) idinga ingxoxo eyongezelelweyo"
+      "strip() ibuyisa i-string entsha engaze igcinwe, ngoko ke igama aliguquki",
+      "strip() isebenza kuphela kwi string yonke, hayi variables",
+      "igama alinakugqalwa emva kokuba libhaliwe",
+      "I-print(word) ifuna ingxoxo eyongezelelweyo"
     ],
-    "answer_xh": "I-strip() ibuyisela i-string entsha engakhange igcinwe, ngoko igama aliguquki"
+    "answer_xh": "strip() ibuyisa i-string entsha engaze igcinwe, ngoko ke igama aliguquki"
   },
   {
     "module_id": "immutability",
@@ -2259,14 +2266,14 @@
       "upper() only works on the whole string, not variables": "method_mutates_target"
     },
     "xp": 15,
-    "prompt_xh": "Le khowudi yenzelwe ukuguqula itag, kodwa iphukile.\ntag = \"abc\"\ntag.upper()\nprint(tag)",
+    "prompt_xh": "Le khowudi yenzelwe ukuguqula itag, kodwa yaphulwe.\ntag = \"abc\"\ntag.upper()\nprint(tag)",
     "options_xh": [
-      "I-upper() ibuyisela i-string entsha engakhange igcinwe, ngoko ithegi ayitshintshi",
-      "I-upper() isebenza kuphela kwi-string epheleleyo, hayi i-variables",
-      "ithegi ayikwazi ukufundwa emva kokuba ibhaliwe",
-      "I-print(tag) idinga ingxoxo eyongezelelweyo"
+      "upper() ibuyisa i-string entsha engakhange igcinwe, ngoko ithegi ayitshintshi",
+      "upper() isebenza kuphela kwi string yonke, hayi variables",
+      "tag ayikwazi kufundwa emva kokuba ibhaliwe",
+      "I-print(tag) ifuna ingxoxo eyongezelelweyo"
     ],
-    "answer_xh": "I-upper() ibuyisela i-string entsha engakhange igcinwe, ngoko ithegi ayitshintshi"
+    "answer_xh": "upper() ibuyisa i-string entsha engakhange igcinwe, ngoko ithegi ayitshintshi"
   },
   {
     "module_id": "immutability",
@@ -2278,7 +2285,7 @@
       "greeting.upper": "method_mutates_target"
     },
     "xp": 15,
-    "prompt_xh": "Lungisa ikhowudi eyonakeleyo ngezantsi ukuze umbuliso utshintshe ngokwenene. Phendula ngomgca olungisiweyo othabathel' indawo umgca wesibini.\nLine 1: greeting = \"hi\"\nLine 2: greeting.upper()\nLine 3: print(greeting)"
+    "prompt_xh": "Lungisa ikhowudi ephukileyo engezantsi ukuze umbuliso utshintshe ngokwenene. Phendula ngomgca olungisiweyo othathela indawo yomgca 2.\nLine 1: greeting = \"hi\"\nLine 2: greeting.upper()\nLine 3: print(greeting)"
   },
   {
     "module_id": "immutability",
@@ -2290,7 +2297,7 @@
       "title.capitalize": "method_mutates_target"
     },
     "xp": 15,
-    "prompt_xh": "Lungisa ikhowudi ephukileyo engezantsi ukuze isihloko sitshintshe ngokwenene. Phendula ngomgca olungisiweyo othabatha indawo yomgca 2.\nLine 1: title = \"hello\"\nLine 2: title.capitalize()\nLine 3: print(title)"
+    "prompt_xh": "Lungisa ikhowudi ephukileyo engezantsi ukuze isihloko sitshintshe. Phendula ngomgca olungisiweyo othathela indawo yomgca 2.\nLine 1: title = \"hello\"\nLine 2: title.capitalize()\nLine 3: print(title)"
   },
   {
     "module_id": "immutability",
@@ -2302,7 +2309,7 @@
       "path.strip": "method_mutates_target"
     },
     "xp": 15,
-    "prompt_xh": "Lungisa ikhowudi ephukileyo engezantsi ukuze indlela itshintshe ngokwenene. Phendula ngomgca olungisiweyo othabatha indawo yomgca 2.\nLine 1: path = \" x \"\nLine 2: path.strip()\nLine 3: print(path)"
+    "prompt_xh": "Lungisa ikhowudi ephukileyo engezantsi ukuze indlela itshintshe ngokwenene. Phendula ngomgca olungisiweyo othathela indawo yomgca 2.\nLine 1: path = \" x \"\nLine 2: path.strip()\nLine 3: print(path)"
   },
   {
     "module_id": "immutability",
@@ -2314,7 +2321,7 @@
       "word.upper": "method_mutates_target"
     },
     "xp": 15,
-    "prompt_xh": "Lungisa ikhowudi eyonakeleyo ngezantsi ukuze igama litshintshe ngokwenene. Phendula ngomgca olungisiweyo othabathel' indawo umgca wesibini.\nLine 1: word = \"cat\"\nLine 2: word.upper()\nLine 3: print(word)"
+    "prompt_xh": "Lungisa ikhowudi ephukileyo engezantsi ukuze igama litshintshe ngokwenene. Phendula ngomgca olungisiweyo othathela indawo yomgca 2.\nLine 1: word = \"cat\"\nLine 2: word.upper()\nLine 3: print(word)"
   },
   {
     "module_id": "immutability",
@@ -2331,12 +2338,12 @@
     "xp": 15,
     "prompt_xh": "letters = ['c','a','t']\nletters[0] = 'b'\nprint(letters)\nKutheni le nto isebenza, ngoxa ikhowudi efanayo kwistring ingaphumeleli?",
     "options_xh": [
-      "I-Lists iyatshintsha, ngoko ke izinto ezizodwa zinokwabelwana ngokutsha; i-strings ayitshintshi",
-      "Lists sebenzisa syntax ekhethekileyo ukuba strings kwakhona inkxaso",
-      "Iileta azitshintshwanga ngokwenene, ziboniswe ngokwahlukileyo",
+      "Lists ziguquguquka, ngoko ke izinto ezizodwa zinokuthunyelwa kwakhona; strings aziguquguquki",
+      "Lists sebenzisa isicatshulwa esikhethekileyo ukuba strings kwakhona inkxaso",
+      "oonobumba abatshintshi, baboniswa ngendlela eyahlukileyo",
       "Le khowudi ngokwenene iphakamisa impazamo kakhulu"
     ],
-    "answer_xh": "I-Lists iyatshintsha, ngoko ke izinto ezizodwa zinokwabelwana ngokutsha; i-strings ayitshintshi"
+    "answer_xh": "Lists ziguquguquka, ngoko ke izinto ezizodwa zinokuthunyelwa kwakhona; strings aziguquguquki"
   },
   {
     "module_id": "immutability",
@@ -2353,12 +2360,12 @@
     "xp": 15,
     "prompt_xh": "nums = [1,2,3]\nnums[1] = 9\nprint(nums)\nKutheni le nto isebenza, ngoxa ikhowudi efanayo kwistring ingaphumeleli?",
     "options_xh": [
-      "I-Lists iyatshintsha, ngoko ke izinto ezizodwa zinokwabelwana ngokutsha; i-strings ayitshintshi",
-      "Lists sebenzisa syntax ekhethekileyo ukuba strings kwakhona inkxaso",
+      "Lists ziguquguquka, ngoko ke izinto ezizodwa zinokuthunyelwa kwakhona; strings aziguquguquki",
+      "Lists sebenzisa isicatshulwa esikhethekileyo ukuba strings kwakhona inkxaso",
       "nums ayitshintshi ngokwenene, nje ukubonisa ngokwahlukileyo",
       "Le khowudi ngokwenene iphakamisa impazamo kakhulu"
     ],
-    "answer_xh": "I-Lists iyatshintsha, ngoko ke izinto ezizodwa zinokwabelwana ngokutsha; i-strings ayitshintshi"
+    "answer_xh": "Lists ziguquguquka, ngoko ke izinto ezizodwa zinokuthunyelwa kwakhona; strings aziguquguquki"
   },
   {
     "module_id": "immutability",
@@ -2375,12 +2382,12 @@
     "xp": 15,
     "prompt_xh": "chars = ['d','o','g']\nchars[2] = 'x'\nprint(chars)\nKutheni le nto isebenza, ngoxa ikhowudi efanayo kwistring ingaphumeleli?",
     "options_xh": [
-      "I-Lists iyatshintsha, ngoko ke izinto ezizodwa zinokwabelwana ngokutsha; i-strings ayitshintshi",
-      "Lists sebenzisa syntax ekhethekileyo ukuba strings kwakhona inkxaso",
-      "i-chars ayitshintshi ngokwenene, iboniswa ngokwahlukileyo",
+      "Lists ziguquguquka, ngoko ke izinto ezizodwa zinokuthunyelwa kwakhona; strings aziguquguquki",
+      "Lists sebenzisa isicatshulwa esikhethekileyo ukuba strings kwakhona inkxaso",
+      "Chars ayitshintshi ngokwenene, nje ukubonisa ngokwahlukileyo",
       "Le khowudi ngokwenene iphakamisa impazamo kakhulu"
     ],
-    "answer_xh": "I-Lists iyatshintsha, ngoko ke izinto ezizodwa zinokwabelwana ngokutsha; i-strings ayitshintshi"
+    "answer_xh": "Lists ziguquguquka, ngoko ke izinto ezizodwa zinokuthunyelwa kwakhona; strings aziguquguquki"
   },
   {
     "module_id": "immutability",
@@ -2397,12 +2404,12 @@
     "xp": 15,
     "prompt_xh": "items = ['a','b']\nitems[0] = 'z'\nprint(items)\nKutheni le nto isebenza, ngoxa ikhowudi efanayo kwistring ingaphumeleli?",
     "options_xh": [
-      "I-Lists iyatshintsha, ngoko ke izinto ezizodwa zinokwabelwana ngokutsha; i-strings ayitshintshi",
-      "Lists sebenzisa syntax ekhethekileyo ukuba strings kwakhona inkxaso",
-      "izinto ayitshintshi ngokwenene, nje ukubonisa ngokwahlukileyo",
+      "Lists ziguquguquka, ngoko ke izinto ezizodwa zinokuthunyelwa kwakhona; strings aziguquguquki",
+      "Lists sebenzisa isicatshulwa esikhethekileyo ukuba strings kwakhona inkxaso",
+      "izinto azitshintshi ngokwenene, nje ukubonisa ngokwahlukileyo",
       "Le khowudi ngokwenene iphakamisa impazamo kakhulu"
     ],
-    "answer_xh": "I-Lists iyatshintsha, ngoko ke izinto ezizodwa zinokwabelwana ngokutsha; i-strings ayitshintshi"
+    "answer_xh": "Lists ziguquguquka, ngoko ke izinto ezizodwa zinokuthunyelwa kwakhona; strings aziguquguquki"
   },
   {
     "module_id": "immutability",
@@ -2420,9 +2427,9 @@
     "prompt_xh": "result = \"\"\nfor ch in \"cat\":\n    result = result + ch.upper()\nprint(result)\nYintoni eboniswa yile loop ngokuphathelele ukungaguquki?",
     "options_xh": [
       "I-iteration nganye yenza i-string entsha kwaye iyisabela ngokutsha ukuze",
-      "Isiphumo siyatshintshwa ngalo lonke ixesha",
+      "Isiphumo sitshintshwa rhoqo",
       "I-ch.upper() itshintsha i-string yoqobo ngokusisigxina",
-      "I-loop isebenza kanye kuphela"
+      "I-loop iqala ukusebenza kanye kuphela"
     ],
     "answer_xh": "I-iteration nganye yenza i-string entsha kwaye iyisabela ngokutsha ukuze"
   },
@@ -2442,9 +2449,9 @@
     "prompt_xh": "output = \"\"\nfor ch in \"dog\":\n    output = output + ch.upper()\nprint(output)\nYintoni eboniswa yile loop ngokuphathelele ukungaguquki?",
     "options_xh": [
       "I-iteration nganye yenza i-string entsha kwaye iyisabela kwakhona kwimveliso",
-      "imveliso iyahlengahlengiswa kwindawo yayo rhoqo",
+      "Ukuphuma kuyatshintshwa kwindawo nganye",
       "I-ch.upper() itshintsha i-string yoqobo ngokusisigxina",
-      "I-loop isebenza kanye kuphela"
+      "I-loop iqala ukusebenza kanye kuphela"
     ],
     "answer_xh": "I-iteration nganye yenza i-string entsha kwaye iyisabela kwakhona kwimveliso"
   },
@@ -2463,12 +2470,12 @@
     "xp": 15,
     "prompt_xh": "text = \"\"\nfor ch in \"owl\":\n    text = text + ch.upper()\nprint(text)\nYintoni eboniswa yile loop ngokuphathelele ukungaguquki?",
     "options_xh": [
-      "I-iteration nganye yenza i-string entsha kwaye iyisabela ngokutsha kwi-text",
-      "isicatshulwa siyatshintshwa ngalo lonke ixesha",
+      "I-iteration nganye yenza i-string entsha kwaye iyisabela ngokutsha",
+      "umbhalo utshintshwa rhoqo",
       "I-ch.upper() itshintsha i-string yoqobo ngokusisigxina",
-      "I-loop isebenza kanye kuphela"
+      "I-loop iqala ukusebenza kanye kuphela"
     ],
-    "answer_xh": "I-iteration nganye yenza i-string entsha kwaye iyisabela ngokutsha kwi-text"
+    "answer_xh": "I-iteration nganye yenza i-string entsha kwaye iyisabela ngokutsha"
   },
   {
     "module_id": "immutability",
@@ -2495,7 +2502,7 @@
       "text.upper()",
       "text.replace('a','b')",
       "text[1:3]",
-      "text[0] = 'Z' (umsebenzi othe ngqo)"
+      "text[0] = 'Z' (umsebenzi otyunjiweyo)"
     ],
     "answers_xh": [
       "text.upper()",
@@ -2528,7 +2535,7 @@
       "text.upper()",
       "text.replace('a','b')",
       "text[1:3]",
-      "text[0] = 'Z' (umsebenzi othe ngqo)"
+      "text[0] = 'Z' (umsebenzi otyunjiweyo)"
     ],
     "answers_xh": [
       "text.upper()",
@@ -2561,7 +2568,7 @@
       "text.upper()",
       "text.replace('a','b')",
       "text[1:3]",
-      "text[0] = 'Z' (umsebenzi othe ngqo)"
+      "text[0] = 'Z' (umsebenzi otyunjiweyo)"
     ],
     "answers_xh": [
       "text.upper()",
@@ -2581,7 +2588,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo efunda igama kwi-input uze uliprinte ngencwadi yokuqala enobumba obukhulu, ngaphandle kokusebenzisa .capitalize() okanye .title()."
+    "prompt_xh": "Bhala inkqubo efunda igama kwi-input kwaye uyiprinte ngencwadi yokuqala enobumba obukhulu, ngaphandle kokusebenzisa .capitalize() okanye .title()."
   },
   {
     "module_id": "immutability",
@@ -2609,7 +2616,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo efunda igama kwi-input uze uprinte eliguqulweyo, ugcine isiphumo kwi-variable entsha ngaphambi kokuprinta."
+    "prompt_xh": "Bhala inkqubo efunda igama elivela kwi-input uze uprinte eliguqulweyo, ugcine isiphumo kwi-variable entsha ngaphambi kokuprinta."
   },
   {
     "module_id": "immutability",
@@ -2627,12 +2634,12 @@
       "It was modified in place to become uppercase": "immutability_in_place"
     },
     "xp": 15,
-    "prompt_xh": "s = \"cat\"\ns = s.upper()\nEmva kokuqhuba, kwenzeka ntoni kwinto yokuqala yestring \"cat\"?",
+    "prompt_xh": "s = \"cat\"\ns = s.upper()\nEmva koku, kwenzeka ntoni kwinto yokuqala yestring \"cat\"?",
     "options_xh": [
       "Isekho ingatshintshanga; s ngoku ibonisa into eyahlukileyo, entsha string",
       "Yatshintshwa endaweni yayo ukuze ibe ngoonobumba abakhulu",
       "Yasuswa kwangoko kwimemori",
-      "Yaba yi string 'upper'"
+      "Yaba yistring 'upper'"
     ],
     "answer_xh": "Isekho ingatshintshanga; s ngoku ibonisa into eyahlukileyo, entsha string"
   },
@@ -2652,12 +2659,12 @@
       "It was modified in place to become uppercase": "immutability_in_place"
     },
     "xp": 15,
-    "prompt_xh": "word = \"dog\"\nword = word.upper()\nEmva kokuqhuba, kwenzeka ntoni kwinto yokuqala yestring \"dog\"?",
+    "prompt_xh": "word = \"dog\"\nword = word.upper()\nEmva koku, kwenzeka ntoni kwinto yokuqala yestring \"dog\"?",
     "options_xh": [
       "Isekho ingatshintshanga; igama ngoku libonisa into eyahlukileyo, entsha string",
       "Yatshintshwa endaweni yayo ukuze ibe ngoonobumba abakhulu",
       "Yasuswa kwangoko kwimemori",
-      "Yaba yi string 'upper'"
+      "Yaba yistring 'upper'"
     ],
     "answer_xh": "Isekho ingatshintshanga; igama ngoku libonisa into eyahlukileyo, entsha string"
   },
@@ -2677,14 +2684,14 @@
       "It was modified in place to become uppercase": "immutability_in_place"
     },
     "xp": 15,
-    "prompt_xh": "text = \"owl\"\ntext = text.upper()\nEmva kokuqhuba, kwenzeka ntoni kwinto yokuqala yestring \"owl\"?",
+    "prompt_xh": "text = \"owl\"\ntext = text.upper()\nEmva koku, kwenzeka ntoni kwinto yokuqala yestring \"owl\"?",
     "options_xh": [
-      "Isekho ingatshintshanga; umbhalo ngoku ubonisa into eyahlukileyo, entsha string",
+      "Isekho ingatshintshanga; umbhalo ngoku ubonisa into eyahlukileyo, entsha yestring",
       "Yatshintshwa endaweni yayo ukuze ibe ngoonobumba abakhulu",
       "Yasuswa kwangoko kwimemori",
-      "Yaba yi string 'upper'"
+      "Yaba yistring 'upper'"
     ],
-    "answer_xh": "Isekho ingatshintshanga; umbhalo ngoku ubonisa into eyahlukileyo, entsha string"
+    "answer_xh": "Isekho ingatshintshanga; umbhalo ngoku ubonisa into eyahlukileyo, entsha yestring"
   },
   {
     "module_id": "comparison",
@@ -2857,7 +2864,7 @@
       "True",
       "False",
       "Impazamo",
-      "Ayikwazi ukuthelekisa strings kunye <"
+      "Ayikwazi ukuthelekisa i-strings kunye <"
     ],
     "answer_xh": "True"
   },
@@ -2882,7 +2889,7 @@
       "True",
       "False",
       "Impazamo",
-      "Ayikwazi ukuthelekisa strings kunye <"
+      "Ayikwazi ukuthelekisa i-strings kunye <"
     ],
     "answer_xh": "True"
   },
@@ -2907,7 +2914,7 @@
       "True",
       "False",
       "Impazamo",
-      "Ayikwazi ukuthelekisa strings kunye <"
+      "Ayikwazi ukuthelekisa i-strings kunye <"
     ],
     "answer_xh": "False"
   },
@@ -2932,7 +2939,7 @@
       "True",
       "False",
       "Impazamo",
-      "Ayikwazi ukuthelekisa strings kunye <"
+      "Ayikwazi ukuthelekisa i-strings kunye <"
     ],
     "answer_xh": "True"
   },
@@ -2948,7 +2955,7 @@
     ],
     "answer": "True",
     "xp": 15,
-    "prompt_xh": "print(\"Z\" < \"a\")\nKhumbula: oonobumba abakhulu bangaphambi koonobumba abancinci ngokulandelelana kweASCII.",
+    "prompt_xh": "print(\"Z\" < \"a\")\nKhumbula: oonobumba abakhulu bangaphambi koonobumba abancinane ngokulandelelana kweASCII.",
     "options_xh": [
       "True",
       "False",
@@ -2968,7 +2975,7 @@
     ],
     "answer": "True",
     "xp": 15,
-    "prompt_xh": "print(\"A\" < \"z\")\nKhumbula: oonobumba abakhulu bangaphambi koonobumba abancinci ngokulandelelana kweASCII.",
+    "prompt_xh": "print(\"A\" < \"z\")\nKhumbula: oonobumba abakhulu bangaphambi koonobumba abancinane ngokulandelelana kweASCII.",
     "options_xh": [
       "True",
       "False",
@@ -2988,7 +2995,7 @@
     ],
     "answer": "True",
     "xp": 15,
-    "prompt_xh": "print(\"B\" < \"b\")\nKhumbula: oonobumba abakhulu bangaphambi koonobumba abancinci ngokulandelelana kweASCII.",
+    "prompt_xh": "print(\"B\" < \"b\")\nKhumbula: oonobumba abakhulu bangaphambi koonobumba abancinane ngokulandelelana kweASCII.",
     "options_xh": [
       "True",
       "False",
@@ -3017,7 +3024,7 @@
       "'10' == '10'": "string_number_equality_myth"
     },
     "xp": 15,
-    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezixabisa kwi-True.",
+    "prompt_xh": "Khetha zonke izishwankathelo ezingezantsi eziza kuhlaziya zibe yi-True.",
     "options_xh": [
       "'10' == 10",
       "'10' == '10'",
@@ -3049,7 +3056,7 @@
       "'5' == 5": "string_number_equality_myth"
     },
     "xp": 15,
-    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezixabisa kwi-True.",
+    "prompt_xh": "Khetha zonke izishwankathelo ezingezantsi eziza kuhlaziya zibe yi-True.",
     "options_xh": [
       "'cat' == 'cat'",
       "'cat' == 'Cat'",
@@ -3080,7 +3087,7 @@
       "3 == '3'": "string_number_equality_myth"
     },
     "xp": 15,
-    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezixabisa kwi-True.",
+    "prompt_xh": "Khetha zonke izishwankathelo ezingezantsi eziza kuhlaziya zibe yi-True.",
     "options_xh": [
       "3 == '3'",
       "'a' != 'b'",
@@ -3111,7 +3118,7 @@
       "'10' == 10": "string_number_equality_myth"
     },
     "xp": 15,
-    "prompt_xh": "Khetha zonke iinkcazo ezingezantsi ezixabisa kwi-True.",
+    "prompt_xh": "Khetha zonke izishwankathelo ezingezantsi eziza kuhlaziya zibe yi-True.",
     "options_xh": [
       "'py' in 'python'",
       "'10' == 10",
@@ -3281,7 +3288,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo ukuthelekisa amagama \"Cat\" kunye \"cat\" ukungahoyi ityala, ukuprinta \"Yes\" ukuba ziyalingana kunye \"No\" ngenye indlela."
+    "prompt_xh": "Bhala inkqubo yokuthelekisa amagama \"Cat\" no \"cat\" ukungahoywa, uprinte \"Yes\" ukuba ziyalingana no \"No\" ukuba akunjalo."
   },
   {
     "module_id": "comparison",
@@ -3294,7 +3301,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo ukuthelekisa amagama \"Dog\" kunye \"DOGGY\" ukungahoyi ityala, ukuprinta \"Yes\" ukuba ziyalingana kunye \"No\" ngenye indlela."
+    "prompt_xh": "Bhala inkqubo yokuthelekisa amagama \"Dog\" no \"DOGGY\" ukungahoywa, uprinte \"Yes\" ukuba ziyalingana no \"No\" ukuba akunjalo."
   },
   {
     "module_id": "comparison",
@@ -3307,7 +3314,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo ukuthelekisa amagama \"python\" kunye \"PYTHON\" ukungahoyi ityala, ukuprinta \"Yes\" ukuba ziyalingana kunye \"No\" ngenye indlela."
+    "prompt_xh": "Bhala inkqubo yokuthelekisa amagama \"python\" no \"PYTHON\" ukungahoywa, uprinte \"Yes\" ukuba ziyalingana no \"No\" ukuba akunjalo."
   },
   {
     "module_id": "comparison",
@@ -3322,12 +3329,12 @@
     ],
     "answer": "apple",
     "xp": 10,
-    "prompt_xh": "Ngawaphi kula magama alandelayo afumaneka kuqala ngokulandelelana kwealfabhethi (isichazi-magama)?",
+    "prompt_xh": "Ngawaphi kula magama alandelayo afumaneka kuqala ngokoluhlu lwealfabhethi?",
     "options_xh": [
       "apple",
       "banana",
       "cherry",
-      "Bonke bayalingana"
+      "Bonke balingana"
     ],
     "answer_xh": "apple"
   },
@@ -3341,7 +3348,7 @@
       "3": "off_by_one_length"
     },
     "xp": 10,
-    "prompt_xh": "Zingaphi izihlandlo isibhengezo esishicilelweyo sisebenza ngazo?\nfor ch in \"cats\":\n    print(ch)"
+    "prompt_xh": "Zingaphi izihlandlo eziphuma ngazo iincwadi?\nfor ch in \"cats\":\n    print(ch)"
   },
   {
     "module_id": "looping",
@@ -3353,7 +3360,7 @@
       "3": "off_by_one_length"
     },
     "xp": 10,
-    "prompt_xh": "Zingaphi izihlandlo isibhengezo esishicilelweyo sisebenza ngazo?\nfor ch in \"dogs\":\n    print(ch)"
+    "prompt_xh": "Zingaphi izihlandlo eziphuma ngazo iincwadi?\nfor ch in \"dogs\":\n    print(ch)"
   },
   {
     "module_id": "looping",
@@ -3365,7 +3372,7 @@
       "5": "off_by_one_length"
     },
     "xp": 10,
-    "prompt_xh": "Zingaphi izihlandlo isibhengezo esishicilelweyo sisebenza ngazo?\nfor ch in \"python\":\n    print(ch)"
+    "prompt_xh": "Zingaphi izihlandlo eziphuma ngazo iincwadi?\nfor ch in \"python\":\n    print(ch)"
   },
   {
     "module_id": "looping",
@@ -3377,7 +3384,7 @@
       "5": "off_by_one_length"
     },
     "xp": 10,
-    "prompt_xh": "Zingaphi izihlandlo isibhengezo esishicilelweyo sisebenza ngazo?\nfor ch in \"banana\":\n    print(ch)"
+    "prompt_xh": "Zingaphi izihlandlo eziphuma ngazo iincwadi?\nfor ch in \"banana\":\n    print(ch)"
   },
   {
     "module_id": "looping",
@@ -3389,7 +3396,7 @@
       "4": "off_by_one_length"
     },
     "xp": 10,
-    "prompt_xh": "Zingaphi izihlandlo isibhengezo esishicilelweyo sisebenza ngazo?\nfor ch in \"xhosa\":\n    print(ch)"
+    "prompt_xh": "Zingaphi izihlandlo eziphuma ngazo iincwadi?\nfor ch in \"xhosa\":\n    print(ch)"
   },
   {
     "module_id": "looping",
@@ -3507,11 +3514,11 @@
       "the loop condition should be i <= len(word)": "off_by_one_length"
     },
     "xp": 15,
-    "prompt_xh": "Okwangoku iloop yenzelwe ukuprinta zonke iileta zegama kodwa ayipheli.\nword = \"owl\"\ni = 0\nwhile i < len(word):\n    print(word[i])",
+    "prompt_xh": "Lo gama iloop yenzelwe ukuprinta zonke iimpawu zegama kodwa ayimi.\nword = \"owl\"\ni = 0\nwhile i < len(word):\n    print(word[i])",
     "options_xh": [
       "i += 1 is missing from inside the loop body",
       "while should be for",
-      "I-len(word) kufuneka ibe yi-len(word) - 1",
+      "len(word) kufuneka ibe yi len(word) - 1",
       "the loop condition should be i <= len(word)"
     ],
     "answer_xh": "i += 1 is missing from inside the loop body"
@@ -3532,11 +3539,11 @@
       "the loop condition should be i <= len(word)": "off_by_one_length"
     },
     "xp": 15,
-    "prompt_xh": "Okwangoku iloop yenzelwe ukuprinta zonke iileta zegama kodwa ayipheli.\nword = \"cat\"\ni = 0\nwhile i < len(word):\n    print(word[i])",
+    "prompt_xh": "Lo gama iloop yenzelwe ukuprinta zonke iimpawu zegama kodwa ayimi.\nword = \"cat\"\ni = 0\nwhile i < len(word):\n    print(word[i])",
     "options_xh": [
       "i += 1 is missing from inside the loop body",
       "while should be for",
-      "I-len(word) kufuneka ibe yi-len(word) - 1",
+      "len(word) kufuneka ibe yi len(word) - 1",
       "the loop condition should be i <= len(word)"
     ],
     "answer_xh": "i += 1 is missing from inside the loop body"
@@ -3557,11 +3564,11 @@
       "the loop condition should be i <= len(word)": "off_by_one_length"
     },
     "xp": 15,
-    "prompt_xh": "Okwangoku iloop yenzelwe ukuprinta zonke iileta zegama kodwa ayipheli.\nword = \"dog\"\ni = 0\nwhile i < len(word):\n    print(word[i])",
+    "prompt_xh": "Lo gama iloop yenzelwe ukuprinta zonke iimpawu zegama kodwa ayimi.\nword = \"dog\"\ni = 0\nwhile i < len(word):\n    print(word[i])",
     "options_xh": [
       "i += 1 is missing from inside the loop body",
       "while should be for",
-      "I-len(word) kufuneka ibe yi-len(word) - 1",
+      "len(word) kufuneka ibe yi len(word) - 1",
       "the loop condition should be i <= len(word)"
     ],
     "answer_xh": "i += 1 is missing from inside the loop body"
@@ -3573,7 +3580,7 @@
     "type": "fill_blank",
     "answer": "6",
     "xp": 15,
-    "prompt_xh": "Zingaphi iilayini eziprintiweyo kule khowudi zizonke?\nfor x in \"abc\":\n    for y in range(2):\n        print(x, y)"
+    "prompt_xh": "Zingaphi imigca edityanisiweyo edityaniswa yile khowudi?\nfor x in \"abc\":\n    for y in range(2):\n        print(x, y)"
   },
   {
     "module_id": "looping",
@@ -3582,7 +3589,7 @@
     "type": "fill_blank",
     "answer": "6",
     "xp": 15,
-    "prompt_xh": "Zingaphi iilayini eziprintiweyo kule khowudi zizonke?\nfor x in range(3):\n    for y in \"hi\":\n        print(x, y)"
+    "prompt_xh": "Zingaphi imigca edityanisiweyo edityaniswa yile khowudi?\nfor x in range(3):\n    for y in \"hi\":\n        print(x, y)"
   },
   {
     "module_id": "looping",
@@ -3591,7 +3598,7 @@
     "type": "fill_blank",
     "answer": "6",
     "xp": 15,
-    "prompt_xh": "Zingaphi iilayini eziprintiweyo kule khowudi zizonke?\nfor x in \"cat\":\n    for y in \"ab\":\n        print(x, y)"
+    "prompt_xh": "Zingaphi imigca edityanisiweyo edityaniswa yile khowudi?\nfor x in \"cat\":\n    for y in \"ab\":\n        print(x, y)"
   },
   {
     "module_id": "looping",
@@ -3600,7 +3607,7 @@
     "type": "fill_blank",
     "answer": "6",
     "xp": 15,
-    "prompt_xh": "Zingaphi iilayini eziprintiweyo kule khowudi zizonke?\nfor x in range(2):\n    for y in range(3):\n        print(x, y)"
+    "prompt_xh": "Zingaphi imigca edityanisiweyo edityaniswa yile khowudi?\nfor x in range(2):\n    for y in range(3):\n        print(x, y)"
   },
   {
     "module_id": "looping",
@@ -3706,7 +3713,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo eguqula igama elithi \"cat\" usebenzisa i-loop (hayi i-slicing). Gcina igalelo njenge-w = \"cat\" uze uprinte isiphumo esiguqukayo."
+    "prompt_xh": "Bhala inkqubo eyenza igama elithi \"cat\" libuyele umva usebenzisa i-loop (hayi i-slicing). Gcina igalelo njenge-w = \"cat\" uze uprinte umphumo obuyimpinda."
   },
   {
     "module_id": "looping",
@@ -3719,7 +3726,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo eguqula igama elithi \"python\" usebenzisa i-loop (hayi i-slicing). Gcina igalelo njenge-w = \"python\" uze uprinte isiphumo esiguqukayo."
+    "prompt_xh": "Bhala inkqubo eyenza igama elithi \"python\" libuyele umva usebenzisa i-loop (hayi i-slicing). Gcina igalelo njenge-w = \"python\" uze uprinte umphumo obuyimpinda."
   },
   {
     "module_id": "looping",
@@ -3732,7 +3739,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo eguqula igama elithi \"umuntu\" usebenzisa i-loop (hayi i-slicing). Gcina igalelo njenge-w = \"umuntu\" uze uprinte isiphumo esiguqukayo."
+    "prompt_xh": "Bhala inkqubo eyenza igama elithi \"umuntu\" libuyele umva usebenzisa i-loop (hayi i-slicing). Gcina igalelo njenge-w = \"umuntu\" uze uprinte umphumo obuyimpinda."
   },
   {
     "module_id": "looping",
@@ -3959,7 +3966,7 @@
       "'  hello  '": "strip_only_removes_one_char"
     },
     "xp": 15,
-    "prompt_xh": "print(repr(\"  hello  \".strip()))\n(i-repr ibonisa amanqaku okucaphula ukuze ubone indawo emhlophe ngokucacileyo)",
+    "prompt_xh": "print(repr(\"  hello  \".strip()))\n(i-repr ibonisa amanqaku e-quote ukuze ubone indawo emhlophe ngokucacileyo)",
     "options_xh": [
       "'hello'",
       "'hello  '",
@@ -3984,7 +3991,7 @@
       "'  hello  '": "strip_only_removes_one_char"
     },
     "xp": 15,
-    "prompt_xh": "print(repr(\"  hello  \".lstrip()))\n(i-repr ibonisa amanqaku okucaphula ukuze ubone indawo emhlophe ngokucacileyo)",
+    "prompt_xh": "print(repr(\"  hello  \".lstrip()))\n(i-repr ibonisa amanqaku e-quote ukuze ubone indawo emhlophe ngokucacileyo)",
     "options_xh": [
       "'hello'",
       "'hello  '",
@@ -4009,7 +4016,7 @@
       "'  hello  '": "strip_only_removes_one_char"
     },
     "xp": 15,
-    "prompt_xh": "print(repr(\"  hello  \".rstrip()))\n(i-repr ibonisa amanqaku okucaphula ukuze ubone indawo emhlophe ngokucacileyo)",
+    "prompt_xh": "print(repr(\"  hello  \".rstrip()))\n(i-repr ibonisa amanqaku e-quote ukuze ubone indawo emhlophe ngokucacileyo)",
     "options_xh": [
       "'hello'",
       "'hello  '",
@@ -4073,7 +4080,7 @@
       "word.count(\"o\")": "count_vs_find_confusion"
     },
     "xp": 15,
-    "prompt_xh": "word = \"hello world\"\nKhetha konke oku kulandelayo okuya kufumana ngokuchanekileyo indawo yokuvela kokuqala kwe\"o\".",
+    "prompt_xh": "word = \"hello world\"\nKhetha zonke ezi zilandelayo eziya kufumana ngokuchanekileyo indawo yokuvela kokuqala kwe\"o\".",
     "options_xh": [
       "word.find(\"o\")",
       "word.index(\"o\")",
@@ -4104,7 +4111,7 @@
       "word.count(\"n\")": "count_vs_find_confusion"
     },
     "xp": 15,
-    "prompt_xh": "word = \"banana\"\nKhetha konke oku kulandelayo okuya kufumana ngokuchanekileyo indawo yokuvela kokuqala kwe\"n\".",
+    "prompt_xh": "word = \"banana\"\nKhetha zonke ezi zilandelayo eziya kufumana ngokuchanekileyo indawo yokuvela kokuqala kwe\"n\".",
     "options_xh": [
       "word.find(\"n\")",
       "word.index(\"n\")",
@@ -4135,7 +4142,7 @@
       "word.count(\"ngumuntu\")": "count_vs_find_confusion"
     },
     "xp": 15,
-    "prompt_xh": "word = \"umuntu ngumuntu\"\nKhetha konke oku kulandelayo okuya kufumana ngokuchanekileyo indawo yokuvela kokuqala kwe\"ngumuntu\".",
+    "prompt_xh": "word = \"umuntu ngumuntu\"\nKhetha zonke ezi zilandelayo eziya kufumana ngokuchanekileyo indawo yokuvela kokuqala kwe\"ngumuntu\".",
     "options_xh": [
       "word.find(\"ngumuntu\")",
       "word.index(\"ngumuntu\")",
@@ -4411,7 +4418,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo efunda isivakalisi kwi-input uze uprinte ukuba mangaphi amagama aqukethe (sebenzisa i-split())."
+    "prompt_xh": "Bhala inkqubo efunda isivakalisi esingenayo ize iprinte amagama angakanani (sebenzisa i-split())."
   },
   {
     "module_id": "methods",
@@ -4425,7 +4432,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo efunda igama kwi-input kwaye uprinte i-'Yes' ukuba ifunda okufanayo phambili nangasemva (ukutyeshela imeko), kungenjalo i-'No'."
+    "prompt_xh": "Bhala inkqubo efunda igama ukusuka kwi-input kwaye uprinte i-'Yes' ukuba ifunda okufanayo phambili nangasemva (ukungahoywa kwimeko), kungenjalo i-'No'."
   },
   {
     "module_id": "methods",
@@ -4439,7 +4446,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala inkqubo efunda igama kwi-input uze uprinte inani lamaxesha apho kuvela khona ileta 'a' (sebenzisa count())."
+    "prompt_xh": "Bhala inkqubo efunda igama kwi-input kwaye uprinte ukuba zingaphi izihlandlo i-'a' ibonakala kuyo (sebenzisa i-count())."
   },
   {
     "module_id": "formatting",
@@ -4459,12 +4466,12 @@
     "xp": 10,
     "prompt_xh": "name = \"Ada\"\nage = 30\nprint(f\"{name} is {age}\")",
     "options_xh": [
-      "I-Ada ingama-30",
+      "Ada ngu 30",
       "igama lixesha lobudala",
       "{name} is {age}",
       "Impazamo"
     ],
-    "answer_xh": "I-Ada ingama-30"
+    "answer_xh": "Ada ngu 30"
   },
   {
     "module_id": "formatting",
@@ -4485,7 +4492,7 @@
     "prompt_xh": "city = \"Cape Town\"\nyear = 2026\nprint(f\"{city} is {year}\")",
     "options_xh": [
       "I-Cape Town ngu-2026",
-      "isixeko kunyaka",
+      "isixeko unyaka",
       "{city} is {year}",
       "Impazamo"
     ],
@@ -4557,7 +4564,7 @@
       "Ada says hi": "fstring_missing_prefix_effect"
     },
     "xp": 15,
-    "prompt_xh": "name = \"Ada\"\nprint(\"{name} says hi\")\nYintoni eprintiweyo? (qwalasela akukho f phambi string)",
+    "prompt_xh": "name = \"Ada\"\nprint(\"{name} says hi\")\nYintoni eprintiweyo? (umzekelo akukho f phambi string)",
     "options_xh": [
       "{name} says hi",
       "Ada says hi",
@@ -4582,7 +4589,7 @@
       "Joburg says hi": "fstring_missing_prefix_effect"
     },
     "xp": 15,
-    "prompt_xh": "city = \"Joburg\"\nprint(\"{city} says hi\")\nYintoni eprintiweyo? (qwalasela akukho f phambi string)",
+    "prompt_xh": "city = \"Joburg\"\nprint(\"{city} says hi\")\nYintoni eprintiweyo? (umzekelo akukho f phambi string)",
     "options_xh": [
       "{city} says hi",
       "Joburg says hi",
@@ -4601,7 +4608,7 @@
       "1": "escape_sequence_literal_confusion"
     },
     "xp": 10,
-    "prompt_xh": "print(\"Line1\\nLine2\")\nZingaphi iilayini ezahlukileyo eziprintiweyo?"
+    "prompt_xh": "print(\"Line1\\nLine2\")\nZingaphi imigca eyahlukeneyo eli phepha liyiprintayo?"
   },
   {
     "module_id": "formatting",
@@ -4614,10 +4621,10 @@
     ],
     "answer": "A tab character",
     "xp": 10,
-    "prompt_xh": "print(\"A\\tB\")\nNgaba kukho umlinganiswa we-tab okanye i-backslash-t yeempawu ezimbini phakathi kwe-A ne-B?",
+    "prompt_xh": "print(\"A\\tB\")\nNgaba kukho umlinganiswa ithebhu okanye iimpawu ezimbini backslash-t phakathi A no B?",
     "options_xh": [
       "A tab character",
-      "Iimpawu ezimbini backslash kwaye t"
+      "Iimpawu ezimbini backslash kunye t"
     ],
     "answer_xh": "A tab character"
   },
@@ -4632,7 +4639,7 @@
     ],
     "answer": "Quotation marks",
     "xp": 10,
-    "prompt_xh": "print(\"She said \\\"hi\\\"\")\nYintoni ebonakalayo phakathi kokuthi \"Hayi\" nothi \"Hayi\" kwi-output?",
+    "prompt_xh": "print(\"She said \\\"hi\\\"\")\nYintoni ebonakalayo phakathi kokuthi \"Hayi\" no \"Hi\" kwinto ephumayo?",
     "options_xh": [
       "Quotation marks",
       "Iimpawu backslash-quote"
@@ -4716,7 +4723,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala ibinzana elithi Python usebenzisa ibinzana elithi f-string elivelisa isicatshulwa esichanekileyo: Inqaku: 7/10"
+    "prompt_xh": "Bhala ibinzana elithi Python usebenzisa i-f-string eyenza umbhalo ofanelekileyo: Inqaku: 7/10"
   },
   {
     "module_id": "formatting",
@@ -4729,7 +4736,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala isibhengezo sePython usebenzisa i-f-string evelisa isicatshulwa esichanekileyo: Iyonke: R150"
+    "prompt_xh": "Bhala ibinzana Python usebenzisa f-string eyenza isicatshulwa esichanekileyo: I-Total: R150"
   },
   {
     "module_id": "formatting",
@@ -4742,7 +4749,7 @@
       }
     ],
     "xp": 20,
-    "prompt_xh": "Bhala ibinzana elithi Python usebenzisa i-f-string evelisa isicatshulwa esichanekileyo: Igama: Hlomla"
+    "prompt_xh": "Bhala ibinzana Python usebenzisa f-string eyenza isicatshulwa esichanekileyo: Igama: Hlomla"
   },
   {
     "module_id": "formatting",
@@ -4759,12 +4766,12 @@
     "xp": 15,
     "prompt_xh": "print(\"{} is {}\".format(\"Ada\", 30))",
     "options_xh": [
-      "I-Ada ingama-30",
+      "Ada ngu 30",
       "\"{} is {}\".format(\"Ada\", 30)",
       "Impazamo",
       "None"
     ],
-    "answer_xh": "I-Ada ingama-30"
+    "answer_xh": "Ada ngu 30"
   },
   {
     "module_id": "formatting",
@@ -4824,11 +4831,11 @@
     "xp": 15,
     "prompt_xh": "print(\"%s is %d\" % (\"Ada\", 30))",
     "options_xh": [
-      "I-Ada ingama-30",
+      "Ada ngu 30",
       "\"%s is %d\" % (\"Ada\", 30)",
       "Impazamo"
     ],
-    "answer_xh": "I-Ada ingama-30"
+    "answer_xh": "Ada ngu 30"
   },
   {
     "module_id": "formatting",
@@ -5006,7 +5013,7 @@
       }
     ],
     "xp": 25,
-    "prompt_xh": "Bhala inkqubo efunda igama kunye nobudala behlukaniswe nge-semicolon (umz. Ada;30), ibahlule, kwaye uprinte i-'<name> is <age> years old' usebenzisa i-f-string."
+    "prompt_xh": "Bhala inkqubo efunda igama nobudala obuhlukaniswe ngombhalo (umz. Ada;30), ubahlukanise, uze uprinte '<name> is <age> years old' usebenzisa i-f-string."
   },
   {
     "module_id": "formatting",
@@ -5020,7 +5027,7 @@
       }
     ],
     "xp": 25,
-    "prompt_xh": "Bhala inkqubo efunda amanani amabini ahlukaniswe yintsomi emele amanqaku; iyonke (umz. 7;10), kwaye uprinte ipesenti njenge '<percent>%' apho percent = score/total*100."
+    "prompt_xh": "Bhala inkqubo efunda amanani amabini ahlukaniswe yintsomi emele amanqaku; iyonke (umz. 7;10), kwaye uprinte ipesenti njenge-'<percent>%' apho i-percent = score/total*100."
   },
   {
     "module_id": "formatting",
@@ -5034,7 +5041,7 @@
       }
     ],
     "xp": 25,
-    "prompt_xh": "Bhala inkqubo efunda inombolo kwi-input kwaye uyiprinte njenge-'Number: 0XX' ephakanyiswe ukuya kumanani ama-2 ene-zero ephambili ukuba kuyimfuneko, usebenzisa i-f-string ngefomathi ye-: 02, ephambi kwe-'Number: '."
+    "prompt_xh": "Bhala inkqubo efunda inani ukusuka kwi-input kwaye uliprinte njenge-'Number: 0XX' ephakanyiswe kwi-2 amanani kunye ne-zero ephambili ukuba kuyimfuneko, usebenzisa i-f-string ngefomathi ye: 02, ephakanyiswe nge-'Number: '."
   },
   {
     "module_id": "challenge",
@@ -5090,7 +5097,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda isivakalisi ize iprinte igama ngalinye kumgca walo, ngoonobumba abancinane, ngaphandle kokusebenzisa isplit()."
+    "prompt_xh": "Bhala inkqubo efunda isivakalisi ize iprinte igama ngalinye kumgca walo, ngeyona leta incinane, ngaphandle kokusebenzisa isplit()."
   },
   {
     "module_id": "challenge",
@@ -5104,7 +5111,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda isivakalisi ize iprinte igama ngalinye kumgca walo, ngoonobumba abancinane, ngaphandle kokusebenzisa isplit()."
+    "prompt_xh": "Bhala inkqubo efunda isivakalisi ize iprinte igama ngalinye kumgca walo, ngeyona leta incinane, ngaphandle kokusebenzisa isplit()."
   },
   {
     "module_id": "challenge",
@@ -5118,7 +5125,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda isivakalisi ize iprinte igama ngalinye kumgca walo, ngoonobumba abancinane, ngaphandle kokusebenzisa isplit()."
+    "prompt_xh": "Bhala inkqubo efunda isivakalisi ize iprinte igama ngalinye kumgca walo, ngeyona leta incinane, ngaphandle kokusebenzisa isplit()."
   },
   {
     "module_id": "challenge",
@@ -5132,7 +5139,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda igama uze uliprinte ngasemva, usebenzisa i-slicing kuphela (hayi i-loops)."
+    "prompt_xh": "Bhala inkqubo efunda igama ize iphrinte ngokuchithwa kwayo, usebenzisa i-slicing kuphela (hayi i-loops)."
   },
   {
     "module_id": "challenge",
@@ -5146,7 +5153,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda igama uze uliprinte ngasemva, usebenzisa i-slicing kuphela (hayi i-loops)."
+    "prompt_xh": "Bhala inkqubo efunda igama ize iphrinte ngokuchithwa kwayo, usebenzisa i-slicing kuphela (hayi i-loops)."
   },
   {
     "module_id": "challenge",
@@ -5160,7 +5167,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda igama uze uliprinte ngasemva, usebenzisa i-slicing kuphela (hayi i-loops)."
+    "prompt_xh": "Bhala inkqubo efunda igama ize iphrinte ngokuchithwa kwayo, usebenzisa i-slicing kuphela (hayi i-loops)."
   },
   {
     "module_id": "challenge",
@@ -5174,7 +5181,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda inombolo yekhadi elinamanani ali-16 ize iprinte zonke ngaphandle kwamanani amane okugqibela endaweni ye'*'."
+    "prompt_xh": "Bhala inkqubo efunda inombolo yekhadi elinamadijithi ali-16 ize iphrinte zonke ngaphandle kwamanani amane okugqibela endaweni ye'*'."
   },
   {
     "module_id": "challenge",
@@ -5188,7 +5195,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda inombolo yekhadi elinamanani ali-16 ize iprinte zonke ngaphandle kwamanani amane okugqibela endaweni ye'*'."
+    "prompt_xh": "Bhala inkqubo efunda inombolo yekhadi elinamadijithi ali-16 ize iphrinte zonke ngaphandle kwamanani amane okugqibela endaweni ye'*'."
   },
   {
     "module_id": "challenge",
@@ -5202,7 +5209,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda inombolo yekhadi elinamanani ali-16 ize iprinte zonke ngaphandle kwamanani amane okugqibela endaweni ye'*'."
+    "prompt_xh": "Bhala inkqubo efunda inombolo yekhadi elinamadijithi ali-16 ize iphrinte zonke ngaphandle kwamanani amane okugqibela endaweni ye'*'."
   },
   {
     "module_id": "challenge",
@@ -5216,7 +5223,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda i-string kwaye uprinte yonke i-substring engenazo iileta (amanani, amaphuzu, iisimboli), enye kumgca ngamnye, ngokulandelelana kwazo."
+    "prompt_xh": "Bhala inkqubo efunda i-string kwaye uprinte yonke i-substring engafakwanga ngamanqaku (amanani, amabala, izimboli), enye ngomgca, ngokulandelelana kwazo."
   },
   {
     "module_id": "challenge",
@@ -5230,7 +5237,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda i-string kwaye uprinte yonke i-substring engenazo iileta (amanani, amaphuzu, iisimboli), enye kumgca ngamnye, ngokulandelelana kwazo."
+    "prompt_xh": "Bhala inkqubo efunda i-string kwaye uprinte yonke i-substring engafakwanga ngamanqaku (amanani, amabala, izimboli), enye ngomgca, ngokulandelelana kwazo."
   },
   {
     "module_id": "challenge",
@@ -5244,7 +5251,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda i-string kwaye uprinte yonke i-substring engenazo iileta (amanani, amaphuzu, iisimboli), enye kumgca ngamnye, ngokulandelelana kwazo."
+    "prompt_xh": "Bhala inkqubo efunda i-string kwaye uprinte yonke i-substring engafakwanga ngamanqaku (amanani, amabala, izimboli), enye ngomgca, ngokulandelelana kwazo."
   },
   {
     "module_id": "challenge",
@@ -5258,7 +5265,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda ibinzana uze uprinte isishwankathelo salo: oonobumba abakhulu bokuqala kwigama ngalinye, ngaphandle kwamathuba."
+    "prompt_xh": "Bhala inkqubo efunda ibinzana ize iprinte isishwankathelo salo: oonobumba abakhulu bokuqala kwigama ngalinye, ngaphandle kwamathuba."
   },
   {
     "module_id": "challenge",
@@ -5272,7 +5279,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda ibinzana uze uprinte isishwankathelo salo: oonobumba abakhulu bokuqala kwigama ngalinye, ngaphandle kwamathuba."
+    "prompt_xh": "Bhala inkqubo efunda ibinzana ize iprinte isishwankathelo salo: oonobumba abakhulu bokuqala kwigama ngalinye, ngaphandle kwamathuba."
   },
   {
     "module_id": "challenge",
@@ -5286,7 +5293,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda ibinzana uze uprinte isishwankathelo salo: oonobumba abakhulu bokuqala kwigama ngalinye, ngaphandle kwamathuba."
+    "prompt_xh": "Bhala inkqubo efunda ibinzana ize iprinte isishwankathelo salo: oonobumba abakhulu bokuqala kwigama ngalinye, ngaphandle kwamathuba."
   },
   {
     "module_id": "challenge",
@@ -5300,7 +5307,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda isivakalisi uze uprinte inani lamagama esiqulethe kuwo."
+    "prompt_xh": "Bhala inkqubo efunda isivakalisi uze uprinte amagama angakanani."
   },
   {
     "module_id": "challenge",
@@ -5314,7 +5321,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda isivakalisi uze uprinte inani lamagama esiqulethe kuwo."
+    "prompt_xh": "Bhala inkqubo efunda isivakalisi uze uprinte amagama angakanani."
   },
   {
     "module_id": "challenge",
@@ -5328,7 +5335,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda isivakalisi uze uprinte inani lamagama esiqulethe kuwo."
+    "prompt_xh": "Bhala inkqubo efunda isivakalisi uze uprinte amagama angakanani."
   },
   {
     "module_id": "challenge",
@@ -5342,7 +5349,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda amagama amabini ahlukaniswe sisigxina (umzekelo, mamela; cwaka) kwaye uprinte i-'Yes' ukuba zii-anagram zomnye nomnye (ukutyeshela imeko), kungenjalo i-'No'."
+    "prompt_xh": "Bhala inkqubo efunda amagama amabini ahlukaniswe sisigxina (umz. mamela; cwaka) kwaye uprinte i-'Yes' ukuba zii-anagrams omnye komnye (ukungahoywa), kungenjalo i-'No'."
   },
   {
     "module_id": "challenge",
@@ -5356,7 +5363,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda amagama amabini ahlukaniswe sisigxina (umzekelo, mamela; cwaka) kwaye uprinte i-'Yes' ukuba zii-anagram zomnye nomnye (ukutyeshela imeko), kungenjalo i-'No'."
+    "prompt_xh": "Bhala inkqubo efunda amagama amabini ahlukaniswe sisigxina (umz. mamela; cwaka) kwaye uprinte i-'Yes' ukuba zii-anagrams omnye komnye (ukungahoywa), kungenjalo i-'No'."
   },
   {
     "module_id": "challenge",
@@ -5370,7 +5377,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda amagama amabini ahlukaniswe sisigxina (umzekelo, mamela; cwaka) kwaye uprinte i-'Yes' ukuba zii-anagram zomnye nomnye (ukutyeshela imeko), kungenjalo i-'No'."
+    "prompt_xh": "Bhala inkqubo efunda amagama amabini ahlukaniswe sisigxina (umz. mamela; cwaka) kwaye uprinte i-'Yes' ukuba zii-anagrams omnye komnye (ukungahoywa), kungenjalo i-'No'."
   },
   {
     "module_id": "challenge",
@@ -5384,7 +5391,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda igama le-snake_case variable kwaye iprinte eliguqulelwe kwi-Title Case kunye nezikhala (umz. igama lomsebenzisi_igama liba ligama lomsebenzisi)."
+    "prompt_xh": "Bhala inkqubo efunda igama le-snake_case variable kwaye iprinte eliguqulelwe kwi-Title Case kunye neendawo (umzekelo igama lomsebenzisi_igama liba ligama lomsebenzisi)."
   },
   {
     "module_id": "challenge",
@@ -5398,7 +5405,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda igama le-snake_case variable kwaye iprinte eliguqulelwe kwi-Title Case kunye nezikhala (umz. igama lomsebenzisi_igama liba ligama lomsebenzisi)."
+    "prompt_xh": "Bhala inkqubo efunda igama le-snake_case variable kwaye iprinte eliguqulelwe kwi-Title Case kunye neendawo (umzekelo igama lomsebenzisi_igama liba ligama lomsebenzisi)."
   },
   {
     "module_id": "challenge",
@@ -5412,7 +5419,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda igama le-snake_case variable kwaye iprinte eliguqulelwe kwi-Title Case kunye nezikhala (umz. igama lomsebenzisi_igama liba ligama lomsebenzisi)."
+    "prompt_xh": "Bhala inkqubo efunda igama le-snake_case variable kwaye iprinte eliguqulelwe kwi-Title Case kunye neendawo (umzekelo igama lomsebenzisi_igama liba ligama lomsebenzisi)."
   },
   {
     "module_id": "challenge",
@@ -5426,7 +5433,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda ilist yamazwi (umz. ama-apile, ibhanana, i-cherries) ahlukaniswe ngamagqabaza kwaye uwaprinte adibaniswe kwisivakalisi sendalo: izinto ezahlulwe ngamagqabaza, kunye ne'and' phambi kwento yokugqibela."
+    "prompt_xh": "Bhala inkqubo efunda ilist yamazwi ahlukaniswe ngamagqabi (umz. ama-apula, iibhhanana, iicheri) kwaye ayiprinte adibaniswe kumhlathi wendalo: izinto ezahlulwe ngamagqabi, kunye ne'and' phambi komxholo wokugqibela."
   },
   {
     "module_id": "challenge",
@@ -5440,7 +5447,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda ilist yamazwi (umz. ama-apile, ibhanana, i-cherries) ahlukaniswe ngamagqabaza kwaye uwaprinte adibaniswe kwisivakalisi sendalo: izinto ezahlulwe ngamagqabaza, kunye ne'and' phambi kwento yokugqibela."
+    "prompt_xh": "Bhala inkqubo efunda ilist yamazwi ahlukaniswe ngamagqabi (umz. ama-apula, iibhhanana, iicheri) kwaye ayiprinte adibaniswe kumhlathi wendalo: izinto ezahlulwe ngamagqabi, kunye ne'and' phambi komxholo wokugqibela."
   },
   {
     "module_id": "challenge",
@@ -5454,7 +5461,7 @@
       }
     ],
     "xp": 30,
-    "prompt_xh": "Bhala inkqubo efunda ilist yamazwi (umz. ama-apile, ibhanana, i-cherries) ahlukaniswe ngamagqabaza kwaye uwaprinte adibaniswe kwisivakalisi sendalo: izinto ezahlulwe ngamagqabaza, kunye ne'and' phambi kwento yokugqibela."
+    "prompt_xh": "Bhala inkqubo efunda ilist yamazwi ahlukaniswe ngamagqabi (umz. ama-apula, iibhhanana, iicheri) kwaye ayiprinte adibaniswe kumhlathi wendalo: izinto ezahlulwe ngamagqabi, kunye ne'and' phambi komxholo wokugqibela."
   },
   {
     "module_id": "indexing",
@@ -5604,7 +5611,7 @@
       "word[len(word)]": "off_by_one_length"
     },
     "xp": 20,
-    "prompt_xh": "word = \"python\"\nKhetha onke amagama angaphantsi anika uphawu LOKUGQIBELA.",
+    "prompt_xh": "word = \"python\"\nKhetha zonke izimbo ezingezantsi ezinika uphawu LOKUGQATHELA.",
     "options_xh": [
       "word[-1]",
       "word[len(word) - 1]",

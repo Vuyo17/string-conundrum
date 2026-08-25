@@ -29,12 +29,12 @@
         "expected": "murdnunoC gnirtS"
       }
     ],
-    "title_xh": "Buyisa i-String",
-    "description_xh": "Funda umgca omnye wesicatshulwa uze usishicilele ngasemva.",
-    "hint_xh": "I-slice enenyathelo elibi ihamba i-string ngasemva: text[::-1].",
+    "title_xh": "Ukujika i-String",
+    "description_xh": "Funda umgca omnye wombhalo kwi-input uze uyiprinte ngokuchithwa.",
+    "hint_xh": "I-slice enesinyathelo esibi ihamba i-string ibuyela umva: text[::-1].",
     "io_xh": {
-      "input": "Umgca omnye wesicatshulwa.",
-      "output": "Umyalezo ofanayo, uphetshwe ngasemva."
+      "input": "Umgca omnye wombhalo.",
+      "output": "Lo myalezo mnye, uphetshwe."
     }
   },
   {
@@ -68,10 +68,10 @@
       }
     ],
     "title_xh": "Bala Iivokaluni",
-    "description_xh": "Funda umgca omnye wesicatshulwa uze uprinte inani lamagama (a, e, i, o, u).",
+    "description_xh": "Funda umgca omnye wombhalo uze uprinte inani leengqayi (a, e, i, o, u) eziqulethwe kuwo.",
     "hint_xh": "Yenza umbhalo ube mncinci, uze ubale oonobumba abavela kwi'aeiou'.",
     "io_xh": {
-      "input": "Umgca omnye wesicatshulwa.",
+      "input": "Umgca omnye wombhalo.",
       "output": "Inani elinye elipheleleyo: inani leengqayi."
     }
   },
@@ -105,12 +105,12 @@
         "expected": "A B C"
       }
     ],
-    "title_xh": "Sebenzisa Ngokusisiseko Ilizwi Lonke",
-    "description_xh": "Funda umgca omnye wesicatshulwa uze usishicilele ngoonobumba abakhulu, uze usishicilele ngoonobumba abancinane.",
-    "hint_xh": "Yahlulahlulahlula ibe zizithuba, yenza igama ngalinye libe likapitali, uze ulidibanise kwakhona kunye nesithuba.",
+    "title_xh": "Yenza Isigqibo Esikhulu Ngamazwi",
+    "description_xh": "Funda umgca omnye wombhalo uze uwushicilele ngoonobumba abakhulu, uze ushicilele oonobumba abambalwa.",
+    "hint_xh": "Yahlulahlula ibe ziindawo, yenza igama ngalinye libe likhulu, uze ulidibanise kwakhona kunye nesithuba.",
     "io_xh": {
       "input": "Umgca omnye wamagama ahlukaniswe yindawo.",
-      "output": "Umgca onamagama amakhulu."
+      "output": "Umgca onegama ngalinye unamagama amakhulu."
     }
   },
   {
@@ -148,10 +148,10 @@
       }
     ],
     "title_xh": "Ukuhlolwa kwe Palindrome",
-    "description_xh": "Funda umgca omnye wesicatshulwa uze uprinte True ukuba ifundeka ngokufanayo phambili nangasemva, kungenjalo uprinte False.",
-    "hint_xh": "Yenza umbhalo ube mncinci, uze uyithelekise nomtsalane wayo: umbhalo == text[::-1].",
+    "description_xh": "Funda umgca omnye wombhalo uze uprinte True ukuba ifundeka ngokufanayo phambili nangasemva, kungenjalo uprinte False.",
+    "hint_xh": "Ukwenza umbhalo ube mncinci, uze uwuthelekise nomngeni wayo: umbhalo == text[::-1].",
     "io_xh": {
-      "input": "Umgca omnye wesicatshulwa.",
+      "input": "Umgca omnye wombhalo.",
       "output": "True okanye False."
     }
   },
@@ -185,11 +185,11 @@
         "expected": "5"
       }
     ],
-    "title_xh": "Bala Amagama",
-    "description_xh": "Funda umgca omnye wesicatshulwa uze uprinte amagama amaninzi.",
-    "hint_xh": "I-split() method ngaphandle kweengxoxo iphula isicatshulwa sibe yi-list yamagama; i-len() iyazibala.",
+    "title_xh": "Bala Amazwi",
+    "description_xh": "Funda umgca omnye wombhalo uze uprinte amagama amaninzi.",
+    "hint_xh": "I-split() method ngaphandle kweengxoxo iphula umbhalo ube yi-list yamagama; i-len() iyazibala.",
     "io_xh": {
-      "input": "Umgca omnye wesicatshulwa.",
+      "input": "Umgca omnye wombhalo.",
       "output": "Inani elinye elipheleleyo: inani lamagama."
     }
   },
@@ -223,12 +223,12 @@
         "expected": "ABC123"
       }
     ],
-    "title_xh": "Danduluka",
-    "description_xh": "Funda umgca omnye wombhalo uze uwushicilele ngokupheleleyo ngoonobumba abakhulu.",
-    "hint_xh": "I-Strings ine-.upper() method ebuyisa ikopi enkulu.",
+    "title_xh": "Yikhwaza",
+    "description_xh": "Funda umgca omnye uze uwushicilele ngokupheleleyo ngoonobumba abakhulu.",
+    "hint_xh": "Strings inombhalo we .upper() method ubuyisa ikopi enkulu.",
     "io_xh": {
-      "input": "Umgca omnye wesicatshulwa.",
-      "output": "Umbhalo obhalwe ngoonobumba abakhulu."
+      "input": "Umgca omnye wombhalo.",
+      "output": "Umbhalo unobumba obukhulu."
     }
   },
   {
@@ -261,12 +261,12 @@
         "expected": "one-two-three"
       }
     ],
-    "title_xh": "I-Kebab Case",
-    "description_xh": "Funda umgca omnye wesicatshulwa uze usishicilele apho indawo nganye ithatyathwe indawo ngumtya ('-').",
-    "hint_xh": "I .replace(old, new) method iyatshintsha yonke into eyenzekayo kwi-substring.",
+    "title_xh": "Icala leKebab",
+    "description_xh": "Funda umgca omnye wombhalo uze uwushicilele ngeendawo zonke ezibekwe indawo ngumtya ('-').",
+    "hint_xh": "I .replace(old, new) method itshintshe yonke into eyenzekayo kwi-substring.",
     "io_xh": {
-      "input": "Umgca omnye wesicatshulwa.",
-      "output": "Umbhalo onesithuba uthatyathelw' indawo ngamaqhosha."
+      "input": "Umgca omnye wombhalo.",
+      "output": "Umbhalo onamabala atshintshwa ngamanqaku."
     }
   },
   {
@@ -300,10 +300,10 @@
       }
     ],
     "title_xh": "Owokuqala nowokugqibela",
-    "description_xh": "Funda umgca omnye wesicatshulwa uze uprinte oonobumba bayo bokuqala nabokugqibela badityaniswe (akukho ndawo phakathi kwabo).",
-    "hint_xh": "Index 0 ngumlinganiswa wokuqala; index -1 ngumlinganiswa wokugqibela. Concatenate abo +.",
+    "description_xh": "Funda umgca omnye wombhalo uze uprinte oonobumba bawo bokuqala nabokugqibela behlanganiswe (akukho ndawo phakathi kwabo).",
+    "hint_xh": "Index 0 ngoyena mlinganiswa wokuqala; index -1 ngoyena wokugqibela. Concatenate ngabo +.",
     "io_xh": {
-      "input": "Umgca omnye wesicatshulwa.",
+      "input": "Umgca omnye wombhalo.",
       "output": "Iimpawu ezimbini: lokuqala + lokugqibela."
     }
   },
@@ -339,10 +339,10 @@
     ],
     "title_xh": "Bala Umlinganiswa",
     "description_xh": "Funda imigca emibini yokungena: umgca wokuqala ngumlinganiswa omnye, umgca wesibini sisiqwenga sombhalo.",
-    "hint_xh": "Funda zombini imigca kunye iifowuni ezimbini input(), uze usebenzise text.count(char).",
+    "hint_xh": "Funda zombini imigca kunye ii-input() ezimbini, uze usebenzise i-text.count(char).",
     "io_xh": {
-      "input": "Umgca 1: uphawu. Umgca 2: isicatshulwa.",
-      "output": "Inani elinye elipheleleyo: ukubala."
+      "input": "Umgca wokuqala, uphawu. Umgca wesibini, isicatshulwa.",
+      "output": "Inani elinye elipheleleyo: inani."
     }
   },
   {
@@ -375,12 +375,12 @@
         "expected": ""
       }
     ],
-    "title_xh": "Susa iiVokal",
-    "description_xh": "Funda umgca omnye wesicatshulwa uze usishicilele zonke izandi (a, e, i, o, u) zisusiwe.",
-    "hint_xh": "Yakha i-string entsha kwiimpawu ezinamagama amancinci angekho kwi-'aeiou'.",
+    "title_xh": "Susa Iivokal",
+    "description_xh": "Funda umgca omnye wombhalo uze uwushicilele ngawo onke amagama (a, e, i, o, u) asuswe.",
+    "hint_xh": "Yakha i-string entsha kwiimpawu ezinobumba obuncinci obungayiyo kwi-'aeiou'.",
     "io_xh": {
-      "input": "Umgca omnye wesicatshulwa.",
-      "output": "Umbhalo onamazwi onke ususiwe."
+      "input": "Umgca omnye wombhalo.",
+      "output": "Umbhalo onamagama onke asusiweyo."
     }
   },
   {
@@ -414,11 +414,11 @@
       }
     ],
     "title_xh": "Yenza Isishwankathelo",
-    "description_xh": "Funda umgca nje omnye wamagama uze uprinte isishwankathelo esenziwe ngoonobumba bokuqala kwigama ngalinye.",
-    "hint_xh": "Yahlula isicatshulwa sibe ngamagama, uthathe i-word[0] nganye, uyibhale ngobukhulu, uze uyidibanise.",
+    "description_xh": "Funda umgca omnye wamagama uze uprinte isishwankathelo esenziwe ngleta yokuqala kwigama ngalinye, zonke zenziwe ngobukhulu.",
+    "hint_xh": "Yahlula umbhalo ube ngamagama, uthathe iword[0] nganye, uyifake kwizikhulu ezinkulu, uze ujoyine.",
     "io_xh": {
       "input": "Umgca omnye wamagama ahlukaniswe yindawo.",
-      "output": "Isishwankathelo esikhulu."
+      "output": "Isifinyezo sencwadi enkulu."
     }
   },
   {
@@ -452,8 +452,8 @@
       }
     ],
     "title_xh": "I-Anagram Detector",
-    "description_xh": "Funda imigca emibini yesicatshulwa uze uprinte True ukuba zii-anagram zomnye nomnye, kungenjalo uprinte False.",
-    "hint_xh": "Zibhale phantsi zombini, zikhuphe izithuba, uze uthelekise oonobumba bazo.",
+    "description_xh": "Funda imigca emibini yombhalo uze uprinte True ukuba zii-anagram zomnye nomnye, kungenjalo uprinte False.",
+    "hint_xh": "Zibhale phantsi zombini, zisuse iindawo, uze uthelekise oonobumba bazo abahlelwe kakuhle.",
     "io_xh": {
       "input": "Umgca 1 nomgca 2: iziqwenga ezimbini zetekisi.",
       "output": "True okanye False."
@@ -489,12 +489,12 @@
         "expected": "x2y1z1"
       }
     ],
-    "title_xh": "Ukubethela ubude bokusebenza",
-    "description_xh": "Funda umgca omnye wesicatshulwa uze uprinte ikhodi yayo yobude bomgca: umgca ngamnye wobude bomlinganiswa ofanayo uthatyathelwa indawo ngumlinganiswa olandelayo ubude bomgca. Umzekelo, i-'aaabbc' iba yi-'a3b2c1'.",
-    "hint_xh": "Hamba ngestring, udibanise oonobumba abalinganayo ngokulandelelana, uze ufake oonobumba kunye nenani labo.",
+    "title_xh": "Ukubethela ubude bomsebenzi",
+    "description_xh": "Funda umgca omnye wombhalo uze uprinte ukubhalwa kwawo: umgca ngamnye wesimboli esifanayo uthatyathelwa indawo yile nto ilandelwa ngumgca. Ngokomzekelo, i-'aaabbc' iba yi-'a3b2c1'.",
+    "hint_xh": "Hamba kwistring, uqokelele oonobumba abalinganayo ngokulandelelana, uze ufake oonobumba kunye nenani labo.",
     "io_xh": {
-      "input": "Umgca omnye wesicatshulwa.",
-      "output": "Ubude bomjikelo ubhalwe nge-string."
+      "input": "Umgca omnye wombhalo.",
+      "output": "Umgama wokuhamba u-string."
     }
   },
   {
@@ -531,11 +531,11 @@
         "expected": "aaaaaaaaaaaa"
       }
     ],
-    "title_xh": "Ukuhlaziya ubude bokusebenza",
-    "description_xh": "Funda umgca onobude obupheleleyo njenge-'a3b2c1' uze uprinte isicatshulwa esimele: umlinganiswa ngamnye ulanjelwa linani lamaxesha aphindaphindwa ngawo.",
-    "hint_xh": "Emva kokufunda umlinganiswa, qhubeka uqokelela amanani alandelayo ade afike kwinani elilandelayo. char * int(digits) iphinda umlinganiswa amaxesha amaninzi.",
+    "title_xh": "Ukuhlaziywa koBude beMisebenzi",
+    "description_xh": "Funda umgca onobude obude obunjengokuthi 'a3b2c1' uze uprinte umbhalo omelayo: umlinganiswa ngamnye ulanjelwa linani lamaxesha aphindaphindwayo.",
+    "hint_xh": "Emva kokufunda umlinganiswa, qhubeka uqoqa amanani alandelayo de kube ngumlinganiswa ongekho kwinani elilandelayo. char * int(digits) iphinda umlinganiswa lowo izihlandlo ezininzi.",
     "io_xh": {
-      "input": "Umgca obhaliweyo wobude bomgca.",
+      "input": "Umgca obhalwe phantsi.",
       "output": "Umbhalo ohlaziyiweyo."
     }
   },
@@ -575,10 +575,10 @@
     ],
     "title_xh": "Umlinganiswa Wokuqala Oyingqayizivele",
     "description_xh": "Funda umgca omnye wesicatshulwa uze uprinte umlinganiswa wokuqala ovela kanye kuphela. Ukuba wonke umlinganiswa uyaphindaphindwa, printa None.",
-    "hint_xh": "I-text.count(char) ikuxelela ukuba umlinganiswa uvela kaninzi kangakanani kumgca wonke.",
+    "hint_xh": "text.count(char) ikuxelela ukuba umlinganiswa uvela kaninzi kangakanani kumgca wonke. Hamba umbhalo ngokulandelana uze ume kumlinganiswa wokuqala onokubala kwakhe ngu-1.",
     "io_xh": {
-      "input": "Umgca omnye wesicatshulwa.",
-      "output": "Umlinganiswa wokuqala ongaphindiyo, okanye None."
+      "input": "Umgca omnye wombhalo.",
+      "output": "Umlinganiswa wokuqala ongenzi nto, okanye uNone."
     }
   },
   {
@@ -615,9 +615,9 @@
         "expected": "True"
       }
     ],
-    "title_xh": "Iikhonkco Ezilungeleleneyo",
-    "description_xh": "Funda umgca omnye uze uprinte i-True ukuba yonke i-bracket kuyo ivaliwe ngokulandelelana okufanelekileyo, kungenjalo uprinte i-False. I-brackets ngu (), [] kunye {}. Naluphi na olunye uphawu aluhoywanga.",
-    "hint_xh": "Sebenzisa i-list njenge-stack: faka i-bracket nganye yokuvula, uze xa udibana ne-bracket yokuvala uvule eyokugqibela uze uqinisekise ukuba iyahambelana.",
+    "title_xh": "Iibhanti Ezilinganiselweyo",
+    "description_xh": "Funda umgca omnye uze uprinte True ukuba zonke i-bracket kuyo zivaliwe ngokulandelelana okufanelekileyo, kungenjalo uprinte False. I-brackets ngu (), [] kunye {}.",
+    "hint_xh": "Sebenzisa i-list njengesiqwenga: faka zonke iziqwenga zokuvula, kwaye xa udibana nesiqwenga sokuvala uvule esokugqibela uze uqinisekise ukuba iyahambelana.",
     "io_xh": {
       "input": "Umgca omnye wombhalo onamaqhosha.",
       "output": "True okanye False."
@@ -658,11 +658,11 @@
       }
     ],
     "title_xh": "I-Palindromic Substring ende",
-    "description_xh": "Funda umgca omnye wesicatshulwa uze uprinte umgca omde weempawu ongaphakathi kuwo ofundeka ngokufanayo ngaphambili nangasemva.",
+    "description_xh": "Funda umgca omnye wombhalo uze uprinte umgca omde kakhulu onamagama afanayo ngaphambili nangasemva. Ukuba amabini alingana, printa lowo uqala kuqala.",
     "hint_xh": "I-slice nganye ye-`text[start:end]` ngumcimbi onokukhethwa. I-slice yi-palindrome xa ilingana nokujikeleziswa kwayo, `piece == piece[::-1]`. Gcina eyona inde ubonileyo ukuya kuthi ga ngoku.",
     "io_xh": {
-      "input": "Umgca omnye wesicatshulwa.",
-      "output": "Elona candelo lide le-palindromic."
+      "input": "Umgca omnye wombhalo.",
+      "output": "Eyona nto incinane kwi-palindromic substring."
     }
   },
   {
@@ -695,12 +695,12 @@
         "expected": "hello"
       }
     ],
-    "title_xh": "Igama Eliqhelekileyo",
-    "description_xh": "Funda umgca nje omnye wamagama uze uprinte igama elivela kaninzi.",
-    "hint_xh": "Yahlulahlula umgca ube yi-list yamagama, uze usebenzise i-words.count(word) kumgca ngamnye.",
+    "title_xh": "Igama Elidla Ngokuqhelekileyo",
+    "description_xh": "Funda umgca nje omnye wamagama uze uprinte igama elivela rhoqo. Ukuba amagama amabini avela kaninzi, printa elivela kuqala.",
+    "hint_xh": "Yahlula umgca ube yi-list yamagama, uze usebenzise i-words.count(word) kumagama ngalinye. Yenza kuphela impendulo yakho efanelekileyo xa ufumana inani elikhulu, ukuze amagama angaphambi kwexesha aphumelele.",
     "io_xh": {
       "input": "Umgca omnye wamagama ahlukaniswe yindawo.",
-      "output": "Lelona gama liqhelekileyo."
+      "output": "Eli lizwi liqhelekileyo."
     }
   }
 ]

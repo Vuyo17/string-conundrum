@@ -2,52 +2,54 @@
 //
 // Machine-translated with NLLB-200 by scripts/translate_content_nllb.py,
 // then merged over the English base by `getModuleContent`. Partial by
-// design: `code`, `output`, `value` and table rows are omitted so they keep
-// their English/original value, and `null` holds an array slot open.
+// design: `code`, `output` and `value` are omitted so they keep their
+// English/original value, and `null` holds an array slot open.
 //
 // Needs a human read before students see it.
 
 export const slicingModuleXh = {
-  "title": "String Slicing",
+  "title": "Ukusika iString",
   "level": "Osaqalayo",
+  "prerequisite": "Ukufikelela nge-Index kwiString",
   "outcomes": [
-    "Ukukhupha nayiphi na intambo engezantsi nge-s[start:stop:step]",
+    "Ukukhupha nayiphi na intambo engezantsi nge s[start:stop:step]",
     "Qikelela iimpazamo xa uqalisa, uyeka okanye unyathela",
-    "Funda kwaye ubhale i-slices ibuyele umva usebenzisa inyathelo elibi",
-    "Phendula imibuzo yohlolisiso lwe\"which slice produces X\" ngokuzithemba"
+    "Funda kwaye ubhale i-slices e-inverse usebenzisa inyathelo elibi",
+    "Phendula imibuzo yohlolo lwe\"which slice produces X\" ngokuzithemba"
   ],
   "learnSections": [
     {
       "title": "Ukusika isiqwenga kwi-string",
       "blocks": [
         {
-          "text": "I-Indexing ifundeka uphawu olunye; **slicing** ifundeka umqolo opheleleyo wazo. Cinga nge-string njengesiqwenga sesonka esinesiqwenga NGAPHAMBI kwe-slice nganye: `start` ithi apho ingena khona imela, `stop` ithi apho iphuma khona, kwaye i-stop slice ngokwayo ihlala ebhodini."
+          "text": "Indexing ifundeka uphawu olunye; **slicing** ifundeka umqolo opheleleyo. Cinga ngestring njengesiqwenga sesonka esinqumlayo NGAPHakathi kweslice: `start` ithi apho ingena khona imela, `stop` ithi apho iphuma khona, kwaye isicwangciso slice ngokwayo sihlala ebhodini."
         },
         {
-          "caption": "I-\"Hello World\"[2:5] iqokelela ii-indices 2, 3, 4, kwaye iyama NGAPHAMBI kwe-index 5."
+          "caption": "\"Hello World\"[2:5] iqokelela amanqaku 2, 3, 4, kwaye iyeka NGAPHAMBI kwe index 5."
         },
         null,
         {
-          "title": "Slice",
-          "text": "I-`s[start:stop:step]` ibuyisela i-string ENTSHA equkethe oonobumba abavela kwi-`start`, iphela ngaphambi kwe-`stop`, ihambisa izikhundla ze-`step` ngexesha."
+          "title": "I-slice",
+          "text": "`s[start:stop:step]` ibuyisa i-string ENTSHA equka oonobumba abavela kwi-`start`, egqibe phambi kwe-`stop`, ihambisa izikhundla ze-`step` ngexesha."
         },
         {
-          "title": "Iphutha eliqhelekileyo: ukujonga ukuyeka njengokubandakanywa"
+          "title": "Impazamo eqhelekileyo: ukujonga ukuyeka njengento equka",
+          "text": "Inani emva komgca we-colon yi-index yokuqala AKUKHO. `s[0:5]` ineempawu ezi-5 kanye (5 - 0), ayisoze ibe zi-6. Uhlolo olulula: ubude be-slice elula yi-stop ususa i-start."
         }
       ]
     },
     {
-      "title": "Iimpawu ezizenzekelayo: zithetha ntoni izithuba ezingenanto",
+      "title": "Iimfuneko ezizenzekelayo: zithetha ntoni izithuba ezingenanto",
       "blocks": [
         {
-          "text": "Nayiphi na kwezi nxalenye zintathu inokushiywa ngaphandle, kwaye iimviwo zivavanya oku kanye. Ngenyathelo **elungileyo**: isiqalo esingasekhoyo sichaza u-0, ukuyeka okungasekhoyo kuchaza isiphelo, kwaye isinyathelo esingasekhoyo sichaza u-1."
+          "text": "Naliphi na la macandelo mathathu linokungabikho, kwaye iimviwo zivavanya oku kanye. Nge ** isinyathelo esihle **: isiqalo esingasekhoyo sichaza u- 0, isithuba esingasekhoyo sichaza isiphelo, kwaye isinyathelo esingasekhoyo sichaza u-1."
         },
         null,
         {
-          "text": "Ngenyathelo **elibi**, okuzenzekelayo kuyaguquka: isiqalo esingasekhoyo sithetha umlinganiswa wokugqibela, kwaye ukuyeka okungasekhoyo kuthetha \"kanye emva komlinganiswa wokuqala\". Kungoko u-`s[::-1]` eguqula i-string."
+          "text": "Xa kukho isinyathelo ** negative**, iziphumo ezizenzekelayo zijika: isiqalo esingasekhoyo sithetha uphawu LOKUGQIBELA, kwaye isilumkiso esingasekhoyo sithetha \"just past the first character\". Kungenxa yoko le nto i-`s[::-1]` ibuyisa i-string."
         },
         {
-          "caption": "Omabini la maphethini aye abuzwa, phantse igama negama, kwiimviwo ezidlulileyo."
+          "caption": "Zombini ezi ndlela ziye zabuzwa, phantse igama negama, kwiimviwo ezidlulileyo."
         }
       ]
     },
@@ -55,14 +57,14 @@ export const slicingModuleXh = {
       "title": "Ukuhamba ngasemva: amanyathelo angalunganga",
       "blocks": [
         {
-          "text": "Inyathelo elibi liqhuba i-string ukusuka ngasemva ukuya phambili. Ukuhamba kuqala kwi-`start`, kugxuma kwizikhundla ze-`step` ngalo lonke ixesha, kwaye kuyeka xa kufikelela kwi-`stop`, ekufuneka ibe NGAPHAMBI kokuqala, okanye akukho nto iqokelelwe."
+          "text": "Isinyathelo esibi siqhuba i-string ukusuka ngasemva ukuya phambili. Ukuhamba kuqala kwi-`start`, kugxuma kwizikhundla ze-`step` ngalo lonke ixesha, kwaye kuyeka xa kufikelela kwi-`stop`, ekufuneka ibe NGAPHAMBI kokuqala, okanye akukho nto iqokelelwe."
         },
         {
-          "caption": "I-\"Jabberwocky\"[::-2] ityelela ii-indices 10, 8, 6, 4, 2, 0 ize ivelise i-'ycwebJ'."
+          "caption": "\"Jabberwocky\"[::-2] ivakashela ii-indices 10, 8, 6, 4, 2, 0 kwaye ivelisa i-'ycwebJ'."
         },
         {
           "head": [
-            "Inkcazo",
+            "Ukuvakaliswa",
             "Isiphumo",
             "Kutheni?"
           ],
@@ -80,39 +82,39 @@ export const slicingModuleXh = {
             [
               "\"Jabberwocky\"[5:0:-2]",
               "'rba'",
-              "Izikhombisi 5, 3, 1 no stop 0 azibandakanyi"
+              "Indices 5, 3, 1, and stop 0 ivelisa excluded"
             ],
             [
               "\"Jabberwocky\"[:5:-1]",
               "'ykcow'",
-              "Ukususela ekupheleni, ukubuyela (ngaphandle) index 5"
+              "Ukusuka ekupheleni, ukubuyela (ngaphandle) index 5"
             ],
             [
               "\"hello\"[3:1]",
-              "'' (empty)",
-              "Ukuyeka kusemva kokuqala ngenyathelo eliya phambili: akukho nto iqokelelwe"
+              "'' (ayinanto)",
+              "Stop ivelisa behind start with a forward step: nothing collected"
             ]
           ]
         },
         {
           "title": "Impazamo eqhelekileyo: ukulindela iIndexError",
-          "text": "I-Slicing akunakuze kuphakamise i-IndexError. Imida engaphandle komda ivalwe kwaye ukuhamba okungenakwenzeka kubuyisela i-string engenanto. Kuphela i-indexing yomlinganiswa omnye eqinileyo."
+          "text": "I-Slicing ayize iphakamisa i-IndexError. Imida engaphandle komda ivalwe kwaye ukuhamba okungenakwenzeka kubuyisa i-string engenanto. I-indexing enobumba omnye kuphela enenkani."
         },
         {
           "title": "Indlela oku kuhlolwa ngayo",
-          "text": "Iiphethini ezimbini zilawula amaphepha angaphambili: \"what is the value of `(expr)[a:b:-1]`\" no \"which slice of `w` produces this string\". Kwindidi yesibini, bhala ii-indices phantsi kweempawu ezijoliswe kuzo uze ufunde iphethini."
+          "text": "Iiphethini ezimbini zixhaphakile kumaxwebhu angaphambili: \"what is the value of `(expr)[a:b:-1]`\" no \"which slice of `w` produces this string\"."
         }
       ]
     },
     {
-      "title": "Izikhokelo ezibalulekileyo",
+      "title": "Iimpawu eziphambili",
       "blocks": [
         {
           "items": [
-            "`s[start:stop:step]`: ukuqala kubandakanyiwe, ukuyeka akuvumelekanga.",
-            "Iimpawu ezisisiseko zenyathelo elilungileyo: ukuqala 0, ukuphela kokumisa, inyathelo 1. I-`s[:]` ikopa yonke i-string.",
-            "I-negative-step defaults: qala kumlinganiswa wokugqibela, ume nje emva komlinganiswa wokuqala. `s[::-1]` iyajika.",
-            "I-Slicing akunakuze kuphakamise i-IndexError, kwaye akunakwenzeka ukuba i-slices inike i-string engenanto.",
+            "`s[start:stop:step]`: ukuqala kubalwa, ukuyeka akubandakanyi.",
+            "Iimpawu ezizenzekelayo zenyathelo elilungileyo: ukuqala 0, ukuyeka ukuphela, inyathelo 1. `s[:]` ikopa yonke i-string.",
+            "Icala elizenzekelayo leNegative-step: Qala kumlinganiswa wokugqibela, ume nje emva komlinganiso wokuqala. `s[::-1]` iyajika.",
+            "I-Slicing ayize iphinde iphakamise i-IndexError, kwaye i-slices engenakwenzeka inika i-string engenanto.",
             "Ukulahla oonobumba bokuqala nabokugqibela: `s[1:-1]`. Ukuvavanya i-palindrome: `s == s[::-1]`."
           ]
         }
@@ -121,30 +123,32 @@ export const slicingModuleXh = {
   ],
   "examples": [
     {
-      "title": "Ukuqikelela ukubuyela umva kweslice",
-      "intro": "Eyona ndlela ixhaphakileyo yokuvavanya: i-concatenation, emva koko i-slice yenyathelo elibi. Yenza ngezigaba ezibini.",
+      "title": "Ukuxela kwangaphambili i-slice",
+      "intro": "Eyona ndlela ixhaphakileyo yokuvavanya: iconcatenation, emva koko islice yokwenqaba.",
       "steps": [
         {
-          "text": "Qala usombulule ibinzana elithi: 'Ma'*2 yi 'MaMa', ngoko ke s yi 'GoMaMa', eyiimpawu ezintandathu, izikhombisi 0 ukuya ku-5 (okanye -6 ukuya ku -1)."
+          "text": "Qala uxazulule ibinzana: 'Ma'*2 yi 'MaMa', ngoko ke s yi 'GoMaMa', nto leyo enamacala amathandathu, amanqaku 0 ukuya ku-5 (okanye -6 ukuya ku -1)."
         },
         {
           "text": "I-slice iqala kwi -1: uphawu lokugqibela, `a` kwi-index 5."
         },
         {
-          "text": "Inyathelo -1 lihambisa isikhundla esinye ngasekhohlo ngalo lonke ixesha: index -2 yi `M`, index -3 yi `a`."
+          "text": "Inyathelo -1 lihamba kwindawo enye ngasekhohlo rhoqo: index -2 yi `M`, index -3 yi `a`."
         },
-        null
+        {
+          "text": "Ukuhamba okulandelayo kuya kuba -4, kodwa -4 yindawo yokumisa, kwaye indawo yokumisa ihlala ingafakwanga. Uhambo luphela ngo 'aMa'."
+        }
       ]
     },
     {
-      "title": "I-reverse-engineering ye-slice",
-      "intro": "\"Which slice of w produces X?\" Yicombulule ngokubhala ii-indices phantsi kweempawu ezijoliswe kuzo.",
+      "title": "I-reverse engineering i-slice",
+      "intro": "\"Which slice of w produces X?\" Yilungise ngokubhala ii-indices phantsi kweempawu ezijoliswe kuzo.",
       "steps": [
         {
-          "text": "Fumana umlinganiswa ngamnye ekujoliswe kuwo w kwaye uqaphele index: `o` yayo kwi 4, `t` kwi 2, `P` kwi 0."
+          "text": "Fumana umlinganiswa ngamnye ekujoliswe kuwo w kwaye uqaphele index: `o` yayo 4, `t` kwi 2, `P` kwi 0."
         },
         {
-          "text": "I-indices yehla nge-2 ngalo lonke ixesha, ngoko inyathelo -2. Ukuhamba kuqala kwi-4, eyi-index -2 ukusuka ngasemva."
+          "text": "Iinkcukacha ziwela ngama-2 ngamaxesha onke, ngoko inyathelo li -2. Ukuhamba kuqala kwi-4, nto leyo i-index -2 ukusuka ngasemva."
         },
         {
           "text": "Emva ko-0 ukuhamba kufuneka kuhambe ngaphambili, ngoko ushiye isithuba esingenanto: `w[-2::-2]` ivelisa 'otP'. Lumka: `w[::-2]` iqala kumlinganiswa wokugqibela kwaye inika 'nhy' endaweni yoko."
@@ -153,10 +157,7 @@ export const slicingModuleXh = {
     }
   ],
   "visualizer": {
-    "title": "Slice Umatshini",
-    "description": "Faka nayiphi na i-string uze usete ii-dials ezintathu, kwaye ushiye nayiphi na kuzo ingenanto ukuze usebenzise i-Python ngokungagqibekanga.",
-    "defaults": {
-      "text": "IJabberwocky"
-    }
+    "title": "Umatshini we-Slice",
+    "description": "Faka nayiphi na i-string uze usete ii-dials ezintathu, kwaye ushiye nayiphi na kuzo ingenanto ukuze usebenzise i-Python's ezingasebenziyo. Cinezela Ukujonga ukuze ubukele ukuhamba kuqokelela oonobumba omnye nge-hop ngexesha."
   }
 };
