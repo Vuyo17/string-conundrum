@@ -41,6 +41,24 @@ def test_execute_stub_response_shape():
     assert response.status_code == 200
     assert payload['ok'] is True
     assert 'stdout' in payload
+    assert payload['stderr_xhosa'] is None
+
+
+def test_execute_lang_xh_returns_isixhosa_translation():
+    # Translation is a local, offline template match (see
+    # error_translation.py) -- no API key or network needed, so a
+    # recognised error type comes back translated.
+    app = create_app()
+    client = app.test_client()
+
+    response = client.post('/api/execute', json={'code': "word = 'hi'\nprint(word[5])", 'lang': 'xh'})
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    assert payload['ok'] is True
+    assert payload['stderr']  # real IndexError from the sandbox
+    assert payload['stderr_xhosa']
+    assert 'IndexError' not in payload['stderr_xhosa']  # translated, not raw
 
 
 def test_submit_exercise_stub_response_shape():

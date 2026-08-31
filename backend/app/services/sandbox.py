@@ -111,13 +111,21 @@ def _run_restricted(
             pass
 
 
-def execute_code(code: str, stdin: str | None = None) -> dict:
+def execute_code(code: str, stdin: str | None = None, lang: str | None = None) -> dict:
     """Execute Python code in a subprocess with a 5-second timeout, under
     the restricted builtins described above.
 
     If stdin is given, it is piped to the process so the code can use
     input() calls (used when grading write_code exercises against
     test cases).
+
+    If lang == "xh", an isiXhosa explanation of any error is also
+    requested from error_translation.py and returned as "stderr_xhosa".
+    That lookup is a local, offline template match against pre-translated
+    isiXhosa text (see that module) -- no network call, no API key -- so
+    it's cheap enough to always attempt, but still degrades to None
+    (not an error) whenever the stderr doesn't match a recognised
+    exception type. The English stderr below is always returned regardless.
     """
     try:
         result = _run_restricted(code, stdin, timeout=5)
@@ -135,9 +143,16 @@ def execute_code(code: str, stdin: str | None = None) -> dict:
 
     steps = trace_steps(code)
 
+    stderr_xhosa = None
+    if lang == "xh" and stderr:
+        from .error_translation import translate_error, translate_timeout
+
+        stderr_xhosa = translate_timeout(code) if timed_out else translate_error(stderr)
+
     return {
         "stdout": stdout,
         "stderr": stderr,
+        "stderr_xhosa": stderr_xhosa,
         "timed_out": timed_out,
         "steps": steps,
     }

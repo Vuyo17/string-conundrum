@@ -299,6 +299,7 @@ export function CodeSpace() {
   const [code, setCode] = useState(DEFAULT_CODE);
   const [stdout, setStdout] = useState('');
   const [stderr, setStderr] = useState('');
+  const [stderrXhosa, setStderrXhosa] = useState('');
   const [loading, setLoading] = useState(false);
   const [debugging, setDebugging] = useState(false);
   const [steps, setSteps] = useState([]);
@@ -332,8 +333,12 @@ export function CodeSpace() {
       .join('\n');
   }, [debugging, stepIndex, steps]);
 
+  // When the template-based translation (stderr_xhosa, from /api/execute)
+  // came back, it's a real isiXhosa sentence and takes priority; otherwise
+  // fall back to the plain keyword-substitution translateDisplayText, which
+  // always works but only swaps individual words inside the English text.
   const displayedOutput = stderr
-    ? translateDisplayText(stderr, lang)
+    ? (lang === 'xh' && stderrXhosa) ? stderrXhosa : translateDisplayText(stderr, lang)
     : debugging
       ? incrementalStdout || t('codeSpace.outputStepPlaceholder')
       : stdout || t('codeSpace.outputRunPlaceholder');
@@ -512,6 +517,7 @@ export function CodeSpace() {
     setStepIndex(0);
     setStdout('');
     setStderr('');
+    setStderrXhosa('');
     setSteps([]);
     setDebugging(false);
   }
@@ -521,6 +527,7 @@ export function CodeSpace() {
     stopPlay();
     setLoading(true);
     setStderr('');
+    setStderrXhosa('');
     setSteps([]);
     setStepIndex(0);
     setDebugging(false);
@@ -532,7 +539,7 @@ export function CodeSpace() {
         fetch(getApiUrl('/api/execute'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code: pythonCode }),
+          body: JSON.stringify({ code: pythonCode, lang }),
         }),
         fetch(getApiUrl('/api/debug'), {
           method: 'POST',
@@ -547,6 +554,7 @@ export function CodeSpace() {
 
       setStdout(execData.stdout ?? '');
       setStderr(execData.stderr ?? '');
+      setStderrXhosa(execData.stderr_xhosa ?? '');
       setSteps(newSteps);
       setDebugging(newSteps.length > 0);
       // Auto-play the visualiser on a successful run, rather than leaving the
@@ -561,7 +569,7 @@ export function CodeSpace() {
     } finally {
       setLoading(false);
     }
-  }, [code]);
+  }, [code, lang]);
 
   function handleClear() {
     stopPlay();
@@ -570,6 +578,7 @@ export function CodeSpace() {
     setTranspileNotice('');
     setStdout('');
     setStderr('');
+    setStderrXhosa('');
     setSteps([]);
     setStepIndex(0);
     setDebugging(false);

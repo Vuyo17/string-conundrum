@@ -48,7 +48,8 @@ def visualize():
 def execute():
     payload = request.get_json(silent=True) or {}
     code = payload.get("code", "")
-    result = execute_code(code)
+    lang = payload.get("lang")
+    result = execute_code(code, lang=lang)
 
     return {
         "ok": True,
