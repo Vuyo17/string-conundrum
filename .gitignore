@@ -32,3 +32,13 @@ backend/backend_pid.txt
 frontend/frontend_out.log
 frontend/frontend_err.log
 frontend/frontend_pid.txt
+
+# Final paper: draft, sources, and figures are not part of the codebase
+FinalPaper/
+
+# Paper-only evaluation scripts and the artifacts they produce -- written
+# to generate results for FinalPaper, not part of the shipped backend
+backend/tests/tracer_correctness_experiment.py
+backend/tests/adversarial_sandbox_experiment.py
+backend/scripts/
+load_test_*.csv

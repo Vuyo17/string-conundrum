@@ -1,26 +1,126 @@
 import ast
+import os
 import subprocess
 import sys
+import tempfile
 from typing import Any
 
 # ─── safe execution ──────────────────────────────────────────────────────────
+#
+# Learner code always ran as a real, separate OS subprocess -- that boundary
+# alone was the whole design before the fix below, and it is still the outer
+# layer: nothing here changes the fact that this is a genuinely separate
+# process from the Flask process, or the 5-second wall-clock timeout.
+#
+# What was missing, and is added here, is the restricted-globals boundary
+# the original proposal specified but which the shipped code never actually
+# wired into this path (a gap this project's own evaluation found and
+# reported: `execute_code` and `run_for_grading` handed the interpreter a
+# fully unrestricted `python -c <code>` process, so any import, any file
+# write, any socket, was one line away). Both functions below now run the
+# learner's code through `_run_restricted`, which execs it inside the
+# subprocess under a builtins dict with no `__import__`, no `open`, no
+# `eval`/`exec`/`compile`, and no attribute-introspection builtins
+# (`getattr`/`vars`/`globals`), plus a best-effort POSIX memory cap. The
+# safe-builtins list is deliberately generous for a strings-teaching module
+# -- every builtin used anywhere in the exercise bank, the challenge
+# solutions, and the automated test suite is in it -- and deliberately
+# excludes anything that reaches the filesystem, the network, another
+# process, or the interpreter's own internals.
+
+_RESTRICTED_PREAMBLE = r'''
+import sys as _sys
+
+def _blocked_import(name, *a, **k):
+    raise ImportError(f"import of {name!r} is not available here")
+
+_builtins = {
+    "abs": abs, "all": all, "any": any, "bin": bin, "bool": bool, "bytes": bytes,
+    "callable": callable, "chr": chr, "complex": complex, "dict": dict,
+    "divmod": divmod, "enumerate": enumerate, "filter": filter, "float": float,
+    "format": format, "frozenset": frozenset, "hash": hash, "hex": hex,
+    "input": input, "int": int, "isinstance": isinstance, "issubclass": issubclass,
+    "iter": iter, "len": len, "list": list, "map": map, "max": max, "min": min,
+    "next": next, "oct": oct, "ord": ord, "pow": pow, "print": print,
+    "range": range, "repr": repr, "reversed": reversed, "round": round,
+    "set": set, "slice": slice, "sorted": sorted, "str": str, "sum": sum,
+    "tuple": tuple, "type": type, "zip": zip,
+    "True": True, "False": False, "None": None, "NotImplemented": NotImplemented,
+    "Exception": Exception, "BaseException": BaseException, "ValueError": ValueError,
+    "TypeError": TypeError, "IndexError": IndexError, "KeyError": KeyError,
+    "ZeroDivisionError": ZeroDivisionError, "AttributeError": AttributeError,
+    "StopIteration": StopIteration, "RuntimeError": RuntimeError,
+    "NameError": NameError, "OverflowError": OverflowError,
+    "ArithmeticError": ArithmeticError, "LookupError": LookupError,
+    "AssertionError": AssertionError, "UnicodeError": UnicodeError,
+    "__import__": _blocked_import,
+    "__build_class__": __build_class__,
+    "__name__": "__main__",
+}
+
+with open(_sys.argv[1], "r", encoding="utf-8") as _f:
+    _code = _f.read()
+
+exec(compile(_code, "<learner_code>", "exec"), {"__builtins__": _builtins})
+'''
+
+
+def _preexec_limits() -> None:
+    """POSIX-only: cap virtual address space so a large allocation is
+    contained even though `"x" * n` needs no builtin (and so slips past the
+    builtins restriction above, which can only guard function calls). A
+    no-op on Windows -- the `resource` module doesn't exist there -- which
+    is fine for local development; the deployed server this protects is
+    Linux, and Section 4.3 notes this specific mitigation was verified
+    against that platform, not the developer's own machine."""
+    try:
+        import resource
+        mem_bytes = 64 * 1024 * 1024  # 64MB: generous for string exercises
+        resource.setrlimit(resource.RLIMIT_AS, (mem_bytes, mem_bytes))
+    except Exception:
+        pass
+
+
+def _run_restricted(
+    code: str, stdin: str | None, timeout: float = 5
+) -> subprocess.CompletedProcess:
+    """Run `code` as a real subprocess, through the restricted-builtins
+    wrapper above. Code travels via a temp file (read by the trusted
+    wrapper before the restriction takes effect) rather than argv or
+    stdin, so stdin stays free for the learner's own input() calls.
+    """
+    fd, path = tempfile.mkstemp(suffix=".py")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(code)
+        kwargs: dict[str, Any] = {}
+        if os.name != "nt":
+            kwargs["preexec_fn"] = _preexec_limits
+        return subprocess.run(
+            [sys.executable, "-c", _RESTRICTED_PREAMBLE, path],
+            input=stdin,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            **kwargs,
+        )
+    finally:
+        try:
+            os.unlink(path)
+        except OSError:
+            pass
 
 
 def execute_code(code: str, stdin: str | None = None) -> dict:
-    """Execute Python code in a subprocess with a 5-second timeout.
+    """Execute Python code in a subprocess with a 5-second timeout, under
+    the restricted builtins described above.
 
     If stdin is given, it is piped to the process so the code can use
     input() calls (used when grading write_code exercises against
     test cases).
     """
     try:
-        result = subprocess.run(
-            [sys.executable, "-c", code],
-            input=stdin,
-            capture_output=True,
-            text=True,
-            timeout=5,
-        )
+        result = _run_restricted(code, stdin, timeout=5)
         stdout = result.stdout
         stderr = result.stderr
         timed_out = False
@@ -58,6 +158,22 @@ _SAFE_BUILTINS: dict[str, Any] = {
 }
 
 _MAX_STEPS = 200  # guard against infinite loops in the tracer
+
+
+class _TraceAbort(BaseException):
+    """Internal signal, not a real error: evaluating a sub-expression
+    raised the same way real Python would (an uncaught exception), so the
+    tracer's own walk should stop at that point instead of continuing past
+    it. Inherits BaseException rather than Exception so it passes
+    undisturbed through the tracer's own `except Exception` fallbacks
+    (e.g. the catch-all branch for statement kinds it doesn't specifically
+    recognise) on its way up to the one place it's actually caught, at the
+    top of trace_steps."""
+
+    def __init__(self, exc: Exception, line: int | None):
+        self.exc = exc
+        self.line = line
+        super().__init__(str(exc))
 
 
 # ─── condition substitution ──────────────────────────────────────────────────
@@ -220,8 +336,18 @@ def trace_steps(code: str) -> list[dict]:
         try:
             src = ast.unparse(node)
             return eval(src, {"__builtins__": _SAFE_BUILTINS}, env)
-        except Exception:
-            return None
+        except Exception as exc:
+            # An expression that fails to evaluate here is, for anything
+            # the tracer supports, the same expression that would raise in
+            # real Python (e.g. an out-of-range word[10]). Silently
+            # substituting None and continuing -- the previous
+            # behaviour -- let a step render as a fabricated success (see
+            # Section 4.3's tracer-correctness experiment: a completed
+            # "print(None)" step for a print() real Python never reaches).
+            # Raising _TraceAbort instead unwinds the same way the real
+            # exception would, so trace_steps stops at the point real
+            # execution would stop.
+            raise _TraceAbort(exc, getattr(node, "lineno", None)) from exc
 
     def exec_stmt(stmt: ast.stmt) -> None:
         """Recursively execute a statement and record steps."""
@@ -448,9 +574,22 @@ def trace_steps(code: str) -> list[dict]:
             if src.strip() not in ("pass", ""):
                 add(line, "stmt", src, [])
 
-    for node in ast.iter_child_nodes(tree):
-        if isinstance(node, ast.stmt):
-            exec_stmt(node)
+    try:
+        for node in ast.iter_child_nodes(tree):
+            if isinstance(node, ast.stmt):
+                exec_stmt(node)
+    except _TraceAbort as abort:
+        # _TraceAbort unwinds through every enclosing exec_stmt call the
+        # same way the real exception would unwind through real Python's
+        # call stack, so no statement after the one that raised -- at any
+        # nesting depth -- is traced, matching what actually executes.
+        add(
+            abort.line if abort.line is not None else (steps[-1]["line"] if steps else 1),
+            "error",
+            f"{type(abort.exc).__name__}: {abort.exc}",
+            [],
+            out="",
+        )
 
     return steps
 
@@ -459,18 +598,13 @@ def trace_steps(code: str) -> list[dict]:
 
 
 def run_for_grading(code: str, stdin: str | None = None) -> dict:
-    """Run code for exercise grading only. Skips trace_steps since grading
-    doesn't need a debugger trace and some submissions (e.g. those using
-    input()) aren't safe to re-run through the AST-walking tracer.
+    """Run code for exercise grading only, under the same restricted
+    builtins as execute_code(). Skips trace_steps since grading doesn't
+    need a debugger trace and some submissions (e.g. those using input())
+    aren't safe to re-run through the AST-walking tracer.
     """
     try:
-        result = subprocess.run(
-            [sys.executable, "-c", code],
-            input=stdin,
-            capture_output=True,
-            text=True,
-            timeout=5,
-        )
+        result = _run_restricted(code, stdin, timeout=5)
         return {"stdout": result.stdout, "stderr": result.stderr, "timed_out": False}
     except subprocess.TimeoutExpired:
         return {"stdout": "", "stderr": "Execution timed out (5 second limit).", "timed_out": True}
