@@ -296,6 +296,11 @@ export const indexingModule = {
   // ── 4 · Practice ───────────────────────────────────────────────────────────
   practice: {
     apiModuleId: 'indexing', // graded through the real backend pipeline
+    // Endless procedural practice (see PracticeEngine.jsx /
+    // indexing_engine.py) instead of the static exercise bank — Exam still
+    // draws from the bank via `exam.questionCount` below, and the
+    // drag-drop warm-up still shows before the very first question.
+    engine: true,
     exam: { questionCount: 10 },
     warmup: {
       type: 'drag_drop',

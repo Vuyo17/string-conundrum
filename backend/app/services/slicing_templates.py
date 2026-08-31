@@ -21,31 +21,23 @@ wrong" with "then ask more negative-index templates" rather than continuing
 to pick uniformly at random.
 """
 from . import corpus
+from . import practice_engine_core as core
 
 # ─── difficulty bands ───────────────────────────────────────────────────────
+# The band/tier system and the Template class itself are shared with every
+# other module's engine -- see practice_engine_core.py -- and re-exported
+# here under their original names for this file's own definitions below and
+# for any existing external caller of e.g. `slicing_templates.Template`.
 
-BAND_EASY = "easy"
-BAND_EASY_MEDIUM = "easy_medium"
-BAND_MEDIUM = "medium"
-BAND_MEDIUM_HARD = "medium_hard"
-BAND_HARD = "hard"
-BAND_VERY_HARD = "very_hard"
-
-BANDS = (
-    BAND_EASY, BAND_EASY_MEDIUM, BAND_MEDIUM,
-    BAND_MEDIUM_HARD, BAND_HARD, BAND_VERY_HARD,
-)
-
-# Six bands over five stars. The windows overlap so a tier is never a hard
-# cliff: reaching tier 3 does not mean easy_medium shapes vanish, it means
-# medium ones start appearing alongside them.
-TIER_BANDS = {
-    1: (BAND_EASY,),
-    2: (BAND_EASY, BAND_EASY_MEDIUM),
-    3: (BAND_EASY_MEDIUM, BAND_MEDIUM),
-    4: (BAND_MEDIUM, BAND_MEDIUM_HARD),
-    5: (BAND_MEDIUM_HARD, BAND_HARD, BAND_VERY_HARD),
-}
+BAND_EASY = core.BAND_EASY
+BAND_EASY_MEDIUM = core.BAND_EASY_MEDIUM
+BAND_MEDIUM = core.BAND_MEDIUM
+BAND_MEDIUM_HARD = core.BAND_MEDIUM_HARD
+BAND_HARD = core.BAND_HARD
+BAND_VERY_HARD = core.BAND_VERY_HARD
+BANDS = core.BANDS
+TIER_BANDS = core.TIER_BANDS
+Template = core.Template
 
 # Concepts, reusing the grader's misconception ids so feedback, template
 # tagging and adaptive selection all speak one vocabulary.
@@ -61,39 +53,6 @@ C_EMPTY = "slice_empty_result"
 
 ANY_KIND = ()
 WORDS_ONLY = (corpus.KIND_WORD,)
-
-
-class Template:
-    """One slice shape, plus everything needed to draw a question from it.
-
-    `build(entry, rng)` returns a `(start, stop, step)` triple for the given
-    string, or None if that string cannot carry this shape (too short, wrong
-    kind). Returning None is normal — the engine simply tries another
-    template rather than emitting a degenerate question.
-    """
-
-    __slots__ = ("id", "band", "build", "concept", "min_len", "kinds", "field_based")
-
-    def __init__(self, id, band, build, concept, min_len=6, kinds=ANY_KIND, field_based=False):
-        self.id = id
-        self.band = band
-        self.build = build
-        self.concept = concept
-        self.min_len = min_len
-        self.kinds = kinds
-        self.field_based = field_based
-
-    def accepts(self, entry):
-        if len(entry.value) < self.min_len:
-            return False
-        if self.kinds and entry.kind not in self.kinds:
-            return False
-        if self.field_based and not entry.fields:
-            return False
-        return True
-
-    def __repr__(self):
-        return f"Template({self.id!r}, {self.band!r})"
 
 
 def _clamp(rng, lo, hi):
@@ -337,8 +296,7 @@ def for_band(band):
 
 
 def for_tier(tier):
-    bands = TIER_BANDS[tier]
-    return [t for t in TEMPLATES if t.band in bands]
+    return core.for_tier(TEMPLATES, tier, TIER_BANDS)
 
 
 # ─── write_code tasks ───────────────────────────────────────────────────────

@@ -1772,7 +1772,7 @@
 }
 
 /* ═══ Slicing endless-practice engine ════════════════════════════════════
-   Unlimited procedurally-generated questions (see SlicingEngine.jsx).
+   Unlimited procedurally-generated questions (see PracticeEngine.jsx).
 
    Everything that used to sit above the question — a tier badge, a running
    score, a stop button — was removed as clutter. What's left is the rail:
@@ -1892,6 +1892,21 @@
 .engineChoiceRight .engineChoiceMark { color: var(--success); }
 .engineChoiceWrong .engineChoiceMark { color: var(--danger); }
 
+/* A select_all option that was correct but the student did not pick it.
+   Deliberately NOT a filled/solid treatment like .engineChoiceRight — that
+   would look identical to an option the student actually selected. Outlined
+   and dashed instead, so the checkbox itself (empty) stays the only true
+   record of what was clicked. */
+.engineChoiceMissed {
+  border-color: var(--success);
+  border-style: dashed;
+  background: transparent;
+  color: var(--fg);
+}
+.engineChoiceMissed .choiceKey,
+.engineChoiceMissed .choiceBox { border-color: var(--success); border-style: dashed; }
+.engineChoiceMissed .engineChoiceMark { color: var(--success); opacity: 0.7; }
+
 /* ── fill_blank: expression = [ your answer ] ── */
 
 .engineBlankRow {
@@ -1945,6 +1960,29 @@
 
 .engineBlankInput:focus { outline: none; border-color: var(--primary); }
 .engineBlankInput:disabled { opacity: 0.7; }
+
+/* ── fill_blank, multiline: a trace's answer spans several output lines,
+   which a single-line <input> can never actually hold (Enter has nowhere
+   to put a newline) ── */
+.engineBlankTextarea {
+  flex: 1;
+  min-width: 220px;
+  width: 100%;
+  min-height: 84px;
+  resize: vertical;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--fg);
+  padding: 10px 14px;
+  font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
+  font-size: 14.5px;
+  line-height: 1.5;
+  transition: border-color 0.15s ease;
+}
+
+.engineBlankTextarea:focus { outline: none; border-color: var(--primary); }
+.engineBlankTextarea:disabled { opacity: 0.7; }
 
 /* ── build_slice: type the bounds into the expression itself ── */
 

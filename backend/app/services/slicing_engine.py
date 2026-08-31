@@ -45,25 +45,18 @@ int(), and every multiple-choice option is matched back to a server-built
 structure by its rendered text, so a submission can only ever name
 something this module generated itself.
 """
-import base64
-import hashlib
-import hmac
-import json
-import os
 import random
 import time
 
 from . import corpus
+from . import practice_engine_core as core
 from . import slicing_templates as tpl
 from .sandbox import run_for_grading
 
 MAX_TIER = 5
-# Anti-tampering, not an auth boundary: generous enough that a student who
-# sits on a question for a while (reading, re-reading the code) doesn't get
-# a stale-token error, short enough that a token isn't useful long after.
-TOKEN_TTL_SECONDS = 30 * 60
 
-_SECRET = os.environ.get("SLICING_ENGINE_SECRET", "dev-only-insecure-secret-change-me").encode()
+InvalidToken = core.InvalidToken
+TOKEN_TTL_SECONDS = core.TOKEN_TTL_SECONDS
 
 # Loaded once: the word list may have been widened by a corpus refresh, and
 # re-reading the cache file per question would put disk IO on the request
@@ -128,10 +121,6 @@ _MAX_MCQ_TIER = 3
 # drilling one concept to the exclusion of all others would make the rest of
 # the module go stale while the student is still climbing tiers.
 _WEAK_CONCEPT_WEIGHT = 4
-
-
-class InvalidToken(Exception):
-    pass
 
 
 # ─── misconception-tagged distractors ───────────────────────────────────────
@@ -491,21 +480,13 @@ def _build_error_options(value, name, rng):
 
 
 # ─── template + string selection ────────────────────────────────────────────
+# Token signing/verification and misconception-weighted selection now live
+# in practice_engine_core.py, shared with every other module's engine; see
+# that module's docstring. _weighted_templates below is a thin wrapper
+# kept under its original name for this file's other call sites.
 
 def _weighted_templates(templates, weak):
-    """Templates, repeated so weak concepts come up more often.
-
-    Repetition rather than random.choices weights: it keeps selection a plain
-    rng.choice, which means a seeded generate() stays reproducible across
-    Python versions whose choices() internals may differ.
-    """
-    if not weak:
-        return templates
-    weighted = list(templates)
-    for template in templates:
-        if template.concept in weak:
-            weighted.extend([template] * (_WEAK_CONCEPT_WEIGHT - 1))
-    return weighted
+    return core.weighted_templates(templates, weak, weight=_WEAK_CONCEPT_WEIGHT)
 
 
 def _kinds_for_template(template):
@@ -640,34 +621,15 @@ def _grade_write_code(task_key, n, tier, rng, code):
 
 
 # ─── token signing ──────────────────────────────────────────────────────────
+# Thin wrappers over practice_engine_core, kept under their original names
+# for this file's many call sites.
 
 def _sign(payload: dict) -> str:
-    raw = json.dumps(payload, separators=(",", ":"), sort_keys=True).encode()
-    body = base64.urlsafe_b64encode(raw).rstrip(b"=")
-    sig = hmac.new(_SECRET, body, hashlib.sha256).digest()
-    sig_b64 = base64.urlsafe_b64encode(sig).rstrip(b"=")
-    return f"{body.decode()}.{sig_b64.decode()}"
+    return core.sign(payload)
 
 
 def _verify(token: str) -> dict:
-    if not token or "." not in token:
-        raise InvalidToken("malformed token")
-    body_s, sig_s = token.split(".", 1)
-
-    expected_sig = hmac.new(_SECRET, body_s.encode(), hashlib.sha256).digest()
-    expected_sig_b64 = base64.urlsafe_b64encode(expected_sig).rstrip(b"=").decode()
-    if not hmac.compare_digest(expected_sig_b64, sig_s):
-        raise InvalidToken("bad signature")
-
-    try:
-        padded = body_s + "=" * (-len(body_s) % 4)
-        payload = json.loads(base64.urlsafe_b64decode(padded))
-    except (ValueError, UnicodeDecodeError) as exc:
-        raise InvalidToken("bad payload") from exc
-
-    if int(time.time()) - payload.get("ts", 0) > TOKEN_TTL_SECONDS:
-        raise InvalidToken("expired")
-    return payload
+    return core.verify(token)
 
 
 # ─── typed-answer normalisation ─────────────────────────────────────────────
@@ -720,17 +682,7 @@ def _parse_bound(raw):
 
 
 def parse_weak_concepts(raw):
-    """The client's recent misconceptions, as a set the picker can use.
-
-    Accepts a comma-separated string or a list. Unknown ids are dropped
-    rather than rejected: the field is advisory, and a client sending
-    something stale should get a normal question, not an error.
-    """
-    if not raw:
-        return set()
-    items = raw.split(",") if isinstance(raw, str) else list(raw)
-    known = {t.concept for t in tpl.TEMPLATES}
-    return {i.strip() for i in items if isinstance(i, str) and i.strip() in known}
+    return core.parse_weak_concepts(raw, {t.concept for t in tpl.TEMPLATES})
 
 
 # ─── generation ─────────────────────────────────────────────────────────────

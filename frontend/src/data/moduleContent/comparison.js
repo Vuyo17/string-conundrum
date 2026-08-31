@@ -167,6 +167,10 @@ export const comparisonModule = {
 
   practice: {
     apiModuleId: 'comparison',
+    // Endless procedural practice (see PracticeEngine.jsx /
+    // comparison_engine.py) instead of the static exercise bank — Exam
+    // still draws from the bank via `exam.questionCount` below.
+    engine: true,
     exam: { questionCount: 10 },
   },
 };

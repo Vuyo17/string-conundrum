@@ -195,7 +195,12 @@ export const introModule = {
 
   practice: {
     apiModuleId: 'intro',
-    questionCount: 3,
+    // Endless procedural practice (see PracticeEngine.jsx /
+    // intro_engine.py) instead of the static exercise bank — Exam still
+    // draws from the bank via `exam.questionCount` below. `questionCount`
+    // (which capped the old static-bank practice run) is dropped along
+    // with it, same as every other engine-enabled module.
+    engine: true,
     exam: { questionCount: 3 },
   },
 };

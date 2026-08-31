@@ -23,6 +23,13 @@ from .services.progress import (
     set_leaderboard_anonymous,
     set_leaderboard_optin,
 )
+from .services.comparison_engine import generate as generate_comparison_question, grade as grade_comparison_question
+from .services.formatting_engine import generate as generate_formatting_question, grade as grade_formatting_question
+from .services.immutability_engine import generate as generate_immutability_question, grade as grade_immutability_question
+from .services.indexing_engine import generate as generate_indexing_question, grade as grade_indexing_question
+from .services.intro_engine import generate as generate_intro_question, grade as grade_intro_question
+from .services.looping_engine import generate as generate_looping_question, grade as grade_looping_question
+from .services.methods_engine import generate as generate_methods_question, grade as grade_methods_question
 from .services.sandbox import execute_code, trace_steps
 from .services.slicing_engine import generate as generate_slicing_question, grade as grade_slicing_question
 from .services.visualizer import build_visual_state
@@ -97,70 +104,96 @@ def list_module_exercises(module_id: str):
     return {"ok": True, "module_id": module_id, "exercises": exercises}
 
 
-# ─── slicing endless-practice engine ───────────────────────────────────────
-# Procedurally generated questions, not the static bank above — see
-# services/slicing_engine.py for why this needs no database or session
-# state of its own.
+# ─── procedural endless-practice engines ────────────────────────────────────
+# Each module that has adopted the adaptive engine (see
+# practice_engine_core.py) gets an identical pair of endpoints --
+# GET .../engine/next and POST .../engine/answer -- so rather than hand-copy
+# that pair per module (as the first two, slicing and indexing, originally
+# were, and promptly drifted apart on one line -- indexing's module_id kwarg
+# wasn't in slicing's copy), _register_engine below builds both routes from
+# one module's generate()/grade() functions. Adding a module means adding
+# one line to _ENGINES, not copying ~50.
 
-@api_bp.get("/exercises/slicing/engine/next")
-def slicing_engine_next():
-    try:
-        tier = int(request.args.get("tier", 1))
-    except (TypeError, ValueError):
-        tier = 1
-    # `weak` is the client's own tally of what it has recently got wrong,
-    # sent back so template selection can lean that way. Keeping the tally
-    # on the client is what lets adaptive selection work without giving the
-    # engine session state; it is advisory, and unknown ids are dropped.
-    weak = request.args.get("weak", "")
-    question = generate_slicing_question(tier, weak=weak)
-    return {"ok": True, **question}
+_ENGINES = {
+    "slicing": (generate_slicing_question, grade_slicing_question),
+    "indexing": (generate_indexing_question, grade_indexing_question),
+    "looping": (generate_looping_question, grade_looping_question),
+    "comparison": (generate_comparison_question, grade_comparison_question),
+    "methods": (generate_methods_question, grade_methods_question),
+    "immutability": (generate_immutability_question, grade_immutability_question),
+    "formatting": (generate_formatting_question, grade_formatting_question),
+    "intro": (generate_intro_question, grade_intro_question),
+}
 
 
-@api_bp.post("/exercises/slicing/engine/answer")
-@require_auth
-def slicing_engine_answer():
-    payload = request.get_json(silent=True) or {}
-    token = payload.get("token", "")
-    lang = payload.get("lang")
+def _register_engine(module_id, generate_fn, grade_fn):
+    @api_bp.get(f"/exercises/{module_id}/engine/next", endpoint=f"{module_id}_engine_next")
+    def _next():
+        try:
+            tier = int(request.args.get("tier", 1))
+        except (TypeError, ValueError):
+            tier = 1
+        # `weak` is the client's own tally of what it has recently got
+        # wrong, sent back so template selection can lean that way.
+        # Keeping the tally on the client is what lets adaptive selection
+        # work without giving the engine session state; it is advisory,
+        # and unknown ids are dropped.
+        weak = request.args.get("weak", "")
+        question = generate_fn(tier, weak=weak)
+        return {"ok": True, **question}
 
-    # The whole payload goes to the grader: which field holds the answer
-    # depends on the question's format, and only the token knows the format.
-    result = grade_slicing_question(token, payload)
-    if not result.get("ok"):
-        return {"ok": False, "error": result.get("error", "invalid_token")}, 400
+    @api_bp.post(f"/exercises/{module_id}/engine/answer", endpoint=f"{module_id}_engine_answer")
+    @require_auth
+    def _answer():
+        payload = request.get_json(silent=True) or {}
+        token = payload.get("token", "")
+        lang = payload.get("lang")
 
-    if result["correct"]:
-        # Every generated question carries a fresh random nonce, so unlike
-        # the static bank a synthetic id per attempt is correct here —
-        # endless mode is meant to award stars every time, not just the
-        # first time a particular question is seen.
-        synthetic_id = f"engine-{result['tier']}-{token[:24]}"
-        record_exercise_completion(g.uid, "slicing", synthetic_id, result["stars_awarded"])
+        # The whole payload goes to the grader: which field holds the
+        # answer depends on the question's format, and only the token
+        # knows the format.
+        result = grade_fn(token, payload)
+        if not result.get("ok"):
+            return {"ok": False, "error": result.get("error", "invalid_token")}, 400
 
-    if result.get("format") == "write_code":
-        feedback = engine_code_feedback(result["correct"], result.get("detail", ""), lang)
-    else:
-        feedback = engine_feedback(
-            result["correct"], result["correct_answer"], result["misconception_id"], lang,
-        )
-        # A format-specific observation ("word[2:5] produces \"ep\".") is
-        # appended rather than substituted: the student still needs to be
-        # told what the right answer was.
-        detail = result.get("detail")
-        if detail and not result["correct"]:
-            feedback["feedback"] = f"{feedback['feedback']} {detail}"
+        if result["correct"]:
+            # Every generated question carries a fresh random nonce, so
+            # unlike the static bank a synthetic id per attempt is correct
+            # here — endless mode is meant to award stars every time, not
+            # just the first time a particular question is seen.
+            synthetic_id = f"engine-{result['tier']}-{token[:24]}"
+            record_exercise_completion(g.uid, module_id, synthetic_id, result["stars_awarded"])
 
-    return {
-        "ok": True,
-        "correct": result["correct"],
-        "correct_answer": result["correct_answer"],
-        "misconception_id": result["misconception_id"],
-        "stars_awarded": result["stars_awarded"],
-        "tier": result["tier"],
-        "format": result.get("format"),
-        **feedback,
-    }
+        if result.get("format") == "write_code":
+            feedback = engine_code_feedback(
+                result["correct"], result.get("detail", ""), lang, module_id=module_id,
+            )
+        else:
+            feedback = engine_feedback(
+                result["correct"], result["correct_answer"], result["misconception_id"], lang,
+                module_id=module_id,
+            )
+            # A format-specific observation ("word[2:5] produces \"ep\".")
+            # is appended rather than substituted: the student still needs
+            # to be told what the right answer was.
+            detail = result.get("detail")
+            if detail and not result["correct"]:
+                feedback["feedback"] = f"{feedback['feedback']} {detail}"
+
+        return {
+            "ok": True,
+            "correct": result["correct"],
+            "correct_answer": result["correct_answer"],
+            "misconception_id": result["misconception_id"],
+            "stars_awarded": result["stars_awarded"],
+            "tier": result["tier"],
+            "format": result.get("format"),
+            **feedback,
+        }
+
+
+for _module_id, (_generate_fn, _grade_fn) in _ENGINES.items():
+    _register_engine(_module_id, _generate_fn, _grade_fn)
 
 
 @api_bp.get("/challenges")

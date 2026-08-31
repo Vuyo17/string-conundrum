@@ -346,21 +346,25 @@ def evaluate_answer(
 
 
 def engine_feedback(
-    correct: bool, correct_answer: str, misconception_id: "str | None" = None, lang: "str | None" = None,
+    correct: bool, correct_answer: str, misconception_id: "str | None" = None,
+    lang: "str | None" = None, module_id: str = "slicing",
 ) -> dict:
     """Feedback text for a procedurally generated exercise, e.g. the
-    Slicing module's endless-practice engine (slicing_engine.py).
+    Slicing or Indexing modules' endless-practice engines
+    (slicing_engine.py, indexing_engine.py).
 
     Those questions aren't in the static bank `evaluate_answer` reads from,
     so they can't go through `_grade_mcq` — but they use the same
     misconception ids and templates, so this reuses that copy rather than
-    duplicating it, keeping the two feel like one voice.
+    duplicating it, keeping the two feel like one voice. `module_id`
+    defaults to "slicing" (the original, and still only, caller that
+    doesn't pass it explicitly) so existing behaviour is unchanged for it.
     """
     lang = normalise_lang(lang)
     if correct:
         return {
             "feedback": _tpl(lang, "correct", answer=correct_answer),
-            "explanation": _module_explanations(lang).get("slicing", ""),
+            "explanation": _module_explanations(lang).get(module_id, ""),
         }
 
     correction = _tpl(lang, "not_quite", answer=correct_answer)
@@ -368,11 +372,13 @@ def engine_feedback(
     feedback = f"{correction} — {specific}" if specific else correction
     return {
         "feedback": feedback,
-        "explanation": specific or _module_explanations(lang).get("slicing", ""),
+        "explanation": specific or _module_explanations(lang).get(module_id, ""),
     }
 
 
-def engine_code_feedback(correct: bool, detail: str = "", lang: "str | None" = None) -> dict:
+def engine_code_feedback(
+    correct: bool, detail: str = "", lang: "str | None" = None, module_id: str = "slicing",
+) -> dict:
     """Feedback for a generated *write_code* question.
 
     `engine_feedback` above wraps the correct answer in "the answer is
@@ -383,7 +389,7 @@ def engine_code_feedback(correct: bool, detail: str = "", lang: "str | None" = N
     that from the grader; this only supplies the surrounding voice.
     """
     lang = normalise_lang(lang)
-    explanation = _module_explanations(lang).get("slicing", "")
+    explanation = _module_explanations(lang).get(module_id, "")
     if correct:
         return {"feedback": _tpl(lang, "all_tests_passed"), "explanation": explanation}
     return {"feedback": detail, "explanation": explanation}

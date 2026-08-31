@@ -686,3 +686,33 @@ def test_grade_reports_the_kind_and_format_it_graded():
     result = engine.grade(question["token"], {"answers": []})
     assert result["kind"] == engine.KIND_IDENTIFY
     assert result["format"] == engine.FORMAT_SELECT_ALL
+
+
+def test_every_code_task_is_reachable_from_its_own_band():
+    """A code task banded below the lowest tier that ever offers
+    KIND_CODE is unreachable by construction -- caught for real in
+    looping_engine.py's own equivalent task during development, so every
+    sibling engine carries the same check."""
+    code_capable_tiers = [t for t, kinds in engine._TIER_KINDS.items() if engine.KIND_CODE in kinds]
+    seen = set()
+    for tier in code_capable_tiers:
+        for seed in range(600):
+            q = engine.generate(tier=tier, seed=seed)
+            if q["kind"] == engine.KIND_CODE:
+                seen.add(q["template"])
+    assert seen == set(tpl.CODE_TASKS), f"unreachable: {set(tpl.CODE_TASKS) - seen}"
+
+
+def test_every_declared_kind_actually_generates_at_every_tier_it_names():
+    """The kind-level version of the same check: a kind can be declared
+    reachable at a tier while silently never succeeding there if nothing
+    in that tier's band window can satisfy it -- see comparison_engine's
+    own version of this test for the real instance this caught."""
+    for tier, kinds in engine._TIER_KINDS.items():
+        seen = set()
+        for seed in range(400):
+            seen.add(engine.generate(tier=tier, seed=seed)["kind"])
+        for kind in kinds:
+            if kind == engine.KIND_CODE and not tpl.code_tasks_for_tier(tier):
+                continue
+            assert kind in seen, f"tier {tier} declares {kind} but it never generated in 400 tries"

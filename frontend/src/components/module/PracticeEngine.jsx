@@ -7,20 +7,28 @@ import { apiFetch, markSectionComplete } from '../../api';
 import { getApiUrl } from '../../config/api';
 import { CodeExercise } from './CodeExercise';
 import { CodeBlock, InlineText } from './ContentBlocks';
+import { DragDropWarmup } from './DragDropWarmup';
 import { useLanguage } from '../../context/LanguageContext';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SlicingEngine — endless practice for the Slicing module.
+// PracticeEngine — endless, adaptive practice for any module that has
+// adopted the procedural engine (currently Slicing and Indexing; see
+// practice_engine_core.py on the backend for the shared machinery each
+// module's own engine builds on).
 //
 // Unlike PracticeSection's PracticeRunner, this never runs out of
 // questions: each one is generated on the fly by the backend
-// (services/slicing_engine.py) rather than drawn from the static exercise
-// bank. Difficulty climbs on two axes at once — the slice itself gets
-// harder, and so does the way it's asked, from picking one of four up to
-// writing runnable code. This component renders whichever of those five
-// formats the backend sent (`question.type`) and submits the matching
-// field; the backend's token decides the format, so the client cannot
-// answer a hard question in an easy format.
+// (services/<module>_engine.py) rather than drawn from the static exercise
+// bank, at /api/exercises/<practice.apiModuleId>/engine/*. Difficulty
+// climbs on two axes at once — the question itself gets harder, and so
+// does the way it's asked, from picking one of four up to writing runnable
+// code. This component renders whichever answer format the backend sent
+// (`question.type`) and submits the matching field; the backend's token
+// decides the format, so the client cannot answer a hard question in an
+// easy format. A format's own widget (SliceBuilder, IndexBuilder, ...) is
+// specific to the module that uses it; everything else here -- the star
+// rail, the five shared formats, the misconception tally sent back on
+// every request -- is not.
 //
 // The star rail at the top IS the progress bar: each star sits at the end
 // of the segment leading to it, and that segment fills as the student
@@ -57,6 +65,7 @@ function emptyAnswer(question) {
     case 'select_all': return { selected: [] };
     case 'fill_blank': return { value: '' };
     case 'build_slice': return { slice: { start: '', stop: '', step: '' } };
+    case 'build_index': return { slice: { index: '' } };
     case 'write_code': return { code: question.starter_code ?? '' };
     default: return { selected: null };
   }
@@ -71,6 +80,9 @@ function canSubmit(question, answer) {
     // would quietly rule out answers the engine can actually ask for.
     case 'fill_blank': return true;
     case 'build_slice': return true;
+    // Unlike a slice bound, a blank index isn't a meaningful (if wrong)
+    // answer on its own -- there's nothing to grade.
+    case 'build_index': return (answer.slice?.index ?? '').trim().length > 0;
     case 'write_code': return (answer.code ?? '').trim().length > 0;
     default: return answer.selected !== null;
   }
@@ -81,6 +93,7 @@ function submissionFor(question, answer) {
     case 'select_all': return { answers: answer.selected ?? [] };
     case 'fill_blank': return { answer: answer.value ?? '' };
     case 'build_slice': return { slice: answer.slice };
+    case 'build_index': return { slice: answer.slice };
     case 'write_code': return { code: answer.code ?? '' };
     default: return { answer: answer.selected ?? '' };
   }
@@ -157,7 +170,24 @@ function ChoiceList({ question, answer, result, onChange }) {
         // if `correct_answer` couldn't be matched back to an option — the
         // banner and the options must never disagree about the same answer.
         const isRight = (result?.correct && picked) || correctSet?.has(choice);
-        const state = !result ? '' : isRight ? m.engineChoiceRight : picked ? m.engineChoiceWrong : '';
+        // select_all questions often have more than one correct option (see
+        // e.g. slicing_engine.py's KIND_IDENTIFY/EQUIVALENCE/ERROR, or
+        // indexing_engine.py's KIND_IDENTIFY/ERROR): a student who
+        // picks only some of them used to see every correct option painted
+        // fully green with a checkmark badge regardless of whether they
+        // picked it, which reads as "the app selected extra options I never
+        // clicked." `missed` is that specific case — correct, but not
+        // picked — kept visually distinct (outlined, not filled; a hollow
+        // circle, not a solid check) from an option the student actually
+        // chose, so the checkbox itself stays the only true record of what
+        // was clicked.
+        const missed = Boolean(result) && multi && isRight && !picked;
+        const state = !result
+          ? ''
+          : missed ? m.engineChoiceMissed
+          : isRight ? m.engineChoiceRight
+          : picked ? m.engineChoiceWrong
+          : '';
         return (
           <button
             key={`${choice}-${i}`}
@@ -174,7 +204,14 @@ function ChoiceList({ question, answer, result, onChange }) {
             <span className={`${m.choiceText} ${choice === '' ? m.engineEmptyOption : ''}`}>
               {displayOption(choice)}
             </span>
-            {result && isRight && <Check size={16} className={m.engineChoiceMark} />}
+            {result && missed && (
+              <CheckCircle2
+                size={16}
+                className={m.engineChoiceMark}
+                aria-label={t('practiceEngine.alsoCorrect')}
+              />
+            )}
+            {result && !missed && isRight && <Check size={16} className={m.engineChoiceMark} />}
             {result && picked && !isRight && <X size={16} className={m.engineChoiceMark} />}
           </button>
         );
@@ -185,6 +222,12 @@ function ChoiceList({ question, answer, result, onChange }) {
 
 function FillBlank({ question, answer, result, onChange, onSubmit, inputRef }) {
   const { t } = useLanguage();
+  // A correct answer that spans several output lines (a loop trace, or a
+  // print() containing \n) can never be typed into a single-line <input>
+  // — there's nowhere for Enter to put a newline. question.multiline
+  // switches to a <textarea>, where Enter inserts a line instead of
+  // submitting (submitting still needs the Check Answer button).
+  const multiline = Boolean(question.multiline);
   return (
     <div className={m.engineBlankRow}>
       {/* A `trace` question has no expression to put an "=" after — the
@@ -197,18 +240,33 @@ function FillBlank({ question, answer, result, onChange, onSubmit, inputRef }) {
       ) : (
         <span className={m.engineBlankLabel}>{question.answer_label}</span>
       )}
-      <input
-        ref={inputRef}
-        className={m.engineBlankInput}
-        value={answer.value ?? ''}
-        onChange={(e) => onChange({ value: e.target.value })}
-        onKeyDown={(e) => { if (e.key === 'Enter') onSubmit(); }}
-        placeholder={t('practiceEngine.typeResult')}
-        disabled={Boolean(result)}
-        aria-label={t('a11y.yourAnswer')}
-        spellCheck={false}
-        autoComplete="off"
-      />
+      {multiline ? (
+        <textarea
+          ref={inputRef}
+          className={m.engineBlankTextarea}
+          value={answer.value ?? ''}
+          onChange={(e) => onChange({ value: e.target.value })}
+          onKeyDown={(e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) onSubmit(); }}
+          placeholder={t('practiceEngine.typeResult')}
+          disabled={Boolean(result)}
+          aria-label={t('a11y.yourAnswer')}
+          spellCheck={false}
+          rows={3}
+        />
+      ) : (
+        <input
+          ref={inputRef}
+          className={m.engineBlankInput}
+          value={answer.value ?? ''}
+          onChange={(e) => onChange({ value: e.target.value })}
+          onKeyDown={(e) => { if (e.key === 'Enter') onSubmit(); }}
+          placeholder={t('practiceEngine.typeResult')}
+          disabled={Boolean(result)}
+          aria-label={t('a11y.yourAnswer')}
+          spellCheck={false}
+          autoComplete="off"
+        />
+      )}
     </div>
   );
 }
@@ -240,7 +298,11 @@ function SliceBuilder({ question, answer, result, onChange, onSubmit, inputRef }
   return (
     <div className={m.engineBuilder}>
       <code className={m.engineBuilderExpr}>
-        <span className={m.engineBuilderToken}>word[</span>
+        {/* question.name, not a hardcoded "word": a field-based template
+            (Section~sec:practiceengine) can name its entry `date`,
+            `timestamp`, etc., and the box should match what the prompt
+            above it actually calls the variable. */}
+        <span className={m.engineBuilderToken}>{question.name ?? 'word'}[</span>
         {box('start', t('practiceEngine.startBound'), inputRef)}
         <span className={m.engineBuilderToken}>:</span>
         {box('stop', t('practiceEngine.stopBound'))}
@@ -253,6 +315,34 @@ function SliceBuilder({ question, answer, result, onChange, onSubmit, inputRef }
         <span className={m.engineBuilderToken}>]</span>
       </code>
       <p className={m.engineBuilderHint}>{t('practiceEngine.builderHint')}</p>
+    </div>
+  );
+}
+
+function IndexBuilder({ question, answer, result, onChange, onSubmit, inputRef }) {
+  const { t } = useLanguage();
+  const slice = answer.slice ?? { index: '' };
+
+  return (
+    <div className={m.engineBuilder}>
+      <code className={m.engineBuilderExpr}>
+        <span className={m.engineBuilderToken}>{question.name ?? 'word'}[</span>
+        <input
+          ref={inputRef}
+          className={m.engineBuilderInput}
+          value={slice.index ?? ''}
+          onChange={(e) => onChange({ slice: { index: e.target.value } })}
+          onKeyDown={(e) => { if (e.key === 'Enter') onSubmit(); }}
+          disabled={Boolean(result)}
+          aria-label={t('practiceEngine.indexValue')}
+          inputMode="numeric"
+          placeholder="·"
+          spellCheck={false}
+          autoComplete="off"
+        />
+        <span className={m.engineBuilderToken}>]</span>
+      </code>
+      <p className={m.engineBuilderHint}>{t('practiceEngine.builderHintIndex')}</p>
     </div>
   );
 }
@@ -286,7 +376,7 @@ function WriteCode({ question, answer, result, onChange }) {
 
 // ─── the engine ──────────────────────────────────────────────────────────────
 
-export function SlicingEngine({ practice, onSectionComplete }) {
+export function PracticeEngine({ practice, onSectionComplete }) {
   const { t, lang } = useLanguage();
 
   const [tier, setTier] = useState(1);
@@ -323,12 +413,19 @@ export function SlicingEngine({ practice, onSectionComplete }) {
     return ranked.join(',');
   }, []);
 
+  // The engine's own endpoints live under /api/exercises/<module>/engine/*,
+  // one pair per module that has adopted this engine (see
+  // practice_engine_core.py on the backend) -- apiModuleId is already how
+  // every other part of this component identifies which module it's
+  // running for, so no separate config is needed to route to the right one.
+  const engineBase = `/api/exercises/${practice.apiModuleId}/engine`;
+
   const loadNext = useCallback((forTier) => {
     setLoading(true);
     setLoadError('');
     setResult(null);
     const weak = encodeURIComponent(weakConcepts());
-    fetch(getApiUrl(`/api/exercises/slicing/engine/next?tier=${forTier}&weak=${weak}`))
+    fetch(getApiUrl(`${engineBase}/next?tier=${forTier}&weak=${weak}`))
       .then((res) => res.json())
       .then((data) => {
         setQuestion(data);
@@ -336,7 +433,7 @@ export function SlicingEngine({ practice, onSectionComplete }) {
       })
       .catch(() => setLoadError('practice.serverUnreachable'))
       .finally(() => setLoading(false));
-  }, [weakConcepts]);
+  }, [weakConcepts, engineBase]);
 
   useEffect(() => { loadNext(1); }, [loadNext]);
 
@@ -345,7 +442,7 @@ export function SlicingEngine({ practice, onSectionComplete }) {
   // upside. Keyed on the token so it fires once per question.
   useEffect(() => {
     if (!question || result) return;
-    if (question.type === 'fill_blank' || question.type === 'build_slice') {
+    if (['fill_blank', 'build_slice', 'build_index'].includes(question.type)) {
       inputRef.current?.focus();
     }
   }, [question?.token, result]);
@@ -361,7 +458,7 @@ export function SlicingEngine({ practice, onSectionComplete }) {
     if (!question || result || submitting || !canSubmit(question, answer)) return;
     setSubmitting(true);
     try {
-      const res = await apiFetch(getApiUrl('/api/exercises/slicing/engine/answer'), {
+      const res = await apiFetch(getApiUrl(`${engineBase}/answer`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: question.token, lang, ...submissionFor(question, answer) }),
@@ -481,6 +578,15 @@ export function SlicingEngine({ practice, onSectionComplete }) {
 
   return (
     <div className={m.runnerStack}>
+      {/* Same condition the static bank's PracticeRunner uses ("only before
+          the very first question"), translated to this engine's own idea
+          of "first": there's no fixed index here, just an endless stream,
+          so stats.asked === 0 is the equivalent -- true until the first
+          question of the session has actually been answered. */}
+      {practice.warmup?.type === 'drag_drop' && stats.asked === 0 && !result && (
+        <DragDropWarmup config={practice.warmup} />
+      )}
+
       <div className={m.engineCard}>
         <StarRail starsFilled={starsFilled} tierStreak={tierStreak} label={railLabel} />
 
@@ -490,6 +596,7 @@ export function SlicingEngine({ practice, onSectionComplete }) {
 
           {question.type === 'fill_blank' && <FillBlank {...shared} />}
           {question.type === 'build_slice' && <SliceBuilder {...shared} />}
+          {question.type === 'build_index' && <IndexBuilder {...shared} />}
           {question.type === 'write_code' && <WriteCode {...shared} />}
           {(question.type === 'mcq' || question.type === 'select_all') && <ChoiceList {...shared} />}
 
