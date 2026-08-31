@@ -244,3 +244,54 @@ def test_tier_band_windows_cover_every_band():
     for tier in range(1, 6):
         seen |= set(tpl.TIER_BANDS[tier])
     assert seen == set(core.BANDS)
+
+
+# ─── worked explanation ──────────────────────────────────────────────────────
+
+def test_predict_answers_carry_a_worked_explanation_correct_or_not():
+    seen_shapes = set()
+    for tier in range(1, 6):
+        for seed in range(300):
+            q = engine.generate(tier=tier, seed=seed)
+            if q["kind"] != "predict":
+                continue
+            wrong = engine.grade(q["token"], {"answer": "###totally-wrong###"})
+            assert wrong["explanation_blocks"]
+            right = engine.grade(q["token"], {"answer": wrong["correct_answer"]})
+            assert right["correct"] is True
+            assert right["explanation_blocks"]
+            payload = core.verify(q["token"])
+            seen_shapes.add((payload.get("raises"), payload.get("reassigned")))
+    # raises, thrown-away-result, and correctly-reassigned are the three
+    # real outcomes a scenario can have -- all three must be covered.
+    assert seen_shapes == {(True, None), (False, False), (False, True)}
+
+
+def test_raises_explanation_names_the_real_exception():
+    for seed in range(300):
+        q = engine.generate(tier=1, seed=seed)
+        if q["kind"] != "predict":
+            continue
+        payload = core.verify(q["token"])
+        if not payload.get("raises"):
+            continue
+        wrong = engine.grade(q["token"], {"answer": "###"})
+        text = " ".join(b.get("text", "") for b in wrong["explanation_blocks"] if b["kind"] == "p")
+        assert payload["exc"] in text
+        return
+    pytest.fail("no raising predict question generated in 300 tries")
+
+
+def test_thrown_away_result_explanation_shows_the_word_is_unchanged():
+    for seed in range(500):
+        q = engine.generate(tier=3, seed=seed)
+        if q["kind"] != "predict":
+            continue
+        payload = core.verify(q["token"])
+        if payload.get("raises") or payload.get("reassigned") is not False:
+            continue
+        wrong = engine.grade(q["token"], {"answer": "###"})
+        code_blocks = [b["code"] for b in wrong["explanation_blocks"] if b["kind"] == "code"]
+        assert any(repr(payload["printed"]) in c for c in code_blocks)
+        return
+    pytest.fail("no thrown-away-result predict question generated in 500 tries")

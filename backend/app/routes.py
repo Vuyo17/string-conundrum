@@ -169,9 +169,19 @@ def _register_engine(module_id, generate_fn, grade_fn):
                 result["correct"], result.get("detail", ""), lang, module_id=module_id,
             )
         else:
+            # The worked-example panel below already explains the
+            # misconception in full when one exists (explanation_blocks) --
+            # appending the same misconception sentence to the terse banner
+            # above it would just repeat the same information in two
+            # different visual registers. Passing None here only changes
+            # that one sentence; `misconception_id` in the response below
+            # (which the frontend tallies for adaptive weighting) is
+            # untouched.
+            has_rich_explanation = bool(result.get("explanation_blocks"))
             feedback = engine_feedback(
-                result["correct"], result["correct_answer"], result["misconception_id"], lang,
-                module_id=module_id,
+                result["correct"], result["correct_answer"],
+                None if has_rich_explanation else result["misconception_id"],
+                lang, module_id=module_id,
             )
             # A format-specific observation ("word[2:5] produces \"ep\".")
             # is appended rather than substituted: the student still needs
@@ -188,6 +198,15 @@ def _register_engine(module_id, generate_fn, grade_fn):
             "stars_awarded": result["stars_awarded"],
             "tier": result["tier"],
             "format": result.get("format"),
+            # A rich, worked-example version of "why" a wrong answer was
+            # wrong, as content blocks the frontend renders with the same
+            # components the Learn section uses (ContentBlocks.jsx) rather
+            # than one prose sentence. Only Slicing's evaluate kind builds
+            # these today (see _build_slice_explanation there); every other
+            # module/kind sends None here and the frontend falls back to
+            # `feedback["explanation"]`'s plain text, so this key is safe to
+            # pass through generically for all eight modules at once.
+            "explanation_blocks": result.get("explanation_blocks"),
             **feedback,
         }
 

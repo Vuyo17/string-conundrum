@@ -320,3 +320,48 @@ def test_tier_band_windows_cover_every_band():
     for tier in range(1, 6):
         seen |= set(tpl.TIER_BANDS[tier])
     assert seen == set(core.BANDS)
+
+
+# ─── worked explanation ──────────────────────────────────────────────────────
+
+def test_evaluate_answers_carry_a_worked_explanation_correct_or_not():
+    seen_templates = set()
+    for tier in range(1, 6):
+        for seed in range(300):
+            q = engine.generate(tier=tier, seed=seed)
+            if q["kind"] != "evaluate":
+                continue
+            wrong = engine.grade(q["token"], {"answer": "###totally-wrong###"})
+            assert wrong["explanation_blocks"]
+            right = engine.grade(q["token"], {"answer": wrong["correct_answer"]})
+            assert right["correct"] is True
+            assert right["explanation_blocks"]
+            seen_templates.add(q["template"])
+    assert seen_templates == set(tpl.BY_ID)
+
+
+def test_repeat_explanation_chain_literally_matches_the_real_result():
+    for seed in range(300):
+        q = engine.generate(tier=2, seed=seed)
+        if q["kind"] != "evaluate" or q["template"] != "repeat":
+            continue
+        wrong = engine.grade(q["token"], {"answer": "###"})
+        chain_block = next(b for b in wrong["explanation_blocks"] if b["kind"] == "code" and "+" in b["code"])
+        chain, shown_result = chain_block["code"].split(" = ")
+        assert chain.replace(" + ", "") == wrong["correct_answer"]
+        assert shown_result == repr(wrong["correct_answer"])
+        return
+    pytest.fail("no repeat question generated in 300 tries")
+
+
+def test_type_error_explanation_names_the_real_exception():
+    for seed in range(500):
+        q = engine.generate(tier=5, seed=seed)
+        if q["kind"] != "evaluate" or q["template"] != "type_error":
+            continue
+        wrong = engine.grade(q["token"], {"answer": "###"})
+        assert wrong["correct_answer"] == "TypeError"
+        text = " ".join(b.get("text", "") for b in wrong["explanation_blocks"] if b["kind"] == "p")
+        assert "TypeError" in text
+        return
+    pytest.fail("no type_error question generated in 500 tries")

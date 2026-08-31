@@ -399,3 +399,70 @@ def test_every_declared_kind_actually_generates_at_every_tier_it_names():
             if kind == "code" and not tpl.code_tasks_for_tier(tier):
                 continue
             assert kind in seen, f"tier {tier} declares {kind} but it never generated in 400 tries"
+
+
+# ─── worked explanation ──────────────────────────────────────────────────────
+
+def test_evaluate_answers_carry_a_worked_explanation_correct_or_not():
+    """Both a right and a wrong evaluate answer get a rich, worked-example
+    explanation (content blocks the frontend renders with ContentBlocks.jsx)
+    -- the highlighted position must literally be the real answer, since a
+    wrong explanation would be worse than none."""
+    for seed in range(200):
+        q = engine.generate(tier=1, seed=seed)
+        if q["kind"] != "evaluate":
+            continue
+        payload = core.verify(q["token"])
+        value = payload["w"]
+
+        wrong = engine.grade(q["token"], {"answer": "#"})
+        assert wrong["correct"] is False
+        assert wrong["explanation_blocks"]
+
+        right = engine.grade(q["token"], {"answer": wrong["correct_answer"]})
+        assert right["correct"] is True
+        assert right["explanation_blocks"]
+
+        for result in (wrong, right):
+            string_block = next(b for b in result["explanation_blocks"] if b["kind"] == "string")
+            spelled = "".join(value[j] for j in string_block["highlight"])
+            assert spelled == result["correct_answer"]
+        return
+    pytest.fail("no evaluate question generated in 200 tries")
+
+
+def test_worked_explanation_never_shows_a_variant_with_the_same_character():
+    """_build_index_explanation must only show nearby indices whose
+    character actually differs -- the mirrored index (same position from
+    the other end) always holds the identical character, and showing it
+    under "a different index is a different character" would be wrong."""
+    seen_any = False
+    for seed in range(800):
+        q = engine.generate(tier=3, seed=seed)
+        if q["kind"] != "evaluate":
+            continue
+        payload = core.verify(q["token"])
+        value, name, i = payload["w"], payload["nm"], payload["i"]
+        correct = value[i]
+        blocks = engine._build_index_explanation(value, name, i, correct)
+        for blk in blocks:
+            if blk["kind"] == "code" and "different index" in blk.get("caption", ""):
+                seen_any = True
+                for line in blk["code"].splitlines():
+                    shown = line.split("#", 1)[1].strip()
+                    assert shown != f'"{correct}"', (seed, line)
+    assert seen_any
+
+
+def test_worked_explanation_never_crashes_across_every_template():
+    seen_templates = set()
+    for tier in range(1, 6):
+        for seed in range(600):
+            q = engine.generate(tier=tier, seed=seed)
+            if q["kind"] != "evaluate":
+                continue
+            payload = core.verify(q["token"])
+            value, name, i = payload["w"], payload["nm"], payload["i"]
+            engine._build_index_explanation(value, name, i, value[i])  # must not raise
+            seen_templates.add(payload["tp"])
+    assert seen_templates  # sanity: the loop actually ran

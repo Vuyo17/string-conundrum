@@ -283,3 +283,55 @@ def test_tier_band_windows_cover_every_band():
     for tier in range(1, 6):
         seen |= set(tpl.TIER_BANDS[tier])
     assert seen == set(core.BANDS)
+
+
+# ─── worked explanation ──────────────────────────────────────────────────────
+
+def test_evaluate_answers_carry_a_worked_explanation_correct_or_not():
+    seen_methods = set()
+    for tier in range(1, 6):
+        for seed in range(400):
+            q = engine.generate(tier=tier, seed=seed)
+            if q["kind"] != "evaluate":
+                continue
+            wrong = engine.grade(q["token"], {"answer": "###totally-wrong###"})
+            assert wrong["explanation_blocks"]
+            right = engine.grade(q["token"], {"answer": wrong["correct_answer"]})
+            assert right["correct"] is True
+            assert right["explanation_blocks"]
+            seen_methods.add(core.verify(q["token"]).get("mn"))
+    assert seen_methods >= {"upper", "lower", "strip", "replace", "count", "startswith", "endswith", "find", "index"}
+
+
+def test_count_explanation_highlight_uses_the_real_non_overlapping_scan():
+    """.count() famously does not count overlapping matches -- the
+    explanation's highlighted positions must be built the same
+    non-overlapping way, or it would visually contradict the real count."""
+    for seed in range(3000):
+        picked = engine._pick_call(5, __import__("random").Random(seed), set())
+        if picked is None or picked[0].id != "count_overlapping":
+            continue
+        _template, mc = picked
+        blocks = engine._build_method_explanation(
+            mc.word, mc.method_name, mc.args, mc.result, mc.raises, mc.exc_name,
+        )
+        string_block = next(b for b in blocks if b["kind"] == "string")
+        sub = mc.args[0]
+        expected = {i + off for i in engine._find_all(mc.word, sub) for off in range(len(sub))}
+        assert set(string_block["highlight"]) == expected
+        assert len(engine._find_all(mc.word, sub)) == mc.word.count(sub)
+        return
+    pytest.fail("count_overlapping never drawn in 3000 tries")
+
+
+def test_index_absent_explanation_names_the_real_exception():
+    for seed in range(500):
+        q = engine.generate(tier=4, seed=seed)
+        if q["kind"] != "evaluate" or q["template"] != "index_absent_raises":
+            continue
+        wrong = engine.grade(q["token"], {"answer": "###"})
+        assert wrong["correct_answer"] == "ValueError"
+        text = " ".join(b.get("text", "") for b in wrong["explanation_blocks"] if b["kind"] == "p")
+        assert "ValueError" in text
+        return
+    pytest.fail("no index_absent_raises question generated in 500 tries")

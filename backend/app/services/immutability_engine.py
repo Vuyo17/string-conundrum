@@ -105,6 +105,77 @@ def _predict_options(scenario, rng):
     return options, correct
 
 
+# ─── worked explanation (predict, correct or wrong) ─────────────────────────
+# Three shapes, one per real outcome a scenario can have -- raises,
+# printed-but-discarded, or printed-and-reassigned -- driven entirely by
+# the scenario's own already-computed fields (never re-simulated).
+
+def _build_predict_explanation(name, source, raises, exc_name, printed, reassigned, method):
+    if raises:
+        return [
+            {"kind": "code", "code": source},
+            {
+                "kind": "p",
+                "text": (
+                    f"Every direct attempt to change a character of a string in place "
+                    f"raises a real **{exc_name}** -- strings are immutable, so there is "
+                    "no in-place operation to perform."
+                ),
+            },
+            {
+                "kind": "callout",
+                "tone": "warn",
+                "title": "Key rule to remember",
+                "text": (
+                    f"`{name}[i] = ...`, `del {name}[i]`, and slice assignment all raise "
+                    "-- the only way to \"change\" a string is to build a new one and "
+                    "reassign it."
+                ),
+            },
+        ]
+
+    if not reassigned:
+        return [
+            {"kind": "code", "code": source},
+            {
+                "kind": "p",
+                "text": (
+                    f"`{name}.{method}()` builds a **new** string and returns it -- but "
+                    f"nothing on that line captures the return value, so it's immediately "
+                    f"thrown away. `{name}` itself never changes."
+                ),
+            },
+            {"kind": "code", "code": f"print({name})  # {printed!r}  -- still the original"},
+            {
+                "kind": "callout",
+                "tone": "warn",
+                "title": "Key rule to remember",
+                "text": f"A method call that isn't assigned to anything achieves nothing visible. Capture it: `{name} = {name}.{method}()`.",
+            },
+        ]
+
+    return [
+        {"kind": "code", "code": source},
+        {
+            "kind": "p",
+            "text": (
+                f"This time the result IS captured -- the assignment points `{name}` at "
+                "the brand-new string, so the change is visible."
+            ),
+        },
+        {"kind": "code", "code": f"print({name})  # {printed!r}"},
+        {
+            "kind": "callout",
+            "tone": "define",
+            "title": "Key rule to remember",
+            "text": (
+                f"`{name} = {name}.method()` (or `{name} += ...`) rebinds `{name}` to a "
+                "new string -- that's the only way a variable's value ever appears to change."
+            ),
+        },
+    ]
+
+
 # ─── identify pool ────────────────────────────────────────────────────────────
 
 def _build_identify_options(word, rng):
@@ -223,6 +294,18 @@ def _generate_predict(tier, rng, weak):
 
     payload = _base_payload(tier, nonce, FORMAT_MCQ, KIND_PREDICT)
     payload.update({"result": correct, "tp": template.id})
+    # The scenario's own real fields, stored directly rather than
+    # regenerated later: template.build() draws from the *shared*
+    # generate()-wide rng at whatever position it happens to be at, so a
+    # fresh rng seeded from the nonce alone would not reliably reproduce
+    # it -- the same reproducibility hazard looping_engine's Loop.lines
+    # and slicing_engine's (start, stop, step) are stored directly to
+    # avoid, documented at length in looping_engine.py's own comment.
+    payload.update({
+        "lines": scenario.lines, "raises": scenario.raises, "exc": scenario.exc_name,
+        "printed": scenario.printed, "reassigned": scenario.reassigned, "method": scenario.method,
+        "sname": scenario.name,
+    })
 
     return {
         "token": core.sign(payload),
@@ -337,7 +420,7 @@ def grade(token: str, submission: "dict | str") -> dict:
     template_id = payload.get("tp", "")
     concept = tpl.BY_ID[template_id].concept if template_id in tpl.BY_ID else None
 
-    def verdict(is_correct, correct_answer, misconception_id=None, detail=""):
+    def verdict(is_correct, correct_answer, misconception_id=None, detail="", explanation_blocks=None):
         return {
             "ok": True,
             "correct": is_correct,
@@ -349,6 +432,7 @@ def grade(token: str, submission: "dict | str") -> dict:
             "kind": kind,
             "concept": concept,
             "detail": detail,
+            "explanation_blocks": explanation_blocks,
         }
 
     if kind == KIND_CODE:
@@ -376,4 +460,12 @@ def grade(token: str, submission: "dict | str") -> dict:
     correct_answer = payload.get("result", "")
     raw = submission.get("answer")
     submitted = str(raw or "") if fmt == FORMAT_MCQ else str(raw or "").strip()
-    return verdict(submitted == correct_answer, correct_answer)
+
+    explanation_blocks = None
+    if kind == KIND_PREDICT and "lines" in payload:
+        explanation_blocks = _build_predict_explanation(
+            payload.get("sname", "word"), "\n".join(payload["lines"]),
+            payload.get("raises", False), payload.get("exc"),
+            payload.get("printed"), payload.get("reassigned"), payload.get("method"),
+        )
+    return verdict(submitted == correct_answer, correct_answer, explanation_blocks=explanation_blocks)

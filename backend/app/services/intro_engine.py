@@ -126,6 +126,110 @@ def _evaluate_options(template, case, rng):
     return options
 
 
+# ─── worked explanation (evaluate, correct or wrong) ────────────────────────
+# One branch per template rather than one universal walk: unlike
+# slicing/indexing's single index-resolution rule, six genuinely different
+# operations (concatenation, repetition, length, ord()/chr(), a raised
+# TypeError) don't reduce to one mechanic -- but every branch is still
+# built from the scenario's own real, already-computed values, never a
+# hand-simulated re-derivation of what the operation does.
+
+def _build_intro_explanation(template_id, source, printed, meta, raises, exc_name):
+    blocks = [{"kind": "code", "code": source}]
+
+    if raises:
+        blocks.append({
+            "kind": "p",
+            "text": (
+                f"`+` between a `str` and an `int` raises a real **{exc_name}** -- "
+                "Python never silently converts one to the other."
+            ),
+        })
+        blocks.append({
+            "kind": "callout",
+            "tone": "warn",
+            "title": "Key rule to remember",
+            "text": 'Convert first: `"Score: " + str(10)`, not `"Score: " + 10`.',
+        })
+        return blocks
+
+    if template_id == "concat":
+        blocks.append({
+            "kind": "p",
+            "text": "`+` joins the two strings exactly as they are -- no space is ever inserted between them.",
+        })
+        blocks.append({
+            "kind": "callout",
+            "tone": "define",
+            "title": "Key rule to remember",
+            "text": 'If you want a space, you have to add it yourself: `a + " " + b`.',
+        })
+
+    elif template_id == "repeat":
+        word, n = meta.get("word", ""), meta.get("n", 0)
+        blocks.append({
+            "kind": "p",
+            "text": f"`*` repeats the string, back to back, exactly **{n}** times -- it never does arithmetic on the text.",
+        })
+        if word and n:
+            blocks.append({"kind": "code", "code": f"{' + '.join([word] * n)} = {printed!r}"})
+        blocks.append({
+            "kind": "callout",
+            "tone": "define",
+            "title": "Key rule to remember",
+            "text": '`"ab" * 3` builds `"ababab"` -- the number 3 never appears anywhere in the result.',
+        })
+
+    elif template_id == "length_plain":
+        blocks.append({
+            "kind": "p",
+            "text": f"`len()` counts every character in the string, one by one -- here that's **{printed}**.",
+        })
+        blocks.append({
+            "kind": "callout",
+            "tone": "define",
+            "title": "Key rule to remember",
+            "text": "`len()` counts characters, not words -- every letter, digit, space and symbol counts as exactly one.",
+        })
+
+    elif template_id == "length_escape":
+        blocks.append({
+            "kind": "p",
+            "text": (
+                "`\\n` is a single newline character, not two -- it looks like a "
+                "backslash and an \"n\" in the source code, but Python turns it into "
+                "one character while reading the string literal."
+            ),
+        })
+        blocks.append({
+            "kind": "callout",
+            "tone": "warn",
+            "title": "Key rule to remember",
+            "text": f"`len()` counts the *stored* characters, not the source code's symbols -- here that's **{printed}**.",
+        })
+
+    elif template_id == "ord_shift":
+        blocks.append({
+            "kind": "p",
+            "text": (
+                "The computer never stores letters -- it stores numbers. `ord()` "
+                "looks up a character's Unicode number, arithmetic shifts that "
+                "number, and `chr()` converts it back to a character."
+            ),
+        })
+        blocks.append({
+            "kind": "callout",
+            "tone": "define",
+            "title": "Key rule to remember",
+            "text": "`chr(ord(ch) + n)` moves a character forward by `n` places in the alphabet -- the same idea behind every classic cypher exercise.",
+        })
+
+    else:
+        blocks.append({"kind": "p", "text": f"This evaluates to {printed!r}."})
+
+    return blocks
+
+
 # ─── write_code ─────────────────────────────────────────────────────────────
 
 _CODE_STARTER = "# `word` is already defined for you.\n"
@@ -209,7 +313,13 @@ def _generate_evaluate(tier, rng, weak):
     fmt = FORMAT_FILL_BLANK if case.raises else _pick_format(KIND_EVALUATE, tier, rng)
 
     payload = _base_payload(tier, nonce, fmt, KIND_EVALUATE)
-    payload.update({"result": ("raises" if case.raises else case.printed), "tp": template.id})
+    # `src`/`meta` stored directly rather than regenerated later -- the
+    # same reproducibility hazard looping_engine.py's Loop.lines is stored
+    # directly to avoid (see its own comment for the full reasoning).
+    payload.update({
+        "result": ("raises" if case.raises else case.printed), "tp": template.id,
+        "src": case.source, "meta": case.meta,
+    })
 
     question = {
         "tier": tier,
@@ -325,7 +435,7 @@ def grade(token: str, submission: "dict | str") -> dict:
     template_id = payload.get("tp", "")
     concept = tpl.BY_ID[template_id].concept if template_id in tpl.BY_ID else None
 
-    def verdict(is_correct, correct_answer, misconception_id=None, detail=""):
+    def verdict(is_correct, correct_answer, misconception_id=None, detail="", explanation_blocks=None):
         return {
             "ok": True,
             "correct": is_correct,
@@ -337,6 +447,7 @@ def grade(token: str, submission: "dict | str") -> dict:
             "kind": kind,
             "concept": concept,
             "detail": detail,
+            "explanation_blocks": explanation_blocks,
         }
 
     if kind == KIND_CODE:
@@ -364,7 +475,15 @@ def grade(token: str, submission: "dict | str") -> dict:
 
     # evaluate: compare against the stored real value (or "TypeError").
     correct_answer = payload.get("result", "")
-    normalised_correct = "TypeError" if correct_answer == "raises" else correct_answer
+    raises = correct_answer == "raises"
+    normalised_correct = "TypeError" if raises else correct_answer
     raw = submission.get("answer")
     submitted = str(raw or "") if fmt == FORMAT_MCQ else str(raw or "").strip()
-    return verdict(submitted == normalised_correct, normalised_correct)
+
+    explanation_blocks = None
+    if "src" in payload:
+        explanation_blocks = _build_intro_explanation(
+            template_id, payload["src"], None if raises else correct_answer,
+            payload.get("meta") or {}, raises, "TypeError" if raises else None,
+        )
+    return verdict(submitted == normalised_correct, normalised_correct, explanation_blocks=explanation_blocks)

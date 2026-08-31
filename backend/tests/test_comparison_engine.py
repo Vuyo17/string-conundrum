@@ -295,3 +295,45 @@ def test_tier_band_windows_cover_every_band():
     for tier in range(1, 6):
         seen |= set(tpl.TIER_BANDS[tier])
     assert seen == set(core.BANDS)
+
+
+# ─── worked explanation ──────────────────────────────────────────────────────
+
+def test_evaluate_answers_carry_a_worked_explanation_correct_or_not():
+    for tier in range(1, 6):
+        for seed in range(200):
+            q = engine.generate(tier=tier, seed=seed)
+            if q["kind"] != "evaluate":
+                continue
+            wrong = engine.grade(q["token"], {"answer": "###"})
+            assert wrong["explanation_blocks"]
+            right = engine.grade(q["token"], {"answer": wrong["correct_answer"]})
+            assert right["correct"] is True
+            assert right["explanation_blocks"]
+
+
+def test_type_error_explanation_names_the_real_types_involved():
+    for seed in range(500):
+        q = engine.generate(tier=4, seed=seed)
+        if q["kind"] != "evaluate" or q["template"] != "string_number_type_error":
+            continue
+        wrong = engine.grade(q["token"], {"answer": "###"})
+        text = " ".join(b.get("text", "") for b in wrong["explanation_blocks"] if b["kind"] == "p")
+        assert "str" in text and "int" in text
+        return
+    pytest.fail("no string_number_type_error question generated in 500 tries")
+
+
+def test_ordering_explanation_table_reflects_the_real_first_difference():
+    for seed in range(500):
+        q = engine.generate(tier=3, seed=seed)
+        if q["kind"] != "evaluate" or q["template"] not in ("lexicographic_lt", "lexicographic_gt"):
+            continue
+        payload = core.verify(q["token"])
+        lv, rv = payload["lv"], payload["rv"]
+        real_first_diff = next(i for i in range(min(len(lv), len(rv))) if lv[i] != rv[i])
+        wrong = engine.grade(q["token"], {"answer": "###"})
+        table = next(b for b in wrong["explanation_blocks"] if b["kind"] == "table")
+        assert int(table["rows"][-1][0]) == real_first_diff
+        return
+    pytest.fail("no lexicographic question generated in 500 tries")

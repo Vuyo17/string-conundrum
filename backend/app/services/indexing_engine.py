@@ -212,6 +212,79 @@ def _rewrites(i, n):
     return out
 
 
+# ─── worked explanation (evaluate, correct or wrong) ────────────────────────
+# One general builder, the same reasoning as slicing_engine.py's own
+# _build_slice_explanation: every index, whichever of indexing_templates.py's
+# shapes produced it, resolves the same real way -- a negative index is
+# len(value) + i, everything else stays put -- so one function driven by
+# that resolution covers positive, negative, first, and last-character
+# templates alike.
+
+def _index_quoted(ch):
+    return f'"{ch}"'
+
+
+def _build_index_explanation(value, name, i, correct):
+    n = len(value)
+    real_i = i if i >= 0 else n + i
+
+    blocks = [
+        {
+            "kind": "string",
+            "value": value,
+            "highlight": [real_i],
+            "negative": i < 0,
+            "caption": f'`{name}[{i}]` is the highlighted character.',
+        },
+    ]
+
+    if i < 0:
+        blocks.append({
+            "kind": "p",
+            "text": (
+                f"A negative index counts backward from the end: **{i}** means "
+                f"`len({name}) + ({i})` = **{n} + ({i})** = index **{real_i}**."
+            ),
+        })
+    else:
+        blocks.append({
+            "kind": "p",
+            "text": f"Counting forward from **0**, index **{i}** is the character shown above.",
+        })
+
+    blocks.append({"kind": "code", "code": f"{name}[{i}] = {_index_quoted(correct)}"})
+
+    variants = []
+    seen = {i}
+    for alt in _rewrites(i, n):
+        if alt in seen or not _in_range(alt, n):
+            continue
+        seen.add(alt)
+        alt_char = value[alt]
+        if alt_char == correct:
+            continue  # the mirrored index -- same character, not a contrast
+        variants.append(f"{name}[{alt}]".ljust(14) + f"# {_index_quoted(alt_char)}")
+        if len(variants) >= 2:
+            break
+    if variants:
+        blocks.append({
+            "kind": "code",
+            "code": "\n".join(variants),
+            "caption": "A different index is a different character — that's the whole rule.",
+        })
+
+    blocks.append({
+        "kind": "callout",
+        "tone": "define",
+        "title": "Key rule to remember",
+        "text": (
+            f"`{name}[0]` is the **first** character. A negative index counts "
+            f"backward from `{name}[-1]`, the **last** one."
+        ),
+    })
+    return blocks
+
+
 def _build_select_all(value, name, i, rng):
     """Up to five index expressions to judge, and the subset that actually
     matches the same character as `word[i]`. Mirrors
@@ -562,7 +635,7 @@ def grade(token: str, submission: "dict | str") -> dict:
     template_id = payload.get("tp", "")
     concept = tpl.BY_ID[template_id].concept if template_id in tpl.BY_ID else None
 
-    def verdict(is_correct, correct_answer, misconception_id=None, detail=""):
+    def verdict(is_correct, correct_answer, misconception_id=None, detail="", explanation_blocks=None):
         return {
             "ok": True,
             "correct": is_correct,
@@ -574,6 +647,7 @@ def grade(token: str, submission: "dict | str") -> dict:
             "kind": kind,
             "concept": concept,
             "detail": detail,
+            "explanation_blocks": explanation_blocks,
         }
 
     if kind == KIND_CODE:
@@ -636,11 +710,19 @@ def grade(token: str, submission: "dict | str") -> dict:
     if fmt != FORMAT_MCQ and len(submitted) >= 2 and submitted[0] == submitted[-1] and submitted[0] in ("'", '"'):
         submitted = submitted[1:-1]
 
+    explanation_blocks = _build_index_explanation(value, name, i, correct_answer)
+
     if submitted == correct_answer:
-        return verdict(True, correct_answer)
+        return verdict(True, correct_answer, explanation_blocks=explanation_blocks)
 
     if fmt == FORMAT_MCQ:
         _, misconception_by_option = _build_options(value, i, correct_answer, random.Random(payload["n"]))
-        return verdict(False, correct_answer, misconception_by_option.get(submitted))
+        return verdict(
+            False, correct_answer, misconception_by_option.get(submitted),
+            explanation_blocks=explanation_blocks,
+        )
 
-    return verdict(False, correct_answer, _misconception_for_char(value, i, submitted, correct_answer))
+    return verdict(
+        False, correct_answer, _misconception_for_char(value, i, submitted, correct_answer),
+        explanation_blocks=explanation_blocks,
+    )

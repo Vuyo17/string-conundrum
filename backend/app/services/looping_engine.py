@@ -144,6 +144,49 @@ def _trace_options(lines, rng):
     return options
 
 
+# ─── worked explanation (count / trace, correct or wrong) ───────────────────
+# One general builder for both kinds: `lines` is already the loop's real,
+# directly-computed output (see looping_templates.py's docstring on why it's
+# never re-simulated), so showing every iteration's own printed line *is*
+# the ground truth -- there's no per-template narration to author, and
+# nothing here needs to know which of the eleven shapes produced `lines`.
+
+def _loop_quoted(text):
+    return f'"{text}"' if text else '"" (the empty string)'
+
+
+def _build_loop_explanation(lines, kind):
+    if not lines:
+        return [{
+            "kind": "p",
+            "text": "The loop's condition is already false on the very first check, so its body never runs — nothing is printed.",
+        }]
+
+    blocks = [{
+        "kind": "table",
+        "head": ["Iteration", "Printed"],
+        "rows": [[str(i), _loop_quoted(line)] for i, line in enumerate(lines)],
+    }]
+
+    if kind == KIND_TRACE:
+        blocks.append({
+            "kind": "code",
+            "code": "\n".join(lines),
+            "caption": "Exactly what gets printed, in order — one line per pass through the loop body.",
+        })
+    else:
+        blocks.append({
+            "kind": "callout",
+            "tone": "define",
+            "title": "Key rule to remember",
+            "text": (
+                f"Count the lines the loop actually prints, one per pass through its "
+                f"body — here that's **{len(lines)}**."
+            ),
+        })
+    return blocks
+
+
 # ─── error-kind candidates ───────────────────────────────────────────────────
 # Authored while-loop headers, not template-driven: the four classic bound
 # mistakes around `len(word)`, verified by actually attempting each on the
@@ -423,7 +466,7 @@ def grade(token: str, submission: "dict | str") -> dict:
     template_id = payload.get("tp", "")
     concept = tpl.BY_ID[template_id].concept if template_id in tpl.BY_ID else None
 
-    def verdict(is_correct, correct_answer, misconception_id=None, detail=""):
+    def verdict(is_correct, correct_answer, misconception_id=None, detail="", explanation_blocks=None):
         return {
             "ok": True,
             "correct": is_correct,
@@ -435,6 +478,7 @@ def grade(token: str, submission: "dict | str") -> dict:
             "kind": kind,
             "concept": concept,
             "detail": detail,
+            "explanation_blocks": explanation_blocks,
         }
 
     if kind == KIND_CODE:
@@ -462,14 +506,16 @@ def grade(token: str, submission: "dict | str") -> dict:
     # template.build() again is not reliably reproducible.
     lines = payload.get("lines") or []
 
+    explanation_blocks = _build_loop_explanation(lines, kind)
+
     if kind == KIND_COUNT:
         answer = str(len(lines))
         raw = submission.get("answer")
         submitted = str(raw or "") if fmt == FORMAT_MCQ else str(raw or "").strip()
-        return verdict(submitted == answer, answer)
+        return verdict(submitted == answer, answer, explanation_blocks=explanation_blocks)
 
     # trace
     answer = "\n".join(lines)
     raw = submission.get("answer")
     submitted = str(raw or "") if fmt == FORMAT_MCQ else str(raw or "").strip()
-    return verdict(submitted == answer, answer)
+    return verdict(submitted == answer, answer, explanation_blocks=explanation_blocks)

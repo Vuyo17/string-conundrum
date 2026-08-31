@@ -688,6 +688,69 @@ def test_grade_reports_the_kind_and_format_it_graded():
     assert result["format"] == engine.FORMAT_SELECT_ALL
 
 
+def test_wrong_evaluate_answer_carries_a_worked_explanation():
+    """A wrong evaluate answer gets a rich, worked-example explanation
+    (content blocks the frontend renders with ContentBlocks.jsx) rather
+    than just the plain-text misconception sentence -- every other kind
+    still gets none, and grade() must never crash building it."""
+    question = _first(1, kind=engine.KIND_EVALUATE)
+    result = engine.grade(question["token"], {"answer": "###totally-wrong###"})
+    assert result["correct"] is False
+    blocks = result["explanation_blocks"]
+    assert blocks and isinstance(blocks, list)
+    kinds = [b["kind"] for b in blocks]
+    assert "string" in kinds  # the character/index grid
+    assert "callout" in kinds  # the general rule
+    string_block = next(b for b in blocks if b["kind"] == "string")
+    # The highlighted positions must literally spell the real answer --
+    # not merely exist, since a wrong explanation would be worse than none.
+    word = engine._verify(question["token"])["w"]
+    assert "".join(word[i] for i in string_block["highlight"]) == result["correct_answer"] or (
+        result["correct_answer"] == "" and not string_block["highlight"]
+    )
+
+
+def test_correct_evaluate_answer_also_carries_a_worked_explanation():
+    """The worked example reinforces a right answer too, not just a
+    wrong one -- knowing *why* you were right matters as much as being
+    told you were wrong."""
+    question = _first(1, kind=engine.KIND_EVALUATE)
+    correct = engine.grade(question["token"], "###totally-wrong###")["correct_answer"]
+    result = engine.grade(question["token"], {"answer": correct})
+    assert result["correct"] is True
+    assert result["explanation_blocks"]
+
+
+def test_non_evaluate_kinds_carry_no_explanation_blocks():
+    question = _first(3, kind=engine.KIND_IDENTIFY)
+    result = engine.grade(question["token"], {"answers": []})
+    assert result["explanation_blocks"] is None
+
+
+def test_worked_explanation_never_shows_a_variant_with_the_same_result():
+    """_nearby_slice_variants must only ever show genuinely different
+    results -- several of _rewrites' own triples are equivalent rewrites
+    of the identical slice, and showing one under "a nudge changes the
+    result" would be a real inaccuracy, not just a weak example."""
+    seen_any = False
+    for seed in range(800):
+        q = engine.generate(tier=3, seed=seed)
+        if q["kind"] != engine.KIND_EVALUATE:
+            continue
+        payload = engine._verify(q["token"])
+        value, name = payload["w"], payload["nm"]
+        a, b, c = payload["a"], payload["b"], payload["c"]
+        correct = engine._safe_slice(value, a, b, c)
+        blocks = engine._build_slice_explanation(value, name, a, b, c, correct)
+        for blk in blocks:
+            if blk["kind"] == "code" and "nudge" in blk.get("caption", ""):
+                seen_any = True
+                for line in blk["code"].splitlines():
+                    shown = line.split("#", 1)[1].strip()
+                    assert shown != engine._quoted(correct), (seed, line)
+    assert seen_any
+
+
 def test_every_code_task_is_reachable_from_its_own_band():
     """A code task banded below the lowest tier that ever offers
     KIND_CODE is unreachable by construction -- caught for real in

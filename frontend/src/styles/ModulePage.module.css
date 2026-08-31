@@ -1436,6 +1436,26 @@
   font-size: 13.5px;
 }
 
+/* ── worked example: a wrong evaluate answer's rich "why", built from the
+   same content blocks (StringFigure, code, callout, ...) the Learn section
+   renders with -- see ContentBlocks.jsx and slicing_engine.py's
+   _build_slice_explanation ── */
+.engineWorkedExample {
+  display: grid;
+  gap: 14px;
+  padding-top: 4px;
+  animation: pageIn 0.2s ease both;
+}
+
+.engineWorkedExampleTitle {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 .inlineStar { vertical-align: -2px; color: var(--accent); }
 
 /* ═══ Exam mode ══════════════════════════════════════════════════════════ */

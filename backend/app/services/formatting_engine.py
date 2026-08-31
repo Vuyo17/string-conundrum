@@ -138,6 +138,65 @@ def _evaluate_options(template, case, rng):
     return options
 
 
+# ─── worked explanation (evaluate, correct or wrong) ────────────────────────
+# Grouped by the real concept each template probes -- the missing-f-prefix
+# trap and the escape-sequence miscount are the two named misconceptions
+# this module actually has a taxonomy for (see formatting_templates.py's
+# docstring), so those two get their own concrete explanation; every other
+# template shares one honest, general description of substitution rather
+# than an invented bespoke one.
+
+def _build_format_explanation(concept, source, printed):
+    blocks = [{"kind": "code", "code": source}]
+
+    if concept == tpl.C_FSTRING_PREFIX:
+        blocks.append({
+            "kind": "p",
+            "text": (
+                "Without the `f` prefix, Python treats the string as a completely "
+                "ordinary string literal -- the `{ }` braces are just characters, "
+                "never evaluated or substituted."
+            ),
+        })
+        blocks.append({
+            "kind": "callout",
+            "tone": "warn",
+            "title": "Key rule to remember",
+            "text": (
+                'Only `f"..."` (or `f\'...\'`) substitutes `{expression}` placeholders. '
+                "Forgetting the `f` is a silent bug -- Python never raises for it."
+            ),
+        })
+    elif concept == tpl.C_ESCAPE_SEQUENCE:
+        n_lines = len(printed.split("\n"))
+        blocks.append({
+            "kind": "p",
+            "text": (
+                "`\\n` is a single newline character and `\\t` is a single tab "
+                "character -- each looks like two symbols in the source code, but "
+                "Python turns it into exactly one character while reading the string."
+            ),
+        })
+        blocks.append({
+            "kind": "callout",
+            "tone": "define",
+            "title": "Key rule to remember",
+            "text": f"This prints across **{n_lines}** line(s) -- one more line than there are `\\n` characters in the string.",
+        })
+    else:
+        blocks.append({
+            "kind": "p",
+            "text": "Each `{ }` placeholder is replaced with the real value of the expression inside it, converted to text, in the order they appear.",
+        })
+        blocks.append({
+            "kind": "callout",
+            "tone": "define",
+            "title": "Key rule to remember",
+            "text": "An f-string and `.format()` both substitute values into placeholders -- they just spell the placeholder differently.",
+        })
+    return blocks
+
+
 # ─── identify pool ────────────────────────────────────────────────────────────
 
 def _build_identify_options(rng):
@@ -247,7 +306,13 @@ def _generate_evaluate(tier, rng, weak):
     fmt = _pick_format(KIND_EVALUATE, tier, rng)
 
     payload = _base_payload(tier, nonce, fmt, KIND_EVALUATE)
-    payload.update({"result": case.printed, "tp": template.id})
+    # `source` stored directly rather than regenerated from template.build()
+    # again later -- the same reproducibility hazard looping_engine.py's
+    # Loop.lines is stored directly to avoid (its own comment explains why
+    # at length: a fresh rng seeded from the nonce alone doesn't reliably
+    # land on the same draw a template made from the *shared* generate()
+    # rng).
+    payload.update({"result": case.printed, "tp": template.id, "src": case.source})
 
     question = {
         "tier": tier,
@@ -368,7 +433,7 @@ def grade(token: str, submission: "dict | str") -> dict:
     template_id = payload.get("tp", "")
     concept = tpl.BY_ID[template_id].concept if template_id in tpl.BY_ID else None
 
-    def verdict(is_correct, correct_answer, misconception_id=None, detail=""):
+    def verdict(is_correct, correct_answer, misconception_id=None, detail="", explanation_blocks=None):
         return {
             "ok": True,
             "correct": is_correct,
@@ -380,6 +445,7 @@ def grade(token: str, submission: "dict | str") -> dict:
             "kind": kind,
             "concept": concept,
             "detail": detail,
+            "explanation_blocks": explanation_blocks,
         }
 
     if kind == KIND_CODE:
@@ -402,4 +468,8 @@ def grade(token: str, submission: "dict | str") -> dict:
     correct_answer = payload.get("result", "")
     raw = submission.get("answer")
     submitted = str(raw or "") if fmt == FORMAT_MCQ else str(raw or "").strip()
-    return verdict(submitted == correct_answer, correct_answer)
+
+    explanation_blocks = None
+    if "src" in payload:
+        explanation_blocks = _build_format_explanation(concept, payload["src"], correct_answer)
+    return verdict(submitted == correct_answer, correct_answer, explanation_blocks=explanation_blocks)

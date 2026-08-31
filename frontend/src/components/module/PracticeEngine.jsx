@@ -6,7 +6,7 @@ import m from '../../styles/ModulePage.module.css';
 import { apiFetch, markSectionComplete } from '../../api';
 import { getApiUrl } from '../../config/api';
 import { CodeExercise } from './CodeExercise';
-import { CodeBlock, InlineText } from './ContentBlocks';
+import { CodeBlock, ContentBlocks, InlineText } from './ContentBlocks';
 import { DragDropWarmup } from './DragDropWarmup';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -602,20 +602,33 @@ export function PracticeEngine({ practice, onSectionComplete }) {
 
           <div aria-live="polite">
             {result && (
-              <div className={`${m.feedbackBanner} ${result.correct ? m.feedbackOk : m.feedbackNo}`}>
-                <span className={m.feedbackIcon}>
-                  {result.correct ? <CheckCircle2 size={18} /> : <Target size={18} />}
-                </span>
-                <div>
-                  <strong>{result.correct ? t('exercise.correctHeading') : t('exercise.notQuite')}</strong>
-                  <p><InlineText text={result.feedback ?? ''} /></p>
-                  {result.explanation && (
-                    <p className={m.feedbackExplanation}>
-                      <strong>{t('common.why')}</strong> <InlineText text={result.explanation} />
-                    </p>
-                  )}
+              <>
+                <div className={`${m.feedbackBanner} ${result.correct ? m.feedbackOk : m.feedbackNo}`}>
+                  <span className={m.feedbackIcon}>
+                    {result.correct ? <CheckCircle2 size={18} /> : <Target size={18} />}
+                  </span>
+                  <div>
+                    <strong>{result.correct ? t('exercise.correctHeading') : t('exercise.notQuite')}</strong>
+                    <p><InlineText text={result.feedback ?? ''} /></p>
+                    {/* The rich worked example below replaces this one-line
+                        "Why" for whichever kinds build one (only Slicing's
+                        evaluate kind so far — see slicing_engine.py's
+                        _build_slice_explanation); every other kind/module
+                        still falls back to this plain-text line. */}
+                    {result.explanation && !result.explanation_blocks && (
+                      <p className={m.feedbackExplanation}>
+                        <strong>{t('common.why')}</strong> <InlineText text={result.explanation} />
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
+                {result.explanation_blocks && (
+                  <div className={m.engineWorkedExample}>
+                    <h4 className={m.engineWorkedExampleTitle}>{t('practiceEngine.workedExample')}</h4>
+                    <ContentBlocks blocks={result.explanation_blocks} />
+                  </div>
+                )}
+              </>
             )}
           </div>
 

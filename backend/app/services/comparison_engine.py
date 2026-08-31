@@ -96,6 +96,148 @@ def _evaluate_options(comp, rng):
     return options
 
 
+# ─── worked explanation (evaluate, correct or wrong) ────────────────────────
+# One general builder covering every operator and both operand-type shapes
+# -- driven entirely by the real operands (left_val/right_val, stored on
+# Comparison specifically so this never has to re-parse the rendered
+# `left_src`/`right_src` prompt text) and Python's own ord() for the
+# character-by-character walk, the same "compute it, don't narrate a
+# simulation of it" principle as slicing_engine.py's own worked explanation.
+
+def _char_or_dash(value, i):
+    return f'"{value[i]}"' if i < len(value) else "—"
+
+
+def _operand_src(value):
+    return repr(value) if isinstance(value, str) else str(value)
+
+
+def _build_comparison_explanation(left_val, right_val, op, result, raises):
+    if raises:
+        return [
+            {
+                "kind": "p",
+                "text": (
+                    f"`{left_val!r}` is a **{type(left_val).__name__}** and "
+                    f"`{right_val!r}` is a **{type(right_val).__name__}** -- Python "
+                    f"has no rule for ordering two different types with `{op}`, so "
+                    "it raises `TypeError` instead of guessing."
+                ),
+            },
+            {
+                "kind": "callout",
+                "tone": "warn",
+                "title": "Key rule to remember",
+                "text": (
+                    "`<`, `>`, `<=` and `>=` only work between two values of the "
+                    "**same** type. Convert first (`str(n)` or `int(s)`) to compare "
+                    "across types."
+                ),
+            },
+        ]
+
+    if not (isinstance(left_val, str) and isinstance(right_val, str)):
+        # A str and an int, compared with == or != -- decided by type alone,
+        # before either value is even looked at.
+        return [
+            {
+                "kind": "p",
+                "text": (
+                    f"`{left_val!r}` is a **{type(left_val).__name__}** and "
+                    f"`{right_val!r}` is a **{type(right_val).__name__}**. Python "
+                    "checks type before value: a `str` and an `int` are never equal "
+                    "to each other, no matter what they contain."
+                ),
+            },
+            {
+                "kind": "callout",
+                "tone": "define",
+                "title": "Key rule to remember",
+                "text": (
+                    '`"5" == 5` is **always False** -- a numeral string is never the '
+                    "same value as the number it names, until you convert one with "
+                    "`int()` or `str()`."
+                ),
+            },
+        ]
+
+    # Both real strings from here on.
+    if op in ("==", "!="):
+        max_len = max(len(left_val), len(right_val))
+        rows = [
+            [str(i), _char_or_dash(left_val, i), _char_or_dash(right_val, i)]
+            for i in range(max_len)
+        ]
+        blocks = [{"kind": "table", "head": ["Position", "Left", "Right"], "rows": rows}]
+
+        if len(left_val) != len(right_val):
+            text = (
+                f'`"{left_val}"` is {len(left_val)} character(s) and `"{right_val}"` is '
+                f"{len(right_val)} character(s) -- different lengths can never be equal."
+            )
+        else:
+            first_diff = next((i for i in range(max_len) if left_val[i] != right_val[i]), None)
+            text = (
+                "Every character matches, in the same order — the two strings are equal."
+                if first_diff is None else
+                f'They first differ at position **{first_diff}**: `"{left_val[first_diff]}"` '
+                f'vs `"{right_val[first_diff]}"` — not equal.'
+            )
+        blocks.append({"kind": "p", "text": text})
+        blocks.append({
+            "kind": "code",
+            "code": f"{_operand_src(left_val)} {op} {_operand_src(right_val)}  # {result}",
+        })
+        blocks.append({
+            "kind": "callout",
+            "tone": "define",
+            "title": "Key rule to remember",
+            "text": '`==` compares every character, in order. Case matters: `"cat" == "Cat"` is False.',
+        })
+        return blocks
+
+    # Ordering: <, >, <=, >=
+    common = min(len(left_val), len(right_val))
+    first_diff = next((i for i in range(common) if left_val[i] != right_val[i]), None)
+    shown = (first_diff + 1) if first_diff is not None else common
+    rows = [[str(i), f'"{left_val[i]}"', f'"{right_val[i]}"'] for i in range(shown)]
+    blocks = [{"kind": "table", "head": ["Position", "Left", "Right"], "rows": rows}] if rows else []
+
+    if first_diff is not None:
+        lc, rc = left_val[first_diff], right_val[first_diff]
+        first, second = (lc, rc) if ord(lc) < ord(rc) else (rc, lc)
+        text = (
+            f'They first differ at position **{first_diff}**: `"{first}"` (code point '
+            f'{ord(first)}) comes before `"{second}"` (code point {ord(second)}) -- that '
+            "single character decides the whole comparison."
+        )
+    elif len(left_val) == len(right_val):
+        text = "The two strings are exactly the same, character for character."
+    else:
+        shorter = "left" if len(left_val) < len(right_val) else "right"
+        text = (
+            "Every character matches up to where the shorter string ends -- a "
+            f"string that's a prefix of the other always sorts first (the {shorter} "
+            "one, here)."
+        )
+    blocks.append({"kind": "p", "text": text})
+    blocks.append({
+        "kind": "code",
+        "code": f"{_operand_src(left_val)} {op} {_operand_src(right_val)}  # {result}",
+    })
+    blocks.append({
+        "kind": "callout",
+        "tone": "define",
+        "title": "Key rule to remember",
+        "text": (
+            "String comparison is **lexicographic**: Python compares characters one "
+            "position at a time by their Unicode code point, the same principle a "
+            "dictionary's alphabetical order follows."
+        ),
+    })
+    return blocks
+
+
 # ─── identify / error pools ───────────────────────────────────────────────────
 
 def _draw_pool(tier, rng, weak, size=5):
@@ -244,6 +386,10 @@ def _generate_evaluate(tier, rng, weak):
         "expr": comp.expression,
         "result": ("raises" if comp.raises else str(comp.result)),
         "tp": template.id,
+        # The real operands themselves (not just their rendered _src
+        # text), so grade() can build a worked explanation by walking the
+        # actual characters rather than re-parsing the prompt string.
+        "lv": comp.left_val, "rv": comp.right_val, "op": comp.op,
     })
 
     question = {
@@ -358,7 +504,7 @@ def grade(token: str, submission: "dict | str") -> dict:
     template_id = payload.get("tp", "")
     concept = tpl.BY_ID[template_id].concept if template_id in tpl.BY_ID else None
 
-    def verdict(is_correct, correct_answer, misconception_id=None, detail=""):
+    def verdict(is_correct, correct_answer, misconception_id=None, detail="", explanation_blocks=None):
         return {
             "ok": True,
             "correct": is_correct,
@@ -370,6 +516,7 @@ def grade(token: str, submission: "dict | str") -> dict:
             "kind": kind,
             "concept": concept,
             "detail": detail,
+            "explanation_blocks": explanation_blocks,
         }
 
     if kind == KIND_CODE:
@@ -404,4 +551,12 @@ def grade(token: str, submission: "dict | str") -> dict:
     raw = submission.get("answer")
     submitted = str(raw or "") if fmt == FORMAT_MCQ else str(raw or "").strip()
     normalised_correct = "TypeError" if correct_answer == "raises" else correct_answer
-    return verdict(submitted == normalised_correct, normalised_correct)
+
+    explanation_blocks = None
+    if "lv" in payload:
+        raises = correct_answer == "raises"
+        explanation_blocks = _build_comparison_explanation(
+            payload["lv"], payload["rv"], payload["op"],
+            None if raises else normalised_correct, raises,
+        )
+    return verdict(submitted == normalised_correct, normalised_correct, explanation_blocks=explanation_blocks)

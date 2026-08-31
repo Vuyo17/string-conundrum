@@ -281,3 +281,42 @@ def test_tier_band_windows_cover_every_band():
     for tier in range(1, 6):
         seen |= set(tpl.TIER_BANDS[tier])
     assert seen == set(core.BANDS)
+
+
+# ─── worked explanation ──────────────────────────────────────────────────────
+
+def test_count_and_trace_answers_carry_a_worked_explanation_correct_or_not():
+    seen_kinds = set()
+    for tier in range(1, 6):
+        for seed in range(300):
+            q = engine.generate(tier=tier, seed=seed)
+            if q["kind"] not in ("count", "trace"):
+                continue
+            wrong = engine.grade(q["token"], {"answer": "###"})
+            assert wrong["correct"] is False
+            assert wrong["explanation_blocks"]
+            right = engine.grade(q["token"], {"answer": wrong["correct_answer"]})
+            assert right["correct"] is True
+            assert right["explanation_blocks"]
+            seen_kinds.add(q["kind"])
+    assert seen_kinds == {"count", "trace"}
+
+
+def test_worked_explanation_table_matches_the_real_printed_lines():
+    """Every row the explanation table shows must be exactly one of the
+    loop's own real, directly-computed lines -- never a re-derived or
+    hand-simulated stand-in."""
+    for seed in range(200):
+        q = engine.generate(tier=2, seed=seed)
+        if q["kind"] not in ("count", "trace"):
+            continue
+        payload = core.verify(q["token"])
+        lines = payload["lines"]
+        blocks = engine._build_loop_explanation(lines, q["kind"])
+        if not lines:
+            continue
+        table = next(b for b in blocks if b["kind"] == "table")
+        shown = [row[1] for row in table["rows"]]
+        assert shown == [engine._loop_quoted(line) for line in lines]
+        return
+    pytest.fail("no count/trace question generated in 200 tries")

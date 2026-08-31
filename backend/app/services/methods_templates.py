@@ -44,26 +44,38 @@ class MTemplate:
 class MethodCall:
     """One concrete method call: the word it's called on, the rendered
     call expression, and the real result -- or the real exception, for
-    templates specifically testing one."""
+    templates specifically testing one. `method_name`/`args` are kept as
+    their own real values (not just baked into `expression`'s rendered
+    text) so a worked explanation can use them directly -- e.g. to
+    highlight every real match position of `args[0]` in `word` -- without
+    ever having to parse them back out of the prompt string."""
 
-    __slots__ = ("word", "expression", "result", "raises", "exc_name")
+    __slots__ = ("word", "expression", "result", "raises", "exc_name", "method_name", "args")
 
-    def __init__(self, word, expression, result, raises=False, exc_name=None):
+    def __init__(self, word, expression, result, raises=False, exc_name=None, method_name="", args=()):
         self.word = word
         self.expression = expression
         self.result = result
         self.raises = raises
         self.exc_name = exc_name
+        self.method_name = method_name
+        self.args = args
 
 
-def _call(word, expr_suffix, fn):
+def _call(word, expr_suffix, fn, args=()):
     """`expr_suffix` is the method-call text after `word.`, e.g.
-    `upper()` or `count("a")`. `fn` actually performs the call on `word`."""
+    `upper()` or `count("a")`. `fn` actually performs the call on `word`.
+    `args` are the call's real argument values (e.g. the substring being
+    searched for), in order."""
     expression = f'"{word}".{expr_suffix}'
+    method_name = expr_suffix.split("(", 1)[0]
     try:
-        return MethodCall(word, expression, fn(word))
+        return MethodCall(word, expression, fn(word), method_name=method_name, args=tuple(args))
     except (ValueError, IndexError) as exc:
-        return MethodCall(word, expression, None, raises=True, exc_name=type(exc).__name__)
+        return MethodCall(
+            word, expression, None, raises=True, exc_name=type(exc).__name__,
+            method_name=method_name, args=tuple(args),
+        )
 
 
 # ─── EASY ───────────────────────────────────────────────────────────────────
@@ -101,7 +113,10 @@ def _t_replace_char(words, rng):
     # never raises, so it's never a member of KIND_ERROR's raising set),
     # but fixed anyway rather than left as a bug waiting for a future
     # template change to trigger it.
-    return _call(w, f'replace("{target}","{replacement}")', lambda s: s.replace(target, replacement))
+    return _call(
+        w, f'replace("{target}","{replacement}")', lambda s: s.replace(target, replacement),
+        args=(target, replacement),
+    )
 
 
 # ─── MEDIUM ─────────────────────────────────────────────────────────────────
@@ -115,21 +130,21 @@ def _t_count_single_char(words, rng):
     # overlap misconception doesn't actually apply here -- see
     # count_substring/count_overlapping for the templates it does.
     char = rng.choice(w)
-    return _call(w, f'count("{char}")', lambda s: s.count(char))
+    return _call(w, f'count("{char}")', lambda s: s.count(char), args=(char,))
 
 
 def _t_startswith(words, rng):
     w = rng.choice(words)
     n = rng.randint(1, 3)
     prefix = w[:n]
-    return _call(w, f'startswith("{prefix}")', lambda s: s.startswith(prefix))
+    return _call(w, f'startswith("{prefix}")', lambda s: s.startswith(prefix), args=(prefix,))
 
 
 def _t_endswith(words, rng):
     w = rng.choice(words)
     n = rng.randint(1, 3)
     suffix = w[-n:]
-    return _call(w, f'endswith("{suffix}")', lambda s: s.endswith(suffix))
+    return _call(w, f'endswith("{suffix}")', lambda s: s.endswith(suffix), args=(suffix,))
 
 
 # ─── MEDIUM_HARD ────────────────────────────────────────────────────────────
@@ -139,7 +154,7 @@ def _t_find_present(words, rng):
     n = rng.randint(2, 3)
     start = rng.randint(0, max(0, len(w) - n))
     sub = w[start:start + n]
-    return _call(w, f'find("{sub}")', lambda s: s.find(sub))
+    return _call(w, f'find("{sub}")', lambda s: s.find(sub), args=(sub,))
 
 
 def _t_index_present(words, rng):
@@ -147,13 +162,13 @@ def _t_index_present(words, rng):
     n = rng.randint(2, 3)
     start = rng.randint(0, max(0, len(w) - n))
     sub = w[start:start + n]
-    return _call(w, f'index("{sub}")', lambda s: s.index(sub))
+    return _call(w, f'index("{sub}")', lambda s: s.index(sub), args=(sub,))
 
 
 def _t_find_absent(words, rng):
     w = rng.choice(words)
     # "zzq" essentially never occurs in a real dictionary word.
-    return _call(w, 'find("zzq")', lambda s: s.find("zzq"))
+    return _call(w, 'find("zzq")', lambda s: s.find("zzq"), args=("zzq",))
 
 
 def _t_index_absent_raises(words, rng):
@@ -168,7 +183,7 @@ def _t_index_absent_raises(words, rng):
     # engine family: generating at scale per declared (tier, kind) pair
     # and checking every one actually appeared.
     w = rng.choice(words)
-    return _call(w, 'index("zzq")', lambda s: s.index("zzq"))
+    return _call(w, 'index("zzq")', lambda s: s.index("zzq"), args=("zzq",))
 
 
 # ─── HARD ───────────────────────────────────────────────────────────────────
@@ -178,7 +193,7 @@ def _t_count_substring(words, rng):
     n = 2
     start = rng.randint(0, max(0, len(w) - n))
     sub = w[start:start + n]
-    return _call(w, f'count("{sub}")', lambda s: s.count(sub))
+    return _call(w, f'count("{sub}")', lambda s: s.count(sub), args=(sub,))
 
 
 # ─── VERY_HARD ──────────────────────────────────────────────────────────────
@@ -192,7 +207,7 @@ def _t_count_overlapping(words, rng):
     reps = rng.randint(4, 6)
     w = letter * reps
     pair = letter * 2
-    return _call(w, f'count("{pair}")', lambda s: s.count(pair))
+    return _call(w, f'count("{pair}")', lambda s: s.count(pair), args=(pair,))
 
 
 def _t_replace_multichar(words, rng):
@@ -201,7 +216,10 @@ def _t_replace_multichar(words, rng):
     start = rng.randint(0, max(0, len(w) - n))
     sub = w[start:start + n]
     replacement = "Q" * n
-    return _call(w, f'replace("{sub}","{replacement}")', lambda s: s.replace(sub, replacement))
+    return _call(
+        w, f'replace("{sub}","{replacement}")', lambda s: s.replace(sub, replacement),
+        args=(sub, replacement),
+    )
 
 
 TEMPLATES = [

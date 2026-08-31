@@ -331,3 +331,46 @@ def test_tier_band_windows_cover_every_band():
     for tier in range(1, 6):
         seen |= set(tpl.TIER_BANDS[tier])
     assert seen == set(core.BANDS)
+
+
+# ─── worked explanation ──────────────────────────────────────────────────────
+
+def test_evaluate_answers_carry_a_worked_explanation_correct_or_not():
+    seen_concepts = set()
+    for tier in range(1, 6):
+        for seed in range(300):
+            q = engine.generate(tier=tier, seed=seed)
+            if q["kind"] != "evaluate":
+                continue
+            wrong = engine.grade(q["token"], {"answer": "###totally-wrong###"})
+            assert wrong["explanation_blocks"]
+            right = engine.grade(q["token"], {"answer": wrong["correct_answer"]})
+            assert right["correct"] is True
+            assert right["explanation_blocks"]
+            seen_concepts.add(wrong["concept"])
+    assert {tpl.C_FSTRING_PREFIX, tpl.C_ESCAPE_SEQUENCE, tpl.C_GENERAL} <= seen_concepts
+
+
+def test_missing_prefix_explanation_names_the_real_rule():
+    for seed in range(500):
+        q = engine.generate(tier=2, seed=seed)
+        if q["kind"] != "evaluate" or q["template"] != "fstring_missing_prefix":
+            continue
+        wrong = engine.grade(q["token"], {"answer": "###"})
+        text = " ".join(b.get("text", "") for b in wrong["explanation_blocks"] if b["kind"] == "p")
+        assert "braces" in text and "prefix" in text.lower()
+        return
+    pytest.fail("no fstring_missing_prefix question generated in 500 tries")
+
+
+def test_escape_sequence_explanation_states_the_real_line_count():
+    for seed in range(500):
+        q = engine.generate(tier=5, seed=seed)
+        if q["kind"] != "evaluate" or q["template"] not in ("newline_count", "tab_and_newline"):
+            continue
+        wrong = engine.grade(q["token"], {"answer": "###"})
+        real_lines = len(wrong["correct_answer"].split("\n"))
+        callout = next(b for b in wrong["explanation_blocks"] if b["kind"] == "callout")
+        assert str(real_lines) in callout["text"]
+        return
+    pytest.fail("no escape-sequence question generated in 500 tries")

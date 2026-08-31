@@ -52,16 +52,22 @@ class Comparison:
     """One concrete comparison: the two operands as they should appear in
     the prompt (already `repr`-quoted where relevant), the operator, and
     the real result of evaluating them -- or the real exception, for the
-    templates that are specifically about the TypeError case."""
+    templates that are specifically about the TypeError case. `left_val`/
+    `right_val` are the real operands themselves (str or int), kept
+    alongside their rendered `_src` text so a worked explanation can walk
+    the actual characters rather than re-parsing them back out of the
+    prompt string."""
 
-    __slots__ = ("left_src", "right_src", "op", "result", "raises")
+    __slots__ = ("left_src", "right_src", "op", "result", "raises", "left_val", "right_val")
 
-    def __init__(self, left_src, right_src, op, result, raises=False):
+    def __init__(self, left_src, right_src, op, result, raises=False, left_val=None, right_val=None):
         self.left_src = left_src
         self.right_src = right_src
         self.op = op
         self.result = result
         self.raises = raises
+        self.left_val = left_val
+        self.right_val = right_val
 
     @property
     def expression(self):
@@ -81,9 +87,9 @@ _OPS = {
 def _compare(left_val, right_val, op, left_src, right_src):
     try:
         result = _OPS[op](left_val, right_val)
-        return Comparison(left_src, right_src, op, result)
+        return Comparison(left_src, right_src, op, result, left_val=left_val, right_val=right_val)
     except TypeError:
-        return Comparison(left_src, right_src, op, None, raises=True)
+        return Comparison(left_src, right_src, op, None, raises=True, left_val=left_val, right_val=right_val)
 
 
 # ─── EASY ───────────────────────────────────────────────────────────────────

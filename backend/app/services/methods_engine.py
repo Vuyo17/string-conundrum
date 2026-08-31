@@ -135,6 +135,212 @@ def _evaluate_options(template, mc, rng):
     return options
 
 
+# ─── worked explanation (evaluate, correct or wrong) ────────────────────────
+# Grouped by method family rather than one universal walk (unlike
+# slicing/indexing's single index-resolution rule, nine different string
+# methods genuinely work nine different ways) -- but every family's
+# highlighted positions and results are still real, computed matches
+# (_find_all uses the exact non-overlapping scan str.count()/str.replace()
+# themselves use), never hand-asserted.
+
+def _find_all(word, sub):
+    """Every non-overlapping match position of `sub` in `word`, found the
+    same way str.count()/str.replace() themselves do -- advancing past the
+    whole match rather than by one character -- so highlighting these
+    positions is a real demonstration of the overlap rule, not just an
+    illustration of it."""
+    positions = []
+    start = 0
+    while True:
+        idx = word.find(sub, start)
+        if idx == -1:
+            break
+        positions.append(idx)
+        start = idx + len(sub)
+    return positions
+
+
+def _method_quoted(text):
+    return f'"{text}"' if text else '"" (the empty string)'
+
+
+def _build_method_explanation(word, method_name, args, result, raises, exc_name):
+    if raises:
+        sub = args[0] if args else ""
+        return [
+            {
+                "kind": "string",
+                "value": word,
+                "highlight": [],
+                "caption": f'`"{sub}"` does not occur anywhere in `"{word}"`.',
+            },
+            {
+                "kind": "p",
+                "text": (
+                    f'`.index("{sub}")` raises **{exc_name}** when the substring '
+                    "isn't found -- unlike `.find()`, which returns **-1** instead "
+                    "of raising."
+                ),
+            },
+            {
+                "kind": "callout",
+                "tone": "warn",
+                "title": "Key rule to remember",
+                "text": (
+                    "`.find()` is the safe search (returns -1 on failure); "
+                    "`.index()` is the strict one (raises `ValueError` on failure). "
+                    "Pick the one that matches how you plan to handle 'not found'."
+                ),
+            },
+        ]
+
+    if method_name in ("upper", "lower"):
+        verb = "uppercase" if method_name == "upper" else "lowercase"
+        return [
+            {"kind": "code", "code": f'"{word}".{method_name}() = {_method_quoted(result)}'},
+            {
+                "kind": "p",
+                "text": f"`.{method_name}()` builds a new string with every letter converted to {verb}; anything that isn't a letter is left exactly as it was.",
+            },
+            {
+                "kind": "callout",
+                "tone": "define",
+                "title": "Key rule to remember",
+                "text": f"`.{method_name}()` returns a **new** string -- `{word!r}` itself is never changed.",
+            },
+        ]
+
+    if method_name == "strip":
+        # The kept range is wherever word.strip()'s own real output starts
+        # and ends inside the original -- found the real way, not by
+        # hand-walking whitespace rules.
+        core_text = word.strip()
+        start = word.find(core_text) if core_text else len(word)
+        kept = list(range(start, start + len(core_text)))
+        return [
+            {
+                "kind": "string",
+                "value": word,
+                "highlight": kept,
+                "caption": "Highlighted characters are what `.strip()` keeps; the rest (whitespace) is removed.",
+            },
+            {
+                "kind": "p",
+                "text": '`.strip()` removes whitespace from **both ends**, and keeps removing it until it reaches a non-whitespace character -- not just one space from each side.',
+            },
+            {"kind": "code", "code": f'"{word}".strip() = {_method_quoted(result)}'},
+            {
+                "kind": "callout",
+                "tone": "define",
+                "title": "Key rule to remember",
+                "text": "`.strip()` never touches whitespace **inside** the string, only leading and trailing.",
+            },
+        ]
+
+    if method_name == "replace":
+        target, replacement = args[0], args[1]
+        positions = _find_all(word, target)
+        highlight = [i + off for i in positions for off in range(len(target))]
+        return [
+            {
+                "kind": "string",
+                "value": word,
+                "highlight": highlight,
+                "caption": f'Every highlighted `"{target}"` is replaced with `"{replacement}"`.',
+            },
+            {"kind": "code", "code": f'"{word}".replace("{target}","{replacement}") = {_method_quoted(result)}'},
+            {
+                "kind": "callout",
+                "tone": "define",
+                "title": "Key rule to remember",
+                "text": '`.replace()` swaps **every** occurrence by default, not just the first -- and, like every string method, it returns a new string rather than changing the original.',
+            },
+        ]
+
+    if method_name == "count":
+        sub = args[0]
+        positions = _find_all(word, sub)
+        highlight = [i + off for i in positions for off in range(len(sub))]
+        blocks = [
+            {
+                "kind": "string",
+                "value": word,
+                "highlight": highlight,
+                "caption": f'Every highlighted `"{sub}"` is one match — {len(positions)} in total.',
+            },
+            {"kind": "code", "code": f'"{word}".count("{sub}") = {result}'},
+        ]
+        if len(sub) > 1:
+            blocks.append({
+                "kind": "callout",
+                "tone": "warn",
+                "title": "Key rule to remember",
+                "text": (
+                    f'`.count()` does **not** count overlapping matches: once a match is found, '
+                    f"it keeps looking *after* that whole match, not one character later. "
+                    f'`"aaaa".count("aa")` is **2**, not 3.'
+                ),
+            })
+        return blocks
+
+    if method_name in ("startswith", "endswith"):
+        target = args[0]
+        n = len(target)
+        highlight = list(range(0, n)) if method_name == "startswith" else list(range(len(word) - n, len(word)))
+        return [
+            {
+                "kind": "string",
+                "value": word,
+                "highlight": highlight,
+                "caption": f'The highlighted span is compared against `"{target}"`.',
+            },
+            {"kind": "code", "code": f'"{word}".{method_name}("{target}") = {result}'},
+            {
+                "kind": "callout",
+                "tone": "define",
+                "title": "Key rule to remember",
+                "text": f'`.{method_name}()` checks the exact {"start" if method_name == "startswith" else "end"} of the string, case-sensitively -- nothing in between matters.',
+            },
+        ]
+
+    if method_name in ("find", "index"):
+        sub = args[0]
+        position = word.find(sub)
+        found = position != -1
+        highlight = list(range(position, position + len(sub))) if found else []
+        blocks = [
+            {
+                "kind": "string",
+                "value": word,
+                "highlight": highlight,
+                "caption": (
+                    f'The first match of `"{sub}"` starts at the highlighted position.'
+                    if found else f'`"{sub}"` does not occur anywhere in `"{word}"`.'
+                ),
+            },
+            {"kind": "code", "code": f'"{word}".{method_name}("{sub}") = {result}'},
+        ]
+        if not found:
+            blocks.append({
+                "kind": "callout",
+                "tone": "define",
+                "title": "Key rule to remember",
+                "text": '`.find()` returns **-1** when nothing matches -- it never raises.',
+            })
+        else:
+            blocks.append({
+                "kind": "callout",
+                "tone": "define",
+                "title": "Key rule to remember",
+                "text": "The result is the index of the **first** character of the match, counting from 0 -- same as any other index into the string.",
+            })
+        return blocks
+
+    # No specific family matched (shouldn't happen for any real template,
+    # but a plain code line is still an honest, correct fallback).
+    return [{"kind": "code", "code": f'"{word}".{method_name}({", ".join(args)}) = {_method_quoted(result) if isinstance(result, str) else result}'}]
+
+
 # ─── identify / error pools ───────────────────────────────────────────────────
 
 def _draw_pool(tier, rng, weak, size=5):
@@ -282,6 +488,10 @@ def _generate_evaluate(tier, rng, weak):
         "expr": mc.expression,
         "result": (f"raises:{mc.exc_name}" if mc.raises else _render(mc.result)),
         "tp": template.id,
+        # The real call itself (not just its rendered expression text), so
+        # grade() can build a worked explanation from the actual word/
+        # method/args rather than re-parsing them back out of `expr`.
+        "w": mc.word, "mn": mc.method_name, "ar": list(mc.args),
     })
 
     question = {
@@ -397,7 +607,7 @@ def grade(token: str, submission: "dict | str") -> dict:
     template_id = payload.get("tp", "")
     concept = tpl.BY_ID[template_id].concept if template_id in tpl.BY_ID else None
 
-    def verdict(is_correct, correct_answer, misconception_id=None, detail=""):
+    def verdict(is_correct, correct_answer, misconception_id=None, detail="", explanation_blocks=None):
         return {
             "ok": True,
             "correct": is_correct,
@@ -409,6 +619,7 @@ def grade(token: str, submission: "dict | str") -> dict:
             "kind": kind,
             "concept": concept,
             "detail": detail,
+            "explanation_blocks": explanation_blocks,
         }
 
     if kind == KIND_CODE:
@@ -443,7 +654,15 @@ def grade(token: str, submission: "dict | str") -> dict:
 
     # evaluate
     stored = payload.get("result", "")
-    correct_answer = stored.split(":", 1)[1] if stored.startswith("raises:") else stored
+    raises = stored.startswith("raises:")
+    correct_answer = stored.split(":", 1)[1] if raises else stored
     raw = submission.get("answer")
     submitted = str(raw or "") if fmt == FORMAT_MCQ else str(raw or "").strip()
-    return verdict(submitted == correct_answer, correct_answer)
+
+    explanation_blocks = None
+    if "w" in payload:
+        explanation_blocks = _build_method_explanation(
+            payload["w"], payload.get("mn", ""), payload.get("ar", []),
+            correct_answer, raises, correct_answer if raises else None,
+        )
+    return verdict(submitted == correct_answer, correct_answer, explanation_blocks=explanation_blocks)

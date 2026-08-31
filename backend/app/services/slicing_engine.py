@@ -329,6 +329,125 @@ def _rewrites(value, start, stop, step):
     return out
 
 
+# ─── worked explanation (evaluate, on a wrong answer) ───────────────────────
+# One general builder rather than per-template prose: every slice, no matter
+# which of the thirty-odd templates shaped it, reduces to the same real
+# mechanics -- slice(start, stop, step).indices(len(value)) is exactly what
+# CPython itself resolves omitted/negative/out-of-range bounds to before it
+# ever touches a character. Driving the narration off that (rather than
+# hand-simulating "what negative/omitted/clamped bounds mean" per case) is
+# what lets one function cover every shape correctly, the same reasoning
+# looping_templates.py's docstring gives for computing every ground truth by
+# actually running it.
+
+def _nearby_slice_variants(value, name, start, stop, step, correct, limit=2):
+    """Up to `limit` real, nearby slices on the same word whose result
+    actually differs from `correct` -- reusing _rewrites' near-miss
+    triples rather than inventing a second set of "nudge this bound"
+    rules, but filtered to only the ones that change something: several
+    of _rewrites' own triples are genuinely equivalent rewrites (e.g. the
+    same slice addressed from the other end), and showing one of those
+    under "a nudge changes the result" would be a real inaccuracy, not
+    just a weak example."""
+    base_expr = _expr(name, start, stop, step)
+    seen = {base_expr}
+    lines = []
+    for a, b, c in _rewrites(value, start, stop, step):
+        if c == 0:
+            continue
+        expr = _expr(name, a, b, c)
+        if expr in seen:
+            continue
+        seen.add(expr)
+        variant_result = _safe_slice(value, a, b, c)
+        if variant_result == correct:
+            continue
+        lines.append(f"{expr:<16} # {_quoted(variant_result)}")
+        if len(lines) >= limit:
+            break
+    return lines
+
+
+def _build_slice_explanation(value, name, start, stop, step, result):
+    """A worked, step-by-step explanation of one concrete slice result, as
+    content blocks the frontend's existing ContentBlocks renderer already
+    knows how to draw (the same components the Learn section uses) --
+    see ContentBlocks.jsx. Returns None only if there is nothing to add
+    beyond the plain correct answer already shown.
+    """
+    n = len(value)
+    real_start, real_stop, real_step = slice(start, stop, step).indices(n)
+    included = list(range(real_start, real_stop, real_step))
+    show_negative = (
+        (isinstance(start, int) and start < 0)
+        or (isinstance(stop, int) and stop < 0)
+        or (isinstance(step, int) and step < 0)
+    )
+    expr = _expr(name, start, stop, step)
+
+    blocks = [
+        {
+            "kind": "string",
+            "value": value,
+            "highlight": included,
+            "negative": show_negative,
+            "caption": (
+                f"Every highlighted position is included in `{expr}`."
+                if included else
+                f"No position is included -- `{expr}` is the empty string."
+            ),
+        },
+    ]
+
+    if not included:
+        direction = "forward" if real_step > 0 else "backward"
+        blocks.append({
+            "kind": "p",
+            "text": (
+                f"Once Python resolves the bounds, start lands at index **{real_start}** "
+                f"and stop at index **{real_stop}**. Moving {direction} from index "
+                f"{real_start}, it's already at or past index {real_stop} -- there's "
+                "nothing in between, so the result is the empty string."
+            ),
+        })
+    else:
+        direction = "forward" if real_step > 0 else "backward"
+        stride = "" if abs(real_step) == 1 else f", taking every {abs(real_step)} character(s) as it goes"
+        stop_desc = (
+            "just before the very first character — index 0 IS included, nothing before it is"
+            if real_step < 0 and real_stop == -1
+            else f"index **{real_stop}** — that index is never included"
+        )
+        blocks.append({
+            "kind": "p",
+            "text": (
+                f"`{expr}` starts at index **{real_start}** and moves {direction}{stride}, "
+                f"stopping at {stop_desc}."
+            ),
+        })
+        chain = " + ".join(value[i] for i in included)
+        blocks.append({"kind": "code", "code": f"{chain} = {_quoted(result)}"})
+
+    variants = _nearby_slice_variants(value, name, start, stop, step, result)
+    if variants:
+        blocks.append({
+            "kind": "code",
+            "code": "\n".join(variants),
+            "caption": "A one-index nudge changes the result — that's the whole rule.",
+        })
+
+    blocks.append({
+        "kind": "callout",
+        "tone": "define",
+        "title": "Key rule to remember",
+        "text": (
+            f"For `{name}[start:stop:step]`, **start is included** and "
+            "**stop is excluded** — always, in the direction the slice travels."
+        ),
+    })
+    return blocks
+
+
 def _build_select_all(value, name, start, stop, step, rng):
     """Up to five expressions to judge, and the set that actually matches.
 
@@ -1069,7 +1188,7 @@ def grade(token: str, submission: "dict | str") -> dict:
     template_id = payload.get("tp", "")
     concept = tpl.BY_ID[template_id].concept if template_id in tpl.BY_ID else None
 
-    def verdict(is_correct, correct_answer, misconception_id=None, detail=""):
+    def verdict(is_correct, correct_answer, misconception_id=None, detail="", explanation_blocks=None):
         return {
             "ok": True,
             "correct": is_correct,
@@ -1084,6 +1203,13 @@ def grade(token: str, submission: "dict | str") -> dict:
             "kind": kind,
             "concept": concept,
             "detail": detail,
+            # A rich, worked-example version of "why" -- content blocks the
+            # frontend renders with the same components the Learn section
+            # uses (ContentBlocks.jsx), rather than one prose sentence.
+            # Only ever set on a wrong evaluate answer for now (see
+            # _build_slice_explanation); every other kind/module still
+            # falls back to feedback.py's plain-text explanation.
+            "explanation_blocks": explanation_blocks,
         }
 
     # ── write_code: run it, don't compare it ──────────────────────────────
@@ -1162,16 +1288,22 @@ def grade(token: str, submission: "dict | str") -> dict:
     # ── evaluate (mcq or typed) ───────────────────────────────────────────
     correct_answer = _safe_slice(value, start, stop, step)
     submitted = _submitted_text(submission, fmt)
+    explanation_blocks = _build_slice_explanation(value, name, start, stop, step, correct_answer)
+
     if submitted == correct_answer:
-        return verdict(True, correct_answer)
+        return verdict(True, correct_answer, explanation_blocks=explanation_blocks)
 
     if fmt == FORMAT_MCQ:
         _, misconception_by_option = _build_options(
             value, start, stop, step, correct_answer, random.Random(payload["n"]),
         )
-        return verdict(False, correct_answer, misconception_by_option.get(submitted))
+        return verdict(
+            False, correct_answer, misconception_by_option.get(submitted),
+            explanation_blocks=explanation_blocks,
+        )
 
     return verdict(
         False, correct_answer,
         _misconception_for_text(value, start, stop, step, submitted, correct_answer),
+        explanation_blocks=explanation_blocks,
     )
