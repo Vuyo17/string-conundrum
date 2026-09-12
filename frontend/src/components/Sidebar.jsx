@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   LayoutGrid, Eye, Code2, Trophy, Sparkles, Lock, Target,
-  Settings, LogOut, BookOpen,
+  Settings, LogOut, BookOpen, LayoutDashboard,
 } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { useAuth } from '../context/AuthContext';
@@ -18,7 +18,7 @@ const NAV_ITEMS = [
   { id: 'Docs', icon: BookOpen, labelKey: 'nav.docs' },
 ];
 
-export function Sidebar({ screen, setScreen, modulesComplete }) {
+export function Sidebar({ screen, setScreen, modulesComplete, isAdmin }) {
   const { isGuest, canAccess, signOut } = useAuth();
   const { t } = useLanguage();
 
@@ -34,6 +34,21 @@ export function Sidebar({ screen, setScreen, modulesComplete }) {
             {t('nav.signInToUnlock')}
           </button>
         </div>
+      )}
+
+      {isAdmin && (
+        // Appended for lecturers rather than filtered out of NAV_ITEMS for
+        // everyone else, so the student sidebar is byte-for-byte what it
+        // always was and only an admin session grows an extra item. Hiding it
+        // is a convenience: the screen and every endpoint behind it are gated
+        // server-side too.
+        <button
+          className={screen === 'Dashboard' ? styles.sideActive : ''}
+          onClick={() => setScreen('Dashboard')}
+        >
+          <LayoutDashboard size={17} />
+          {t('nav.dashboard')}
+        </button>
       )}
 
       {NAV_ITEMS.map(({ id, icon: Icon, labelKey }) => {

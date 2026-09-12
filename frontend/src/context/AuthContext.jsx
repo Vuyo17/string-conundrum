@@ -13,6 +13,7 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import { auth } from '../firebase';
+import { apiFetch } from '../api';
 import { getApiUrl } from '../config/api';
 
 const AuthContext = createContext(null);
@@ -33,6 +34,11 @@ const EMAIL_STORAGE_KEY = 'stringConundrum.signUpEmail';
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  // 'student' until the backend says otherwise. Used ONLY to decide whether
+  // to render the Dashboard nav item -- it is not access control. Every
+  // /api/admin route re-checks the role server-side (see require_admin), so
+  // a student who patches this in devtools gets a nav item that 403s.
+  const [role, setRole] = useState('student');
 
   // Read once, before any sign-in can happen: opening a sign-in link signs the
   // student in immediately, and App must keep showing the auth flow until they
@@ -49,12 +55,36 @@ export function AuthProvider({ children }) {
     return unsubscribe;
   }, []);
 
+  // Ask the backend who this is. Guests skip it: their uid can never carry a
+  // role, and the call would just be one more failed request on a screen that
+  // is deliberately offline-tolerant.
+  useEffect(() => {
+    let cancelled = false;
+    if (!user || isGuestUser(user)) {
+      setRole('student');
+      return undefined;
+    }
+    apiFetch(getApiUrl('/api/me'))
+      .then((res) => res.json())
+      .then((data) => {
+        if (!cancelled) setRole(data?.role ?? 'student');
+      })
+      // A failure here means no Dashboard item appears, which is the correct
+      // way to fail: it withholds a link rather than offering a broken one.
+      .catch(() => {
+        if (!cancelled) setRole('student');
+      });
+    return () => { cancelled = true; };
+  }, [user]);
+
   const value = {
     user,
     loading,
     emailLinkPending,
     isGuest: isGuestUser(user),
     isAuthed: Boolean(user),
+    role,
+    isAdmin: role === 'admin',
 
     signup: (email, password) => createUserWithEmailAndPassword(auth, email, password),
     login: (email, password) => signInWithEmailAndPassword(auth, email, password),
@@ -63,6 +93,9 @@ export function AuthProvider({ children }) {
 
     canAccess: (screen) => {
       if (!user) return false;
+      // The dashboard is the one screen a signed-in account can still be
+      // refused, so it is checked before the blanket "signed in means yes".
+      if (screen === 'Dashboard') return role === 'admin';
       if (!isGuestUser(user)) return true;
       return GUEST_SCREENS.includes(screen);
     },

@@ -1,3 +1,5 @@
+import os
+
 from ..db import get_cursor
 
 
@@ -157,3 +159,135 @@ def get_leaderboard(limit: int = 20) -> list[dict]:
         }
         for row in rows
     ]
+
+
+# ─── roles ───────────────────────────────────────────────────────────────────
+# A lecturer is just a user row with role='admin'. Two ways in:
+#
+#   1. ADMIN_EMAILS -- a comma-separated env allowlist, applied on sign-in.
+#      This is the bootstrap: without it the very first lecturer account would
+#      have no admin to promote it.
+#   2. promote/demote from the dashboard itself, once one lecturer exists.
+#
+# Deliberately NOT a Firebase custom claim. Claims only reach the backend when
+# the client refreshes its ID token (up to an hour later), and they do not
+# exist at all under LOCAL_DB_FALLBACK, where the whole point is running with
+# no Firebase console access.
+
+ROLE_STUDENT = "student"
+ROLE_ADMIN = "admin"
+VALID_ROLES = {ROLE_STUDENT, ROLE_ADMIN}
+
+
+def _admin_emails() -> set:
+    raw = os.environ.get("ADMIN_EMAILS", "")
+    return {part.strip().casefold() for part in raw.split(",") if part.strip()}
+
+
+def is_allowlisted_admin(email: "str | None") -> bool:
+    return bool(email) and email.casefold() in _admin_emails()
+
+
+def get_role(user_id: str) -> str:
+    with get_cursor() as cur:
+        cur.execute("SELECT role FROM users WHERE uid = %s", (user_id,))
+        row = cur.fetchone()
+    return (row["role"] if row and row.get("role") else ROLE_STUDENT)
+
+
+def set_role(user_id: str, role: str) -> None:
+    if role not in VALID_ROLES:
+        raise ValueError(f"unknown role: {role!r}")
+    with get_cursor() as cur:
+        cur.execute("UPDATE users SET role = %s, updated_at = now() WHERE uid = %s", (role, user_id))
+
+
+def sync_allowlisted_admin(user_id: str, email: "str | None") -> None:
+    """Promote an ADMIN_EMAILS address on sign-in. A no-op for everyone else.
+
+    Called from require_auth, so it runs on every authenticated request -- the
+    early return keeps that free for students, and the write is idempotent for
+    the handful of lecturer accounts that do match.
+    """
+    if not is_allowlisted_admin(email):
+        return
+    if get_role(user_id) != ROLE_ADMIN:
+        set_role(user_id, ROLE_ADMIN)
+
+
+def list_users() -> list[dict]:
+    """Every account, for the admin dashboard's student roster."""
+    with get_cursor() as cur:
+        cur.execute(
+            "SELECT uid, email, display_name, role, created_at FROM users"
+        )
+        rows = cur.fetchall()
+    return [dict(row) for row in rows]
+
+
+# ─── event recording ─────────────────────────────────────────────────────────
+
+# Wrong answers are stored verbatim so a lecturer can see what students
+# actually typed, but a write_code answer is a whole program -- capped so one
+# pathological submission cannot bloat the table.
+_ANSWER_MAX = 500
+
+
+def record_attempt(
+    user_id: str,
+    module_id: str,
+    question_id: "str | None",
+    correct: bool,
+    *,
+    source: str = "bank",
+    misconception_id: "str | None" = None,
+    answer_given: "str | None" = None,
+    tier: "int | None" = None,
+) -> None:
+    """Append one graded answer to the analytics event log.
+
+    Never raises. This table exists purely so the lecturer dashboard has
+    something to read; a student must never lose a correct answer, a star or a
+    module unlock because an analytics insert failed, and every caller sits
+    directly in a grading path.
+    """
+    if answer_given is not None:
+        answer_given = str(answer_given)[:_ANSWER_MAX]
+    try:
+        with get_cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO attempts
+                    (user_id, module_id, question_id, source, correct,
+                     misconception_id, answer_given, tier)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """,
+                (user_id, module_id, question_id, source, correct,
+                 misconception_id, answer_given, tier),
+            )
+    except Exception:
+        pass
+
+
+def record_exam_attempt(
+    user_id: str,
+    module_id: str,
+    correct_count: int,
+    total_count: int,
+    percent: int,
+    passed: bool,
+    stars_awarded: int = 0,
+    duration_seconds: "int | None" = None,
+) -> None:
+    """Store one completed exam paper. Every sitting is kept, including retakes."""
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            INSERT INTO exam_attempts
+                (user_id, module_id, correct_count, total_count, percent,
+                 passed, stars_awarded, duration_seconds)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            (user_id, module_id, correct_count, total_count, percent,
+             passed, stars_awarded, duration_seconds),
+        )

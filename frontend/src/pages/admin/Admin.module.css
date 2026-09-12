@@ -1,0 +1,698 @@
+/*
+ * Lecturer dashboard.
+ *
+ * Every colour here is one of the app's existing custom properties (declared
+ * on :root in styles/App.module.css and re-declared under
+ * [data-theme="dark"]), so the dashboard follows the theme toggle without a
+ * single hard-coded hex. Two consequences worth stating:
+ *
+ *  - There is no categorical palette. Every magnitude bar is ONE hue
+ *    (--primary) at varying length, because length is the encoding and hue
+ *    would be decoration. Nothing here needs eight distinguishable series
+ *    colours, so nothing here risks being unreadable to a colourblind reader.
+ *  - --success / --warning / --danger are used only for state (passing,
+ *    borderline, at risk) and never as "series 3". Every one of them appears
+ *    alongside a number or a word, never as the sole carrier of meaning.
+ */
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-bottom: 40px;
+}
+
+/* ── tabs ─────────────────────────────────────────────────────────────── */
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0;
+}
+
+.tab {
+  appearance: none;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 14px;
+  margin-bottom: -1px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.tab:hover { color: var(--fg); }
+
+.tabActive {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+/* ── cards & layout ───────────────────────────────────────────────────── */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow-soft);
+}
+
+.cardHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.cardHead h2 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.cardHead p {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 2px 0 0;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 18px;
+}
+
+/* ── stat tiles ───────────────────────────────────────────────────────── */
+/* A bare number, not a chart: one value has no shape worth drawing. */
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+}
+
+.tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+}
+
+.tileLabel {
+  align-items: center;
+  color: var(--muted);
+  display: flex;
+  font-size: 12px;
+  font-weight: 600;
+  gap: 6px;
+  letter-spacing: 0.01em;
+  margin-bottom: 6px;
+}
+
+.tileValue {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.tileHint {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ── meters ───────────────────────────────────────────────────────────── */
+/* Thin bar, rounded data-end, recessive track. The number always appears as
+   text beside it, so the bar is a comparison aid rather than the only way to
+   read the value. */
+
+.meterRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 120px;
+}
+
+.meterTrack {
+  background: var(--border);
+  border-radius: 999px;
+  flex: 1;
+  height: 6px;
+  overflow: hidden;
+}
+
+.meterFill {
+  background: var(--primary);
+  border-radius: 999px;
+  display: block;
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.meterValue {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  min-width: 42px;
+  text-align: right;
+}
+
+.meterEmpty {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ── tables ───────────────────────────────────────────────────────────── */
+
+.tableScroll {
+  /* Wide tables scroll inside their own card rather than pushing the page
+     sideways. */
+  overflow-x: auto;
+  margin: 0 -4px;
+  padding: 0 4px;
+}
+
+.table {
+  border-collapse: collapse;
+  font-size: 13px;
+  width: 100%;
+}
+
+.table th {
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 8px 10px;
+  position: sticky;
+  text-align: left;
+  text-transform: uppercase;
+  top: 0;
+  background: var(--surface);
+  white-space: nowrap;
+}
+
+.table td {
+  border-bottom: 1px solid var(--border);
+  padding: 9px 10px;
+  vertical-align: middle;
+}
+
+.table tbody tr:hover { background: var(--primary-soft); }
+
+.table tbody tr:last-child td { border-bottom: none; }
+
+.num {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.rowButton {
+  appearance: none;
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  padding: 0;
+  text-align: left;
+}
+
+.rowButton:hover { text-decoration: underline; }
+
+/* ── badges & status ──────────────────────────────────────────────────── */
+
+.badge {
+  align-items: center;
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 700;
+  gap: 4px;
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+
+.badgeGood { background: var(--success-soft); color: var(--success); }
+.badgeWarn { background: var(--accent-soft); color: var(--accent); }
+.badgeRisk { background: var(--danger-soft); color: var(--danger); }
+.badgeMuted { background: var(--primary-soft); color: var(--primary); }
+
+/* ── forms & controls ─────────────────────────────────────────────────── */
+
+.toolbar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.input,
+.select,
+.textarea {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--fg);
+  font: inherit;
+  font-size: 13px;
+  padding: 8px 11px;
+  width: 100%;
+}
+
+.textarea {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  min-height: 80px;
+  resize: vertical;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: var(--primary);
+  outline: 2px solid var(--primary-soft);
+}
+
+.searchBox {
+  flex: 1;
+  max-width: 280px;
+  position: relative;
+}
+
+.searchIcon {
+  color: var(--muted);
+  left: 11px;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.searchInput { padding-left: 32px; }
+
+.field { margin-bottom: 12px; }
+
+.fieldLabel {
+  color: var(--muted);
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.fieldHint {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.fieldRow {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.btn {
+  align-items: center;
+  background: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-sm);
+  color: var(--primary-fg);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  gap: 6px;
+  padding: 8px 14px;
+  white-space: nowrap;
+}
+
+.btn:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+
+.btn:disabled { cursor: not-allowed; opacity: 0.55; }
+
+.btnGhost {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--fg);
+}
+
+.btnGhost:hover { background: var(--primary-soft); border-color: var(--primary); }
+
+.btnDanger {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--danger);
+}
+
+.btnDanger:hover { background: var(--danger-soft); border-color: var(--danger); }
+
+.btnSmall { font-size: 12px; padding: 5px 10px; }
+
+/* ── messages ─────────────────────────────────────────────────────────── */
+
+.muted { color: var(--muted); font-size: 13px; }
+
+.error {
+  background: var(--danger-soft);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+  color: var(--danger);
+  font-size: 13px;
+  padding: 10px 14px;
+}
+
+.notice {
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  border-radius: var(--radius-sm);
+  color: var(--warn-ink);
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 10px 14px;
+}
+
+.success {
+  background: var(--success-soft);
+  border: 1px solid var(--success);
+  border-radius: var(--radius-sm);
+  color: var(--success);
+  font-size: 13px;
+  padding: 10px 14px;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 13px;
+  padding: 28px 0;
+  text-align: center;
+}
+
+/* ── misconception & activity lists ───────────────────────────────────── */
+
+.barList { display: flex; flex-direction: column; gap: 12px; }
+
+.barItem { display: flex; flex-direction: column; gap: 5px; }
+
+.barLabel {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.barLabelId {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+
+.barMeta { color: var(--muted); font-size: 11px; }
+
+.feed { display: flex; flex-direction: column; gap: 0; }
+
+.feedItem {
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  padding: 9px 0;
+}
+
+.feedItem:last-child { border-bottom: none; }
+
+.feedText { font-size: 13px; }
+
+.feedName { font-weight: 600; }
+
+.feedTime { color: var(--muted); font-size: 11px; white-space: nowrap; }
+
+/* ── student detail ───────────────────────────────────────────────────── */
+
+.detailHead {
+  align-items: flex-start;
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.detailName { font-size: 19px; font-weight: 700; margin: 0; }
+
+.detailEmail { color: var(--muted); font-size: 13px; margin: 2px 0 0; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+
+/* ── exercise editor ──────────────────────────────────────────────────── */
+
+.editorLayout {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(240px, 320px) 1fr;
+}
+
+@media (max-width: 860px) {
+  .editorLayout { grid-template-columns: 1fr; }
+}
+
+.list { display: flex; flex-direction: column; gap: 2px; }
+
+.listItem {
+  appearance: none;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: block;
+  font: inherit;
+  padding: 9px 11px;
+  text-align: left;
+  width: 100%;
+}
+
+.listItem:hover { background: var(--primary-soft); }
+
+.listItemActive { background: var(--primary-soft); color: var(--primary); }
+
+.listItemTitle {
+  font-size: 13px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listItemMeta { color: var(--muted); font-size: 11px; margin-top: 2px; }
+
+.optionRow {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.optionRow input[type="text"] { flex: 1; }
+
+.iconBtn {
+  appearance: none;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  cursor: pointer;
+  display: inline-flex;
+  padding: 6px;
+}
+
+.iconBtn:hover { border-color: var(--danger); color: var(--danger); }
+
+.formActions {
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+  padding-top: 14px;
+}
+
+/* ── module manager ───────────────────────────────────────────────────── */
+
+.moduleRow {
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+  padding: 12px 14px;
+}
+
+.moduleOrder {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.orderBtn {
+  appearance: none;
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  line-height: 0;
+  padding: 2px;
+}
+
+.orderBtn:hover:not(:disabled) { color: var(--primary); }
+.orderBtn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.moduleBody { flex: 1; min-width: 0; }
+
+.moduleTitle { font-size: 14px; font-weight: 600; }
+
+.moduleMeta { color: var(--muted); font-size: 12px; margin-top: 2px; }
+
+.moduleActions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* ── charts ───────────────────────────────────────────────────────────────── */
+/* Every colour below is a theme token, so the charts follow the light/dark
+   toggle with the rest of the app rather than carrying their own palette.
+   One hue only: length is the encoding in both charts, and colouring by
+   value would restate it. */
+
+.chartWrap {
+  position: relative;
+  width: 100%;
+}
+
+.chartSvg {
+  display: block;
+  height: auto;
+  width: 100%;
+  overflow: visible;
+}
+
+.chartGrid {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.chartAxisText {
+  fill: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.chartArea {
+  fill: var(--primary);
+  /* Low enough that the gridlines stay visible through it -- the fill is
+     there to give the line a body, not to hide the scale behind it. */
+  opacity: 0.14;
+}
+
+.chartLine {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chartCrosshair {
+  stroke: var(--muted);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.chartMarker {
+  fill: var(--primary);
+  /* A ring in the surface colour, so the marker stays legible where it sits
+     on top of the filled area. */
+  stroke: var(--surface);
+  stroke-width: 2;
+}
+
+.chartBar {
+  fill: var(--primary);
+  opacity: 0.75;
+  transition: opacity 0.12s ease;
+}
+
+.chartBarActive {
+  fill: var(--primary);
+  opacity: 1;
+}
+
+/* The class average, drawn over the distribution so the two are read
+   together. Dashed and in the accent colour so it cannot be mistaken for a
+   bar or a gridline. */
+.chartRule {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+}
+
+.chartRuleText {
+  fill: var(--accent);
+  font-weight: 700;
+}
+
+.chartTip {
+  background: var(--fg);
+  border-radius: var(--radius-sm);
+  color: var(--surface);
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  gap: 1px;
+  line-height: 1.35;
+  padding: 6px 10px;
+  pointer-events: none;
+  position: absolute;
+  top: 40%;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.chartTip span { opacity: 0.75; font-size: 11px; }
+
+.chartData { margin-top: 10px; }
+
+.chartData summary {
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 0;
+}
+
+.chartData summary:hover { color: var(--primary); }
+
+.chartData .tableScroll { max-height: 240px; overflow-y: auto; }
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

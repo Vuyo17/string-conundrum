@@ -12,11 +12,15 @@ from .services.feedback import (
     get_module_exercises,
 )
 from .services.progress import (
+    ROLE_ADMIN,
     get_bypass_unlocks,
+    get_role,
     get_leaderboard,
     get_leaderboard_prefs,
     get_section_progress,
+    record_attempt,
     record_challenge_completion,
+    record_exam_attempt,
     record_exercise_completion,
     record_section_completion,
     set_bypass_unlocks,
@@ -94,6 +98,18 @@ def submit_exercise():
     )
     if evaluation.get("correct"):
         record_exercise_completion(g.uid, module_id, question_id, evaluation["stars_awarded"])
+
+    # The analytics event log, which unlike exercise_completions above records
+    # wrong answers too -- that is the entire point of it. `source` separates
+    # a question answered inside a timed exam paper from ordinary practice on
+    # the same bank, because a lecturer reading a difficulty figure needs to
+    # know which of the two it describes. record_attempt never raises.
+    record_attempt(
+        g.uid, module_id, question_id, bool(evaluation.get("correct")),
+        source="exam" if payload.get("exam") else "bank",
+        misconception_id=evaluation.get("misconception_id"),
+        answer_given=None if evaluation.get("correct") else (code or answers or answer),
+    )
     return {"ok": True, **evaluation}
 
 
@@ -155,6 +171,13 @@ def _register_engine(module_id, generate_fn, grade_fn):
         result = grade_fn(token, payload)
         if not result.get("ok"):
             return {"ok": False, "error": result.get("error", "invalid_token")}, 400
+
+        record_attempt(
+            g.uid, module_id, None, bool(result["correct"]),
+            source="engine",
+            misconception_id=result.get("misconception_id"),
+            tier=result.get("tier"),
+        )
 
         if result["correct"]:
             # Every generated question carries a fresh random nonce, so
@@ -249,6 +272,14 @@ def run_challenge():
     )
     if result.get("all_passed"):
         record_challenge_completion(g.uid, challenge_id, result["stars_awarded"])
+    # Challenges are not scoped to a module, so module_id carries the literal
+    # "challenges" and question_id the challenge id -- enough for the
+    # dashboard's activity feed and attempt counts to include them without
+    # giving attempts a nullable second foreign key.
+    record_attempt(
+        g.uid, "challenges", challenge_id, bool(result.get("all_passed")),
+        source="challenge",
+    )
     return result
 
 
@@ -275,6 +306,79 @@ def complete_section(module_id: str, section_id: str):
         return {"ok": False, "error": "invalid section"}, 400
     record_section_completion(g.uid, module_id, section_id)
     return {"ok": True}
+
+
+# The bar a paper has to clear to count toward module completion. Mirrors
+# PASS_THRESHOLD in frontend/src/components/module/ExamMode.jsx -- the client
+# still decides what to congratulate the student with, but the mark stored
+# against their name is judged here.
+EXAM_PASS_THRESHOLD = 80
+
+
+@api_bp.post("/exams/submit")
+@require_auth
+def submit_exam():
+    """Record one completed exam paper.
+
+    ExamMode already grades every question through /exercises/submit; this
+    endpoint exists because the PAPER -- the thing a lecturer calls a mark --
+    had nowhere to live. The percentage was computed in the browser, shown
+    once on the results screen, and lost on navigation.
+
+    The client sends the counts, not the percentage: the percentage and the
+    pass flag are both derived here, so a mark in the database is always the
+    server's arithmetic on the server's own grading of each question.
+    """
+    payload = request.get_json(silent=True) or {}
+    module_id = (payload.get("module_id") or "").strip()
+    if not module_id:
+        return {"ok": False, "error": "module_id is required"}, 400
+
+    try:
+        correct_count = max(0, int(payload.get("correct_count", 0)))
+        total_count = int(payload.get("total_count", 0))
+    except (TypeError, ValueError):
+        return {"ok": False, "error": "correct_count and total_count must be whole numbers"}, 400
+
+    if total_count <= 0:
+        return {"ok": False, "error": "total_count must be at least 1"}, 400
+    correct_count = min(correct_count, total_count)
+
+    percent = round(100 * correct_count / total_count)
+    passed = percent >= EXAM_PASS_THRESHOLD
+
+    duration = payload.get("duration_seconds")
+    try:
+        duration = int(duration) if duration is not None else None
+    except (TypeError, ValueError):
+        duration = None
+
+    record_exam_attempt(
+        g.uid, module_id, correct_count, total_count, percent, passed,
+        stars_awarded=int(payload.get("stars_awarded") or 0),
+        duration_seconds=duration,
+    )
+    return {"ok": True, "percent": percent, "passed": passed}
+
+
+@api_bp.get("/me")
+@require_auth
+def me():
+    """Who the caller is, and whether they may open the lecturer dashboard.
+
+    The frontend uses `role` only to decide whether to render the Dashboard
+    nav item. It is not the access control -- every /api/admin route checks
+    the role again server-side via require_admin, so a student who forges this
+    response gets a 403 the moment they call anything.
+    """
+    role = get_role(g.uid)
+    return {
+        "ok": True,
+        "uid": g.uid,
+        "email": g.user_email,
+        "role": role,
+        "is_admin": role == ROLE_ADMIN,
+    }
 
 
 @api_bp.patch("/settings")

@@ -27,6 +27,9 @@ const Challenges = lazy(() => import("./pages/Challenges").then((m) => ({ defaul
 const Leaderboard = lazy(() => import("./pages/Leaderboard").then((m) => ({ default: m.Leaderboard })));
 const Docs = lazy(() => import("./pages/Docs").then((m) => ({ default: m.Docs })));
 const Settings = lazy(() => import("./pages/Settings").then((m) => ({ default: m.Settings })));
+// Lazy like every other screen, and more so: the dashboard is a sizeable
+// chunk that only lecturers ever open, so a student's bundle never includes it.
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard").then((m) => ({ default: m.AdminDashboard })));
 
 // Same spinner as the auth-loading state, so a screen chunk still loading
 // doesn't look like a different kind of "stuck" to a student.
@@ -81,7 +84,7 @@ function ModuleUnlockNotifier({ progress }) {
 }
 
 function Shell() {
-  const { user, loading, emailLinkPending, isGuest, canAccess } = useAuth();
+  const { user, loading, emailLinkPending, isGuest, isAdmin, canAccess } = useAuth();
   const { t } = useLanguage();
   const progress = useProgress();
   // Guests land on the Visualiser; signed-in users on Modules.
@@ -146,6 +149,7 @@ function Shell() {
     Leaderboard,
     Docs,
     Settings,
+    Dashboard: AdminDashboard,
   }[safeScreen];
 
   return (
@@ -154,7 +158,12 @@ function Shell() {
       <div className={styles.app}>
         <TopBar screen={safeScreen} setScreen={go} onSearchSelect={openSearchResult} />
         <main className={styles.shell}>
-          <Sidebar screen={safeScreen} setScreen={go} modulesComplete={progress.allCompleted} />
+          <Sidebar
+          screen={safeScreen}
+          setScreen={go}
+          modulesComplete={progress.allCompleted}
+          isAdmin={isAdmin}
+        />
           <section className={styles.content}>
             <Suspense fallback={<ScreenLoading />}>
               <CurrentScreen

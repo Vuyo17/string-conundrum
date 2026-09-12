@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Award, CheckCircle2, ChevronLeft, ChevronRight, Dumbbell, Eye,
   GraduationCap, RefreshCcw, Star, TrendingUp, XCircle,
 } from 'lucide-react';
 import m from '../../styles/ModulePage.module.css';
-import { apiFetch, markSectionComplete } from '../../api';
+import { apiFetch, markSectionComplete, recordExamResult } from '../../api';
 import { getApiUrl } from '../../config/api';
 
 // The bar for a module to unlock the next one. Deliberately independent of
@@ -140,12 +140,39 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete, 
     });
   }, [exercises]);
 
+  // Which sitting this is. Incremented by retry(), and compared against
+  // recordedSittingRef below so one paper is recorded exactly once -- React
+  // re-runs this effect in StrictMode, and without the guard every exam would
+  // be written to the database twice in development.
+  const [sitting, setSitting] = useState(0);
+  const recordedSittingRef = useRef(-1);
+  const startedAtRef = useRef(Date.now());
+
   // The exam only counts toward module progress once cleared at PASS_THRESHOLD
   // in one sitting; "Retry with new questions" can re-trigger this.
   useEffect(() => {
     if (phase !== 'results') return;
     const correctCount = paper.filter((ex) => results[ex.question_id]?.correct).length;
     const percent = Math.round((correctCount / paper.length) * 100);
+
+    // Store the mark. Until this existed the percentage was computed here,
+    // shown on the results screen, and lost the moment the student navigated
+    // away -- so "what did this student score?" had no answer anywhere in the
+    // system. Counts are sent rather than the percentage; the server derives
+    // the mark itself (see /api/exams/submit).
+    if (recordedSittingRef.current !== sitting) {
+      recordedSittingRef.current = sitting;
+      recordExamResult({
+        moduleId: practice.apiModuleId,
+        correctCount,
+        totalCount: paper.length,
+        stars: paper.reduce(
+          (sum, ex) => sum + (results[ex.question_id]?.correct ? starsOf(ex) : 0), 0,
+        ),
+        durationSeconds: Math.round((Date.now() - startedAtRef.current) / 1000),
+      });
+    }
+
     if (percent >= PASS_THRESHOLD) {
       markSectionComplete(practice.apiModuleId, 'exam').then(() => onSectionComplete?.());
       addNotification({
@@ -189,7 +216,14 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete, 
     const graded = {};
     await Promise.all(paper.map(async (ex) => {
       const a = answers[ex.question_id] ?? defaultAnswer(ex);
-      const payload = { module_id: ex.module_id, question_id: ex.question_id, lang };
+      // `exam: true` only changes how the attempt is LOGGED (source='exam'),
+      // never how it is graded -- an exam answer and a practice answer to the
+      // same question are marked by exactly the same code. It is what lets
+      // the dashboard say whether a question's difficulty figure describes
+      // test conditions or open practice.
+      const payload = {
+        module_id: ex.module_id, question_id: ex.question_id, lang, exam: true,
+      };
       if (ex.type === 'mcq') payload.answer = a.selected ?? '';
       if (ex.type === 'fill_blank') payload.answer = a.value ?? '';
       if (ex.type === 'select_all') payload.answers = a.selected ?? [];
@@ -229,6 +263,11 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete, 
     setResults({});
     setCurrent(0);
     setPhase('answering');
+    // A retake is a separate sitting: it gets its own row, its own timer, and
+    // never overwrites the earlier mark. The dashboard reports each student's
+    // best sitting, so retrying and doing worse cannot cost them anything.
+    setSitting((n) => n + 1);
+    startedAtRef.current = Date.now();
   }
 
   // ─── results screen ─────────────────────────────────────────────────────────

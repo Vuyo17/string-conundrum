@@ -4,6 +4,7 @@ from flask_cors import CORS
 
 from .firebase_admin_init import init_firebase_admin
 from .routes import api_bp
+from .routes_admin import admin_bp
 
 load_dotenv()
 
@@ -38,6 +39,7 @@ def create_app() -> Flask:
     init_firebase_admin()
 
     app.register_blueprint(api_bp)
+    app.register_blueprint(admin_bp)
 
     @app.get('/health')
     def health_check():

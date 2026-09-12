@@ -1,5 +1,7 @@
 import os
+import threading
 from contextlib import contextmanager
+from datetime import datetime, timezone
 
 try:
     import psycopg2
@@ -13,6 +15,22 @@ except ModuleNotFoundError:
     psycopg2 = None
 
 from .storage import load_state, save_state
+
+# Serialises the fallback's read-modify-write cycle within this process.
+#
+# Every fallback statement reads the whole state file, changes part of it and
+# writes it back. Two threads doing that at once interleave, and the second
+# write silently discards the first -- a created module, a recorded attempt, a
+# role change, gone. The Flask development server is threaded, and the
+# lecturer dashboard issues several requests in parallel, so this was not
+# theoretical: it dropped writes and, combined with a torn read, made
+# require_admin refuse a lecturer at random.
+#
+# Reentrant because a service function already inside a cursor block may call
+# another that opens its own. This protects one process only; the fallback has
+# always been a single-process development aid, and DATABASE_URL is the
+# supported path for anything else.
+_FALLBACK_LOCK = threading.RLock()
 
 # The JSON-file fallback is opt-in, and only ever opt-in.
 #
@@ -54,6 +72,11 @@ def _dsn() -> str:
     return dsn
 
 
+def _now_iso() -> str:
+    """Postgres fills created_at with now(); the JSON fallback has to do it itself."""
+    return datetime.now(timezone.utc).isoformat()
+
+
 def _key(*parts: str) -> str:
     """Flatten a composite primary key into one string.
 
@@ -74,12 +97,16 @@ class _LocalCursor:
     def __init__(self, state: dict):
         self.state = state
         self._rows: list[dict] = []
+        # Only a statement that changed something needs writing back. Saving
+        # after a plain SELECT rewrote the entire file on every read, which
+        # multiplied the amount of contention for no gain.
+        self._dirty = False
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc, tb):
-        if exc_type is None:
+        if exc_type is None and self._dirty:
             save_state(self.state)
         return False
 
@@ -88,6 +115,11 @@ class _LocalCursor:
         # the SELECT's rows in place for the next fetchall().
         self._rows = []
         state = self.state
+
+        # Decided once here rather than in each of the branches below, so a
+        # new write branch cannot be added without its result being persisted.
+        if "INSERT INTO" in query or "UPDATE " in query or "DELETE FROM" in query:
+            self._dirty = True
 
         if "INSERT INTO users" in query:
             # The real query is an upsert — ON CONFLICT (uid) DO UPDATE SET
@@ -106,6 +138,7 @@ class _LocalCursor:
                 "uid": uid,
                 "email": email,
                 "display_name": display_name if display_name is not None else existing.get("display_name"),
+                "role": existing.get("role", "student"),
                 "bypass_unlocks": existing.get("bypass_unlocks", False),
                 "leaderboard_optin": existing.get("leaderboard_optin", True),
                 "leaderboard_anonymous": existing.get("leaderboard_anonymous", False),
@@ -149,6 +182,7 @@ class _LocalCursor:
                 "module_id": module_id,
                 "question_id": question_id,
                 "stars_awarded": stars,
+                "completed_at": _now_iso(),
             }
 
         elif "INSERT INTO challenge_completions" in query:
@@ -157,6 +191,7 @@ class _LocalCursor:
                 "user_id": user_id,
                 "challenge_id": challenge_id,
                 "stars_awarded": stars,
+                "completed_at": _now_iso(),
             }
 
         elif "INSERT INTO module_section_completions" in query:
@@ -165,6 +200,7 @@ class _LocalCursor:
                 "user_id": user_id,
                 "module_id": module_id,
                 "section_id": section_id,
+                "completed_at": _now_iso(),
             }
 
         elif "SELECT module_id, array_agg" in query:
@@ -177,6 +213,127 @@ class _LocalCursor:
                 {"module_id": module_id, "sections_completed": sorted(set(sections))}
                 for module_id, sections in grouped.items()
             ]
+
+        # ─── admin dashboard ────────────────────────────────────────────
+        # The analytics service deliberately fetches whole rows and
+        # aggregates in Python rather than issuing GROUP BY/window queries.
+        # That costs a little at Postgres scale (a class-sized cohort, not a
+        # warehouse) and buys one code path that also runs here, so the
+        # lecturer dashboard is demonstrable on a laptop with no Postgres —
+        # which is the configuration this project's own README falls back to
+        # on Windows.
+
+        elif "SELECT role FROM users" in query:
+            row = state["users"].get(params[0])
+            if row:
+                self._rows = [{"role": row.get("role", "student")}]
+
+        elif "UPDATE users SET role" in query:
+            value, user_id = params[0], params[1]
+            user = state["users"].get(user_id)
+            if user is not None:
+                user["role"] = value
+
+        elif "FROM users" in query and "SELECT uid" in query:
+            self._rows = [
+                {
+                    "uid": u["uid"],
+                    "email": u.get("email"),
+                    "display_name": u.get("display_name"),
+                    "role": u.get("role", "student"),
+                    "created_at": u.get("created_at"),
+                }
+                for u in state["users"].values()
+            ]
+
+        elif "INSERT INTO attempts" in query:
+            (user_id, module_id, question_id, source, correct,
+             misconception_id, answer_given, tier) = params
+            state["attempts"].append({
+                "user_id": user_id,
+                "module_id": module_id,
+                "question_id": question_id,
+                "source": source,
+                "correct": bool(correct),
+                "misconception_id": misconception_id,
+                "answer_given": answer_given,
+                "tier": tier,
+                "created_at": _now_iso(),
+            })
+
+        elif "FROM attempts" in query:
+            self._rows = list(state["attempts"])
+
+        elif "INSERT INTO exam_attempts" in query:
+            (user_id, module_id, correct_count, total_count, percent,
+             passed, stars_awarded, duration_seconds) = params
+            state["exam_attempts"].append({
+                "user_id": user_id,
+                "module_id": module_id,
+                "correct_count": correct_count,
+                "total_count": total_count,
+                "percent": percent,
+                "passed": bool(passed),
+                "stars_awarded": stars_awarded,
+                "duration_seconds": duration_seconds,
+                "created_at": _now_iso(),
+            })
+
+        elif "FROM exam_attempts" in query:
+            self._rows = list(state["exam_attempts"])
+
+        elif "SELECT user_id, module_id, question_id, stars_awarded" in query:
+            self._rows = list(state["exercise_completions"].values())
+
+        elif "SELECT user_id, challenge_id, stars_awarded" in query:
+            self._rows = list(state["challenge_completions"].values())
+
+        elif "SELECT user_id, module_id, section_id" in query:
+            self._rows = list(state["module_section_completions"].values())
+
+        elif "INSERT INTO modules" in query:
+            (module_id, title, description, minutes, level, objectives,
+             sort_order, published) = params
+            existing = state["modules"].get(module_id, {})
+            state["modules"][module_id] = {
+                "id": module_id,
+                "title": title,
+                "description": description,
+                "minutes": minutes,
+                "level": level,
+                "objectives": objectives,
+                "sort_order": sort_order,
+                "published": bool(published),
+                "archived": existing.get("archived", False),
+                "created_at": existing.get("created_at", _now_iso()),
+                "updated_at": _now_iso(),
+            }
+
+        elif "UPDATE modules SET" in query:
+            # Params are (title, description, minutes, level, objectives,
+            # sort_order, published, archived, id) -- the same column order
+            # admin_content.update_module builds the statement in.
+            (title, description, minutes, level, objectives, sort_order,
+             published, archived, module_id) = params
+            row = state["modules"].get(module_id)
+            if row is not None:
+                row.update({
+                    "title": title,
+                    "description": description,
+                    "minutes": minutes,
+                    "level": level,
+                    "objectives": objectives,
+                    "sort_order": sort_order,
+                    "published": bool(published),
+                    "archived": bool(archived),
+                    "updated_at": _now_iso(),
+                })
+
+        elif "DELETE FROM modules" in query:
+            state["modules"].pop(params[0], None)
+
+        elif "FROM modules" in query:
+            self._rows = list(state["modules"].values())
 
         # Everything else — leaderboards, the exercise bank — has no local
         # equivalent. Content is read from the JSON files by the services
@@ -212,15 +369,18 @@ class _LocalConn:
 @contextmanager
 def get_connection():
     if use_local_fallback():
-        conn = _LocalConn()
-        try:
-            yield conn
-            conn.commit()
-        except Exception:
-            conn.rollback()
-            raise
-        finally:
-            conn.close()
+        # Held across the whole block, so load -> mutate -> save is atomic
+        # with respect to any other thread in this process.
+        with _FALLBACK_LOCK:
+            conn = _LocalConn()
+            try:
+                yield conn
+                conn.commit()
+            except Exception:
+                conn.rollback()
+                raise
+            finally:
+                conn.close()
         return
 
     # Resolve the DSN first: `psycopg2.connect(_dsn())` evaluates the
@@ -241,8 +401,9 @@ def get_connection():
 @contextmanager
 def get_cursor():
     if use_local_fallback():
-        with _LocalCursor(load_state()) as cur:
-            yield cur
+        with _FALLBACK_LOCK:
+            with _LocalCursor(load_state()) as cur:
+                yield cur
         return
 
     with get_connection() as conn:

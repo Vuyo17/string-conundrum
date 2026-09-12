@@ -13,7 +13,12 @@ This backend is the Controller layer for String Conundrum.
 - `POST /api/challenges/run` (auth required)
 - `GET /api/progress/<user_id>` (auth required)
 - `GET /api/leaderboard`
+- `POST /api/exams/submit` (auth required)
+- `GET /api/me` (auth required)
 - `GET /health`
+
+Lecturer dashboard endpoints live under `/api/admin/*` and are all gated by
+`require_admin`. See [docs/admin-dashboard.md](../docs/admin-dashboard.md).
 
 ## Database (PostgreSQL)
 
@@ -30,6 +35,17 @@ Set up a fresh database:
 ```bash
 psql "$DATABASE_URL" -f db/schema.sql
 python db/migrate_json_to_db.py   # seeds exercises.json/challenges.json content; safe to re-run
+```
+
+`schema.sql` is idempotent and doubles as the migration: re-running it on a
+live database adds the lecturer-dashboard tables (`modules`, `attempts`,
+`exam_attempts`) and the `users.role` column without touching existing data.
+
+Fill the lecturer dashboard with a fake cohort for a demo, and clear it again:
+
+```bash
+python -m db.seed_demo_data --students 40
+python -m db.seed_demo_data --clear
 ```
 
 ## Run
