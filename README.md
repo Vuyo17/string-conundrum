@@ -1,39 +1,38 @@
-# String Conundrum Template
+# String Conundrum
 
-This folder is a starter template for the String Conundrum project described in the proposal.
+An interactive, bilingual (English / isiXhosa) web application for learning
+Python string manipulation. Students work through concept modules with guided
+lessons, visualisations, adaptive practice and exams; lecturers manage content
+and monitor cohort progress through a role-gated dashboard.
 
-It includes:
-- React frontend (View)
-- Flask backend (Controller)
-- Firebase-ready placeholders (Model for auth/progress)
-- Frozen API contract docs
-- CI workflow scaffold
+## Architecture
 
-## Production Deployment
+The application follows a Model–View–Controller split:
 
-Both halves run on the same UCT server, `string-1.cs.uct.ac.za` (137.158.61.235,
-Ubuntu with Nginx + Gunicorn): Nginx serves the built React frontend and proxies
-`/api` through to Flask, so the app is same-origin end to end.
+- **View** — React (Vite) single-page app. See `frontend/`.
+- **Controller** — Flask REST API served by Gunicorn. See `backend/`.
+- **Model** — Firebase Authentication for identity; PostgreSQL for users,
+  progress, attempts and lecturer-authored content.
 
-✓ **Frontend:** http://string-1.cs.uct.ac.za (React + Vite, built to `frontend/dist`)
-✓ **Backend:** Flask + Gunicorn behind Nginx on the same host
+In production, Nginx serves the built frontend and reverse-proxies `/api` to
+Flask on the same origin. Further detail is in `docs/architecture.md`, and the
+lecturer dashboard is documented in `docs/admin-dashboard.md`.
 
-## Project Structure
+## Project structure
 
 ```text
-string-conundrum-template/
-  .github/workflows/ci.yml
-  backend/
-  docs/
-  frontend/
-  shared/
-  .env.example
-  .gitignore
+string-conundrum/
+  backend/            Flask API, services, database schema and tests
+  frontend/           React + Vite single-page application
+  docs/               Architecture and lecturer-dashboard documentation
+  shared/             Cross-cutting schemas shared by both halves
+  .github/workflows/  CI and deployment pipelines
+  .env.example        Reference environment variables
 ```
 
-## Quick Start
+## Local development
 
-### 1) Frontend
+### Frontend
 
 ```bash
 cd frontend
@@ -41,27 +40,41 @@ npm install
 npm run dev
 ```
 
-### 2) Backend
+By default the app calls `/api` on its own origin. To point it at a locally
+running backend, set `VITE_API_BASE_URL` in `frontend/.env`:
+
+```env
+VITE_API_BASE_URL=http://127.0.0.1:5000
+```
+
+### Backend
 
 ```bash
 cd backend
 python -m venv .venv
 # Windows PowerShell:
 .venv\Scripts\Activate.ps1
+# macOS / Linux:
+# source .venv/bin/activate
 pip install -r requirements.txt
 python run.py
 ```
 
-### 3) API Integration
+The backend can run against PostgreSQL (set `DATABASE_URL`) or, for local
+development without a database, against a JSON state file by setting
+`LOCAL_DB_FALLBACK=1`. See `backend/README.md` for database setup, the endpoint
+list and test instructions.
 
-Set the frontend API base URL in `frontend/.env`:
+Run the backend test suite with:
 
-```env
-VITE_API_BASE_URL=http://127.0.0.1:5000
+```bash
+cd backend
+pytest
 ```
 
-## Notes
+## Deployment
 
-- This is a scaffold, not the final production implementation.
-- The backend includes stub endpoints so frontend-backend wiring can start immediately (Phase 1 goal).
-- See `docs/api-contract.md` for the frozen request/response shape to guide parallel development.
+Deployment to the UCT host is automated: pushing to the `production` branch
+triggers the self-hosted GitHub Actions workflow
+(`.github/workflows/deploy-self-hosted.yml`), which builds the frontend, syncs
+the backend, applies database migrations and restarts the service.

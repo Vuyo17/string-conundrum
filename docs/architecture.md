@@ -2,7 +2,7 @@
 
 String Conundrum follows a Model-View-Controller split.
 
-- Model: Firebase Authentication + Firestore for identity and progress.
+- Model: Firebase Authentication for identity; PostgreSQL for users, progress, attempts and lecturer-authored content.
 - View: React frontend that only renders state from backend responses.
 - Controller: Flask REST API responsible for execution, evaluation, and feedback mapping.
 
@@ -20,7 +20,10 @@ String Conundrum follows a Model-View-Controller split.
   - Detect misconception IDs and return explanation text.
 
 - Firebase
-  - Store per-user module completion, score, and timestamps.
+  - Authenticate users and issue ID tokens verified by the backend.
+
+- PostgreSQL
+  - Store users and roles, per-module completion and scores, graded attempts, exam results, and lecturer-authored module content.
 
 ## Development Phases Supported
 
