@@ -25,12 +25,7 @@ from datetime import datetime, timedelta, timezone
 from ..db import get_cursor
 from . import admin_content
 
-# Mirrors GATING_SECTION_IDS in frontend/src/utils/moduleSections.js -- the
-# sections that count toward a module being "complete" (practice is
-# deliberately not one of them). Every module currently ships all four; if one
-# ever ships without a visualizer, that file and this tuple have to move
-# together or the two progress bars will disagree.
-GATING_SECTIONS = ("learn", "examples", "visualize", "exam")
+# Completion requirements come from the same catalogue as the student app.
 
 # How the overall mark is composed. Exams weigh more than practice because
 # practice is untimed, retryable and hint-assisted, so its accuracy is a
@@ -227,19 +222,20 @@ def _student_row(snap: _Snapshot, user: dict) -> dict:
     completions = snap.completions_by_user.get(uid, [])
     challenges = snap.challenges_by_user.get(uid, [])
 
-    total_sections = len(snap.module_order) * len(GATING_SECTIONS)
+    required = {mid: set(admin_content.completion_sections(mid)) for mid in snap.module_order}
+    total_sections = sum(len(ids) for ids in required.values())
     done_sections = len({
         (s["module_id"], s["section_id"]) for s in sections
-        if s["section_id"] in GATING_SECTIONS and s["module_id"] in snap.module_titles
+        if s["section_id"] in required.get(s["module_id"], ())
     })
 
     by_module = defaultdict(set)
     for s in sections:
-        if s["section_id"] in GATING_SECTIONS:
+        if s["section_id"] in required.get(s["module_id"], ()):
             by_module[s["module_id"]].add(s["section_id"])
     modules_completed = sum(
         1 for module_id in snap.module_order
-        if len(by_module.get(module_id, ())) >= len(GATING_SECTIONS)
+        if required[module_id].issubset(by_module.get(module_id, set()))
     )
 
     # Best sitting per module, then the mean across modules attempted -- not
@@ -324,13 +320,14 @@ def overview(include_guests: bool = False) -> dict:
         m_exams = snap.exams_by_module.get(module_id, [])
         m_sections = snap.sections_by_module.get(module_id, [])
         started = {a["user_id"] for a in m_attempts} | {s["user_id"] for s in m_sections}
+        required = set(admin_content.completion_sections(module_id))
         gating_by_user = defaultdict(set)
         for s in m_sections:
-            if s["section_id"] in GATING_SECTIONS:
+            if s["section_id"] in required:
                 gating_by_user[s["user_id"]].add(s["section_id"])
         completed = {
             uid for uid, done in gating_by_user.items()
-            if len(done) >= len(GATING_SECTIONS)
+            if required.issubset(done)
         }
         graded = [a for a in m_attempts if a["source"] in ("bank", "engine", "exam")]
         best_by_student = {}
@@ -510,7 +507,8 @@ def student_detail(uid: str, include_guests: bool = True) -> dict:
             s["section_id"] for s in snap.sections_by_user.get(uid, ())
             if s["module_id"] == module_id
         }
-        gating_done = sections & set(GATING_SECTIONS)
+        required = set(admin_content.completion_sections(module_id))
+        gating_done = sections & required
         m_attempts = [a for a in attempts if a["module_id"] == module_id]
         graded = [a for a in m_attempts if a["source"] in ("bank", "engine", "exam")]
         m_exams = [e for e in exams if e["module_id"] == module_id]
@@ -521,8 +519,8 @@ def student_detail(uid: str, include_guests: bool = True) -> dict:
             "module_id": module_id,
             "title": snap.title(module_id),
             "sections_completed": sorted(sections),
-            "progress_percent": _pct(len(gating_done), len(GATING_SECTIONS)),
-            "completed": len(gating_done) >= len(GATING_SECTIONS),
+            "progress_percent": _pct(len(gating_done), len(required)),
+            "completed": required.issubset(gating_done),
             "attempts": len(graded),
             "accuracy": _pct(sum(1 for a in graded if a["correct"]), len(graded)) if graded else None,
             "exercises_completed": sum(

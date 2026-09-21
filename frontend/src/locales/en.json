@@ -71,6 +71,9 @@
     "title": "Learning Modules",
     "subtitle": "Master all string concepts step by step. Complete each module and score 80% on its exam to unlock the next.",
     "allModules": "All Modules",
+    "loadError": "Modules could not be loaded.",
+    "retry": "Try again",
+    "nonePublished": "No modules are published yet.",
     "overallProgress": "Overall Progress",
     "open": "Open",
     "openModule": "Open module: {title}",
@@ -238,6 +241,7 @@
     "line": "Line {number}"
   },
   "modulePage": {
+    "noLessonYet": "Lesson content is not available yet. You can check Practice and Exam for questions.",
     "missingTitle": "This module is still being written",
     "missingBlurb": "Content for this module hasn't been added yet. Check back soon.",
     "backToModules": "Back to modules",

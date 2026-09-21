@@ -17,7 +17,7 @@ export function ModuleCard({ module, number, onOpen }) {
   const { t } = useLanguage();
   const locked = module.status === 'Locked';
 
-  const title = t(`modules.items.${module.id}.title`);
+  const title = module.title;
 
   const statusClass = {
     Completed: styles.statusCompleted,
@@ -54,7 +54,7 @@ export function ModuleCard({ module, number, onOpen }) {
     >
       <div className={styles.moduleNumber}>{number}</div>
       <h3>{title}</h3>
-      <p>{t(`modules.items.${module.id}.desc`)}</p>
+      <p>{module.description}</p>
       <span className={`${styles.statusBadge} ${statusClass}`}>
         <StatusIcon size={11} />
         {t(STATUS_KEY[module.status])}

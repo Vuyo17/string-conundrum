@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import m from '../styles/ModulePage.module.css';
 import { getModuleContent } from '../data/moduleContent';
+import { modulePageContent } from '../utils/moduleCatalog';
 import { useLanguage } from '../context/LanguageContext';
 import { markSectionComplete } from '../api';
 import { ContentBlocks } from '../components/module/ContentBlocks';
@@ -38,10 +39,10 @@ const EXPOSURE_SECTIONS = new Set(['learn', 'examples', 'visualize']);
 const HIDDEN = { display: 'none' };
 
 export function ModulePage({
-  moduleId, moduleNumber, onBack, initialSection, anchor, entryKey, onProgressChange,
+  moduleId, moduleMetadata, moduleNumber, onBack, initialSection, anchor, entryKey, onProgressChange,
 }) {
   const { lang, t } = useLanguage();
-  const content = getModuleContent(moduleId, lang);
+  const content = useMemo(() => modulePageContent(moduleMetadata, getModuleContent(moduleId, lang)), [moduleMetadata, moduleId, lang]);
   const [activeSection, setActiveSection] = useState(initialSection ?? 'learn');
   const [visualizerPreset, setVisualizerPreset] = useState(null);
   // Bumped each time the Visualize section becomes active, so the visualizer
@@ -66,11 +67,12 @@ export function ModulePage({
   // Rail sections for THIS module; indices shift up when Visualize/Exam are absent.
   const sections = useMemo(
     () => ALL_SECTIONS.filter((s) => {
+      if (s.id === 'examples') return Boolean(content?.examples?.length);
       if (s.id === 'visualize') return Boolean(Visualizer);
       if (s.id === 'exam') return hasExam;
       return true;
     }),
-    [Visualizer, hasExam],
+    [Visualizer, hasExam, content],
   );
 
   // Keep the active section valid (e.g. if Visualize drops out for a module).
@@ -152,13 +154,7 @@ export function ModulePage({
             <span className={m.heroEyebrow}>
               {t('modulePage.eyebrow', { number: moduleNumber ?? '' })}
             </span>
-            {/* Locale title, not content.title: moduleContent's title is a
-                glossary-protected term ("String Indexing") the translation
-                pipeline correctly never touches, but the module list already
-                has a properly translated one at modules.items.<id>.title —
-                use that here too instead of leaving the page header in
-                English while the list that links to it is translated. */}
-            <h1 className={m.heroTitle}>{t(`modules.items.${moduleId}.title`)}</h1>
+            <h1 className={m.heroTitle}>{moduleMetadata?.title ?? t(`modules.items.${moduleId}.title`)}</h1>
 
             <div className={m.heroMeta}>
               <span><Clock size={14} /> {t('modulePage.minutes', { count: content.minutes })}</span>
@@ -172,12 +168,12 @@ export function ModulePage({
             </div>
           </div>
 
-          <aside className={m.outcomesCard}>
+          {content.outcomes.length > 0 && <aside className={m.outcomesCard}>
             <h2 className={m.outcomesTitle}><Target size={15} /> {t('modulePage.outcomesTitle')}</h2>
             <ul>
               {content.outcomes.map((outcome) => <li key={outcome}>{outcome}</li>)}
             </ul>
-          </aside>
+          </aside>}
         </div>
       </header>
 
@@ -215,6 +211,7 @@ export function ModulePage({
               title={t('modulePage.learn')}
               subtitle={t('modulePage.learnSubtitle')}
             />
+            {content.learnSections.length === 0 && <p>{t('modulePage.noLessonYet')}</p>}
             {content.learnSections.map((learnSection) => (
               // id doubles as the global-search scroll target (see searchIndex).
               <div key={learnSection.id} id={`learn-${learnSection.id}`} className={m.learnBlock}>

@@ -4,7 +4,8 @@ import {
 } from 'lucide-react';
 import styles from '../styles/App.module.css';
 import { useAuth } from '../context/AuthContext';
-import { searchAll } from '../data/searchIndex';
+import { buildIndex, searchAll } from '../data/searchIndex';
+import { useModuleCatalog } from '../context/ModuleCatalogContext';
 import { useLanguage } from '../context/LanguageContext';
 
 const KIND_ICON = {
@@ -32,6 +33,8 @@ const KIND_LABEL_KEY = {
  */
 export function GlobalSearch({ onSelect }) {
   const { canAccess } = useAuth();
+  const { modules } = useModuleCatalog();
+  const index = useMemo(() => buildIndex(modules), [modules]);
   const { t } = useLanguage();
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
@@ -40,8 +43,8 @@ export function GlobalSearch({ onSelect }) {
   const inputRef = useRef(null);
 
   const results = useMemo(
-    () => searchAll(query, { canAccess }),
-    [query, canAccess],
+    () => searchAll(query, { canAccess, index }),
+    [query, canAccess, index],
   );
 
   // A fresh query means the first result is the one Enter should take.

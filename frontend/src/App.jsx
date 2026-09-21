@@ -12,7 +12,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { LanguageProvider, useLanguage } from "./context/LanguageContext";
 import { NotificationProvider, useNotifications } from "./context/NotificationContext";
 import { useProgress } from "./hooks/useProgress";
-import { modules } from "./data/modules";
+import { ModuleCatalogProvider, useModuleCatalog } from "./context/ModuleCatalogContext";
 
 // Each screen is its own chunk, fetched only when a student actually opens
 // it — the whole app used to ship as one ~650KB bundle regardless of which
@@ -49,6 +49,7 @@ function ScreenLoading() {
 // stops every module a student finished in a *previous* session from firing
 // a notification the moment they load the app.
 function ModuleUnlockNotifier({ progress }) {
+  const { modules } = useModuleCatalog();
   const { t } = useLanguage();
   const { addNotification } = useNotifications();
   const prevCompletedRef = useRef({});
@@ -65,11 +66,11 @@ function ModuleUnlockNotifier({ progress }) {
           title: t('notifications.moduleCompleteTitle'),
           message: next
             ? t('notifications.moduleUnlockedMessage', {
-              module: t(`modules.items.${id}.title`),
-              next: t(`modules.items.${next.id}.title`),
+              module: modules[i].title,
+              next: next.title,
             })
             : t('notifications.allModulesCompleteMessage', {
-              module: t(`modules.items.${id}.title`),
+              module: modules[i].title,
             }),
         });
       }
@@ -78,7 +79,7 @@ function ModuleUnlockNotifier({ progress }) {
     prevCompletedRef.current = Object.fromEntries(
       modules.map(({ id }) => [id, progress.byModuleId[id]?.completed ?? false]),
     );
-  }, [progress.byModuleId, progress.loading, addNotification, t]);
+  }, [modules, progress.byModuleId, progress.loading, addNotification, t]);
 
   return null;
 }
@@ -184,7 +185,9 @@ function App() {
   return (
     <LanguageProvider>
       <ThemeProvider>
-        <Shell />
+        <ModuleCatalogProvider>
+          <Shell />
+        </ModuleCatalogProvider>
       </ThemeProvider>
     </LanguageProvider>
   );

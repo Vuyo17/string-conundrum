@@ -111,7 +111,7 @@ function entry({ key, kind, title, subtitle, screen, moduleId, section, anchor, 
   };
 }
 
-function buildIndex() {
+export function buildIndex(catalog = modules) {
   const entries = [];
 
   for (const page of PAGES) {
@@ -125,9 +125,11 @@ function buildIndex() {
     }));
   }
 
-  for (const mod of modules) {
+  for (const mod of catalog) {
     const content = MODULE_CONTENT[mod.id];
-    const { title: modTitle, desc: modDesc } = moduleCopy(mod.id);
+    const fallback = moduleCopy(mod.id);
+    const modTitle = mod.title ?? fallback.title;
+    const modDesc = mod.description ?? fallback.desc;
 
     entries.push(entry({
       key: `module:${mod.id}`,
@@ -231,14 +233,14 @@ function escapeRegExp(value) {
  *        drops results on screens this user cannot open (guests)
  * @param {number} [options.limit] max results, default 8
  */
-export function searchAll(rawQuery, { canAccess, limit = 8 } = {}) {
+export function searchAll(rawQuery, { canAccess, limit = 8, index = SEARCH_INDEX } = {}) {
   const query = (rawQuery ?? '').trim().toLowerCase();
   if (!query) return [];
 
   const tokens = query.split(/\s+/).filter(Boolean);
   const hits = [];
 
-  for (const item of SEARCH_INDEX) {
+  for (const item of index) {
     if (canAccess && !canAccess(item.screen)) continue;
 
     let total = 0;

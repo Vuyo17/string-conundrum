@@ -74,7 +74,7 @@ export function StringFigure({ value, highlight = [], negative = false, caption,
       >
         {chars.map((char, i) => (
           <div key={`cell-${i}`} className={`${m.cell} ${highlight.includes(i) ? m.cellActive : ''}`}>
-            <span className={m.cellChar}>{char === ' ' ? '·' : char}</span>
+            <span className={m.cellChar}>{char === '\n' ? '\\n' : char === ' ' ? '·' : char}</span>
             <span className={m.cellIndex}>{i}</span>
             {negative && <span className={m.cellNegIndex}>{i - chars.length}</span>}
           </div>

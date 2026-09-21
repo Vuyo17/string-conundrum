@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { apiFetch } from '../api';
 import { getApiUrl } from '../config/api';
 import { useAuth } from '../context/AuthContext';
-import { modules } from '../data/modules';
+import { useModuleCatalog } from '../context/ModuleCatalogContext';
+import { moduleProgress } from '../utils/moduleCatalog';
 import { getModuleSectionIds } from '../utils/moduleSections';
 
 // Real per-module section progress for the signed-in user, backing sequential
@@ -12,6 +13,7 @@ import { getModuleSectionIds } from '../utils/moduleSections';
 // after marking a section complete, rather than waiting for a reload.
 export function useProgress() {
   const { user, isGuest } = useAuth();
+  const { modules, loading: catalogLoading } = useModuleCatalog();
   const [sectionsByModule, setSectionsByModule] = useState({});
   const [bypassUnlocks, setBypassUnlocksState] = useState(false);
   // Leaderboard participation defaults to on (matching how every account
@@ -57,14 +59,7 @@ export function useProgress() {
     refresh();
   }, [refresh]);
 
-  const byModuleId = Object.fromEntries(
-    modules.map((mod) => {
-      const total = getModuleSectionIds(mod.id).length;
-      const done = (sectionsByModule[mod.id] ?? []).length;
-      const percent = total > 0 ? Math.min(100, Math.round((done / total) * 100)) : 0;
-      return [mod.id, { percent, completed: total > 0 && done >= total }];
-    }),
-  );
+  const byModuleId = moduleProgress(modules, sectionsByModule, getModuleSectionIds);
 
   const allCompleted = bypassUnlocks
     || (modules.length > 0 && modules.every((mod) => byModuleId[mod.id]?.completed));
@@ -111,7 +106,7 @@ export function useProgress() {
   return {
     byModuleId,
     allCompleted,
-    loading,
+    loading: loading || catalogLoading,
     bypassUnlocks,
     setBypassUnlocks,
     leaderboardOptIn,

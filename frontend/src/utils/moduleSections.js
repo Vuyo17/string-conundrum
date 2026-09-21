@@ -15,7 +15,7 @@ const GATING_SECTION_IDS = SECTION_IDS.filter((id) => id !== 'practice');
 // vary by language, so 'en' is always safe to read here.
 export function getModuleSectionIds(moduleId) {
   const content = getModuleContent(moduleId, 'en');
-  if (!content) return GATING_SECTION_IDS;
+  if (!content) return ['learn', 'exam'];
   return GATING_SECTION_IDS.filter((id) => {
     if (id === 'visualize') return Boolean(content.visualizer);
     if (id === 'exam') return Boolean(content.practice?.exam);

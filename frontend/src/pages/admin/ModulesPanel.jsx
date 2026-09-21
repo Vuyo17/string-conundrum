@@ -5,10 +5,16 @@ import {
 import s from './Admin.module.css';
 import { adminApi } from './adminApi';
 import { Card, ErrorNote } from './AdminUI';
+import { useModuleCatalog } from '../../context/ModuleCatalogContext';
 
 const BLANK = { id: '', title: '', description: '', minutes: 20, level: 'Beginner' };
+const SECTION_LABELS = {
+  learn: 'Learn', examples: 'Examples', visualize: 'Visualize', practice: 'Practice', exam: 'Exam',
+};
+const DEFAULT_SECTION_IDS = Object.keys(SECTION_LABELS);
 
 export function ModulesPanel() {
+  const { refresh: refreshCatalog } = useModuleCatalog();
   const [modules, setModules] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -17,16 +23,32 @@ export function ModulesPanel() {
   const [draft, setDraft] = useState(BLANK);
   const [editingId, setEditingId] = useState(null);
   const [editDraft, setEditDraft] = useState(BLANK);
+  const [contentModuleId, setContentModuleId] = useState('');
+  const [contentText, setContentText] = useState('{}');
+  const [sectionIds, setSectionIds] = useState(DEFAULT_SECTION_IDS);
+  const [contentSaved, setContentSaved] = useState('');
 
   function load() {
     setLoading(true);
     return adminApi.modules()
-      .then((payload) => { setModules(payload.modules); setError(null); })
+      .then((payload) => {
+        setModules(payload.modules);
+        setContentModuleId((current) => current || payload.modules[0]?.id || '');
+        setError(null);
+      })
       .catch(setError)
       .finally(() => setLoading(false));
   }
 
   useEffect(() => { load(); }, []);
+
+  useEffect(() => {
+    const module = modules.find((item) => item.id === contentModuleId);
+    if (!module) return;
+    setContentText(JSON.stringify(module.content ?? {}, null, 2));
+    setSectionIds(module.section_ids?.length ? module.section_ids : DEFAULT_SECTION_IDS);
+    setContentSaved('');
+  }, [contentModuleId, modules]);
 
   // Every mutation reloads rather than patching local state. The server
   // decides sort order, publication defaults and the seed-on-first-write
@@ -37,6 +59,7 @@ export function ModulesPanel() {
     try {
       await action();
       await load();
+      await refreshCatalog();
       return true;
     } catch (err) {
       setError(err);
@@ -53,6 +76,95 @@ export function ModulesPanel() {
       setDraft(BLANK);
       setCreating(false);
     }
+  }
+
+  async function saveContent(event) {
+    event.preventDefault();
+    let content;
+    try {
+      content = JSON.parse(contentText);
+    } catch {
+      setError(new Error('Lesson content must be valid JSON.'));
+      return;
+    }
+    if (!content || Array.isArray(content)) {
+      setError(new Error('Lesson content must be a JSON object.'));
+      return;
+    }
+    const ok = await mutate(() => adminApi.updateModuleContent(contentModuleId, {
+      content,
+      section_ids: sectionIds,
+    }));
+    if (ok) setContentSaved('Lesson content and section order saved.');
+  }
+
+  function contentObject() {
+    try {
+      const parsed = JSON.parse(contentText);
+      return parsed && !Array.isArray(parsed) ? parsed : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function updateContentObject(update) {
+    setContentText(JSON.stringify(update(contentObject()), null, 2));
+    setContentSaved('');
+  }
+
+  function addLearnSection() {
+    updateContentObject((content) => ({
+      ...content,
+      learnSections: [...(content.learnSections ?? []), {
+        id: `section-${(content.learnSections ?? []).length + 1}`,
+        title: 'New lesson section',
+        blocks: [{ kind: 'p', text: '' }],
+      }],
+    }));
+  }
+
+  function updateLearnSection(index, field, value) {
+    updateContentObject((content) => ({
+      ...content,
+      learnSections: (content.learnSections ?? []).map((section, sectionIndex) => (
+        sectionIndex === index ? { ...section, [field]: value } : section
+      )),
+    }));
+  }
+
+  function addLearnBlock(sectionIndex) {
+    updateContentObject((content) => ({
+      ...content,
+      learnSections: (content.learnSections ?? []).map((section, index) => (
+        index === sectionIndex
+          ? { ...section, blocks: [...(section.blocks ?? []), { kind: 'p', text: '' }] }
+          : section
+      )),
+    }));
+  }
+
+  function updateLearnBlock(sectionIndex, blockIndex, field, value) {
+    updateContentObject((content) => ({
+      ...content,
+      learnSections: (content.learnSections ?? []).map((section, index) => (
+        index === sectionIndex
+          ? {
+            ...section,
+            blocks: (section.blocks ?? []).map((block, currentIndex) => (
+              currentIndex === blockIndex ? { ...block, [field]: value } : block
+            )),
+          }
+          : section
+      )),
+    }));
+  }
+
+  function moveSection(index, direction) {
+    const target = index + direction;
+    if (target < 0 || target >= sectionIds.length) return;
+    const next = sectionIds.slice();
+    [next[index], next[target]] = [next[target], next[index]];
+    setSectionIds(next);
   }
 
   async function saveEdit(event) {
@@ -90,18 +202,15 @@ export function ModulesPanel() {
   return (
     <div className={s.wrap}>
       <div className={s.notice}>
-        <strong>What is editable here.</strong> Module titles, descriptions,
-        ordering and whether students can see them. The lesson pages themselves
-        (explanations, worked examples, visualisers) are still part of the app
-        build — a module created here appears with its description and its
-        exercises, but no lesson text until content is written for it.
+        <strong>Lecturer workspace.</strong> Create modules here, then write their
+        lesson content in the Content tab before publishing.
       </div>
 
       {error && <ErrorNote error={error} />}
 
       <Card
         title="Modules"
-        subtitle="Drag order, visibility and details. Students see published modules in this order."
+        subtitle="Change order, visibility and details. Students see published modules in this order."
         action={(
           <button type="button" className={s.btn} onClick={() => setCreating((v) => !v)}>
             {creating ? <X size={14} /> : <Plus size={14} />}
@@ -258,6 +367,9 @@ export function ModulesPanel() {
                       <span className={`${s.badge} ${module.published ? s.badgeGood : s.badgeMuted}`}>
                         {module.published ? 'Published' : 'Hidden'}
                       </span>
+                      <span className={`${s.badge} ${module.content && Object.keys(module.content).length ? s.badgeGood : s.badgeMuted}`}>
+                        {module.content && Object.keys(module.content).length ? 'Lesson ready' : 'No lesson content'}
+                      </span>
                     </div>
                     <div className={s.moduleMeta}>
                       <code>{module.id}</code>
@@ -303,6 +415,101 @@ export function ModulesPanel() {
             </div>
           ))
         )}
+      </Card>
+
+      <Card title="Lesson content" subtitle="Build Learn content with form controls, then save it directly to the module.">
+        <form onSubmit={saveContent}>
+          <div className={s.toolbar}>
+            <label className={s.muted} htmlFor="lesson-content-module">Module</label>
+            <select
+              id="lesson-content-module"
+              className={s.select}
+              value={contentModuleId}
+              onChange={(event) => setContentModuleId(event.target.value)}
+            >
+              {modules.map((module) => <option key={module.id} value={module.id}>{module.title}</option>)}
+            </select>
+          </div>
+          <div className={s.field}>
+            <span className={s.fieldLabel}>Student section order</span>
+            <div className={s.list}>
+              {sectionIds.map((sectionId, index) => (
+                <div key={sectionId} className={s.moduleRow}>
+                  <span>{SECTION_LABELS[sectionId]}</span>
+                  <div className={s.moduleActions}>
+                    <button type="button" className={`${s.btn} ${s.btnGhost} ${s.btnSmall}`} onClick={() => moveSection(index, -1)} disabled={index === 0}>Move up</button>
+                    <button type="button" className={`${s.btn} ${s.btnGhost} ${s.btnSmall}`} onClick={() => moveSection(index, 1)} disabled={index === sectionIds.length - 1}>Move down</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className={s.field}>
+            <div className={s.formActions}>
+              <span className={s.fieldLabel}>Learn sections</span>
+              <button type="button" className={`${s.btn} ${s.btnGhost} ${s.btnSmall}`} onClick={addLearnSection}>
+                <Plus size={13} /> Add section
+              </button>
+            </div>
+            {(contentObject().learnSections ?? []).map((section, sectionIndex) => (
+              <div key={section.id ?? sectionIndex} className={s.card} style={{ marginBottom: 12 }}>
+                <input
+                  className={s.input}
+                  value={section.title ?? ''}
+                  onChange={(event) => updateLearnSection(sectionIndex, 'title', event.target.value)}
+                  placeholder="Section title"
+                  aria-label={`Lesson section ${sectionIndex + 1} title`}
+                />
+                {(section.blocks ?? []).map((block, blockIndex) => (
+                  <div key={blockIndex} className={s.fieldRow} style={{ marginTop: 8 }}>
+                    <select
+                      className={s.select}
+                      value={block.kind ?? 'p'}
+                      onChange={(event) => updateLearnBlock(sectionIndex, blockIndex, 'kind', event.target.value)}
+                      aria-label="Content block type"
+                    >
+                      <option value="p">Paragraph</option>
+                      <option value="code">Code example</option>
+                      <option value="callout">Callout</option>
+                      <option value="keypoints">Key points</option>
+                    </select>
+                    <textarea
+                      className={s.textarea}
+                      rows={3}
+                      value={block.text ?? block.code ?? (block.items ?? []).join('\n')}
+                      onChange={(event) => {
+                        const field = block.kind === 'code' ? 'code' : block.kind === 'keypoints' ? 'items' : 'text';
+                        const value = field === 'items' ? event.target.value.split('\n') : event.target.value;
+                        updateLearnBlock(sectionIndex, blockIndex, field, value);
+                      }}
+                      placeholder={block.kind === 'code' ? 'print("Hello")' : 'Write lesson content...'}
+                    />
+                  </div>
+                ))}
+                <button type="button" className={`${s.btn} ${s.btnGhost} ${s.btnSmall}`} onClick={() => addLearnBlock(sectionIndex)}>
+                  <Plus size={13} /> Add content block
+                </button>
+              </div>
+            ))}
+            <p className={s.fieldHint}>Build the Learn page with sections and paragraphs, code examples, callouts, or key points.</p>
+          </div>
+          <div className={s.field}>
+            <label className={s.fieldLabel} htmlFor="module-content-json">Advanced content JSON</label>
+            <textarea
+              id="module-content-json"
+              className={s.textarea}
+              rows={12}
+              value={contentText}
+              onChange={(event) => setContentText(event.target.value)}
+              spellCheck="false"
+            />
+            <p className={s.fieldHint}>Use this for worked Examples, Visualize settings, or content that needs the full data format.</p>
+          </div>
+          {contentSaved && <div className={s.success}>{contentSaved}</div>}
+          <button type="submit" className={s.btn} disabled={busy || !contentModuleId}>
+            <Save size={14} /> Save lesson
+          </button>
+        </form>
       </Card>
     </div>
   );

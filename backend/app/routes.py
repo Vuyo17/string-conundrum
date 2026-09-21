@@ -5,6 +5,7 @@ import secrets
 from flask import Blueprint, g, request
 
 from .auth import require_auth
+from .services import admin_content
 from .services.feedback import (
     engine_code_feedback,
     engine_feedback,
@@ -111,6 +112,18 @@ def submit_exercise():
         answer_given=None if evaluation.get("correct") else (code or answers or answer),
     )
     return {"ok": True, **evaluation}
+
+
+@api_bp.get("/modules")
+def list_published_modules():
+    """The student catalogue: published modules, in the lecturer's order."""
+    fields = ("id", "title", "description", "minutes", "level", "objectives")
+    modules = [
+        {**{key: row.get(key) for key in fields},
+         "section_ids": admin_content.completion_sections(row["id"])}
+        for row in admin_content.list_modules(include_unpublished=False)
+    ]
+    return {"ok": True, "modules": modules}
 
 
 @api_bp.get("/exercises/<module_id>")

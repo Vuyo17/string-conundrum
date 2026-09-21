@@ -19,8 +19,9 @@ import { presetForExercise } from './visualizers/presets';
 import { useLanguage } from '../../context/LanguageContext';
 import { useNotifications } from '../../context/NotificationContext';
 import {
-  starsOf, shuffle, splitPrompt, displayOptionsOf, defaultAnswer, optionOrder,
+  starsOf, splitPrompt, displayOptionsOf, defaultAnswer, optionOrder,
 } from './exerciseHelpers';
+import { drawExam } from './examQuestions';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ExamMode — the test-conditions counterpart to the practice runner.
@@ -110,16 +111,13 @@ function describeCorrectAnswer(exercise, lang) {
   return exercise.answer ?? '';
 }
 
-function drawExam(exercises, count) {
-  return shuffle(exercises).slice(0, Math.min(count, exercises.length));
-}
-
 export function ExamMode({ practice, exercises, onVisualize, onSectionComplete, onGoToPractice }) {
   const { t, lang } = useLanguage();
   const { addNotification } = useNotifications();
   const questionCount = practice.exam?.questionCount ?? 10;
+  const balanceTypes = practice.exam?.balanceTypes ?? false;
 
-  const [paper, setPaper] = useState(() => drawExam(exercises, questionCount));
+  const [paper, setPaper] = useState(() => drawExam(exercises, questionCount, balanceTypes));
   const [answers, setAnswers] = useState({});     // question_id → answer object
   const [current, setCurrent] = useState(0);
   const [phase, setPhase] = useState('answering'); // answering | submitting | results
@@ -134,7 +132,7 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete, 
   useEffect(() => {
     if (!exercises.length) return;
     setPaper((prev) => {
-      if (!prev.length) return drawExam(exercises, questionCount);
+      if (!prev.length) return drawExam(exercises, questionCount, balanceTypes);
       const byId = new Map(exercises.map((ex) => [ex.question_id, ex]));
       return prev.map((ex) => byId.get(ex.question_id) ?? ex);
     });
@@ -179,7 +177,7 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete, 
         title: t('notifications.examPassedTitle'),
         message: t('notifications.examPassedMessage', {
           percent,
-          module: t(`modules.items.${practice.apiModuleId}.title`),
+          module: practice.moduleTitle ?? t(`modules.items.${practice.apiModuleId}.title`),
         }),
       });
     }
@@ -258,7 +256,7 @@ export function ExamMode({ practice, exercises, onVisualize, onSectionComplete, 
   }
 
   function retry() {
-    setPaper(drawExam(exercises, questionCount));
+    setPaper(drawExam(exercises, questionCount, balanceTypes));
     setAnswers({});
     setResults({});
     setCurrent(0);

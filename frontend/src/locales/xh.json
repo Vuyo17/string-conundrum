@@ -68,6 +68,9 @@
     "allModulesCompleteMessage": "I-{module} igqityiwe — ugqibe zonke iimodyuli! Imingeni sele ivuliwe."
   },
   "modules": {
+    "loadError": "Iimodyuli azikwazanga ukulayishwa.",
+    "retry": "Zama kwakhona",
+    "nonePublished": "Akukho modyuli zipapashiweyo okwangoku.",
     "title": "Iimodyuli Zokufunda",
     "subtitle": "Yiba ngcaphephe kuzo zonke iingqiqo zeestring inyathelo nenyathelo. Gqiba imodyuli nganye kwaye ufumane i-80% kuviwo lwayo ukuze uvule elandelayo.",
     "allModules": "Zonke Iimodyuli",
@@ -216,6 +219,7 @@
     "line": "Umgca {number}"
   },
   "modulePage": {
+    "noLessonYet": "Umxholo wesifundo awukafumaneki. Ungajonga imibuzo kuQheliselo nakuViwo.",
     "missingTitle": "Le modyuli isabhalwa",
     "missingBlurb": "Umxholo wale modyuli awukongezwa. Buya kungekudala.",
     "backToModules": "Buyela kwiimodyuli",

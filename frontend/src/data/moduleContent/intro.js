@@ -138,7 +138,7 @@ export const introModule = {
       id: 'ex-escape-len',
       title: 'Counting characters through an escape sequence',
       intro: 'A theory-test favourite: how long is a string that contains an escape sequence?',
-      string: 'A\\nB',
+      string: 'A\nB',
       code: 's = "A\\nB"\nprint(len(s))',
       steps: [
         {
@@ -147,7 +147,7 @@ export const introModule = {
         },
         {
           text: 'But Python translates `\\n` into a single newline character as it reads the code. The stored string is A, newline, B.',
-          highlight: [1, 2],
+          highlight: [1],
           state: 'stored: 3 chars',
         },
         {
@@ -201,6 +201,6 @@ export const introModule = {
     // (which capped the old static-bank practice run) is dropped along
     // with it, same as every other engine-enabled module.
     engine: true,
-    exam: { questionCount: 3 },
+    exam: { questionCount: 10, balanceTypes: true },
   },
 };

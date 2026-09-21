@@ -731,6 +731,93 @@
     "answer_xh": "TypeError, kuba awukwazi concatenate a str kunye int ngqo"
   },
   {
+    "module_id": "intro",
+    "question_id": "intro-31",
+    "prompt": "How many stored characters does this string contain?\ns = \"A\\nB\"\nprint(len(s))",
+    "type": "mcq",
+    "options": ["3", "4", "2", "TypeError"],
+    "answer": "3",
+    "explanation": "The escape sequence \\n represents one newline character. The stored characters are A, newline and B, so len(s) is 3.",
+    "xp": 15,
+    "prompt_xh": "Zingaphi iimpawu ezigcinwe kule string?\ns = \"A\\nB\"\nprint(len(s))",
+    "explanation_xh": "I-\\n imele uphawu olunye lomgca omtsha. Iimpawu ezigciniweyo ngu-A, umgca omtsha no-B, ngoko i-len(s) ngu-3."
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-32",
+    "prompt": "Which letter does this code print?\nprint(chr(ord(\"C\") + 2))",
+    "type": "mcq",
+    "answer": "E",
+    "explanation": "ord(\"C\") is 67. Adding 2 gives 69, and chr(69) is the letter E.",
+    "xp": 15,
+    "prompt_xh": "Ngowuphi unobumba oprintwa yile khowudi?\nprint(chr(ord(\"C\") + 2))",
+    "explanation_xh": "I-ord(\"C\") ngu-67. Ukongeza u-2 kunika u-69, kwaye i-chr(69) ngunobumba E.",
+    "options": [
+      "E",
+      "D",
+      "C",
+      "69"
+    ]
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-33",
+    "prompt": "Select every valid Python literal whose value is exactly it's OK (including the apostrophe).",
+    "type": "select_all",
+    "options": ["\"it's OK\"", "'it\\'s OK'", "'its OK'", "'it's OK'"],
+    "answers": ["\"it's OK\"", "'it\\'s OK'"],
+    "explanation": "Double quotes can enclose an apostrophe directly. With single quotes, escape the apostrophe as \\' so it does not end the string. Omitting the apostrophe changes the value.",
+    "xp": 15,
+    "prompt_xh": "Khetha zonke ii-literal ezisebenzayo zePython ezinexabiso elingu-it's OK kanye (kuquka i-apostrophe).",
+    "explanation_xh": "Iimpawu zocaphulo eziphindwe kabini zinokuquka i-apostrophe ngqo. Xa usebenzisa ezizodwa, bhala i-apostrophe njengo-\\' ukuze ingayivali i-string. Ukuyishiya ngaphandle kutshintsha ixabiso."
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-34",
+    "prompt": "Enter the number printed. Remember that an escaped backslash is one character.\npath = \"C:\\\\tmp\"\nprint(len(path))",
+    "type": "fill_blank",
+    "answer": "6",
+    "explanation": "The two backslashes in the source represent one stored backslash. The six stored characters are C, colon, backslash, t, m and p.",
+    "xp": 15,
+    "prompt_xh": "Faka inani eliprintwayo. Khumbula ukuba i-backslash ebhalwe njenge-escape sequence luphawu olunye.\npath = \"C:\\\\tmp\"\nprint(len(path))",
+    "explanation_xh": "Ii-backslash ezimbini kwikhowudi zimele i-backslash enye egciniweyo. Iimpawu ezintandathu ezigciniweyo ngu-C, ikholoni, i-backslash, t, m no-p."
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-35",
+    "prompt": "Enter the output of this code, without quotes.\nprint(\"2\" * 3 + str(4))",
+    "type": "fill_blank",
+    "answer": "2224",
+    "explanation": "Repeating the string \"2\" three times gives \"222\". str(4) gives \"4\", and + joins the strings without inserting a space.",
+    "xp": 15,
+    "prompt_xh": "Faka isiphumo sale khowudi, ngaphandle kweempawu zocaphulo.\nprint(\"2\" * 3 + str(4))",
+    "explanation_xh": "Ukuphinda i-string \"2\" kathathu kunika \"222\". I-str(4) inika \"4\", kwaye u-+ udibanisa ii-string ngaphandle kokufaka isithuba."
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-36",
+    "prompt": "Select every expression that evaluates to the integer 5, rather than a string.",
+    "type": "select_all",
+    "options": ["len(\"hello\")", "int(\"2\") + 3", "\"2\" + \"3\"", "str(5)"],
+    "answers": ["len(\"hello\")", "int(\"2\") + 3"],
+    "explanation": "len(\"hello\") returns the integer 5. int(\"2\") converts text to the integer 2 before addition. The other expressions return the strings \"23\" and \"5\".",
+    "xp": 15,
+    "prompt_xh": "Khetha zonke ii-expression ezivelisa i-integer engu-5, hayi i-string.",
+    "explanation_xh": "I-len(\"hello\") ibuyisela i-integer engu-5. I-int(\"2\") iguqula umbhalo ube yi-integer engu-2 phambi kokudibanisa. Ezinye ii-expression zibuyisela ii-string \"23\" no-\"5\"."
+  },
+  {
+    "module_id": "intro",
+    "question_id": "intro-37",
+    "prompt": "Fix the starter code so it prints exactly Count: 5 on one line. Keep count as an integer and convert it to text when building the message.",
+    "type": "write_code",
+    "starter_code": "count = 5\nprint(\"Count: \" + count)\n",
+    "test_cases": [{"expected_output": "Count: 5"}],
+    "explanation": "A string and an integer cannot be joined directly with +. Use print(\"Count: \" + str(count)) to convert the number while leaving count itself as an integer.",
+    "xp": 20,
+    "prompt_xh": "Lungisa ikhowudi yokuqala ukuze iprinte u-Count: 5 kanye kumgca omnye. Gcina u-count eyi-integer uze uyiguqule ibe ngumbhalo xa usakha umyalezo.",
+    "explanation_xh": "I-string ne-integer azinakudityaniswa ngqo ngo-+. Sebenzisa u-print(\"Count: \" + str(count)) ukuguqula inani, ngoxa u-count ehlala eyi-integer."
+  },
+  {
     "module_id": "indexing",
     "question_id": "indexing-01",
     "prompt": "text = \"python\"\nprint(text[0])",

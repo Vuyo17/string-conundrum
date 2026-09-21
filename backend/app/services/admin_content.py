@@ -132,6 +132,14 @@ def get_module(module_id: str):
     return None
 
 
+def completion_sections(module_id: str) -> tuple:
+    # Bundled lessons include examples and a visualizer. Lecturer-created
+    # modules have a description (Learn), bank practice, and an Exam.
+    if module_id in {row[0] for row in DEFAULT_MODULES}:
+        return ("learn", "examples", "visualize", "exam")
+    return ("learn", "exam")
+
+
 def module_ids() -> list:
     return [row["id"] for row in list_modules()]
 

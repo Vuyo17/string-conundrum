@@ -29,20 +29,8 @@ export function OverviewPanel({ onOpenStudent }) {
   if (loading || !data) return <p className={s.muted}>Loading the class overview…</p>;
 
   const { students, averages, totals, modules, hardest_module: hardest } = data;
-  const noData = totals.attempts === 0 && totals.exam_sittings === 0;
-
   return (
     <div className={s.wrap}>
-      {noData && (
-        <div className={s.notice}>
-          <strong>Nothing recorded yet.</strong> Student answers and exam marks are
-          logged from the moment this build is deployed — earlier activity was never
-          stored, so it cannot be shown here. To populate the dashboard for a demo,
-          run <code>python -m db.seed_demo_data --students 40</code> from the backend
-          directory.
-        </div>
-      )}
-
       <div className={s.tiles}>
         <StatTile
           icon={Users}

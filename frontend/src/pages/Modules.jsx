@@ -1,19 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from '../styles/App.module.css';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { ModuleCard } from '../components/ModuleCard';
 import { ModulePage } from './ModulePage';
-import { modules } from '../data/modules';
+import { useModuleCatalog } from '../context/ModuleCatalogContext';
+import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
-export function Modules({ target, progress, setScreen }) {
+export function Modules({ target, progress }) {
   const { t } = useLanguage();
+  const { modules, loading, error, refresh } = useModuleCatalog();
+  const { isAdmin } = useAuth();
+  useEffect(() => { refresh(); }, [refresh, target]);
   // Which module is open, if any. Null shows the card grid.
-  const [openModule, setOpenModule] = useState(null);
+  const [openModuleId, setOpenModuleId] = useState(null);
   // Where inside that module to land, when a search result sent us here.
   const [entry, setEntry] = useState(null);
+  const handledTarget = useRef(null);
 
-  // Merge real per-module section progress into the static module metadata,
+  // Merge progress into the published catalogue,
   // and lock every module until the one before it is complete. While progress
   // is still loading, default everything past the first to locked so the UI
   // never flashes an unlock it has to immediately take back. The Settings
@@ -29,7 +34,7 @@ export function Modules({ target, progress, setScreen }) {
 
     const prevId = modules[i - 1]?.id;
     const prevCompleted = i === 0 || (byModuleId[prevId]?.completed ?? false);
-    const locked = bypassUnlocks ? false : progressLoading ? i > 0 : !prevCompleted;
+    const locked = (isAdmin || bypassUnlocks) ? false : progressLoading ? i > 0 : !prevCompleted;
 
     const status = locked
       ? 'Locked'
@@ -42,9 +47,10 @@ export function Modules({ target, progress, setScreen }) {
     return { ...mod, progress: percent, status };
   });
 
-  const overallProgress = Math.round(
+  const openModule = enrichedModules.find(mod => mod.id === openModuleId);
+  const overallProgress = enrichedModules.length ? Math.round(
     enrichedModules.reduce((sum, mod) => sum + mod.progress, 0) / enrichedModules.length,
-  );
+  ) : 0;
 
   // A search hit on a module, topic, example or practice section opens it —
   // unless that module is still locked, in which case search can't bypass it.
@@ -56,19 +62,21 @@ export function Modules({ target, progress, setScreen }) {
   // null. `target` is `null` only on first mount (before any navigation),
   // when there is nothing to close, so that case is still a no-op.
   useEffect(() => {
-    if (!target) return;
+    if (!target || handledTarget.current === target) return;
     if (!target.moduleId) {
+      handledTarget.current = target;
       closeModule();
       return;
     }
     const mod = enrichedModules.find((m) => m.id === target.moduleId);
     if (!mod || mod.status === 'Locked') return;
-    setOpenModule(mod);
+    handledTarget.current = target;
+    setOpenModuleId(mod.id);
     setEntry({ section: target.section, anchor: target.anchor, nonce: target.nonce });
-  }, [target]);
+  }, [target, modules, progressLoading, bypassUnlocks, isAdmin]);
 
   function closeModule() {
-    setOpenModule(null);
+    setOpenModuleId(null);
     setEntry(null);
   }
 
@@ -78,6 +86,7 @@ export function Modules({ target, progress, setScreen }) {
       <ModulePage
         key={openModule.id}
         moduleId={openModule.id}
+        moduleMetadata={openModule}
         moduleNumber={number}
         onBack={closeModule}
         initialSection={entry?.section}
@@ -95,26 +104,21 @@ export function Modules({ target, progress, setScreen }) {
         <span>{t('modules.allModules')}</span>
         <span>{t('modules.overallProgress')} <strong>{overallProgress}%</strong></span>
       </div>
-      {/* cycle-1 usability feedback: one participant wanted free navigation
-          between modules rather than the sequential 80%-to-advance gate —
-          that's exactly what Settings' "Unlock everything" already does, it
-          just wasn't discoverable. Only shown while it'd actually change
-          something: some module still locked, and not already turned on. */}
-      {!bypassUnlocks && enrichedModules.some((mod) => mod.status === 'Locked') && (
-        <p className={styles.cardTopHint}>
-          {t('modules.unlockHintPrefix')}{' '}
-          <button type="button" className={styles.linkButton} onClick={() => setScreen?.('Settings')}>
-            {t('modules.unlockHintLink')}
-          </button>
+      {error && (
+        <p role="alert">
+          {t('modules.loadError')}{' '}
+          <button type="button" onClick={refresh}>{t('modules.retry')}</button>
         </p>
       )}
+      {loading && modules.length === 0 && <p role="status">{t('common.loading')}</p>}
+      {!loading && !error && modules.length === 0 && <p>{t('modules.nonePublished')}</p>}
       <div className={styles.moduleGrid}>
         {enrichedModules.map((mod, i) => (
           <ModuleCard
             key={mod.id}
             module={mod}
             number={i + 1}
-            onOpen={setOpenModule}
+            onOpen={(mod) => setOpenModuleId(mod.id)}
           />
         ))}
       </div>

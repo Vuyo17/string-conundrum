@@ -536,3 +536,61 @@ def test_editing_an_exercise_keeps_its_isixhosa_translation(client, scratch_bank
     after = next(e for e in admin_content.list_exercises('intro') if e['question_id'] == 'intro-01')
     assert after['prompt'] == 'Reworded prompt'
     assert after['prompt_xh'] == before['prompt_xh']
+
+
+def test_student_catalogue_tracks_dashboard_changes(client):
+    make_admin(client, 'catalogue-admin')
+    before = client.get('/api/modules').get_json()['modules']
+    assert len(before) == 8
+    assert before[0]['section_ids'] == ['learn', 'examples', 'visualize', 'exam']
+    with mock_verified_token('catalogue-admin'):
+        response = client.post('/api/admin/modules', json={
+            'id': 'recursion', 'title': 'Recursion', 'description': 'Recursive functions',
+        }, headers=AUTH_HEADERS)
+        assert response.status_code < 300
+        assert 'recursion' not in {m['id'] for m in client.get('/api/modules').get_json()['modules']}
+        response = client.patch('/api/admin/modules/recursion', json={
+            'published': True, 'title': 'Recursion basics', 'minutes': 25,
+        }, headers=AUTH_HEADERS)
+        assert response.status_code == 200
+        order = ['recursion'] + [m['id'] for m in before]
+        client.post('/api/admin/modules/reorder', json={'order': order}, headers=AUTH_HEADERS)
+        published = client.get('/api/modules').get_json()['modules']
+        assert [m['id'] for m in published] == order
+        assert published[0]['title'] == 'Recursion basics'
+        assert published[0]['description'] == 'Recursive functions'
+        assert published[0]['minutes'] == 25
+        assert published[0]['section_ids'] == ['learn', 'exam']
+        client.patch('/api/admin/modules/recursion', json={'published': False}, headers=AUTH_HEADERS)
+        assert 'recursion' not in {m['id'] for m in client.get('/api/modules').get_json()['modules']}
+        client.patch('/api/admin/modules/recursion', json={'published': True}, headers=AUTH_HEADERS)
+        client.delete('/api/admin/modules/recursion', headers=AUTH_HEADERS)
+        assert 'recursion' not in {m['id'] for m in client.get('/api/modules').get_json()['modules']}
+
+
+def test_hiding_all_modules_returns_an_empty_student_catalogue(client):
+    from app.services import admin_content
+    for module in admin_content.list_modules():
+        admin_content.update_module(module['id'], {'published': False})
+    assert client.get('/api/modules').get_json()['modules'] == []
+
+
+def test_custom_module_completion_matches_student_page(client):
+    from app.services import admin_content
+    admin_content.create_module({'id': 'recursion', 'title': 'Recursion', 'published': True})
+    sign_in(client, 'custom-module-student')
+    progress.record_section_completion('custom-module-student', 'recursion', 'learn')
+    progress.record_section_completion('custom-module-student', 'recursion', 'practice')
+    details = analytics.student_detail('custom-module-student')
+    row = next(m for m in details['modules'] if m['module_id'] == 'recursion')
+    assert row['progress_percent'] == 50
+    assert not row['completed']
+    progress.record_section_completion('custom-module-student', 'recursion', 'exam')
+    details = analytics.student_detail('custom-module-student')
+    row = next(m for m in details['modules'] if m['module_id'] == 'recursion')
+    assert row['progress_percent'] == 100
+    assert row['completed']
+    assert details['student']['modules_completed'] == 1
+    summary = analytics.overview()
+    module = next(m for m in summary['modules'] if m['module_id'] == 'recursion')
+    assert module['students_completed'] == 1
