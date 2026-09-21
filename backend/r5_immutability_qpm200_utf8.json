@@ -1,0 +1,24 @@
+﻿[r5] module=immutability start qpm=200
+{
+  "module": "immutability",
+  "questions_per_module": 200,
+  "result": {
+    "by_type": {
+      "fill_blank": 24,
+      "mcq": 107,
+      "select_all": 43,
+      "write_code": 26
+    },
+    "duplicate_option_pct": 0.0,
+    "duplicate_option_questions": 0,
+    "generated": 200,
+    "recoverable": 200,
+    "recoverable_pct": 100.0,
+    "seconds": 23.46,
+    "select_all_total": 43,
+    "select_all_unique": 0,
+    "select_all_unique_pct": null,
+    "tamper_rejected": 200,
+    "tamper_rejected_pct": 100.0
+  }
+}

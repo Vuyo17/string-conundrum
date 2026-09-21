@@ -1,0 +1,187 @@
+﻿[r5] module=intro start qpm=200
+[r5] module=intro done seconds=37.97
+[r5] module=indexing start qpm=200
+[r5] module=indexing done seconds=22.84
+[r5] module=slicing start qpm=200
+[r5] module=slicing done seconds=10.85
+[r5] module=looping start qpm=200
+[r5] module=looping done seconds=30.1
+[r5] module=comparison start qpm=200
+[r5] module=comparison done seconds=36.92
+[r5] module=methods start qpm=200
+[r5] module=methods done seconds=30.61
+[r5] module=immutability start qpm=200
+[r5] module=immutability done seconds=28.59
+[r5] module=formatting start qpm=200
+[r5] module=formatting done seconds=30.22
+{
+  "modules": {
+    "comparison": {
+      "by_type": {
+        "fill_blank": 53,
+        "mcq": 50,
+        "select_all": 59,
+        "write_code": 38
+      },
+      "duplicate_option_pct": 0.0,
+      "duplicate_option_questions": 0,
+      "generated": 200,
+      "recoverable": 200,
+      "recoverable_pct": 100.0,
+      "seconds": 36.92,
+      "select_all_total": 59,
+      "select_all_unique": 0,
+      "select_all_unique_pct": null,
+      "tamper_rejected": 200,
+      "tamper_rejected_pct": 100.0
+    },
+    "formatting": {
+      "by_type": {
+        "fill_blank": 73,
+        "mcq": 37,
+        "select_all": 62,
+        "write_code": 28
+      },
+      "duplicate_option_pct": 0.0,
+      "duplicate_option_questions": 0,
+      "generated": 200,
+      "recoverable": 200,
+      "recoverable_pct": 100.0,
+      "seconds": 30.22,
+      "select_all_total": 62,
+      "select_all_unique": 0,
+      "select_all_unique_pct": null,
+      "tamper_rejected": 200,
+      "tamper_rejected_pct": 100.0
+    },
+    "immutability": {
+      "by_type": {
+        "fill_blank": 34,
+        "mcq": 94,
+        "select_all": 46,
+        "write_code": 26
+      },
+      "duplicate_option_pct": 0.0,
+      "duplicate_option_questions": 0,
+      "generated": 200,
+      "recoverable": 200,
+      "recoverable_pct": 100.0,
+      "seconds": 28.59,
+      "select_all_total": 46,
+      "select_all_unique": 0,
+      "select_all_unique_pct": null,
+      "tamper_rejected": 200,
+      "tamper_rejected_pct": 100.0
+    },
+    "indexing": {
+      "by_type": {
+        "build_index": 36,
+        "fill_blank": 50,
+        "mcq": 45,
+        "select_all": 45,
+        "write_code": 24
+      },
+      "duplicate_option_pct": 0.0,
+      "duplicate_option_questions": 0,
+      "generated": 200,
+      "recoverable": 200,
+      "recoverable_pct": 100.0,
+      "seconds": 22.84,
+      "select_all_total": 45,
+      "select_all_unique": 0,
+      "select_all_unique_pct": null,
+      "tamper_rejected": 200,
+      "tamper_rejected_pct": 100.0
+    },
+    "intro": {
+      "by_type": {
+        "fill_blank": 56,
+        "mcq": 58,
+        "select_all": 45,
+        "write_code": 41
+      },
+      "duplicate_option_pct": 0.0,
+      "duplicate_option_questions": 0,
+      "generated": 200,
+      "recoverable": 200,
+      "recoverable_pct": 100.0,
+      "seconds": 37.97,
+      "select_all_total": 45,
+      "select_all_unique": 0,
+      "select_all_unique_pct": null,
+      "tamper_rejected": 200,
+      "tamper_rejected_pct": 100.0
+    },
+    "looping": {
+      "by_type": {
+        "fill_blank": 112,
+        "mcq": 27,
+        "select_all": 29,
+        "write_code": 32
+      },
+      "duplicate_option_pct": 0.0,
+      "duplicate_option_questions": 0,
+      "generated": 200,
+      "recoverable": 200,
+      "recoverable_pct": 100.0,
+      "seconds": 30.1,
+      "select_all_total": 29,
+      "select_all_unique": 0,
+      "select_all_unique_pct": null,
+      "tamper_rejected": 200,
+      "tamper_rejected_pct": 100.0
+    },
+    "methods": {
+      "by_type": {
+        "fill_blank": 55,
+        "mcq": 39,
+        "select_all": 80,
+        "write_code": 26
+      },
+      "duplicate_option_pct": 0.0,
+      "duplicate_option_questions": 0,
+      "generated": 200,
+      "recoverable": 200,
+      "recoverable_pct": 100.0,
+      "seconds": 30.61,
+      "select_all_total": 80,
+      "select_all_unique": 0,
+      "select_all_unique_pct": null,
+      "tamper_rejected": 200,
+      "tamper_rejected_pct": 100.0
+    },
+    "slicing": {
+      "by_type": {
+        "build_slice": 31,
+        "fill_blank": 74,
+        "mcq": 49,
+        "select_all": 34,
+        "write_code": 12
+      },
+      "duplicate_option_pct": 0.0,
+      "duplicate_option_questions": 0,
+      "generated": 200,
+      "recoverable": 200,
+      "recoverable_pct": 100.0,
+      "seconds": 10.85,
+      "select_all_total": 34,
+      "select_all_unique": 0,
+      "select_all_unique_pct": null,
+      "tamper_rejected": 200,
+      "tamper_rejected_pct": 100.0
+    }
+  },
+  "questions_per_module": 200,
+  "totals": {
+    "duplicate_option_pct": 0.0,
+    "duplicate_option_questions": 0,
+    "generated": 1600,
+    "recoverable": 1600,
+    "recoverable_pct": 100.0,
+    "select_all_total": 400,
+    "select_all_unique": 0,
+    "select_all_unique_pct": null,
+    "tamper_rejected": 1600,
+    "tamper_rejected_pct": 100.0
+  }
+}
