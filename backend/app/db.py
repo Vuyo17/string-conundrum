@@ -1,3 +1,4 @@
+import json
 import os
 import threading
 from contextlib import contextmanager
@@ -75,6 +76,22 @@ def _dsn() -> str:
 def _now_iso() -> str:
     """Postgres fills created_at with now(); the JSON fallback has to do it itself."""
     return datetime.now(timezone.utc).isoformat()
+
+
+def _json_param(value):
+    """Undo a caller's json.dumps() so the fallback stores a plain object.
+
+    Callers build params the way a real psycopg2/Postgres jsonb column
+    needs -- json.dumps(section_ids), json.dumps(content) -- so this
+    in-memory store must decode those strings back before storing them,
+    or an isinstance(value, list/dict) check downstream never matches.
+    """
+    if isinstance(value, str):
+        try:
+            return json.loads(value)
+        except (TypeError, ValueError):
+            return value
+    return value
 
 
 def _key(*parts: str) -> str:
@@ -300,6 +317,14 @@ class _LocalCursor:
                  sort_order, published) = params
                 section_ids = ["learn", "examples", "visualize", "practice", "exam"]
                 content = {}
+            # admin_content.py always json.dumps() section_ids/content before
+            # passing them, since that is what a real Postgres jsonb column
+            # needs. This fallback stores plain Python objects, so those
+            # strings must be decoded back first -- otherwise isinstance()
+            # below never matches and every write silently reverts to the
+            # 5-section default, discarding whatever a lecturer actually set.
+            section_ids = _json_param(section_ids)
+            content = _json_param(content)
             existing = state["modules"].get(module_id, {})
             state["modules"][module_id] = {
                 "id": module_id,
@@ -329,6 +354,9 @@ class _LocalCursor:
                  published, archived, module_id) = params
                 section_ids = ["learn", "examples", "visualize", "practice", "exam"]
                 content = {}
+            # See the matching comment in the INSERT INTO modules branch above.
+            section_ids = _json_param(section_ids)
+            content = _json_param(content)
             row = state["modules"].get(module_id)
             if row is not None:
                 row.update({

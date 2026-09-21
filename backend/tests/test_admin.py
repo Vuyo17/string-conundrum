@@ -444,7 +444,6 @@ def test_lecturer_can_edit_module_content_and_custom_section_order(client):
         assert response.status_code == 201
 
         content = {
-            'section_ids': ['learn', 'examples', 'practice', 'exam'],
             'learnSections': [{
                 'id': 'overview',
                 'title': 'Regex overview',
@@ -460,9 +459,14 @@ def test_lecturer_can_edit_module_content_and_custom_section_order(client):
             }],
             'practice': {'moduleTitle': 'Regex Basics', 'exam': {'questionCount': 5, 'balanceTypes': True}},
         }
+        # section_ids is a sibling of content in this payload, matching the
+        # real request shape sent by ContentPanel.jsx / ModulesPanel.jsx --
+        # nesting it inside content (as an earlier version of this test did)
+        # means the route's payload.get('section_ids') never sees it and the
+        # update is silently dropped.
         saved = client.patch(
             '/api/admin/modules/regex-basics/content',
-            json={'content': content},
+            json={'content': content, 'section_ids': ['learn', 'examples', 'practice', 'exam']},
             headers=AUTH_HEADERS,
         )
         assert saved.status_code == 200
@@ -581,7 +585,7 @@ def test_student_catalogue_tracks_dashboard_changes(client):
     make_admin(client, 'catalogue-admin')
     before = client.get('/api/modules').get_json()['modules']
     assert len(before) == 8
-    assert before[0]['section_ids'] == ['learn', 'examples', 'visualize', 'exam']
+    assert before[0]['section_ids'] == ['learn', 'examples', 'visualize', 'practice', 'exam']
     with mock_verified_token('catalogue-admin'):
         response = client.post('/api/admin/modules', json={
             'id': 'recursion', 'title': 'Recursion', 'description': 'Recursive functions',
@@ -599,7 +603,7 @@ def test_student_catalogue_tracks_dashboard_changes(client):
         assert published[0]['title'] == 'Recursion basics'
         assert published[0]['description'] == 'Recursive functions'
         assert published[0]['minutes'] == 25
-        assert published[0]['section_ids'] == ['learn', 'exam']
+        assert published[0]['section_ids'] == ['learn', 'examples', 'visualize', 'practice', 'exam']
         client.patch('/api/admin/modules/recursion', json={'published': False}, headers=AUTH_HEADERS)
         assert 'recursion' not in {m['id'] for m in client.get('/api/modules').get_json()['modules']}
         client.patch('/api/admin/modules/recursion', json={'published': True}, headers=AUTH_HEADERS)
@@ -615,6 +619,12 @@ def test_hiding_all_modules_returns_an_empty_student_catalogue(client):
 
 
 def test_custom_module_completion_matches_student_page(client):
+    # A freshly created module gets the full 5-section flow (learn, examples,
+    # visualize, practice, exam), same as the 8 built-in modules. 'practice'
+    # is deliberately excluded from the *gating* set -- see
+    # admin_content.gating_sections() and frontend/src/utils/moduleSections.js
+    # -- so completing it alone moves the needle but doesn't finish the
+    # module, and it's excluded from the progress_percent denominator too.
     from app.services import admin_content
     admin_content.create_module({'id': 'recursion', 'title': 'Recursion', 'published': True})
     sign_in(client, 'custom-module-student')
@@ -622,8 +632,11 @@ def test_custom_module_completion_matches_student_page(client):
     progress.record_section_completion('custom-module-student', 'recursion', 'practice')
     details = analytics.student_detail('custom-module-student')
     row = next(m for m in details['modules'] if m['module_id'] == 'recursion')
-    assert row['progress_percent'] == 50
+    # Gating set is {learn, examples, visualize, exam}; only 'learn' is done.
+    assert row['progress_percent'] == 25
     assert not row['completed']
+    progress.record_section_completion('custom-module-student', 'recursion', 'examples')
+    progress.record_section_completion('custom-module-student', 'recursion', 'visualize')
     progress.record_section_completion('custom-module-student', 'recursion', 'exam')
     details = analytics.student_detail('custom-module-student')
     row = next(m for m in details['modules'] if m['module_id'] == 'recursion')

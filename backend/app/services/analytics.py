@@ -222,7 +222,7 @@ def _student_row(snap: _Snapshot, user: dict) -> dict:
     completions = snap.completions_by_user.get(uid, [])
     challenges = snap.challenges_by_user.get(uid, [])
 
-    required = {mid: set(admin_content.completion_sections(mid)) for mid in snap.module_order}
+    required = {mid: set(admin_content.gating_sections(mid)) for mid in snap.module_order}
     total_sections = sum(len(ids) for ids in required.values())
     done_sections = len({
         (s["module_id"], s["section_id"]) for s in sections
@@ -320,7 +320,7 @@ def overview(include_guests: bool = False) -> dict:
         m_exams = snap.exams_by_module.get(module_id, [])
         m_sections = snap.sections_by_module.get(module_id, [])
         started = {a["user_id"] for a in m_attempts} | {s["user_id"] for s in m_sections}
-        required = set(admin_content.completion_sections(module_id))
+        required = set(admin_content.gating_sections(module_id))
         gating_by_user = defaultdict(set)
         for s in m_sections:
             if s["section_id"] in required:
@@ -507,7 +507,7 @@ def student_detail(uid: str, include_guests: bool = True) -> dict:
             s["section_id"] for s in snap.sections_by_user.get(uid, ())
             if s["module_id"] == module_id
         }
-        required = set(admin_content.completion_sections(module_id))
+        required = set(admin_content.gating_sections(module_id))
         gating_done = sections & required
         m_attempts = [a for a in attempts if a["module_id"] == module_id]
         graded = [a for a in m_attempts if a["source"] in ("bank", "engine", "exam")]

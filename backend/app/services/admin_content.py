@@ -186,12 +186,32 @@ def get_module(module_id: str):
 
 
 def completion_sections(module_id: str) -> tuple:
+    """The full navigable section flow for a module, in order.
+
+    This includes 'practice' -- it is a real section a student can open and
+    see their own pass/fail on. Do not use this for completion/progress
+    math; see gating_sections() below, which mirrors the frontend's
+    GATING_SECTION_IDS (frontend/src/utils/moduleSections.js).
+    """
     row = get_module(module_id)
     if row and row.get("section_ids"):
         return tuple(row["section_ids"])
     if module_id in {row[0] for row in DEFAULT_MODULES}:
         return tuple(DEFAULT_SECTION_IDS)
     return ("learn", "exam")
+
+
+def gating_sections(module_id: str) -> tuple:
+    """The sections that count toward module completion.
+
+    'practice' is deliberately excluded, matching GATING_SECTION_IDS in
+    frontend/src/utils/moduleSections.js: a module can complete on Learn +
+    Examples + Visualize exposure plus an Exam pass alone, without ever
+    touching Practice. completion_sections() stays the full navigable list
+    (used by routes.py to render the module page); this is the subset used
+    for progress percentages and the "completed" flag.
+    """
+    return tuple(s for s in completion_sections(module_id) if s != "practice")
 
 
 def module_ids() -> list:
