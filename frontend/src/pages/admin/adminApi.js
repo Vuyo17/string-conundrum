@@ -52,6 +52,11 @@ export const adminApi = {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   }),
+  updateModuleContent: (id, body) => request(`/modules/${encodeURIComponent(id)}/content`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  }),
   reorderModules: (order) => request('/modules/reorder', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

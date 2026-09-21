@@ -40,7 +40,7 @@ point is running with no Firebase console access.
 | **Students** | Searchable roster with progress, overall mark and an "at risk" flag. Click a name for a full per-module breakdown, exam history and that student's misconceptions. |
 | **Marks** | One row per student, one column per module, plus practice, exam and overall columns. Exports to CSV. |
 | **Analytics** | Misconceptions ranked by how often they actually fired, and the hardest questions in the bank. |
-| **Modules** | Create, rename, reorder, publish/hide and archive modules. |
+| **Modules** | Create, rename, reorder, publish/hide and archive modules, and author lesson content. |
 | **Content** | Create, edit and delete exercises in any module. |
 
 The dashboard is English-only, unlike the student app. That is deliberate: the
@@ -57,16 +57,16 @@ rendering to machine-translate into.
 |---|---|---|
 | Module title, description, order, visibility | `modules` table | **Yes** |
 | Exercises (prompt, options, answers, explanations, test cases) | `exercises` table (or `app/data/exercises.json` under the fallback) | **Yes** |
-| Lesson prose: learn sections, callouts, worked examples, visualisers | `frontend/src/data/moduleContent/*.js`, compiled into the app bundle | **No** |
+| Lesson prose: Learn sections and supported content blocks | `modules.content` JSON | **Yes** |
+| Worked examples and visualiser configuration | `modules.content` JSON | **Yes**, through the advanced content editor |
 | isiXhosa translations of exercises | `*_xh` columns | **No** — but edits never destroy them |
 
-Lesson content was scoped out rather than forgotten. Moving it into the
-database means a block-structured editor, a migration of eight modules of
-hand-authored content, and reworking the isiXhosa overlay merge in
-`moduleContent/index.js` and the client-side search index — a change to the
-working student experience far larger than the dashboard itself. A module
-created in the dashboard therefore appears to students with its description
-and its exercises, but no lesson pages until content is written for it in code.
+The Modules tab includes a visual editor for Learn sections and common content
+blocks (paragraphs, code examples, callouts and key points). It also keeps an
+advanced JSON editor for worked examples and visualiser configuration. Saved
+content is stored with the module and is used by students immediately; no code
+change is required. A newly created module starts with an empty lesson so the
+lecturer can author it before publishing.
 
 The exercise editor is careful about two things that are easy to get wrong:
 
@@ -177,6 +177,7 @@ students is a convenience, not the access control.
 | GET/POST | `/api/admin/modules` | List / create |
 | PATCH/DELETE | `/api/admin/modules/<id>` | Update / archive |
 | POST | `/api/admin/modules/reorder` | Reorder |
+| PATCH | `/api/admin/modules/<id>/content` | Save lesson content and section order |
 | GET | `/api/admin/modules/<id>/exercises` | List, **including answers** |
 | PUT/DELETE | `/api/admin/modules/<id>/exercises/<qid>` | Save / delete |
 | PATCH | `/api/admin/users/<uid>/role` | Promote or demote |

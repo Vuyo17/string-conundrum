@@ -433,6 +433,45 @@ def test_deleting_a_module_archives_rather_than_destroys(client):
     assert 'formatting' not in [m['id'] for m in listed['modules']]
 
 
+def test_lecturer_can_edit_module_content_and_custom_section_order(client):
+    make_admin(client, 'lecturer-custom-content')
+    with mock_verified_token('lecturer-custom-content', 'lecturer@example.com'):
+        response = client.post(
+            '/api/admin/modules',
+            json={'id': 'regex-basics', 'title': 'Regex Basics', 'published': True},
+            headers=AUTH_HEADERS,
+        )
+        assert response.status_code == 201
+
+        content = {
+            'section_ids': ['learn', 'examples', 'practice', 'exam'],
+            'learnSections': [{
+                'id': 'overview',
+                'title': 'Regex overview',
+                'blocks': [{'kind': 'p', 'text': 'Regex helps find patterns in text.'}],
+            }],
+            'examples': [{
+                'id': 'match',
+                'title': 'Match a date',
+                'intro': 'Use a pattern to match digits.',
+                'code': 'import re\nre.search(r"\\d{4}", "2025")',
+                'string': '2025-06-02',
+                'steps': [{'text': 'Match each year.', 'highlight': [0, 1, 2, 3]}],
+            }],
+            'practice': {'moduleTitle': 'Regex Basics', 'exam': {'questionCount': 5, 'balanceTypes': True}},
+        }
+        saved = client.patch(
+            '/api/admin/modules/regex-basics/content',
+            json={'content': content},
+            headers=AUTH_HEADERS,
+        )
+        assert saved.status_code == 200
+        module = client.get('/api/modules').get_json()['modules']
+        row = next(m for m in module if m['id'] == 'regex-basics')
+        assert row['section_ids'] == ['learn', 'examples', 'practice', 'exam']
+        assert row['content']['learnSections'][0]['title'] == 'Regex overview'
+
+
 # --- exercise management ---------------------------------------------------
 
 @pytest.fixture

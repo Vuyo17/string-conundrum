@@ -147,6 +147,26 @@ def reorder_modules():
     return {"ok": True, "modules": admin_content.reorder_modules(order)}
 
 
+@admin_bp.patch("/modules/<module_id>/content")
+@require_admin
+def update_module_content(module_id: str):
+    payload = request.get_json(silent=True) or {}
+    try:
+        section_ids = payload.get("section_ids")
+        content = payload.get("content")
+        update = {}
+        if section_ids is not None:
+            update["section_ids"] = section_ids
+        if content is not None:
+            update["content"] = content
+        module = admin_content.update_module(module_id, update)
+    except LookupError:
+        return {"ok": False, "error": "no such module"}, 404
+    except ValueError as exc:
+        return {"ok": False, "error": str(exc)}, 400
+    return {"ok": True, "module": module}
+
+
 @admin_bp.delete("/modules/<module_id>")
 @require_admin
 def archive_module(module_id: str):

@@ -4,6 +4,21 @@ import { getModuleContent } from '../data/moduleContent';
 // (Visualize, if the module has one) -> Practice -> (Exam, if configured).
 export const SECTION_IDS = ['learn', 'examples', 'visualize', 'practice', 'exam'];
 
+export function normaliseSectionOrder(sectionIds = SECTION_IDS) {
+  const ordered = Array.isArray(sectionIds) ? sectionIds : SECTION_IDS;
+  const seen = new Set();
+  const result = [];
+  for (const id of ordered) {
+    if (!SECTION_IDS.includes(id) || seen.has(id)) continue;
+    seen.add(id);
+    result.push(id);
+  }
+  for (const id of SECTION_IDS) {
+    if (!seen.has(id)) result.push(id);
+  }
+  return result;
+}
+
 // The sections that count toward module completion (and so toward unlocking
 // the next module / the Challenges gate). Practice is deliberately excluded:
 // it's still a real, navigable section — students can do it and see their own
@@ -16,9 +31,9 @@ const GATING_SECTION_IDS = SECTION_IDS.filter((id) => id !== 'practice');
 export function getModuleSectionIds(moduleId) {
   const content = getModuleContent(moduleId, 'en');
   if (!content) return ['learn', 'exam'];
-  return GATING_SECTION_IDS.filter((id) => {
+  return normaliseSectionOrder(GATING_SECTION_IDS.filter((id) => {
     if (id === 'visualize') return Boolean(content.visualizer);
     if (id === 'exam') return Boolean(content.practice?.exam);
     return true;
-  });
+  }));
 }

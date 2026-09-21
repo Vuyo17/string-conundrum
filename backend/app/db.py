@@ -292,8 +292,14 @@ class _LocalCursor:
             self._rows = list(state["module_section_completions"].values())
 
         elif "INSERT INTO modules" in query:
-            (module_id, title, description, minutes, level, objectives,
-             sort_order, published) = params
+            if len(params) >= 10:
+                (module_id, title, description, minutes, level, objectives,
+                 section_ids, content, sort_order, published) = params
+            else:
+                (module_id, title, description, minutes, level, objectives,
+                 sort_order, published) = params
+                section_ids = ["learn", "examples", "visualize", "practice", "exam"]
+                content = {}
             existing = state["modules"].get(module_id, {})
             state["modules"][module_id] = {
                 "id": module_id,
@@ -302,6 +308,8 @@ class _LocalCursor:
                 "minutes": minutes,
                 "level": level,
                 "objectives": objectives,
+                "section_ids": section_ids if isinstance(section_ids, list) else ["learn", "examples", "visualize", "practice", "exam"],
+                "content": content if isinstance(content, dict) else {},
                 "sort_order": sort_order,
                 "published": bool(published),
                 "archived": existing.get("archived", False),
@@ -311,10 +319,16 @@ class _LocalCursor:
 
         elif "UPDATE modules SET" in query:
             # Params are (title, description, minutes, level, objectives,
-            # sort_order, published, archived, id) -- the same column order
-            # admin_content.update_module builds the statement in.
-            (title, description, minutes, level, objectives, sort_order,
-             published, archived, module_id) = params
+            # section_ids, content, sort_order, published, archived, id) --
+            # the same column order admin_content.update_module builds.
+            if len(params) >= 11:
+                (title, description, minutes, level, objectives,
+                 section_ids, content, sort_order, published, archived, module_id) = params
+            else:
+                (title, description, minutes, level, objectives, sort_order,
+                 published, archived, module_id) = params
+                section_ids = ["learn", "examples", "visualize", "practice", "exam"]
+                content = {}
             row = state["modules"].get(module_id)
             if row is not None:
                 row.update({
@@ -323,6 +337,8 @@ class _LocalCursor:
                     "minutes": minutes,
                     "level": level,
                     "objectives": objectives,
+                    "section_ids": section_ids if isinstance(section_ids, list) else ["learn", "examples", "visualize", "practice", "exam"],
+                    "content": content if isinstance(content, dict) else {},
                     "sort_order": sort_order,
                     "published": bool(published),
                     "archived": bool(archived),

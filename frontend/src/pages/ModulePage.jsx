@@ -45,6 +45,9 @@ export function ModulePage({
   const content = useMemo(() => modulePageContent(moduleMetadata, getModuleContent(moduleId, lang)), [moduleMetadata, moduleId, lang]);
   const [activeSection, setActiveSection] = useState(initialSection ?? 'learn');
   const [visualizerPreset, setVisualizerPreset] = useState(null);
+  const orderedSectionIds = moduleMetadata?.section_ids && Array.isArray(moduleMetadata.section_ids)
+    ? moduleMetadata.section_ids
+    : ['learn', 'examples', 'visualize', 'practice', 'exam'];
   // Bumped each time the Visualize section becomes active, so the visualizer
   // replays on arrival instead of sitting still until a manual trigger
   // (cycle-1 feedback). A counter rather than a boolean: revisiting the
@@ -66,13 +69,16 @@ export function ModulePage({
 
   // Rail sections for THIS module; indices shift up when Visualize/Exam are absent.
   const sections = useMemo(
-    () => ALL_SECTIONS.filter((s) => {
-      if (s.id === 'examples') return Boolean(content?.examples?.length);
-      if (s.id === 'visualize') return Boolean(Visualizer);
-      if (s.id === 'exam') return hasExam;
-      return true;
-    }),
-    [Visualizer, hasExam, content],
+    () => orderedSectionIds
+      .map((id) => ALL_SECTIONS.find((section) => section.id === id))
+      .filter(Boolean)
+      .filter((section) => {
+        if (section.id === 'examples') return Boolean(content?.examples?.length);
+        if (section.id === 'visualize') return Boolean(Visualizer);
+        if (section.id === 'exam') return hasExam;
+        return true;
+      }),
+    [orderedSectionIds, Visualizer, hasExam, content],
   );
 
   // Keep the active section valid (e.g. if Visualize drops out for a module).

@@ -154,6 +154,8 @@ CREATE TABLE IF NOT EXISTS modules (
     minutes INTEGER NOT NULL DEFAULT 20,
     level TEXT,
     objectives JSONB,
+    section_ids JSONB NOT NULL DEFAULT '["learn","examples","visualize","practice","exam"]'::jsonb,
+    content JSONB NOT NULL DEFAULT '{}'::jsonb,
     sort_order INTEGER NOT NULL DEFAULT 0,
     -- Unpublished modules are invisible to students but still editable by the
     -- lecturer, so a module can be built up over several sittings and
@@ -163,6 +165,9 @@ CREATE TABLE IF NOT EXISTS modules (
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+ALTER TABLE modules ADD COLUMN IF NOT EXISTS section_ids JSONB NOT NULL DEFAULT '["learn","examples","visualize","practice","exam"]'::jsonb;
+ALTER TABLE modules ADD COLUMN IF NOT EXISTS content JSONB NOT NULL DEFAULT '{}'::jsonb;
 
 -- Every graded answer, right or wrong.
 --

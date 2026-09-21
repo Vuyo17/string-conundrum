@@ -117,10 +117,11 @@ def submit_exercise():
 @api_bp.get("/modules")
 def list_published_modules():
     """The student catalogue: published modules, in the lecturer's order."""
-    fields = ("id", "title", "description", "minutes", "level", "objectives")
+    fields = ("id", "title", "description", "minutes", "level", "objectives", "content")
     modules = [
         {**{key: row.get(key) for key in fields},
-         "section_ids": admin_content.completion_sections(row["id"])}
+         "section_ids": admin_content.completion_sections(row["id"]),
+         "content": row.get("content") or {}}
         for row in admin_content.list_modules(include_unpublished=False)
     ]
     return {"ok": True, "modules": modules}

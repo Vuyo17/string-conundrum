@@ -43,7 +43,49 @@ DEFAULT_MODULES = [
     ("formatting", "String Formatting", "Format strings in various ways.", 35, "Advanced"),
 ]
 
+DEFAULT_SECTION_IDS = ["learn", "examples", "visualize", "practice", "exam"]
 VALID_EXERCISE_TYPES = {"mcq", "fill_blank", "select_all", "write_code"}
+
+
+def _decode_json_field(value, default=None):
+    if value in (None, ""):
+        return default
+    if isinstance(value, (dict, list)):
+        return value
+    if isinstance(value, str):
+        try:
+            decoded = json.loads(value)
+        except (TypeError, ValueError):
+            return default
+        return decoded if isinstance(decoded, (dict, list)) else default
+    return default
+
+
+def _normalise_section_ids(value):
+    if value is None:
+        return list(DEFAULT_SECTION_IDS)
+    if not isinstance(value, list):
+        raise ValueError("section_ids must be a list of section ids")
+    cleaned = []
+    seen = set()
+    for item in value:
+        section_id = str(item).strip().lower()
+        if section_id not in DEFAULT_SECTION_IDS:
+            raise ValueError("section_ids may only contain: " + ", ".join(DEFAULT_SECTION_IDS))
+        if section_id not in seen:
+            seen.add(section_id)
+            cleaned.append(section_id)
+    if not cleaned:
+        return list(DEFAULT_SECTION_IDS)
+    return cleaned
+
+
+def _normalise_content(value):
+    if value is None:
+        return {}
+    if not isinstance(value, dict):
+        raise ValueError("content must be a JSON object")
+    return value
 
 
 def _default_rows() -> list:
@@ -55,6 +97,8 @@ def _default_rows() -> list:
             "minutes": minutes,
             "level": level,
             "objectives": None,
+            "section_ids": list(DEFAULT_SECTION_IDS),
+            "content": {},
             "sort_order": index,
             "published": True,
             "archived": False,
@@ -70,9 +114,13 @@ def _read_modules() -> list:
     with get_cursor() as cur:
         cur.execute(
             "SELECT id, title, description, minutes, level, objectives, "
-            "sort_order, published, archived, created_at, updated_at FROM modules"
+            "section_ids, content, sort_order, published, archived, "
+            "created_at, updated_at FROM modules"
         )
         rows = [dict(row) for row in cur.fetchall()]
+    for row in rows:
+        row["section_ids"] = _normalise_section_ids(_decode_json_field(row.get("section_ids"), list(DEFAULT_SECTION_IDS)))
+        row["content"] = _decode_json_field(row.get("content"), {})
     return sorted(rows, key=lambda r: (r.get("sort_order") or 0, r["id"]))
 
 
@@ -95,14 +143,17 @@ def _insert_module(row: dict) -> None:
         cur.execute(
             """
             INSERT INTO modules
-                (id, title, description, minutes, level, objectives, sort_order, published)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                (id, title, description, minutes, level, objectives, section_ids, content,
+                 sort_order, published)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (id) DO UPDATE SET
                 title = EXCLUDED.title,
                 description = EXCLUDED.description,
                 minutes = EXCLUDED.minutes,
                 level = EXCLUDED.level,
                 objectives = EXCLUDED.objectives,
+                section_ids = EXCLUDED.section_ids,
+                content = EXCLUDED.content,
                 sort_order = EXCLUDED.sort_order,
                 published = EXCLUDED.published,
                 updated_at = now()
@@ -111,6 +162,8 @@ def _insert_module(row: dict) -> None:
                 row["id"], row["title"], row.get("description"),
                 row.get("minutes") or 20, row.get("level"),
                 json.dumps(row["objectives"]) if row.get("objectives") is not None else None,
+                json.dumps(row.get("section_ids") or list(DEFAULT_SECTION_IDS)),
+                json.dumps(row.get("content") or {}),
                 row.get("sort_order") or 0,
                 bool(row.get("published", True)),
             ),
@@ -133,10 +186,11 @@ def get_module(module_id: str):
 
 
 def completion_sections(module_id: str) -> tuple:
-    # Bundled lessons include examples and a visualizer. Lecturer-created
-    # modules have a description (Learn), bank practice, and an Exam.
+    row = get_module(module_id)
+    if row and row.get("section_ids"):
+        return tuple(row["section_ids"])
     if module_id in {row[0] for row in DEFAULT_MODULES}:
-        return ("learn", "examples", "visualize", "exam")
+        return tuple(DEFAULT_SECTION_IDS)
     return ("learn", "exam")
 
 
@@ -164,6 +218,8 @@ def create_module(payload: dict) -> dict:
         "minutes": int(payload.get("minutes") or 20),
         "level": (payload.get("level") or "").strip() or None,
         "objectives": payload.get("objectives") or None,
+        "section_ids": _normalise_section_ids(payload.get("section_ids", list(DEFAULT_SECTION_IDS))),
+        "content": _normalise_content(payload.get("content", {})),
         # New modules go to the end of the sequence by default.
         "sort_order": len(existing),
         # ...and start unpublished, so students do not see an empty module the
@@ -181,13 +237,20 @@ def update_module(module_id: str, payload: dict) -> dict:
         raise LookupError(module_id)
 
     merged = {**current, **{k: v for k, v in payload.items() if k != "id"}}
+    if "section_ids" in payload:
+        merged["section_ids"] = _normalise_section_ids(payload.get("section_ids"))
+    if "content" in payload:
+        merged["content"] = _normalise_content(payload.get("content"))
     objectives = merged.get("objectives")
+    section_ids = merged.get("section_ids") or list(DEFAULT_SECTION_IDS)
+    content = merged.get("content") or {}
     with get_cursor() as cur:
         cur.execute(
             """
             UPDATE modules SET
                 title = %s, description = %s, minutes = %s, level = %s,
-                objectives = %s, sort_order = %s, published = %s, archived = %s,
+                objectives = %s, section_ids = %s, content = %s,
+                sort_order = %s, published = %s, archived = %s,
                 updated_at = now()
             WHERE id = %s
             """,
@@ -195,6 +258,8 @@ def update_module(module_id: str, payload: dict) -> dict:
                 merged.get("title"), merged.get("description"),
                 int(merged.get("minutes") or 20), merged.get("level"),
                 json.dumps(objectives) if objectives is not None else None,
+                json.dumps(section_ids),
+                json.dumps(content),
                 int(merged.get("sort_order") or 0),
                 bool(merged.get("published", True)),
                 bool(merged.get("archived", False)),

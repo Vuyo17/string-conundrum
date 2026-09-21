@@ -15,20 +15,31 @@ export function localiseModules(modules, t, defaults) {
 
 export function modulePageContent(module, bundled) {
   if (!module) return bundled;
-  const content = bundled ?? {
-    id: module.id,
-    outcomes: Array.isArray(module.objectives) ? module.objectives : [],
-    learnSections: module.description ? [{
-      id: 'overview', title: module.title,
-      blocks: [{ kind: 'p', text: module.description }],
-    }] : [],
-    examples: [],
-    visualizer: null,
-    practice: { apiModuleId: module.id, exam: { questionCount: 10, balanceTypes: true } },
-  };
+  const baseContent = module.content && Object.keys(module.content).length
+    ? module.content
+    : bundled ?? {
+      id: module.id,
+      outcomes: Array.isArray(module.objectives) ? module.objectives : [],
+      learnSections: module.description ? [{
+        id: 'overview', title: module.title,
+        blocks: [{ kind: 'p', text: module.description }],
+      }] : [],
+      examples: [],
+      visualizer: null,
+      practice: { apiModuleId: module.id, exam: { questionCount: 10, balanceTypes: true } },
+    };
+  const content = { ...baseContent };
+  if (!content.outcomes && Array.isArray(module.objectives)) content.outcomes = module.objectives;
+  if (!content.learnSections && module.description) {
+    content.learnSections = [{ id: 'overview', title: module.title, blocks: [{ kind: 'p', text: module.description }] }];
+  }
+  if (!content.practice) content.practice = { apiModuleId: module.id, exam: { questionCount: 10, balanceTypes: true } };
   return {
-    ...content, title: module.title, minutes: module.minutes, level: module.level,
-    practice: { ...content.practice, moduleTitle: module.title },
+    ...content,
+    title: module.title,
+    minutes: module.minutes,
+    level: module.level,
+    practice: { ...content.practice, apiModuleId: module.id, moduleTitle: module.title },
   };
 }
 
