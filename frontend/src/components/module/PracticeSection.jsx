@@ -17,7 +17,7 @@ import {
 
 // A practice run is recorded once a student clears this bar in one sitting.
 // Practice is no longer part of the module-completion gate (see
-// getModuleSectionIds in utils/moduleSections.js) — this only drives
+// gatingSections in utils/moduleCatalog.js) — this only drives
 // Practice's own pass/fail display and stats, not module unlocking.
 const PASS_THRESHOLD = 70;
 

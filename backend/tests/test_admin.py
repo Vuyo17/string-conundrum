@@ -618,31 +618,80 @@ def test_hiding_all_modules_returns_an_empty_student_catalogue(client):
     assert client.get('/api/modules').get_json()['modules'] == []
 
 
-def test_custom_module_completion_matches_student_page(client):
-    # A freshly created module gets the full 5-section flow (learn, examples,
-    # visualize, practice, exam), same as the 8 built-in modules. 'practice'
-    # is deliberately excluded from the *gating* set -- see
-    # admin_content.gating_sections() and frontend/src/utils/moduleSections.js
-    # -- so completing it alone moves the needle but doesn't finish the
-    # module, and it's excluded from the progress_percent denominator too.
+def _recursion_row(uid):
+    details = analytics.student_detail(uid)
+    return details, next(m for m in details['modules'] if m['module_id'] == 'recursion')
+
+
+def test_custom_module_completion_matches_student_page(client, scratch_bank):
+    # Mirrors availableSections() in frontend/src/utils/moduleCatalog.js: a
+    # new module has no worked examples or visualizer, so its page shows only
+    # Learn, Practice and (once it has questions) Exam. Requiring a section
+    # the page never shows would make the module impossible to finish.
     from app.services import admin_content
     admin_content.create_module({'id': 'recursion', 'title': 'Recursion', 'published': True})
     sign_in(client, 'custom-module-student')
-    progress.record_section_completion('custom-module-student', 'recursion', 'learn')
+
     progress.record_section_completion('custom-module-student', 'recursion', 'practice')
-    details = analytics.student_detail('custom-module-student')
-    row = next(m for m in details['modules'] if m['module_id'] == 'recursion')
-    # Gating set is {learn, examples, visualize, exam}; only 'learn' is done.
-    assert row['progress_percent'] == 25
-    assert not row['completed']
-    progress.record_section_completion('custom-module-student', 'recursion', 'examples')
-    progress.record_section_completion('custom-module-student', 'recursion', 'visualize')
-    progress.record_section_completion('custom-module-student', 'recursion', 'exam')
-    details = analytics.student_detail('custom-module-student')
-    row = next(m for m in details['modules'] if m['module_id'] == 'recursion')
-    assert row['progress_percent'] == 100
+    _, row = _recursion_row('custom-module-student')
+    assert row['progress_percent'] == 0
+
+    # No questions yet: there is no Exam to sit, so Learn alone completes it.
+    progress.record_section_completion('custom-module-student', 'recursion', 'learn')
+    details, row = _recursion_row('custom-module-student')
     assert row['completed']
     assert details['student']['modules_completed'] == 1
-    summary = analytics.overview()
-    module = next(m for m in summary['modules'] if m['module_id'] == 'recursion')
+
+    # Once the lecturer adds a question, the Exam counts too.
+    scratch_bank.append(('recursion', 'rec-01'))
+    admin_content.save_exercise('recursion', 'rec-01', {
+        'type': 'mcq', 'prompt': 'Does a recursive function call itself?',
+        'options': ['Yes', 'No'], 'answer': 'Yes',
+    })
+    _, row = _recursion_row('custom-module-student')
+    assert row['progress_percent'] == 50
+    assert not row['completed']
+
+    progress.record_section_completion('custom-module-student', 'recursion', 'exam')
+    _, row = _recursion_row('custom-module-student')
+    assert row['progress_percent'] == 100
+    assert row['completed']
+    module = next(m for m in analytics.overview()['modules'] if m['module_id'] == 'recursion')
     assert module['students_completed'] == 1
+
+
+def test_lecturer_content_decides_which_sections_are_required(client):
+    from app.services import admin_content
+
+    row = {'id': 'recursion', 'section_ids': admin_content.DEFAULT_SECTION_IDS, 'content': {
+        'learnSections': [{'id': 'a', 'blocks': []}],
+        'examples': [{'id': 'e1', 'steps': [{'text': 'step'}]}, {'id': 'no-steps'}],
+        'visualizer': {'type': 'indexing'},
+    }}
+    assert admin_content.gating_sections(row, 3) == ('learn', 'examples', 'visualize', 'exam')
+
+    row['content'] = {'examples': [{'id': 'no-steps'}], 'visualizer': {'type': 'unknown'},
+                      'practice': {'questionCount': 5}}
+    assert admin_content.gating_sections(row, 3) == ('learn',)
+
+    # The lecturer's section order is kept.
+    row = {'id': 'recursion', 'section_ids': ['exam', 'practice', 'learn'], 'content': {}}
+    assert admin_content.available_sections(row, 1) == ('exam', 'practice', 'learn')
+
+
+def test_built_in_modules_without_a_visualizer_do_not_require_one(client):
+    from app.services import admin_content
+
+    by_id = {m['id']: m for m in admin_content.list_modules()}
+    assert 'visualize' not in admin_content.gating_sections(by_id['comparison'], 10)
+    assert admin_content.gating_sections(by_id['indexing'], 10) == (
+        'learn', 'examples', 'visualize', 'exam')
+
+
+def test_student_catalogue_reports_question_counts(client, scratch_bank):
+    from app.services import admin_content
+
+    admin_content.create_module({'id': 'recursion', 'title': 'Recursion', 'published': True})
+    modules = {m['id']: m for m in client.get('/api/modules').get_json()['modules']}
+    assert modules['recursion']['question_count'] == 0
+    assert modules['intro']['question_count'] > 0

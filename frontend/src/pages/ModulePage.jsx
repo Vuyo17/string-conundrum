@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import m from '../styles/ModulePage.module.css';
 import { getModuleContent } from '../data/moduleContent';
-import { modulePageContent } from '../utils/moduleCatalog';
+import { availableSections, modulePageContent } from '../utils/moduleCatalog';
 import { useLanguage } from '../context/LanguageContext';
 import { markSectionComplete } from '../api';
 import { ContentBlocks } from '../components/module/ContentBlocks';
@@ -38,16 +38,52 @@ const EXPOSURE_SECTIONS = new Set(['learn', 'examples', 'visualize']);
 // find those results still there when they come back.
 const HIDDEN = { display: 'none' };
 
-export function ModulePage({
+// Lecturer-authored content reaches this page unvetted, so a render failure is
+// contained to the module instead of unmounting the whole app. Keyed by module
+// in Modules.jsx, so opening another module starts from a clean boundary.
+class ModuleErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { failed: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  render() {
+    return this.state.failed ? <MissingModule onBack={this.props.onBack} /> : this.props.children;
+  }
+}
+
+function MissingModule({ onBack }) {
+  const { t } = useLanguage();
+  return (
+    <div className={m.missing}>
+      <h2>{t('modulePage.missingTitle')}</h2>
+      <p>{t('modulePage.missingBlurb')}</p>
+      <button type="button" className={m.solidButton} onClick={onBack}>
+        <ArrowLeft size={15} /> {t('modulePage.backToModules')}
+      </button>
+    </div>
+  );
+}
+
+export function ModulePage(props) {
+  return (
+    <ModuleErrorBoundary onBack={props.onBack}>
+      <ModulePageContent {...props} />
+    </ModuleErrorBoundary>
+  );
+}
+
+function ModulePageContent({
   moduleId, moduleMetadata, moduleNumber, onBack, initialSection, anchor, entryKey, onProgressChange,
 }) {
   const { lang, t } = useLanguage();
   const content = useMemo(() => modulePageContent(moduleMetadata, getModuleContent(moduleId, lang)), [moduleMetadata, moduleId, lang]);
   const [activeSection, setActiveSection] = useState(initialSection ?? 'learn');
   const [visualizerPreset, setVisualizerPreset] = useState(null);
-  const orderedSectionIds = moduleMetadata?.section_ids && Array.isArray(moduleMetadata.section_ids)
-    ? moduleMetadata.section_ids
-    : ['learn', 'examples', 'visualize', 'practice', 'exam'];
   // Bumped each time the Visualize section becomes active, so the visualizer
   // replays on arrival instead of sitting still until a manual trigger
   // (cycle-1 feedback). A counter rather than a boolean: revisiting the
@@ -65,21 +101,15 @@ export function ModulePage({
     () => (content?.visualizer ? getVisualizer(content.visualizer.type) : null),
     [content],
   );
-  const hasExam = Boolean(content?.practice?.exam);
 
-  // Rail sections for THIS module; indices shift up when Visualize/Exam are absent.
+  // Rail sections for THIS module, from the same rule that decides module
+  // completion, so a student can always reach every section it requires.
   const sections = useMemo(
-    () => orderedSectionIds
-      .map((id) => ALL_SECTIONS.find((section) => section.id === id))
-      .filter(Boolean)
-      .filter((section) => {
-        if (section.id === 'examples') return Boolean(content?.examples?.length);
-        if (section.id === 'visualize') return Boolean(Visualizer);
-        if (section.id === 'exam') return hasExam;
-        return true;
-      }),
-    [orderedSectionIds, Visualizer, hasExam, content],
+    () => (content ? availableSections(moduleMetadata, content) : [])
+      .map((id) => ALL_SECTIONS.find((section) => section.id === id)),
+    [moduleMetadata, content],
   );
+  const hasExam = sections.some((section) => section.id === 'exam');
 
   // Keep the active section valid (e.g. if Visualize drops out for a module).
   const activeIndex = Math.max(0, sections.findIndex((s) => s.id === activeSection));
@@ -122,17 +152,7 @@ export function ModulePage({
     topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [activeSection, entryKey]);
 
-  if (!content) {
-    return (
-      <div className={m.missing}>
-        <h2>{t('modulePage.missingTitle')}</h2>
-        <p>{t('modulePage.missingBlurb')}</p>
-        <button type="button" className={m.solidButton} onClick={onBack}>
-          <ArrowLeft size={15} /> {t('modulePage.backToModules')}
-        </button>
-      </div>
-    );
-  }
+  if (!content) return <MissingModule onBack={onBack} />;
 
   const goTo = (id) => setActiveSection(id);
 

@@ -46,6 +46,13 @@ DEFAULT_MODULES = [
 DEFAULT_SECTION_IDS = ["learn", "examples", "visualize", "practice", "exam"]
 VALID_EXERCISE_TYPES = {"mcq", "fill_blank", "select_all", "write_code"}
 
+# Mirrors frontend/src/components/module/visualizers/types.js.
+VISUALIZER_TYPES = {"indexing", "slicing"}
+# Built-in lessons are bundled in frontend/src/data/moduleContent/*.js, which
+# the server cannot read. All eight have worked examples and an exam; these
+# are the ones whose bundled lesson has `visualizer: null`.
+BUNDLED_WITHOUT_VISUALIZER = {"comparison", "methods", "formatting"}
+
 
 def _decode_json_field(value, default=None):
     if value in (None, ""):
@@ -185,33 +192,54 @@ def get_module(module_id: str):
     return None
 
 
-def completion_sections(module_id: str) -> tuple:
-    """The full navigable section flow for a module, in order.
+def available_sections(row: dict, question_count: int) -> tuple:
+    """The sections a student actually sees for this module, in order.
 
-    This includes 'practice' -- it is a real section a student can open and
-    see their own pass/fail on. Do not use this for completion/progress
-    math; see gating_sections() below, which mirrors the frontend's
-    GATING_SECTION_IDS (frontend/src/utils/moduleSections.js).
+    Mirrors availableSections() in frontend/src/utils/moduleCatalog.js, which
+    builds the module page's rail: Examples and Visualize exist only when the
+    lesson has them, and the Exam only once the module has questions. A
+    section the page never shows must never be required for completion, or
+    the module -- and every module after it -- can never be finished.
     """
-    row = get_module(module_id)
-    if row and row.get("section_ids"):
-        return tuple(row["section_ids"])
-    if module_id in {row[0] for row in DEFAULT_MODULES}:
-        return tuple(DEFAULT_SECTION_IDS)
-    return ("learn", "exam")
+    content = row.get("content") or {}
+    if content:
+        examples = content.get("examples")
+        has_examples = isinstance(examples, list) and any(
+            isinstance(e, dict) and isinstance(e.get("steps"), list) and e["steps"]
+            for e in examples
+        )
+        visualizer = content.get("visualizer")
+        has_visualizer = isinstance(visualizer, dict) and visualizer.get("type") in VISUALIZER_TYPES
+        practice = content.get("practice")
+        has_exam = bool(practice.get("exam")) if isinstance(practice, dict) else True
+    elif row["id"] in {m[0] for m in DEFAULT_MODULES}:
+        has_examples = True
+        has_visualizer = row["id"] not in BUNDLED_WITHOUT_VISUALIZER
+        has_exam = True
+    else:
+        has_examples = has_visualizer = False
+        has_exam = True
+
+    available = {
+        "learn": True,
+        "examples": has_examples,
+        "visualize": has_visualizer,
+        "practice": True,
+        "exam": has_exam and question_count > 0,
+    }
+    order = row.get("section_ids") or DEFAULT_SECTION_IDS
+    sections = tuple(dict.fromkeys(s for s in order if available.get(s)))
+    return sections or ("learn",)
 
 
-def gating_sections(module_id: str) -> tuple:
+def gating_sections(row: dict, question_count: int) -> tuple:
     """The sections that count toward module completion.
 
-    'practice' is deliberately excluded, matching GATING_SECTION_IDS in
-    frontend/src/utils/moduleSections.js: a module can complete on Learn +
-    Examples + Visualize exposure plus an Exam pass alone, without ever
-    touching Practice. completion_sections() stays the full navigable list
-    (used by routes.py to render the module page); this is the subset used
-    for progress percentages and the "completed" flag.
+    'practice' is deliberately excluded, matching gatingSections() in
+    frontend/src/utils/moduleCatalog.js: a module completes on exposure to its
+    lesson sections plus an Exam pass, without ever touching Practice.
     """
-    return tuple(s for s in completion_sections(module_id) if s != "practice")
+    return tuple(s for s in available_sections(row, question_count) if s != "practice")
 
 
 def module_ids() -> list:
@@ -360,6 +388,19 @@ def list_exercises(module_id: str) -> list:
             (module_id,),
         )
         return [dict(row) for row in cur.fetchall()]
+
+
+def exercise_counts() -> dict:
+    """How many questions each module's bank holds, keyed by module id."""
+    if use_local_fallback():
+        counts = {}
+        for row in _load_json_bank():
+            counts[row.get("module_id")] = counts.get(row.get("module_id"), 0) + 1
+        return counts
+
+    with get_cursor() as cur:
+        cur.execute("SELECT module_id, COUNT(*) AS n FROM exercises GROUP BY module_id")
+        return {row["module_id"]: row["n"] for row in cur.fetchall()}
 
 
 def _as_int(value, default):

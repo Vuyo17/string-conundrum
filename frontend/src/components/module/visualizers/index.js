@@ -5,7 +5,8 @@
 // Set `visualizer: null` in a content file to omit the Visualize section.
 //
 // To add a visualizer for a new module, create the component in this folder
-// and register it here — the ModulePage picks it up by type.
+// and register it here — the ModulePage picks it up by type. Also add the
+// type to ./types.js, which decides whether the Visualize section exists.
 
 import { IndexingVisualizer } from './IndexingVisualizer';
 import { SlicingVisualizer } from './SlicingVisualizer';

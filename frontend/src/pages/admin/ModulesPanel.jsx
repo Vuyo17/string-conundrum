@@ -6,12 +6,22 @@ import s from './Admin.module.css';
 import { adminApi } from './adminApi';
 import { Card, ErrorNote } from './AdminUI';
 import { useModuleCatalog } from '../../context/ModuleCatalogContext';
+import { getModuleContent } from '../../data/moduleContent';
 
 const BLANK = { id: '', title: '', description: '', minutes: 20, level: 'Beginner' };
 const SECTION_LABELS = {
   learn: 'Learn', examples: 'Examples', visualize: 'Visualize', practice: 'Practice', exam: 'Exam',
 };
 const DEFAULT_SECTION_IDS = Object.keys(SECTION_LABELS);
+
+// The one field each block kind renders from (see ContentBlock in
+// components/module/ContentBlocks.jsx).
+const blockField = (kind) => (kind === 'code' ? 'code' : kind === 'keypoints' ? 'items' : 'text');
+
+function blockText(block) {
+  const value = block[blockField(block.kind)] ?? block.text ?? block.code ?? block.items ?? '';
+  return Array.isArray(value) ? value.join('\n') : String(value);
+}
 
 export function ModulesPanel() {
   const { refresh: refreshCatalog } = useModuleCatalog();
@@ -153,6 +163,28 @@ export function ModulesPanel() {
             blocks: (section.blocks ?? []).map((block, currentIndex) => (
               currentIndex === blockIndex ? { ...block, [field]: value } : block
             )),
+          }
+          : section
+      )),
+    }));
+  }
+
+  // A type change rewrites the block rather than merging into it, carrying the
+  // text across; merging left the old field behind and the editor kept
+  // showing it, so typing into a block switched to Code appeared to do nothing.
+  function changeLearnBlockKind(sectionIndex, blockIndex, kind) {
+    updateContentObject((content) => ({
+      ...content,
+      learnSections: (content.learnSections ?? []).map((section, index) => (
+        index === sectionIndex
+          ? {
+            ...section,
+            blocks: (section.blocks ?? []).map((block, currentIndex) => {
+              if (currentIndex !== blockIndex) return block;
+              const text = blockText(block);
+              const field = blockField(kind);
+              return { kind, [field]: field === 'items' ? text.split('\n') : text };
+            }),
           }
           : section
       )),
@@ -367,9 +399,15 @@ export function ModulesPanel() {
                       <span className={`${s.badge} ${module.published ? s.badgeGood : s.badgeMuted}`}>
                         {module.published ? 'Published' : 'Hidden'}
                       </span>
-                      <span className={`${s.badge} ${module.content && Object.keys(module.content).length ? s.badgeGood : s.badgeMuted}`}>
-                        {module.content && Object.keys(module.content).length ? 'Lesson ready' : 'No lesson content'}
-                      </span>
+                      <LessonBadge module={module} />
+                      {module.question_count === 0 && (
+                        <span
+                          className={`${s.badge} ${s.badgeRisk}`}
+                          title="Practice and Exam stay empty until you add questions in the Content tab. Until then, students complete this module from its lesson alone."
+                        >
+                          No questions
+                        </span>
+                      )}
                     </div>
                     <div className={s.moduleMeta}>
                       <code>{module.id}</code>
@@ -465,7 +503,7 @@ export function ModulesPanel() {
                     <select
                       className={s.select}
                       value={block.kind ?? 'p'}
-                      onChange={(event) => updateLearnBlock(sectionIndex, blockIndex, 'kind', event.target.value)}
+                      onChange={(event) => changeLearnBlockKind(sectionIndex, blockIndex, event.target.value)}
                       aria-label="Content block type"
                     >
                       <option value="p">Paragraph</option>
@@ -476,9 +514,9 @@ export function ModulesPanel() {
                     <textarea
                       className={s.textarea}
                       rows={3}
-                      value={block.text ?? block.code ?? (block.items ?? []).join('\n')}
+                      value={blockText(block)}
                       onChange={(event) => {
-                        const field = block.kind === 'code' ? 'code' : block.kind === 'keypoints' ? 'items' : 'text';
+                        const field = blockField(block.kind);
                         const value = field === 'items' ? event.target.value.split('\n') : event.target.value;
                         updateLearnBlock(sectionIndex, blockIndex, field, value);
                       }}
@@ -513,4 +551,14 @@ export function ModulesPanel() {
       </Card>
     </div>
   );
+}
+
+function LessonBadge({ module }) {
+  if (module.content && Object.keys(module.content).length) {
+    return <span className={`${s.badge} ${s.badgeGood}`}>Lesson ready</span>;
+  }
+  if (getModuleContent(module.id)) {
+    return <span className={`${s.badge} ${s.badgeGood}`}>Built-in lesson</span>;
+  }
+  return <span className={`${s.badge} ${s.badgeMuted}`}>No lesson content</span>;
 }

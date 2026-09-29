@@ -194,14 +194,13 @@ class _Snapshot:
         self.modules = admin_content.list_modules()
         self.module_titles = {m["id"]: m["title"] for m in self.modules}
         self.module_order = [m["id"] for m in self.modules]
-        # gating_sections() re-reads the modules table on every call. Computed
-        # once per module here rather than once per (student, module) pair in
-        # _student_row -- for a full class that was hundreds of redundant
-        # round trips (41 students x 9 modules) to open a fresh connection and
-        # re-fetch data this snapshot already has, measured at several seconds
-        # on the deployed dashboard.
+        # Computed once per snapshot, never per (student, module) pair: every
+        # per-student figure reads it, and recomputing it per student used to
+        # cost a database round trip each time -- several seconds per page.
+        counts = admin_content.exercise_counts()
         self.required_sections = {
-            mid: set(admin_content.gating_sections(mid)) for mid in self.module_order
+            m["id"]: set(admin_content.gating_sections(m, counts.get(m["id"], 0)))
+            for m in self.modules
         }
 
     @staticmethod

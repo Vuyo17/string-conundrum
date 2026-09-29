@@ -1,10 +1,13 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { apiFetch } from '../api';
 import { getApiUrl } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import { useModuleCatalog } from '../context/ModuleCatalogContext';
-import { moduleProgress } from '../utils/moduleCatalog';
-import { getModuleSectionIds } from '../utils/moduleSections';
+import { getModuleContent } from '../data/moduleContent';
+import { modulePageContent, moduleProgress } from '../utils/moduleCatalog';
+
+// Content shape doesn't vary by language, so 'en' is always safe here.
+const contentFor = (module) => modulePageContent(module, getModuleContent(module.id, 'en'));
 
 // Real per-module section progress for the signed-in user, backing sequential
 // module unlocking, the module card's progress bar, and the Challenges gate.
@@ -59,7 +62,10 @@ export function useProgress() {
     refresh();
   }, [refresh]);
 
-  const byModuleId = moduleProgress(modules, sectionsByModule, getModuleSectionIds);
+  const byModuleId = useMemo(
+    () => moduleProgress(modules, sectionsByModule, contentFor),
+    [modules, sectionsByModule],
+  );
 
   const allCompleted = bypassUnlocks
     || (modules.length > 0 && modules.every((mod) => byModuleId[mod.id]?.completed));

@@ -110,7 +110,12 @@ def questions():
 @admin_bp.get("/modules")
 @require_admin
 def list_modules():
-    return {"ok": True, "modules": admin_content.list_modules()}
+    counts = admin_content.exercise_counts()
+    modules = [
+        {**row, "question_count": counts.get(row["id"], 0)}
+        for row in admin_content.list_modules()
+    ]
+    return {"ok": True, "modules": modules}
 
 
 @admin_bp.post("/modules")

@@ -118,10 +118,12 @@ def submit_exercise():
 def list_published_modules():
     """The student catalogue: published modules, in the lecturer's order."""
     fields = ("id", "title", "description", "minutes", "level", "objectives", "content")
+    counts = admin_content.exercise_counts()
     modules = [
         {**{key: row.get(key) for key in fields},
-         "section_ids": admin_content.completion_sections(row["id"]),
-         "content": row.get("content") or {}}
+         "section_ids": list(row.get("section_ids") or admin_content.DEFAULT_SECTION_IDS),
+         "content": row.get("content") or {},
+         "question_count": counts.get(row["id"], 0)}
         for row in admin_content.list_modules(include_unpublished=False)
     ]
     return {"ok": True, "modules": modules}
