@@ -4,11 +4,6 @@ import s from './Admin.module.css';
 import { adminApi } from './adminApi';
 import { Card, Empty, ErrorNote } from './AdminUI';
 
-const SECTION_LABELS = {
-  learn: 'Learn', examples: 'Examples', visualize: 'Visualize', practice: 'Practice', exam: 'Exam',
-};
-const DEFAULT_SECTION_IDS = Object.keys(SECTION_LABELS);
-
 const TYPES = [
   { value: 'mcq', label: 'Multiple choice', hint: 'One correct option.' },
   { value: 'select_all', label: 'Select all that apply', hint: 'Several correct options.' },
@@ -42,9 +37,6 @@ export function ContentPanel() {
   const [error, setError] = useState(null);
   const [saved, setSaved] = useState('');
   const [busy, setBusy] = useState(false);
-  const [lessonText, setLessonText] = useState('{}');
-  const [sectionIds, setSectionIds] = useState(DEFAULT_SECTION_IDS);
-  const [lessonSaved, setLessonSaved] = useState('');
 
   useEffect(() => {
     adminApi.modules()
@@ -67,49 +59,6 @@ export function ContentPanel() {
     setDraft(null);
     loadExercises();
   }, [loadExercises]);
-
-  useEffect(() => {
-    const module = modules.find((item) => item.id === moduleId);
-    if (!module) return;
-    setLessonText(JSON.stringify(module.content ?? {}, null, 2));
-    setSectionIds(module.section_ids?.length ? module.section_ids : DEFAULT_SECTION_IDS);
-    setLessonSaved('');
-  }, [moduleId, modules]);
-
-  async function saveLesson(event) {
-    event.preventDefault();
-    let content;
-    try {
-      content = JSON.parse(lessonText);
-    } catch {
-      setError(new Error('Lesson content must be valid JSON.'));
-      return;
-    }
-    if (!content || Array.isArray(content)) {
-      setError(new Error('Lesson content must be a JSON object.'));
-      return;
-    }
-    setBusy(true);
-    setError(null);
-    try {
-      await adminApi.updateModuleContent(moduleId, { content, section_ids: sectionIds });
-      setLessonSaved('Lesson content and section order saved.');
-      const payload = await adminApi.modules();
-      setModules(payload.modules);
-    } catch (err) {
-      setError(err);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  function moveSection(index, direction) {
-    const target = index + direction;
-    if (target < 0 || target >= sectionIds.length) return;
-    const next = sectionIds.slice();
-    [next[index], next[target]] = [next[target], next[index]];
-    setSectionIds(next);
-  }
 
   function openExercise(exercise) {
     setSaved('');
@@ -198,8 +147,8 @@ export function ContentPanel() {
   return (
     <div className={s.wrap}>
       <div className={s.notice}>
-        <strong>Module content and exercises.</strong> Add lesson content for
-        students as well as the questions they answer in Practice and Exam.
+        <strong>Module questions.</strong> Add and edit the questions students
+        answer in Practice and Exam. Lesson content is edited in the Modules tab.
         Changes take effect immediately for students loading a module next.
       </div>
 
@@ -224,41 +173,6 @@ export function ContentPanel() {
 
       {error && <ErrorNote error={error} />}
       {saved && <div className={s.success}>{saved}</div>}
-
-      <Card title="Lesson content" subtitle="Write lesson content and choose the order students follow.">
-        <form onSubmit={saveLesson}>
-          <div className={s.field}>
-            <span className={s.fieldLabel}>Student section order</span>
-            <div className={s.list}>
-              {sectionIds.map((sectionId, index) => (
-                <div key={sectionId} className={s.moduleRow}>
-                  <span>{SECTION_LABELS[sectionId]}</span>
-                  <div className={s.moduleActions}>
-                    <button type="button" className={`${s.btn} ${s.btnGhost} ${s.btnSmall}`} onClick={() => moveSection(index, -1)} disabled={index === 0}>Move up</button>
-                    <button type="button" className={`${s.btn} ${s.btnGhost} ${s.btnSmall}`} onClick={() => moveSection(index, 1)} disabled={index === sectionIds.length - 1}>Move down</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className={s.field}>
-            <label className={s.fieldLabel} htmlFor="lesson-content-json">Lesson content</label>
-            <textarea
-              id="lesson-content-json"
-              className={s.textarea}
-              rows={16}
-              value={lessonText}
-              onChange={(event) => setLessonText(event.target.value)}
-              spellCheck="false"
-            />
-            <p className={s.fieldHint}>Add learnSections, examples, visualizer, and practice content as JSON. No code change is needed.</p>
-          </div>
-          {lessonSaved && <div className={s.success}>{lessonSaved}</div>}
-          <button type="submit" className={s.btn} disabled={busy || !moduleId}>
-            <Save size={14} /> Save lesson content
-          </button>
-        </form>
-      </Card>
 
       <div className={s.editorLayout}>
         <Card title="Questions">

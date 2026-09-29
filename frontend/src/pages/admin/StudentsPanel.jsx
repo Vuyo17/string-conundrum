@@ -3,7 +3,7 @@ import { ArrowLeft, Search } from 'lucide-react';
 import s from './Admin.module.css';
 import { adminApi } from './adminApi';
 import {
-  Card, Empty, ErrorNote, MarkBadge, Meter, RiskBadge, StatTile,
+  Card, Empty, ErrorNote, MarkBadge, Meter, StatTile,
   fmtNumber, fmtPercent, fmtWhen, NO_DATA,
 } from './AdminUI';
 
@@ -117,7 +117,6 @@ function StudentList({ onOpenStudent }) {
                   <th className={s.num}>Answers</th>
                   <th className={s.num}>Stars</th>
                   <th>Last active</th>
-                  <th>Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -140,7 +139,6 @@ function StudentList({ onOpenStudent }) {
                     <td className={s.num}>{fmtNumber(row.attempts)}</td>
                     <td className={s.num}>{fmtNumber(row.stars)}</td>
                     <td className={s.muted}>{fmtWhen(row.last_active)}</td>
-                    <td><RiskBadge reasons={row.risk_reasons} /></td>
                   </tr>
                 ))}
               </tbody>

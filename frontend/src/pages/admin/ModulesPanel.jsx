@@ -23,6 +23,25 @@ function blockText(block) {
   return Array.isArray(value) ? value.join('\n') : String(value);
 }
 
+const FORM_BLOCK_KINDS = ['p', 'code', 'callout', 'keypoints'];
+
+const hasSavedLesson = (module) => Boolean(module?.content && Object.keys(module.content).length);
+
+// The lesson students currently see, so the editor opens on it rather than on
+// a blank page: saved content, else the built-in lesson, else the lesson the
+// student page builds from the description.
+function currentLesson(module) {
+  if (hasSavedLesson(module)) return module.content;
+  const bundled = getModuleContent(module.id, 'en');
+  if (bundled) return bundled;
+  if (!module.description) return {};
+  return {
+    learnSections: [{
+      id: 'overview', title: module.title, blocks: [{ kind: 'p', text: module.description }],
+    }],
+  };
+}
+
 export function ModulesPanel() {
   const { refresh: refreshCatalog } = useModuleCatalog();
   const [modules, setModules] = useState([]);
@@ -35,6 +54,7 @@ export function ModulesPanel() {
   const [editDraft, setEditDraft] = useState(BLANK);
   const [contentModuleId, setContentModuleId] = useState('');
   const [contentText, setContentText] = useState('{}');
+  const [loadedText, setLoadedText] = useState('{}');
   const [sectionIds, setSectionIds] = useState(DEFAULT_SECTION_IDS);
   const [contentSaved, setContentSaved] = useState('');
 
@@ -55,7 +75,9 @@ export function ModulesPanel() {
   useEffect(() => {
     const module = modules.find((item) => item.id === contentModuleId);
     if (!module) return;
-    setContentText(JSON.stringify(module.content ?? {}, null, 2));
+    const text = JSON.stringify(currentLesson(module), null, 2);
+    setContentText(text);
+    setLoadedText(text);
     setSectionIds(module.section_ids?.length ? module.section_ids : DEFAULT_SECTION_IDS);
     setContentSaved('');
   }, [contentModuleId, modules]);
@@ -101,10 +123,14 @@ export function ModulesPanel() {
       setError(new Error('Lesson content must be a JSON object.'));
       return;
     }
-    const ok = await mutate(() => adminApi.updateModuleContent(contentModuleId, {
-      content,
-      section_ids: sectionIds,
-    }));
+    // An untouched built-in or default lesson is left unsaved, so the module
+    // keeps following its built-in lesson (and that lesson's translation);
+    // only the section order is stored.
+    const module = modules.find((item) => item.id === contentModuleId);
+    const unchanged = !hasSavedLesson(module) && contentText === loadedText;
+    const ok = await mutate(() => adminApi.updateModuleContent(contentModuleId, unchanged
+      ? { section_ids: sectionIds }
+      : { content, section_ids: sectionIds }));
     if (ok) setContentSaved('Lesson content and section order saved.');
   }
 
@@ -498,7 +524,12 @@ export function ModulesPanel() {
                   placeholder="Section title"
                   aria-label={`Lesson section ${sectionIndex + 1} title`}
                 />
-                {(section.blocks ?? []).map((block, blockIndex) => (
+                {(section.blocks ?? []).map((block, blockIndex) => (!FORM_BLOCK_KINDS.includes(block.kind ?? 'p') ? (
+                  <p key={blockIndex} className={s.fieldHint} style={{ marginTop: 8 }}>
+                    {block.kind === 'table' ? 'Table' : block.kind === 'string' ? 'String diagram' : `"${block.kind}"`}
+                    {' '}block: edit it in Advanced content JSON below.
+                  </p>
+                ) : (
                   <div key={blockIndex} className={s.fieldRow} style={{ marginTop: 8 }}>
                     <select
                       className={s.select}
@@ -523,7 +554,7 @@ export function ModulesPanel() {
                       placeholder={block.kind === 'code' ? 'print("Hello")' : 'Write lesson content...'}
                     />
                   </div>
-                ))}
+                )))}
                 <button type="button" className={`${s.btn} ${s.btnGhost} ${s.btnSmall}`} onClick={() => addLearnBlock(sectionIndex)}>
                   <Plus size={13} /> Add content block
                 </button>
@@ -543,6 +574,14 @@ export function ModulesPanel() {
             />
             <p className={s.fieldHint}>Use this for worked Examples, Visualize settings, or content that needs the full data format.</p>
           </div>
+          {!hasSavedLesson(modules.find((item) => item.id === contentModuleId))
+            && getModuleContent(contentModuleId) && (
+            <p className={s.fieldHint}>
+              Showing the built-in lesson. Saving changes to it stores your edited
+              copy, which then replaces the built-in lesson in both English and
+              isiXhosa.
+            </p>
+          )}
           {contentSaved && <div className={s.success}>{contentSaved}</div>}
           <button type="submit" className={s.btn} disabled={busy || !contentModuleId}>
             <Save size={14} /> Save lesson
