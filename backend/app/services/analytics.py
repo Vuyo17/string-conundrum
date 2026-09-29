@@ -194,6 +194,15 @@ class _Snapshot:
         self.modules = admin_content.list_modules()
         self.module_titles = {m["id"]: m["title"] for m in self.modules}
         self.module_order = [m["id"] for m in self.modules]
+        # gating_sections() re-reads the modules table on every call. Computed
+        # once per module here rather than once per (student, module) pair in
+        # _student_row -- for a full class that was hundreds of redundant
+        # round trips (41 students x 9 modules) to open a fresh connection and
+        # re-fetch data this snapshot already has, measured at several seconds
+        # on the deployed dashboard.
+        self.required_sections = {
+            mid: set(admin_content.gating_sections(mid)) for mid in self.module_order
+        }
 
     @staticmethod
     def _bucket(rows: list, key: str) -> dict:
@@ -222,7 +231,7 @@ def _student_row(snap: _Snapshot, user: dict) -> dict:
     completions = snap.completions_by_user.get(uid, [])
     challenges = snap.challenges_by_user.get(uid, [])
 
-    required = {mid: set(admin_content.gating_sections(mid)) for mid in snap.module_order}
+    required = snap.required_sections
     total_sections = sum(len(ids) for ids in required.values())
     done_sections = len({
         (s["module_id"], s["section_id"]) for s in sections
@@ -320,7 +329,7 @@ def overview(include_guests: bool = False) -> dict:
         m_exams = snap.exams_by_module.get(module_id, [])
         m_sections = snap.sections_by_module.get(module_id, [])
         started = {a["user_id"] for a in m_attempts} | {s["user_id"] for s in m_sections}
-        required = set(admin_content.gating_sections(module_id))
+        required = snap.required_sections[module_id]
         gating_by_user = defaultdict(set)
         for s in m_sections:
             if s["section_id"] in required:
@@ -507,7 +516,7 @@ def student_detail(uid: str, include_guests: bool = True) -> dict:
             s["section_id"] for s in snap.sections_by_user.get(uid, ())
             if s["module_id"] == module_id
         }
-        required = set(admin_content.gating_sections(module_id))
+        required = snap.required_sections[module_id]
         gating_done = sections & required
         m_attempts = [a for a in attempts if a["module_id"] == module_id]
         graded = [a for a in m_attempts if a["source"] in ("bank", "engine", "exam")]
