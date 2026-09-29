@@ -30,6 +30,9 @@ const Settings = lazy(() => import("./pages/Settings").then((m) => ({ default: m
 // Lazy like every other screen, and more so: the dashboard is a sizeable
 // chunk that only lecturers ever open, so a student's bundle never includes it.
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard").then((m) => ({ default: m.AdminDashboard })));
+// The lecturer-only backend demo, reached only at /demo* URLs. Lazy like the
+// dashboard, so its bundle never ships to a student who never visits /demo.
+const DemoApp = lazy(() => import("./pages/demo/DemoApp").then((m) => ({ default: m.DemoApp })));
 
 // Same spinner as the auth-loading state, so a screen chunk still loading
 // doesn't look like a different kind of "stuck" to a student.
@@ -182,11 +185,19 @@ function Shell() {
 }
 
 function App() {
+  const isDemo = typeof window !== "undefined"
+    && window.location.pathname.startsWith("/demo");
   return (
     <LanguageProvider>
       <ThemeProvider>
         <ModuleCatalogProvider>
-          <Shell />
+          {isDemo ? (
+            <Suspense fallback={<ScreenLoading />}>
+              <DemoApp />
+            </Suspense>
+          ) : (
+            <Shell />
+          )}
         </ModuleCatalogProvider>
       </ThemeProvider>
     </LanguageProvider>

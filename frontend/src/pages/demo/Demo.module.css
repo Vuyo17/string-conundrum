@@ -1,0 +1,62 @@
+/* Deliberately plain: a technical console, not a styled app screen. Self
+   contained colours (not theme tokens) so it reads the same on a projector
+   regardless of the viewer's light/dark setting. */
+.wrap { min-height: 100vh; background: #f6f7f9; color: #14181f; font-family: ui-sans-serif, system-ui, sans-serif; }
+.header {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 14px 20px; background: #14181f; color: #e8eaed;
+}
+.brand { font-weight: 700; letter-spacing: .3px; }
+.brandSub { color: #9aa4b2; font-size: 12px; margin-left: 4px; }
+.nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.navLink {
+  color: #cdd3db; text-decoration: none; font-size: 13px; padding: 5px 10px;
+  border-radius: 6px; border: 1px solid transparent;
+}
+.navLink:hover { background: #232a34; }
+.navLinkOn { background: #2b3442; color: #fff; border-color: #3a4657; }
+.spacer { margin-left: auto; }
+.who { color: #9aa4b2; font-size: 12px; }
+.signout { background: none; border: 1px solid #3a4657; color: #cdd3db; border-radius: 6px; padding: 4px 10px; font-size: 12px; cursor: pointer; }
+
+.main { max-width: 980px; margin: 0 auto; padding: 24px 20px 64px; }
+.h1 { font-size: 20px; margin: 0 0 4px; }
+.lede { color: #5b6472; font-size: 14px; margin: 0 0 20px; max-width: 70ch; }
+
+.card { background: #fff; border: 1px solid #e2e6eb; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+.h2 { font-size: 15px; margin: 0 0 10px; }
+.note { color: #5b6472; font-size: 13px; margin: 0 0 12px; }
+
+.controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+.label { font-size: 12px; color: #5b6472; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 4px; }
+.select, .input { font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid #cbd2da; border-radius: 6px; background: #fff; color: #14181f; }
+.input { width: 100%; box-sizing: border-box; }
+.num { width: 90px; }
+.btn { font: inherit; font-size: 13px; font-weight: 600; padding: 7px 14px; border-radius: 6px; border: 1px solid #2b6cb0; background: #2b6cb0; color: #fff; cursor: pointer; }
+.btn:disabled { opacity: .5; cursor: default; }
+.btnGhost { background: #fff; color: #2b6cb0; }
+.preset { font: inherit; font-size: 12px; padding: 5px 10px; border-radius: 6px; border: 1px solid #cbd2da; background: #fff; color: #14181f; cursor: pointer; }
+.preset:hover { border-color: #2b6cb0; }
+
+.textarea { width: 100%; box-sizing: border-box; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 13px; line-height: 1.5; padding: 10px; border: 1px solid #cbd2da; border-radius: 8px; background: #0f1420; color: #e6edf3; min-height: 120px; tab-size: 4; }
+
+.exchange { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 720px) { .exchange { grid-template-columns: 1fr; } }
+.code { margin: 0; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.55; background: #0f1420; color: #e6edf3; border-radius: 8px; padding: 12px; overflow-x: auto; white-space: pre-wrap; word-break: break-word; max-height: 420px; }
+.meta { font-size: 12px; color: #5b6472; margin-bottom: 4px; display: flex; gap: 10px; }
+.ok { color: #1a7f4b; font-weight: 600; }
+.bad { color: #b42318; font-weight: 600; }
+.pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 999px; }
+.pillOk { background: #e6f4ec; color: #1a7f4b; }
+.pillBad { background: #fdeceb; color: #b42318; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.tileLink { display: block; text-decoration: none; color: inherit; background: #fff; border: 1px solid #e2e6eb; border-radius: 10px; padding: 16px; }
+.tileLink:hover { border-color: #2b6cb0; }
+.tileTitle { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+.tileText { color: #5b6472; font-size: 13px; }
+.tileEndpoints { margin-top: 10px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11.5px; color: #2b6cb0; }
+
+.center { min-height: 100vh; display: grid; place-items: center; padding: 24px; text-align: center; color: #14181f; background: #f6f7f9; }
+.qprompt { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; white-space: pre-wrap; background: #eef1f4; border-radius: 8px; padding: 10px; margin: 0 0 12px; }
+.opt { display: flex; gap: 8px; align-items: center; font-size: 13px; margin-bottom: 6px; font-family: ui-monospace, Menlo, Consolas, monospace; }
