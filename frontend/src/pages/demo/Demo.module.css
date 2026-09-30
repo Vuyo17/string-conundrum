@@ -1,62 +1,56 @@
-/* Deliberately plain: a technical console, not a styled app screen. Self
-   contained colours (not theme tokens) so it reads the same on a projector
-   regardless of the viewer's light/dark setting. */
-.wrap { min-height: 100vh; background: #f6f7f9; color: #14181f; font-family: ui-sans-serif, system-ui, sans-serif; }
-.header {
-  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-  padding: 14px 20px; background: #14181f; color: #e8eaed;
-}
-.brand { font-weight: 700; letter-spacing: .3px; }
-.brandSub { color: #9aa4b2; font-size: 12px; margin-left: 4px; }
-.nav { display: flex; gap: 4px; flex-wrap: wrap; }
-.navLink {
-  color: #cdd3db; text-decoration: none; font-size: 13px; padding: 5px 10px;
-  border-radius: 6px; border: 1px solid transparent;
-}
-.navLink:hover { background: #232a34; }
-.navLinkOn { background: #2b3442; color: #fff; border-color: #3a4657; }
+/* Deliberately bare: black on white, one accent, thin rules, no cards or
+   colour beyond what a request/response needs. A technical console, readable
+   on a projector regardless of the viewer's theme. */
+.wrap { min-height: 100vh; background: #fff; color: #14181f; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; }
+
+.header { display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; padding: 12px 20px; border-bottom: 1px solid #e2e6eb; }
+.brand { font-weight: 600; }
+.brandSub { color: #8a93a0; font-weight: 400; margin-left: 6px; }
+.nav { display: flex; gap: 14px; }
+.navLink { color: #5b6472; text-decoration: none; }
+.navLink:hover { color: #14181f; }
+.navLinkOn { color: #14181f; font-weight: 600; }
 .spacer { margin-left: auto; }
-.who { color: #9aa4b2; font-size: 12px; }
-.signout { background: none; border: 1px solid #3a4657; color: #cdd3db; border-radius: 6px; padding: 4px 10px; font-size: 12px; cursor: pointer; }
+.who { color: #8a93a0; font-size: 13px; }
+.signout { background: none; border: none; color: #5b6472; font: inherit; font-size: 13px; text-decoration: underline; cursor: pointer; padding: 0; }
 
-.main { max-width: 980px; margin: 0 auto; padding: 24px 20px 64px; }
-.h1 { font-size: 20px; margin: 0 0 4px; }
-.lede { color: #5b6472; font-size: 14px; margin: 0 0 20px; max-width: 70ch; }
+.main { max-width: 900px; margin: 0 auto; padding: 28px 20px 72px; }
+.h1 { font-size: 19px; font-weight: 600; margin: 0 0 6px; }
+.lede { color: #5b6472; margin: 0 0 28px; max-width: 68ch; }
 
-.card { background: #fff; border: 1px solid #e2e6eb; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
-.h2 { font-size: 15px; margin: 0 0 10px; }
-.note { color: #5b6472; font-size: 13px; margin: 0 0 12px; }
+/* Sections are separated by space and a heading, not boxes. */
+.card { margin-bottom: 32px; }
+.h2 { font-size: 14px; font-weight: 600; margin: 0 0 12px; }
 
-.controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
-.label { font-size: 12px; color: #5b6472; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 4px; }
-.select, .input { font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid #cbd2da; border-radius: 6px; background: #fff; color: #14181f; }
+.controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 12px; }
+.label { font-size: 11px; color: #8a93a0; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+.select, .input { font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid #d3d9e0; border-radius: 5px; background: #fff; color: #14181f; }
 .input { width: 100%; box-sizing: border-box; }
 .num { width: 90px; }
-.btn { font: inherit; font-size: 13px; font-weight: 600; padding: 7px 14px; border-radius: 6px; border: 1px solid #2b6cb0; background: #2b6cb0; color: #fff; cursor: pointer; }
-.btn:disabled { opacity: .5; cursor: default; }
-.btnGhost { background: #fff; color: #2b6cb0; }
-.preset { font: inherit; font-size: 12px; padding: 5px 10px; border-radius: 6px; border: 1px solid #cbd2da; background: #fff; color: #14181f; cursor: pointer; }
-.preset:hover { border-color: #2b6cb0; }
+.btn { font: inherit; font-size: 13px; padding: 6px 12px; border-radius: 5px; border: 1px solid #14181f; background: #14181f; color: #fff; cursor: pointer; }
+.btn:disabled { opacity: .4; cursor: default; }
+.preset { font: inherit; font-size: 12px; padding: 5px 9px; border-radius: 5px; border: 1px solid #d3d9e0; background: #fff; color: #14181f; cursor: pointer; }
+.preset:hover { border-color: #14181f; }
 
-.textarea { width: 100%; box-sizing: border-box; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 13px; line-height: 1.5; padding: 10px; border: 1px solid #cbd2da; border-radius: 8px; background: #0f1420; color: #e6edf3; min-height: 120px; tab-size: 4; }
+.textarea { width: 100%; box-sizing: border-box; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 1.5; padding: 10px; border: 1px solid #d3d9e0; border-radius: 6px; background: #fafbfc; color: #14181f; min-height: 108px; tab-size: 4; }
 
-.exchange { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.exchange { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 @media (max-width: 720px) { .exchange { grid-template-columns: 1fr; } }
-.code { margin: 0; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.55; background: #0f1420; color: #e6edf3; border-radius: 8px; padding: 12px; overflow-x: auto; white-space: pre-wrap; word-break: break-word; max-height: 420px; }
-.meta { font-size: 12px; color: #5b6472; margin-bottom: 4px; display: flex; gap: 10px; }
-.ok { color: #1a7f4b; font-weight: 600; }
-.bad { color: #b42318; font-weight: 600; }
-.pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 999px; }
-.pillOk { background: #e6f4ec; color: #1a7f4b; }
-.pillBad { background: #fdeceb; color: #b42318; }
+.code { margin: 0; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.55; background: #f6f7f9; color: #14181f; border: 1px solid #eceef1; border-radius: 6px; padding: 11px; overflow-x: auto; white-space: pre-wrap; word-break: break-word; max-height: 440px; }
+.meta { font-size: 12px; color: #8a93a0; margin: 4px 0; }
+.ok { color: #1a7f4b; }
+.bad { color: #b42318; }
+.verdict { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; }
 
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-.tileLink { display: block; text-decoration: none; color: inherit; background: #fff; border: 1px solid #e2e6eb; border-radius: 10px; padding: 16px; }
-.tileLink:hover { border-color: #2b6cb0; }
-.tileTitle { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
-.tileText { color: #5b6472; font-size: 13px; }
-.tileEndpoints { margin-top: 10px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11.5px; color: #2b6cb0; }
+/* Index: a plain list of links, not tiles. */
+.tocList { list-style: none; margin: 0; padding: 0; }
+.tocItem { padding: 14px 0; border-top: 1px solid #eceef1; }
+.tocItem:last-child { border-bottom: 1px solid #eceef1; }
+.tocLink { color: #14181f; text-decoration: none; font-weight: 600; }
+.tocLink:hover { text-decoration: underline; }
+.tocText { color: #5b6472; margin: 2px 0 0; }
+.tocEndpoints { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #8a93a0; margin-top: 4px; }
 
-.center { min-height: 100vh; display: grid; place-items: center; padding: 24px; text-align: center; color: #14181f; background: #f6f7f9; }
-.qprompt { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; white-space: pre-wrap; background: #eef1f4; border-radius: 8px; padding: 10px; margin: 0 0 12px; }
-.opt { display: flex; gap: 8px; align-items: center; font-size: 13px; margin-bottom: 6px; font-family: ui-monospace, Menlo, Consolas, monospace; }
+.center { min-height: 100vh; display: grid; place-items: center; padding: 24px; text-align: center; color: #14181f; background: #fff; }
+.qprompt { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; white-space: pre-wrap; color: #14181f; margin: 0 0 12px; }
+.opt { display: flex; gap: 8px; align-items: center; font-size: 13px; margin-bottom: 5px; font-family: ui-monospace, Menlo, Consolas, monospace; }

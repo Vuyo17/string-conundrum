@@ -59,6 +59,7 @@ function Exchange({ req, result, error, pending }) {
         {result && (
           <div className={s.meta}>
             <span className={result.status < 400 ? s.ok : s.bad}>{result.status}</span>
+            {' · '}
             <span>{result.ms} ms</span>
           </div>
         )}
@@ -120,10 +121,8 @@ function PracticeEngineDemo() {
     <div className={s.main}>
       <h1 className={s.h1}>Practice engine</h1>
       <p className={s.lede}>
-        Each module generates questions procedurally. The question carries an HMAC-signed
-        token that encodes its own answer key, so the server keeps no session: grading
-        re-derives the answer from the token. Wrong answers are classified into a named
-        misconception.
+        Questions are generated procedurally; each carries an HMAC-signed token encoding
+        its own answer key, so grading is stateless. Wrong answers map to a named misconception.
       </p>
 
       <div className={s.card}>
@@ -169,9 +168,9 @@ function PracticeEngineDemo() {
           <div className={s.controls} style={{ marginTop: 12 }}>
             <button className={s.btn} onClick={submit} disabled={grade.pending}>POST answer</button>
             {grade.result && grade.result.data && typeof grade.result.data.correct === 'boolean' && (
-              <span className={`${s.pill} ${grade.result.data.correct ? s.pillOk : s.pillBad}`}>
-                {grade.result.data.correct ? 'correct' : 'incorrect'}
-                {grade.result.data.misconception_id ? ` · ${grade.result.data.misconception_id}` : ''}
+              <span className={`${s.verdict} ${grade.result.data.correct ? s.ok : s.bad}`}>
+                {grade.result.data.correct ? '→ correct' : '→ incorrect'}
+                {grade.result.data.misconception_id ? ` (${grade.result.data.misconception_id})` : ''}
               </span>
             )}
           </div>
@@ -205,10 +204,9 @@ function SandboxDemo() {
     <div className={s.main}>
       <h1 className={s.h1}>Code sandbox</h1>
       <p className={s.lede}>
-        Learner code runs as a separate OS subprocess under a restricted builtins
-        dictionary — no <code>__import__</code>, no <code>open</code>, no <code>eval</code> —
-        with a 5-second wall-clock timeout and a memory cap. Errors can be returned
-        translated into isiXhosa from an offline template match.
+        Untrusted code runs in a separate subprocess under restricted builtins (no
+        import, open or eval), with a 5-second timeout and a memory cap. Errors can be
+        translated into isiXhosa offline.
       </p>
 
       <div className={s.card}>
@@ -257,9 +255,8 @@ function TracerDemo() {
     <div className={s.main}>
       <h1 className={s.h1}>Tracer & visualiser</h1>
       <p className={s.lede}>
-        Two read-only endpoints that power the Debugger and the string visualiser.
-        The tracer returns a per-line list of steps; the visualiser returns the
-        cells and highlighted indices a slice or index expression produces.
+        Two read-only endpoints behind the debugger and string visualiser: a per-line
+        execution trace, and the cells and highlighted indices a slice or index produces.
       </p>
 
       <div className={s.card}>
@@ -309,19 +306,18 @@ function Index() {
     <div className={s.main}>
       <h1 className={s.h1}>Backend demo</h1>
       <p className={s.lede}>
-        A technical walkthrough of the String Conundrum backend. Every panel calls the
-        real production API and shows the exact request and raw response. Lecturer-only,
-        and unlinked from the student app.
+        Every panel calls the real production API and shows the exact request and
+        raw response. Lecturer-only, and unlinked from the student app.
       </p>
-      <div className={s.grid}>
+      <ul className={s.tocList}>
         {PAGES.map((p) => (
-          <a key={p.path} className={s.tileLink} href={p.path}>
-            <div className={s.tileTitle}>{p.title}</div>
-            <div className={s.tileText}>{p.text}</div>
-            <div className={s.tileEndpoints}>{p.endpoints}</div>
-          </a>
+          <li key={p.path} className={s.tocItem}>
+            <a className={s.tocLink} href={p.path}>{p.title}</a>
+            <p className={s.tocText}>{p.text}</p>
+            <div className={s.tocEndpoints}>{p.endpoints}</div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }
